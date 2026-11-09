@@ -29,7 +29,7 @@ export const uid = () => Date.now().toString(36) + Math.random().toString(36).sl
 export function defaults() {
   return {
     version: 1,
-    goals: [{ from: '2000-01-01', kcal: 2000 }],
+    goals: [{ from: '2000-01-01' }],                    // inget kalorimål från start (beslut 2026-11-10)
     meals: [{ id: 'm1', name: 'Frukost' }, { id: 'm2', name: 'Lunch' }, { id: 'm3', name: 'Mellanmål' }, { id: 'm4', name: 'Middag' }],
     log: {}, dishes: [], foods: [], aliases: Object.create(null), weights: {},
     habits: {}, workouts: {}, settings: habitSettings(fdtDefaults().settings),
@@ -88,8 +88,10 @@ export function validate(raw) {
   const s = defaults();
   if (!isObj(raw)) return s;
   if (Array.isArray(raw.goals)) {
-    const g = raw.goals.filter((x) => isObj(x) && validDate(x.from) && num(x.kcal, 500, 10000)).slice(0, LIM.goals).map((x) => {
-      const o = { from: x.from, kcal: Math.round(x.kcal) };
+    // Kalorimålet är valfritt (beslut 2026-11-10): ett mål utan kcal = inget mål från det datumet.
+    const g = raw.goals.filter((x) => isObj(x) && validDate(x.from)).slice(0, LIM.goals).map((x) => {
+      const o = { from: x.from };
+      if (num(x.kcal, 500, 10000)) o.kcal = Math.round(x.kcal);
       if (num(x.prot, 10, 500)) o.prot = Math.round(x.prot);
       if (num(x.kolh, 10, 1000)) o.kolh = Math.round(x.kolh);
       return o;
@@ -167,6 +169,7 @@ export function goalFor(state, k) {
 export function setGoal(state, k, patch) {
   const cur = { ...goalFor(state, k) };
   const next = { ...cur, ...patch, from: k };
+  for (const f of Object.keys(next)) if (next[f] === undefined) delete next[f];
   state.goals = state.goals.filter((g) => g.from !== k).concat(next).sort((a, b) => (a.from < b.from ? -1 : 1));
 }
 export function weekStats(state, ws) {
@@ -174,11 +177,12 @@ export function weekStats(state, ws) {
   let sum = 0, logged = 0, within = 0;
   for (let i = 0; i < 7; i++) {
     const k = addDays(ws, i), posts = state.log[k] || [];
-    const kcal = Math.round(sumN(posts)[0]), goal = goalFor(state, k).kcal;
+    const kcal = Math.round(sumN(posts)[0]), goal = goalFor(state, k).kcal ?? null;
     days.push({ k, kcal, goal, logged: posts.length > 0 });
-    if (posts.length) { sum += kcal; logged++; if (kcal <= goal * 1.05) within++; }
+    if (posts.length) { sum += kcal; logged++; if (goal != null && kcal <= goal * 1.05) within++; }
   }
-  return { days, logged, within, avg: logged ? Math.round(sum / logged) : null };
+  // hasGoal: some day this week has a kcal goal – otherwise no "inom mål" is shown.
+  return { days, logged, within, hasGoal: days.some((d) => d.goal != null), avg: logged ? Math.round(sum / logged) : null };
 }
 
 /* ---------- Food search (data/foods.js) ---------- */

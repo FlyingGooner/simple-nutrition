@@ -4,10 +4,10 @@ const FDT = JSON.stringify({ app: 'follow-diet-tracker', format: 1, exported: '2
 
 const post = (o) => ({ id: 'p1', m: 'm1', ref: 'l:151', name: 'Mjölk', g: 200, n: [39, 3.6, 4.8, 0.5], ...o });
 
-T.test('defaults: fyra måltider och 2000 kcal', () => {
+T.test('defaults: fyra måltider och inget kalorimål', () => {
   const d = defaults();
   T.eq(d.meals.map((m) => m.name), ['Frukost', 'Lunch', 'Mellanmål', 'Middag']);
-  T.eq(d.goals[0].kcal, 2000);
+  T.ok(!('kcal' in d.goals[0]), 'inget kcal-mål från start');
 });
 T.test('kcal per post: gram × n/100, summa per dag', () => {
   T.eq(Math.round(postN(post())[0]), 78);
@@ -31,14 +31,14 @@ T.test('alias: __proto__ avvisas, objekt utan prototyp', () => {
   T.eq(Object.getPrototypeOf(s.aliases), null);
 });
 T.test('vikt och mål valideras', () => {
-  const s = validate({ weights: { '2026-11-01': 84.25, '2026-11-02': 5 }, goals: [{ from: '2026-01-01', kcal: 100 }, { from: '2026-01-01', kcal: 1800, prot: 120 }] });
+  const s = validate({ weights: { '2026-11-01': 84.25, '2026-11-02': 5 }, goals: [{ from: '2026-01-01', kcal: 100, prot: 120 }, { from: '2026-02-01', kcal: 1800 }, { from: 'x', kcal: 1800 }] });
   T.eq(s.weights, { '2026-11-01': 84.3 });
-  T.eq(s.goals, [{ from: '2026-01-01', kcal: 1800, prot: 120 }]);
+  T.eq(s.goals, [{ from: '2026-01-01', prot: 120 }, { from: '2026-02-01', kcal: 1800 }]);
 });
 T.test('mål från datum: gamla dagar behåller gammalt mål', () => {
   const s = defaults();
   setGoal(s, '2026-11-09', { kcal: 1800 });
-  T.eq(goalFor(s, '2026-11-08').kcal, 2000);
+  T.eq(goalFor(s, '2026-11-08').kcal, undefined);
   T.eq(goalFor(s, '2026-11-09').kcal, 1800);
   setGoal(s, '2026-11-09', { kcal: 1700 });
   T.eq(s.goals.length, 2);
@@ -48,7 +48,7 @@ T.test('ögonblicksbild: posten behåller sitt n', () => {
   T.eq(s.log['2026-11-09'][0].n, [40, 3, 5, 1]);
 });
 T.test('vecka: snitt, inom mål (≤ +5 %), datum', () => {
-  const s = validate({ log: { '2026-11-03': [post({ g: 5000 })], '2026-11-04': [post({ g: 5500 })] } });
+  const s = validate({ goals: [{ from: '2000-01-01', kcal: 2000 }], log: { '2026-11-03': [post({ g: 5000 })], '2026-11-04': [post({ g: 5500 })] } });
   const st = weekStats(s, '2026-11-03');
   T.eq([st.logged, st.within, st.avg], [2, 1, 2048]);
   T.eq(weekStart('2026-11-12'), '2026-11-09'); T.eq(isoWeek('2026-11-09'), 46); T.eq(addDays('2026-11-30', 1), '2026-12-01');
@@ -95,4 +95,13 @@ T.test('import från Följ planen: trasig eller fel export avvisas utan att någ
   T.ok(importText('{"app":"follow-diet-tracker","format":1}').error, 'data saknas');
   const r = importText(JSON.stringify({ app: 'follow-diet-tracker', format: 1, data: { days: { '__proto__': { x: 'f' }, '9999-01-01': { a: 'f' }, '2026-11-02': { 'bad id!': 'f', ok: 'z' } } } }));
   T.eq(Object.keys(mergeFdt(defaults(), r.fdt).habits), []);
+});
+T.test('inget kalorimål: veckan räknar inte "inom mål", tomt mål tas bort från ett datum', () => {
+  const s = validate({ log: { '2026-11-03': [post({ g: 5000 })] } });
+  const st = weekStats(s, '2026-11-03');
+  T.eq([st.hasGoal, st.within, st.avg], [false, 0, 1950]);
+  setGoal(s, '2026-11-01', { kcal: 1800 });
+  setGoal(s, '2026-11-05', { kcal: undefined });
+  T.eq([goalFor(s, '2026-11-03').kcal, goalFor(s, '2026-11-06').kcal], [1800, undefined]);
+  T.ok(!('kcal' in s.goals.at(-1)), 'kcal borttaget');
 });

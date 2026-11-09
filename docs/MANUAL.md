@@ -23,7 +23,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Under **Varor** söker du, t.ex. mjölk. Välj variant (Lätt, Mellan …) och mängd i gram eller i mått som dl eller st. Mått är ungefärliga (≈). Visa fler söker i hela Livsmedelsverkets lista.
 - Under **Senaste** loggar du något du ätit förut med ett tryck. **Kopiera maten från igår** fyller en tom dag med gårdagens mat.
 - Tryck på en post för att ändra mängd, flytta den till en annan måltid eller ta bort den.
-- Kalorimål och valfria mål för protein och kolhydrater sätter du under **Inställningar → Kalorier**.
+- Det finns inget kalorimål från start – appen visar bara dagens summa. Vill du ha ett mål sätter du det under **Inställningar → Kalorier → Kalorimål** (tomt = inget mål), och likaså valfria mål för protein och kolhydrater.
 
 ## Rätter
 - Bygg dina egna rätter under **Inställningar → Kalorier → Mina rätter → + Ny rätt**. Lägg till ingredienserna i gram (råvikt).

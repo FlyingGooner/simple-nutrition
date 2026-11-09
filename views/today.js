@@ -8,16 +8,16 @@ export const dayPosts = () => S.state.log[S.current] || [];
 
 function summaryCard() {
   const posts = dayPosts(), n = sumN(posts), g = goalFor(S.state, S.current);
-  const left = g.kcal - n[0], over = left < 0;
-  const ratio = Math.min(1, n[0] / g.kcal);
   const macro = (label, v, goal) => el('span', { class: 'macro' }, `${label} `, el('strong', { text: fmtNum(v, 0) }), goal ? ` / ${goal} g` : ' g');
-  return el('section', { class: 'card sum-card', 'aria-label': 'Dagens summa' },
+  const has = g.kcal != null, left = has ? g.kcal - n[0] : 0, over = left < 0;
+  // Utan kalorimål (standard): bara dagens summa, ingen stapel eller "kvar".
+  return el('section', { class: 'card sum-card', 'aria-label': 'Dagens kalorier' },
     el('div', { class: 'sum-top' },
-      el('span', { class: 'sum-big' }, el('strong', { text: kcal(n[0]) }), ` / ${kcal(g.kcal)} kcal`),
-      el('span', { class: 'sum-left' + (over ? ' over' : ''), text: over ? `${kcal(-left)} över` : `${kcal(left)} kvar` })),
-    svg('svg', { class: 'kbar', viewBox: '0 0 100 6', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
+      el('span', { class: 'sum-big' }, el('strong', { text: kcal(n[0]) }), has ? ` / ${kcal(g.kcal)} kcal` : ' kcal idag'),
+      has ? el('span', { class: 'sum-left' + (over ? ' over' : ''), text: over ? `${kcal(-left)} över` : `${kcal(left)} kvar` }) : null),
+    has ? svg('svg', { class: 'kbar', viewBox: '0 0 100 6', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
       svg('rect', { class: 'kbar-bg', x: 0, y: 0, width: 100, height: 6, rx: 2 }),
-      svg('rect', { class: 'kbar-fill' + (over ? ' over' : ''), x: 0, y: 0, width: Math.round(ratio * 1000) / 10, height: 6, rx: 2 })),
+      svg('rect', { class: 'kbar-fill' + (over ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, n[0] / g.kcal) * 1000) / 10, height: 6, rx: 2 })) : null,
     el('p', { class: 'macros' }, macro('Protein', n[1], g.prot), ' · ', macro('Kolh.', n[2], g.kolh), ' · ', macro('Fett', n[3])));
 }
 

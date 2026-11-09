@@ -5,16 +5,16 @@ import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goa
 const DAYS = ['M', 'T', 'O', 'T', 'F', 'L', 'S'];
 
 function kcalBars(st) {
-  const max = Math.max(...st.days.map((d) => Math.max(d.kcal, d.goal)), 1) * 1.05;
+  const max = Math.max(...st.days.map((d) => Math.max(d.kcal, d.goal ?? 0)), 1) * 1.05;
   return el('ul', { class: 'kbars' }, st.days.map((d, i) => {
-    const w = Math.round(d.kcal / max * 1000) / 10, gx = Math.round(d.goal / max * 1000) / 10;
-    const cls = !d.logged ? 'none' : d.kcal <= d.goal * 1.05 ? 'good' : 'over';
+    const w = Math.round(d.kcal / max * 1000) / 10, gx = d.goal != null ? Math.round(d.goal / max * 1000) / 10 : null;
+    const cls = !d.logged ? 'none' : d.goal == null || d.kcal <= d.goal * 1.05 ? 'good' : 'over';
     return el('li', {}, el('button', { class: 'kb-row', 'data-act': 'goto', 'data-val': d.k, 'aria-label': `${shortDate(d.k)}: ${d.logged ? kcal(d.kcal) + ' kcal' : 'ingen mat loggad'}` },
       el('span', { class: 'kb-day', text: DAYS[i] }),
       svg('svg', { class: 'kb', viewBox: '0 0 100 10', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
         svg('rect', { class: 'kb-bg', x: 0, y: 0, width: 100, height: 10, rx: 1 }),
         d.logged ? svg('rect', { class: 'kb-' + cls, x: 0, y: 0, width: w, height: 10, rx: 1 }) : null,
-        svg('line', { class: 'kb-goal', x1: gx, x2: gx, y1: 0, y2: 10 })),
+        gx != null ? svg('line', { class: 'kb-goal', x1: gx, x2: gx, y1: 0, y2: 10 }) : null),
       el('span', { class: 'kb-n', text: d.logged ? kcal(d.kcal) : '–' })));
   }));
 }
@@ -52,7 +52,7 @@ export function viewWeek(ws = S.week) {
     el('section', { class: 'card' }, el('h2', { text: 'Kalorier' }),
       el('div', { class: 'stats' },
         stat(st.avg == null ? '–' : kcal(st.avg), 'kcal per dag i snitt'),
-        stat(`${st.within}/${st.logged}`, 'dagar inom mål')),
+        st.hasGoal ? stat(`${st.within}/${st.logged}`, 'dagar inom mål') : stat(String(st.logged), 'dagar med mat loggad')),
       st.logged ? kcalBars(st) : el('p', { class: 'muted small center', text: 'Ingen mat loggad den här veckan.' })),
   ];
 }

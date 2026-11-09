@@ -79,7 +79,7 @@ function compare() {
   for (const ws of weeks(52).slice(1)) {
     const st = weekStats(S.state, ws), h = habitWeek(S.state, ws), a = avg7(addDays(ws, 6)), b = avg7(addDays(ws, -1));
     if (a == null || b == null || (!h.count && st.logged < 4)) continue;
-    rows.push({ good: h.ratio != null ? h.ratio >= thr : null, trained: weekSessions(ws).all >= wg, under: st.logged >= 4 ? st.avg <= st.days[6].goal : null, d: a - b });
+    rows.push({ good: h.ratio != null ? h.ratio >= thr : null, trained: weekSessions(ws).all >= wg, under: st.logged >= 4 && st.days[6].goal != null ? st.avg <= st.days[6].goal : null, d: a - b });
   }
   const body = rows.length < 4 ? [el('p', { class: 'muted small', text: `Fler veckor behövs (${rows.length}/4) – veckor med loggning och vikt före och efter.` })] : (() => {
     const mean = (l) => l.reduce((s, r) => s + r.d, 0) / l.length;

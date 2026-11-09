@@ -463,9 +463,10 @@ app.addEventListener('change', (ev) => {
       persist(); return;
     }
     case 'goalkcal': {
+      if (!t.value.trim()) { setGoal(S.state, today(), { kcal: undefined }); persist(); render(); snackbar('Inget kalorimål från idag', null, null, 3000); return; }
       const v = Math.round(parseNum(t.value));
       if (v >= 500 && v <= 10000) { setGoal(S.state, today(), { kcal: v }); persist(); render(); snackbar(`Kalorimål ${kcal(v)} kcal från idag`, null, null, 3000); }
-      else { t.value = String(goalFor(S.state, today()).kcal); snackbar('Ange ett mål mellan 500 och 10 000 kcal', null, null, 3000); }
+      else { t.value = goalFor(S.state, today()).kcal ? String(goalFor(S.state, today()).kcal) : ''; snackbar('Ange ett mål mellan 500 och 10 000 kcal, eller tomt för inget mål', null, null, 3000); }
       return;
     }
     case 'goalmacro': {

@@ -110,7 +110,7 @@ Samma struktur som follow-diet-tracker (beslut 2026-11-09): bottenmeny med fem f
 
 ### 5. Inställningar
 Hopfällbara sektioner som i diet, grupper Mål, Mat och Appen.
-- **Mål:** kcal per dag (ändring gäller från idag, historiken behåller gamla mål via `goals[].from`); protein och kolhydrater av/på + gram.
+- **Mål:** kcal per dag, **valfritt och av från start (beslut 2026-11-10)** – utan mål visas bara summan, inga "kvar", staplar mot mål eller "inom mål" (ändring gäller från idag, historiken behåller gamla mål via `goals[].from`); protein och kolhydrater av/på + gram.
 - **Måltider:** lägg till, döp om, sortera, ta bort (slots som i diet).
 - **Mina rätter:** lista, ny rätt, redigera, ta bort. Rätteditor: namn, ingredienser (samma sökning som Lägg till), antal portioner, valfri färdig vikt (g). Visar kcal/portion och per 100 g.
 - **Egna produkter:** namn + kcal/P/K/F per 100 g, valfritt mått.
@@ -251,7 +251,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
   - `portions`: 1–50
   - `cooked`: 1–20000
   - mått `u`: `[enhet ≤ 10 tecken, tal 0,01–10000]` eller saknas. Vara: [mått, antal] (t.ex. ["dl", 2]). Egen produkt: [mått, gram per mått]. Rätt-post: ["port." | "av satsen" | "g", mängd]
-  - `goals.kcal`: 500–10000, `prot`/`kolh` frivilliga och inom rimliga gränser
+  - `goals.kcal`: 500–10000 eller saknas (inget mål), `prot`/`kolh` frivilliga och inom rimliga gränser
   - `weights`: 20–400 kg
   - `meals`: 1–10 st, och en post vars `m` saknas bland dem visas under Övrigt
 - **Text** (namn på post, rätt, produkt, måltid och sökord samt alias-nycklar):
