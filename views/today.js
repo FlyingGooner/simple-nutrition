@@ -46,7 +46,7 @@ function mealCard(m, posts) {
     el('div', { class: 'meal-head' },
       el('span', { class: 'meal-name', text: m.name }),
       posts.some((p) => p.g != null) ? el('button', { class: 'meal-dish', 'data-act': 'mealdish', 'data-id': m.id, 'aria-label': `Spara ${m.name} som rätt`, title: 'Spara som rätt', text: '+🍲' }) : null,
-      el('span', { class: 'meal-kcal', text: posts.length ? kcal(total) : '–' })),
+      posts.length ? el('span', { class: 'meal-kcal', text: kcal(total) }) : null),
     posts.length ? el('ul', { class: 'posts' }, posts.map(postRow)) : null,
     m.id === '_other' ? null : el('button', { class: 'link add-btn', 'data-act': 'addopen', 'data-id': m.id, 'aria-label': `Lägg till i ${m.name}`, text: '+ Lägg till' }));
 }
