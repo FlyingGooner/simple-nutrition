@@ -19,7 +19,7 @@ Korv;Falukorv;skiva;30
 Pålägg kött;;skiva;8
 Lax;Rå;bit;125
 Vit fisk;;bit;125
-Tonfisk;;burk;120
+Tonfisk;;burk avr.;120
 Bröd;Tortilla;st;40
 Bröd;;skiva;35
 Knäckebröd;;skiva;12
@@ -30,8 +30,9 @@ Pasta;Okokt;dl;40
 Potatis;Rå;st;80
 Potatis;Kokt;st;80
 Vetemjöl;;dl;60
-Bönor och linser;Kikärtor kokta;burk;230
-Bönor och linser;Kidneybönor kokta;burk;230
+Bönor och linser;Kikärtor kokta;burk avr.;230
+Bönor och linser;Kidneybönor kokta;burk avr.;230
+Bönor och linser;Svarta bönor;burk avr.;230
 Bönor och linser;Röda linser kokta;dl;85
 Tomat;Färsk;st;100
 Tomat;Krossade;paket;400

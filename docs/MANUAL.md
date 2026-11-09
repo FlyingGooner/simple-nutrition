@@ -21,6 +21,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 ## Mat och kalorier
 - Under varje måltid finns en hopfälld rad **🍽 Mat**. Fäll ut den och tryck **+ Lägg till mat**.
 - Under **Varor** söker du, t.ex. mjölk. Välj variant (Lätt, Mellan …) och mängd i gram eller i mått som dl eller st. Mått är ungefärliga (≈). Visa fler söker i hela Livsmedelsverkets lista.
+- **burk avr.** betyder avrunnen vikt: en burk kidneybönor är 400 g med spad men ca 230 g bönor – det är bönorna som räknas.
 - Under **Senaste** loggar du något du ätit förut med ett tryck. **Kopiera maten från igår** fyller en tom dag med gårdagens mat.
 - Tryck på en post för att ändra mängd, flytta den till en annan måltid eller ta bort den.
 - Det finns inget kalorimål från start – appen visar bara dagens summa. Vill du ha ett mål sätter du det under **Inställningar → Kalorier → Kalorimål** (tomt = inget mål), och likaså valfria mål för protein och kolhydrater.

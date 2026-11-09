@@ -8,8 +8,8 @@ Laxpasta med spenat;4;Lax;400;200;20;0;13;Lax|Rå
 Laxpasta med spenat;4;Pasta okokt;350;355;12.5;71;1.5;Pasta|Okokt
 Laxpasta med spenat;4;Matlagningsgrädde 15 %;250;160;3;4;15;Grädde|Matlagning 15 %
 Laxpasta med spenat;4;Spenat;100;23;2.9;1.4;0.4;Sallad|Spenat
-Chili sin carne;4;Kidneybönor kokta;400;125;8.5;19;0.5;Bönor och linser|Kidneybönor kokta
-Chili sin carne;4;Svarta bönor;400;132;8.9;23;0.5;Bönor och linser|Svarta bönor
+Chili sin carne;4;Kidneybönor kokta (1 burk avrunnen);230;125;8.5;19;0.5;Bönor och linser|Kidneybönor kokta
+Chili sin carne;4;Svarta bönor (1 burk avrunnen);230;132;8.9;23;0.5;Bönor och linser|Svarta bönor
 Chili sin carne;4;Krossade tomater;800;25;1.2;4;0.2;Tomat|Krossade
 Chili sin carne;4;Gul lök;150;40;1.1;9;0.1;Lök|Gul lök
 Chili sin carne;4;Rapsolja;20;884;0;0;100;Olja|Rapsolja
@@ -183,7 +183,7 @@ Tonfiskpasta;2;Tonfisk i vatten;150;110;25;0;1;Tonfisk|I vatten
 Tonfiskpasta;2;Majs;100;85;3;17;1.2;Majs och ärtor|Majs
 Tonfiskpasta;2;Gräddfil;100;130;3;4;12;Crème fraiche|Gräddfil 12 %
 Quinoasallad med kikärtor;2;Quinoa okokt;100;368;14;64;6;Couscous och bulgur|Quinoa okokt
-Quinoasallad med kikärtor;2;Kikärtor kokta;250;140;8;20;2.5;Bönor och linser|Kikärtor kokta
+Quinoasallad med kikärtor;2;Kikärtor kokta (1 burk avrunnen);230;140;8;20;2.5;Bönor och linser|Kikärtor kokta
 Quinoasallad med kikärtor;2;Paprika;150;30;1;6;0.3;Paprika|Färsk
 Quinoasallad med kikärtor;2;Gurka;150;12;0.7;2;0.1;Gurka|Färsk
 Quinoasallad med kikärtor;2;Olivolja;20;884;0;0;100;Olja|Olivolja
@@ -233,7 +233,7 @@ Tacos med kycklingfärs;4;Tortilla;320;310;8;52;7;Bröd|Tortilla
 Tacos med kycklingfärs;4;Gräddfil;200;130;3;4;12;Crème fraiche|Gräddfil 12 %
 Tacos med kycklingfärs;4;Riven ost 28 %;100;360;26;0;28;Ost|Normal 28 %
 Tacos med kycklingfärs;4;Majs;150;85;3;17;1.2;Majs och ärtor|Majs
-Bönsoppa med kidneybönor;4;Kidneybönor kokta;500;125;8.5;19;0.5;Bönor och linser|Kidneybönor kokta
+Bönsoppa med kidneybönor;4;Kidneybönor kokta (2 burkar avrunna);460;125;8.5;19;0.5;Bönor och linser|Kidneybönor kokta
 Bönsoppa med kidneybönor;4;Krossade tomater;800;25;1.2;4;0.2;Tomat|Krossade
 Bönsoppa med kidneybönor;4;Morot;200;40;0.9;9;0.2;Morot|Rå
 Bönsoppa med kidneybönor;4;Gul lök;150;40;1.1;9;0.1;Lök|Gul lök
