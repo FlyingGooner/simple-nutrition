@@ -8,6 +8,8 @@
   3. test-maltider.ps1 -Fil test-dag.csv: en hel dag (frukost–kväll) på samma sätt.
   4. test-data.ps1: typiska recept (data/test/test-ratter.csv) mot Livsmedelsverkets egna färdiga rätter, kcal/100 g ±20 %.
      Två kända avvikelser (vattenförlust vid kokning) räknas inte.
+  5. test-maltider.ps1 -Fil test-ratter50.csv: 61 blandade rätter med grova standardvärden, ±20 % (fångar felkopplingar,
+     t.ex. lätt kokosmjölk som Normal; 10–16 % skillnad mot Livsmedelsverket för tofu, falafel, sidfläsk m.fl. är normalt).
   Skriver en rad per test; -Full visar hela tabellerna. Exit 1 om något test avviker. Inga nätverksanrop.
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File tools\data.ps1
@@ -34,6 +36,7 @@ $codes += Run 'Bygg datan' 'build-data.ps1'
 $codes += Run 'Rätter mot standardvärden' 'test-maltider.ps1'
 $codes += Run 'En hel dag mot standardvärden' 'test-maltider.ps1' @('-Fil', 'test-dag.csv')
 $codes += Run 'Recept mot Livsmedelsverkets rätter' 'test-data.ps1'
+$codes += Run '61 blandade rätter mot standardvärden (bred, ±20 %)' 'test-maltider.ps1' @('-Fil', 'test-ratter50.csv', '-Tolerans', '20')
 $fail = @($codes | Where-Object { $_ }).Count
 Write-Host "=== Data: $(if ($fail) { "$fail FEL" } else { 'allt ok' })"
 if ($fail) { exit 1 }

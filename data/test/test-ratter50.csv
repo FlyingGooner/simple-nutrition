@@ -1,0 +1,273 @@
+ratt;portioner;ingrediens;gram;est_kcal;est_p;est_k;est_f;db
+Kycklingcurry med kokosmjölk och ris;4;Kycklingfilé;500;110;23;0;1.5;Kyckling|Filé
+Kycklingcurry med kokosmjölk och ris;4;Kokosmjölk;400;200;2;3;20;Kokosmjölk|Normal 24 %
+Kycklingcurry med kokosmjölk och ris;4;Gul lök;150;40;1.1;9;0.1;Lök|Gul lök
+Kycklingcurry med kokosmjölk och ris;4;Paprika;150;30;1;6;0.3;Paprika|Färsk
+Kycklingcurry med kokosmjölk och ris;4;Ris okokt;300;355;7;78;0.7;Ris|Okokt
+Laxpasta med spenat;4;Lax;400;200;20;0;13;Lax|Rå
+Laxpasta med spenat;4;Pasta okokt;350;355;12.5;71;1.5;Pasta|Okokt
+Laxpasta med spenat;4;Matlagningsgrädde 15 %;250;160;3;4;15;Grädde|Matlagning 15 %
+Laxpasta med spenat;4;Spenat;100;23;2.9;1.4;0.4;Sallad|Spenat
+Chili sin carne;4;Kidneybönor kokta;400;125;8.5;19;0.5;Bönor och linser|Kidneybönor kokta
+Chili sin carne;4;Svarta bönor;400;132;8.9;23;0.5;Bönor och linser|Svarta bönor
+Chili sin carne;4;Krossade tomater;800;25;1.2;4;0.2;Tomat|Krossade
+Chili sin carne;4;Gul lök;150;40;1.1;9;0.1;Lök|Gul lök
+Chili sin carne;4;Rapsolja;20;884;0;0;100;Olja|Rapsolja
+Fläskpannkaka;4;Vetemjöl;200;340;10.5;71;1.5;Vetemjöl|Vetemjöl
+Fläskpannkaka;4;Mellanmjölk;600;47;3.5;4.8;1.5;Mjölk|Mellan 1,5 %
+Fläskpannkaka;4;Ägg;150;140;12.5;0.5;10;Ägg|Rått/kokt
+Fläskpannkaka;4;Bacon;280;300;13;0.5;28;Bacon|Rått
+Fläskpannkaka;4;Lingonsylt;100;180;0.3;44;0.3;Sylt|Lingonsylt
+Raggmunk med fläsk;4;Potatis rå;800;77;2;17;0.1;Potatis|Rå
+Raggmunk med fläsk;4;Vetemjöl;120;340;10.5;71;1.5;Vetemjöl|Vetemjöl
+Raggmunk med fläsk;4;Mellanmjölk;300;47;3.5;4.8;1.5;Mjölk|Mellan 1,5 %
+Raggmunk med fläsk;4;Ägg;100;140;12.5;0.5;10;Ägg|Rått/kokt
+Raggmunk med fläsk;4;Sidfläsk;400;400;13;0;38;Fläskkött|Sidfläsk
+Raggmunk med fläsk;4;Smör;30;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Janssons frestelse;6;Potatis rå;1000;77;2;17;0.1;Potatis|Rå
+Janssons frestelse;6;Gul lök;200;40;1.1;9;0.1;Lök|Gul lök
+Janssons frestelse;6;Vispgrädde 40 %;300;375;2;3;40;Grädde|Visp 40 %
+Janssons frestelse;6;Inlagd sill (som ansjovis);125;220;10;18;12;Strömming|Inlagd sill
+Janssons frestelse;6;Smör;30;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Köttgryta med potatis;4;Högrev;600;200;19;0;13;Nötkött|Högrev
+Köttgryta med potatis;4;Morot;250;40;0.9;9;0.2;Morot|Rå
+Köttgryta med potatis;4;Gul lök;150;40;1.1;9;0.1;Lök|Gul lök
+Köttgryta med potatis;4;Potatis kokt;800;80;2;17;0.1;Potatis|Kokt
+Köttgryta med potatis;4;Rapsolja;20;884;0;0;100;Olja|Rapsolja
+Nötstroganoff med ris;4;Ryggbiff;500;150;22;0;6;Nötkött|Ryggbiff/oxfilé
+Nötstroganoff med ris;4;Matlagningsgrädde 15 %;250;160;3;4;15;Grädde|Matlagning 15 %
+Nötstroganoff med ris;4;Tomatpuré;70;85;4;15;0.5;Tomat|Puré
+Nötstroganoff med ris;4;Gul lök;150;40;1.1;9;0.1;Lök|Gul lök
+Nötstroganoff med ris;4;Ris okokt;300;355;7;78;0.7;Ris|Okokt
+Kebabtallrik med pommes;2;Kebabkött;300;230;16;3;17;Kebab|Kebabkött
+Kebabtallrik med pommes;2;Ugnspommes;300;200;3;30;7;Potatis|Ugnspommes
+Kebabtallrik med pommes;2;Isbergssallad;100;14;0.9;2;0.1;Sallad|Isberg
+Kebabtallrik med pommes;2;Tomat;100;18;0.9;3.5;0.2;Tomat|Färsk
+Kebabtallrik med pommes;2;Lätt majonnäs (sås);60;300;1;8;30;Majonnäs|Lätt 30 %
+Falafel i tortilla;2;Falafel;200;330;13;32;18;Grönsaksbiffar|Falafel
+Falafel i tortilla;2;Tortilla;120;310;8;52;7;Bröd|Tortilla
+Falafel i tortilla;2;Turkisk yoghurt;100;125;3.5;4;10;Turkisk yoghurt|Normal 10 %
+Falafel i tortilla;2;Gurka;100;12;0.7;2;0.1;Gurka|Färsk
+Falafel i tortilla;2;Tomat;100;18;0.9;3.5;0.2;Tomat|Färsk
+Halloumisallad med bulgur;2;Halloumi;200;320;22;2;25;Halloumi|Normal
+Halloumisallad med bulgur;2;Bulgur okokt;120;342;12;76;1.3;Couscous och bulgur|Bulgur okokt
+Halloumisallad med bulgur;2;Tomat;150;18;0.9;3.5;0.2;Tomat|Färsk
+Halloumisallad med bulgur;2;Gurka;150;12;0.7;2;0.1;Gurka|Färsk
+Halloumisallad med bulgur;2;Olivolja;20;884;0;0;100;Olja|Olivolja
+Röd linsgryta;4;Röda linser kokta;600;115;9;18;0.4;Bönor och linser|Röda linser kokta
+Röd linsgryta;4;Krossade tomater;400;25;1.2;4;0.2;Tomat|Krossade
+Röd linsgryta;4;Kokosmjölk;200;200;2;3;20;Kokosmjölk|Normal 24 %
+Röd linsgryta;4;Morot;200;40;0.9;9;0.2;Morot|Rå
+Röd linsgryta;4;Gul lök;150;40;1.1;9;0.1;Lök|Gul lök
+Kycklingsallad med avokado;2;Kycklingfilé;250;110;23;0;1.5;Kyckling|Filé
+Kycklingsallad med avokado;2;Avokado;150;160;2;2;15;Avokado|Färsk
+Kycklingsallad med avokado;2;Isbergssallad;150;14;0.9;2;0.1;Sallad|Isberg
+Kycklingsallad med avokado;2;Tomat;150;18;0.9;3.5;0.2;Tomat|Färsk
+Kycklingsallad med avokado;2;Olivolja;15;884;0;0;100;Olja|Olivolja
+Torsk med potatis och smörsås;4;Torsk;600;80;18;0;0.7;Vit fisk|Torsk
+Torsk med potatis och smörsås;4;Potatis kokt;800;80;2;17;0.1;Potatis|Kokt
+Torsk med potatis och smörsås;4;Smör;80;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Torsk med potatis och smörsås;4;Ägg;100;140;12.5;0.5;10;Ägg|Rått/kokt
+Fisksoppa med sej och räkor;4;Sej;400;85;19;0;1;Vit fisk|Sej
+Fisksoppa med sej och räkor;4;Räkor;200;90;19;0;1.5;Räkor|Skalade
+Fisksoppa med sej och räkor;4;Krossade tomater;400;25;1.2;4;0.2;Tomat|Krossade
+Fisksoppa med sej och räkor;4;Matlagningsgrädde 15 %;200;160;3;4;15;Grädde|Matlagning 15 %
+Fisksoppa med sej och räkor;4;Purjolök;150;35;1.5;7;0.3;Purjo och vitlök|Purjolök
+Köttfärspaj;6;Vetemjöl;180;340;10.5;71;1.5;Vetemjöl|Vetemjöl
+Köttfärspaj;6;Smör;100;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Köttfärspaj;6;Nötfärs 12 %;400;190;19;0;12;Nötfärs|Normal 12 %
+Köttfärspaj;6;Riven ost 28 %;150;360;26;0;28;Ost|Normal 28 %
+Köttfärspaj;6;Ägg;150;140;12.5;0.5;10;Ägg|Rått/kokt
+Köttfärspaj;6;Matlagningsgrädde 15 %;250;160;3;4;15;Grädde|Matlagning 15 %
+Pannbiff med lök och potatis;4;Nötfärs 12 %;500;190;19;0;12;Nötfärs|Normal 12 %
+Pannbiff med lök och potatis;4;Gul lök;300;40;1.1;9;0.1;Lök|Gul lök
+Pannbiff med lök och potatis;4;Potatis kokt;800;80;2;17;0.1;Potatis|Kokt
+Pannbiff med lök och potatis;4;Smör;40;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Kalkonfilé med sötpotatis;2;Kalkonfilé;300;105;23;0;1;Kalkon|Filé rå
+Kalkonfilé med sötpotatis;2;Sötpotatis;400;86;1.6;20;0.1;Rotfrukter|Sötpotatis
+Kalkonfilé med sötpotatis;2;Broccoli;200;34;3;4;0.4;Broccoli|Fryst
+Kalkonfilé med sötpotatis;2;Olivolja;15;884;0;0;100;Olja|Olivolja
+Äggröra med bacon;2;Ägg;240;140;12.5;0.5;10;Ägg|Rått/kokt
+Äggröra med bacon;2;Bacon stekt;80;470;35;1;36;Bacon|Stekt
+Äggröra med bacon;2;Mellanmjölk;50;47;3.5;4.8;1.5;Mjölk|Mellan 1,5 %
+Äggröra med bacon;2;Smör;10;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Overnight oats;1;Havregryn;60;370;13;60;7;Havregryn|Okokt
+Overnight oats;1;Mellanmjölk;150;47;3.5;4.8;1.5;Mjölk|Mellan 1,5 %
+Overnight oats;1;Chiafrön;10;490;17;8;31;Frön|Chiafrön
+Overnight oats;1;Blåbär;75;57;0.7;13;0.3;Bär|Blåbär
+Smoothie banan och blåbär;1;Banan;120;90;1.1;21;0.3;Banan|Färsk
+Smoothie banan och blåbär;1;Blåbär;100;57;0.7;13;0.3;Bär|Blåbär
+Smoothie banan och blåbär;1;Yoghurt 3 %;150;60;3.5;4.5;3;Yoghurt|Standard 3 %
+Smoothie banan och blåbär;1;Havredryck;100;45;1;6.5;1.5;Havredryck|Normal 1,5 %
+Yoghurt med granola och bär;1;Yoghurt 3 %;200;60;3.5;4.5;3;Yoghurt|Standard 3 %
+Yoghurt med granola och bär;1;Granola;50;450;10;60;18;Flingor|Granola
+Yoghurt med granola och bär;1;Hallon;75;45;1.2;8;0.6;Bär|Hallon
+Kvarg med jordnötssmör och banan;1;Mager kvarg;200;60;11;3.5;0.2;Kvarg|Mager 0,2 %
+Kvarg med jordnötssmör och banan;1;Jordnötssmör;20;590;25;20;50;Jordnötssmör|Normal
+Kvarg med jordnötssmör och banan;1;Banan;100;90;1.1;21;0.3;Banan|Färsk
+Grovmacka med ost och skinka;1;Grovt bröd;80;250;9;42;3.5;Bröd|Grovt/fullkorn
+Grovmacka med ost och skinka;1;Smörgåsfett 60 %;10;540;0.5;1;60;Smörgåsfett|Mellan 60 %
+Grovmacka med ost och skinka;1;Ost 28 %;20;360;26;0;28;Ost|Normal 28 %
+Grovmacka med ost och skinka;1;Skinka;20;105;19;1;3;Pålägg kött|Skinka
+Grovmacka med ost och skinka;1;Gurka;20;12;0.7;2;0.1;Gurka|Färsk
+Avokadotoast med ägg;1;Ljust bröd;60;265;9;48;3.5;Bröd|Ljust
+Avokadotoast med ägg;1;Avokado;75;160;2;2;15;Avokado|Färsk
+Avokadotoast med ägg;1;Ägg;60;140;12.5;0.5;10;Ägg|Rått/kokt
+Pasta pesto med kyckling;4;Pasta okokt;350;355;12.5;71;1.5;Pasta|Okokt
+Pasta pesto med kyckling;4;Kycklingfilé;450;110;23;0;1.5;Kyckling|Filé
+Pasta pesto med kyckling;4;Pesto;120;450;5;5;45;Såser|Pesto
+Pasta pesto med kyckling;4;Parmesan;30;400;35;0;28;Parmesan|Normal
+Pasta pesto med kyckling;4;Tomat;200;18;0.9;3.5;0.2;Tomat|Färsk
+Nudelwok med tofu;2;Nudlar okokta;150;370;11;73;2;Nudlar|Okokta
+Nudelwok med tofu;2;Tofu;250;120;13;2;7;Vegoprotein|Tofu
+Nudelwok med tofu;2;Broccoli;200;34;3;4;0.4;Broccoli|Fryst
+Nudelwok med tofu;2;Paprika;150;30;1;6;0.3;Paprika|Färsk
+Nudelwok med tofu;2;Sojasås;30;60;8;6;0.1;Såser|Sojasås
+Nudelwok med tofu;2;Rapsolja;15;884;0;0;100;Olja|Rapsolja
+Svamprisotto med parmesan;4;Ris okokt (arborio);350;355;7;78;0.7;Ris|Okokt
+Svamprisotto med parmesan;4;Champinjoner;300;22;3;1;0.3;Svamp|Champinjon
+Svamprisotto med parmesan;4;Gul lök;100;40;1.1;9;0.1;Lök|Gul lök
+Svamprisotto med parmesan;4;Parmesan;60;400;35;0;28;Parmesan|Normal
+Svamprisotto med parmesan;4;Smör;40;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Gulaschsoppa;4;Högrev;500;200;19;0;13;Nötkött|Högrev
+Gulaschsoppa;4;Potatis rå;500;77;2;17;0.1;Potatis|Rå
+Gulaschsoppa;4;Krossade tomater;400;25;1.2;4;0.2;Tomat|Krossade
+Gulaschsoppa;4;Paprika;200;30;1;6;0.3;Paprika|Färsk
+Gulaschsoppa;4;Gul lök;150;40;1.1;9;0.1;Lök|Gul lök
+Potatis- och purjolökssoppa;4;Potatis rå;700;77;2;17;0.1;Potatis|Rå
+Potatis- och purjolökssoppa;4;Purjolök;300;35;1.5;7;0.3;Purjo och vitlök|Purjolök
+Potatis- och purjolökssoppa;4;Matlagningsgrädde 15 %;200;160;3;4;15;Grädde|Matlagning 15 %
+Potatis- och purjolökssoppa;4;Smör;20;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Lammfärsbiffar med couscous;4;Lammfärs;500;280;17;0;23;Lamm|Färs
+Lammfärsbiffar med couscous;4;Couscous okokt;250;375;13;77;0.6;Couscous och bulgur|Couscous okokt
+Lammfärsbiffar med couscous;4;Turkisk yoghurt;200;125;3.5;4;10;Turkisk yoghurt|Normal 10 %
+Lammfärsbiffar med couscous;4;Gurka;200;12;0.7;2;0.1;Gurka|Färsk
+Älgfärsbiffar med potatis och lingon;4;Älgfärs;500;120;22;0;3;Vilt|Älgfärs
+Älgfärsbiffar med potatis och lingon;4;Potatis kokt;800;80;2;17;0.1;Potatis|Kokt
+Älgfärsbiffar med potatis och lingon;4;Lingonsylt;100;180;0.3;44;0.3;Sylt|Lingonsylt
+Älgfärsbiffar med potatis och lingon;4;Matlagningsgrädde 15 %;200;160;3;4;15;Grädde|Matlagning 15 %
+Älgfärsbiffar med potatis och lingon;4;Smör;30;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Fläskkotlett med potatissallad;4;Kotlett med fettkant;600;200;19;0;13;Fläskkött|Kotlett/karré (med fettkant)
+Fläskkotlett med potatissallad;4;Potatis kokt;600;80;2;17;0.1;Potatis|Kokt
+Fläskkotlett med potatissallad;4;Lätt majonnäs;100;300;1;8;30;Majonnäs|Lätt 30 %
+Fläskkotlett med potatissallad;4;Crème fraiche lätt;100;130;3;4;12;Crème fraiche|Gräddfil 12 %
+Fläskkotlett med potatissallad;4;Gul lök;50;40;1.1;9;0.1;Lök|Gul lök
+Korv med bröd;1;Grillkorv;80;250;11;3;22;Korv|Grillkorv/wiener
+Korv med bröd;1;Korvbröd;40;280;8;50;5;Korvbröd|Korvbröd
+Korv med bröd;1;Ketchup;20;110;1.2;25;0.2;Ketchup|Normal
+Korv med bröd;1;Senap;10;80;5;5;4;Såser|Senap
+Ugnsfalukorv med potatismos;4;Falukorv;600;230;10;6;19;Korv|Falukorv
+Ugnsfalukorv med potatismos;4;Potatis kokt;800;80;2;17;0.1;Potatis|Kokt
+Ugnsfalukorv med potatismos;4;Mellanmjölk;200;47;3.5;4.8;1.5;Mjölk|Mellan 1,5 %
+Ugnsfalukorv med potatismos;4;Smör;30;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Ugnsfalukorv med potatismos;4;Ketchup;60;110;1.2;25;0.2;Ketchup|Normal
+Pizza margherita (hel);1;Vetemjöl;150;340;10.5;71;1.5;Vetemjöl|Vetemjöl
+Pizza margherita (hel);1;Olivolja;15;884;0;0;100;Olja|Olivolja
+Pizza margherita (hel);1;Krossade tomater;100;25;1.2;4;0.2;Tomat|Krossade
+Pizza margherita (hel);1;Mozzarella;125;250;18;1;19;Ost|Mozzarella
+Kycklingburgare;2;Kycklinglårfilé;300;130;19;0;6;Kyckling|Lårfilé (utan skinn)
+Kycklingburgare;2;Hamburgerbröd;140;280;9;49;4.5;Bröd|Hamburgerbröd
+Kycklingburgare;2;Majonnäs;30;720;1.1;1;79;Majonnäs|Normal 80 %
+Kycklingburgare;2;Isbergssallad;40;14;0.9;2;0.1;Sallad|Isberg
+Kycklingburgare;2;Tomat;80;18;0.9;3.5;0.2;Tomat|Färsk
+Ugnslax med broccoli och ris;4;Lax;600;200;20;0;13;Lax|Rå
+Ugnslax med broccoli och ris;4;Broccoli;400;34;3;4;0.4;Broccoli|Fryst
+Ugnslax med broccoli och ris;4;Ris okokt;300;355;7;78;0.7;Ris|Okokt
+Räksallad med ägg;2;Räkor;250;90;19;0;1.5;Räkor|Skalade
+Räksallad med ägg;2;Ägg;120;140;12.5;0.5;10;Ägg|Rått/kokt
+Räksallad med ägg;2;Isbergssallad;150;14;0.9;2;0.1;Sallad|Isberg
+Räksallad med ägg;2;Gurka;100;12;0.7;2;0.1;Gurka|Färsk
+Räksallad med ägg;2;Lätt majonnäs;40;300;1;8;30;Majonnäs|Lätt 30 %
+Tonfiskpasta;2;Pasta okokt;150;355;12.5;71;1.5;Pasta|Okokt
+Tonfiskpasta;2;Tonfisk i vatten;150;110;25;0;1;Tonfisk|I vatten
+Tonfiskpasta;2;Majs;100;85;3;17;1.2;Majs och ärtor|Majs
+Tonfiskpasta;2;Gräddfil;100;130;3;4;12;Crème fraiche|Gräddfil 12 %
+Quinoasallad med kikärtor;2;Quinoa okokt;100;368;14;64;6;Couscous och bulgur|Quinoa okokt
+Quinoasallad med kikärtor;2;Kikärtor kokta;250;140;8;20;2.5;Bönor och linser|Kikärtor kokta
+Quinoasallad med kikärtor;2;Paprika;150;30;1;6;0.3;Paprika|Färsk
+Quinoasallad med kikärtor;2;Gurka;150;12;0.7;2;0.1;Gurka|Färsk
+Quinoasallad med kikärtor;2;Olivolja;20;884;0;0;100;Olja|Olivolja
+Grönsakssoppa;4;Morot;300;40;0.9;9;0.2;Morot|Rå
+Grönsakssoppa;4;Potatis rå;300;77;2;17;0.1;Potatis|Rå
+Grönsakssoppa;4;Vitkål;300;25;1.3;5;0.1;Kål|Vitkål
+Grönsakssoppa;4;Purjolök;150;35;1.5;7;0.3;Purjo och vitlök|Purjolök
+Grönsakssoppa;4;Gröna ärtor;150;80;5.4;13;0.4;Majs och ärtor|Gröna ärtor frysta
+Blomkålsgratäng;4;Blomkål;800;25;2;4;0.3;Blomkål|Färsk
+Blomkålsgratäng;4;Mellanmjölk;400;47;3.5;4.8;1.5;Mjölk|Mellan 1,5 %
+Blomkålsgratäng;4;Vetemjöl;40;340;10.5;71;1.5;Vetemjöl|Vetemjöl
+Blomkålsgratäng;4;Smör;30;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Blomkålsgratäng;4;Riven ost 28 %;150;360;26;0;28;Ost|Normal 28 %
+Moussaka;4;Aubergine;500;25;1;5;0.2;Zucchini och aubergine|Aubergine
+Moussaka;4;Lammfärs;500;280;17;0;23;Lamm|Färs
+Moussaka;4;Krossade tomater;400;25;1.2;4;0.2;Tomat|Krossade
+Moussaka;4;Mellanmjölk;300;47;3.5;4.8;1.5;Mjölk|Mellan 1,5 %
+Moussaka;4;Parmesan;50;400;35;0;28;Parmesan|Normal
+Moussaka;4;Olivolja;30;884;0;0;100;Olja|Olivolja
+Kålpudding;6;Vitkål;1000;25;1.3;5;0.1;Kål|Vitkål
+Kålpudding;6;Blandfärs;500;215;18;0;16;Blandfärs|Nöt 70 / gris 30
+Kålpudding;6;Mellanmjölk;200;47;3.5;4.8;1.5;Mjölk|Mellan 1,5 %
+Kålpudding;6;Ströbröd;50;380;12;72;4;Ströbröd|Normal
+Kålpudding;6;Smör;30;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Sill och potatis med gräddfil;2;Inlagd sill;150;220;10;18;12;Strömming|Inlagd sill
+Sill och potatis med gräddfil;2;Potatis kokt;400;80;2;17;0.1;Potatis|Kokt
+Sill och potatis med gräddfil;2;Gräddfil;100;130;3;4;12;Crème fraiche|Gräddfil 12 %
+Sill och potatis med gräddfil;2;Ägg;60;140;12.5;0.5;10;Ägg|Rått/kokt
+Våfflor med sylt och grädde;4;Vetemjöl;250;340;10.5;71;1.5;Vetemjöl|Vetemjöl
+Våfflor med sylt och grädde;4;Mellanmjölk;400;47;3.5;4.8;1.5;Mjölk|Mellan 1,5 %
+Våfflor med sylt och grädde;4;Smör;75;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Våfflor med sylt och grädde;4;Lingonsylt (sylt);100;180;0.3;44;0.3;Sylt|Lingonsylt
+Våfflor med sylt och grädde;4;Vispgrädde 40 %;200;375;2;3;40;Grädde|Visp 40 %
+Müsli med mjölk;1;Müsli osötad;60;365;10;62;6;Flingor|Müsli osötad
+Müsli med mjölk;1;Mellanmjölk;200;47;3.5;4.8;1.5;Mjölk|Mellan 1,5 %
+Ryggbiff med haricots verts och potatis;2;Ryggbiff;300;150;22;0;6;Nötkött|Ryggbiff/oxfilé
+Ryggbiff med haricots verts och potatis;2;Haricots verts;200;31;1.8;7;0.2;Majs och ärtor|Haricots verts
+Ryggbiff med haricots verts och potatis;2;Potatis kokt;400;80;2;17;0.1;Potatis|Kokt
+Ryggbiff med haricots verts och potatis;2;Smör;20;720;0.7;0.6;80;Smörgåsfett|Smör 80 %
+Kycklinglår i ugn med rotfrukter;4;Kyckling kött med skinn;800;215;18;0;16;Kyckling|Kött med skinn
+Kycklinglår i ugn med rotfrukter;4;Morot;300;40;0.9;9;0.2;Morot|Rå
+Kycklinglår i ugn med rotfrukter;4;Rödbetor;300;43;1.6;9;0.2;Rotfrukter|Rödbetor
+Kycklinglår i ugn med rotfrukter;4;Rotselleri;300;40;1.5;9;0.3;Rotfrukter|Rotselleri
+Kycklinglår i ugn med rotfrukter;4;Olivolja;30;884;0;0;100;Olja|Olivolja
+Tacos med kycklingfärs;4;Kycklingfilé (som färs);500;110;23;0;1.5;Kyckling|Filé
+Tacos med kycklingfärs;4;Tortilla;320;310;8;52;7;Bröd|Tortilla
+Tacos med kycklingfärs;4;Gräddfil;200;130;3;4;12;Crème fraiche|Gräddfil 12 %
+Tacos med kycklingfärs;4;Riven ost 28 %;100;360;26;0;28;Ost|Normal 28 %
+Tacos med kycklingfärs;4;Majs;150;85;3;17;1.2;Majs och ärtor|Majs
+Bönsoppa med kidneybönor;4;Kidneybönor kokta;500;125;8.5;19;0.5;Bönor och linser|Kidneybönor kokta
+Bönsoppa med kidneybönor;4;Krossade tomater;800;25;1.2;4;0.2;Tomat|Krossade
+Bönsoppa med kidneybönor;4;Morot;200;40;0.9;9;0.2;Morot|Rå
+Bönsoppa med kidneybönor;4;Gul lök;150;40;1.1;9;0.1;Lök|Gul lök
+Ostfralla med mjölk;1;Fralla;70;270;9;48;4;Korvbröd|Fralla
+Ostfralla med mjölk;1;Smörgåsfett 60 %;10;540;0.5;1;60;Smörgåsfett|Mellan 60 %
+Ostfralla med mjölk;1;Ost 28 %;25;360;26;0;28;Ost|Normal 28 %
+Ostfralla med mjölk;1;Mellanmjölk;250;47;3.5;4.8;1.5;Mjölk|Mellan 1,5 %
+Cashewwok med kyckling;2;Kycklingfilé;300;110;23;0;1.5;Kyckling|Filé
+Cashewwok med kyckling;2;Cashewnötter;40;580;18;30;44;Nötter|Cashew
+Cashewwok med kyckling;2;Paprika;150;30;1;6;0.3;Paprika|Färsk
+Cashewwok med kyckling;2;Ris kokt;300;130;2.7;28;0.3;Ris|Kokt
+Cashewwok med kyckling;2;Sweet chili;40;220;0.5;52;0.3;Såser|Sweet chili
+Fiskpinnar med ris och ärtor;2;Fiskpinnar;250;200;13;17;9;Fiskpinnar|Ugnsstekta
+Fiskpinnar med ris och ärtor;2;Ris kokt;300;130;2.7;28;0.3;Ris|Kokt
+Fiskpinnar med ris och ärtor;2;Gröna ärtor;150;80;5.4;13;0.4;Majs och ärtor|Gröna ärtor frysta
+Fiskpinnar med ris och ärtor;2;Lätt majonnäs;40;300;1;8;30;Majonnäs|Lätt 30 %
+Zucchinipasta med räkor;2;Pasta okokt;150;355;12.5;71;1.5;Pasta|Okokt
+Zucchinipasta med räkor;2;Räkor;200;90;19;0;1.5;Räkor|Skalade
+Zucchinipasta med räkor;2;Zucchini;250;17;1.2;3;0.3;Zucchini och aubergine|Zucchini
+Zucchinipasta med räkor;2;Olivolja;20;884;0;0;100;Olja|Olivolja
+Zucchinipasta med räkor;2;Vitlök;10;150;6;33;0.5;Purjo och vitlök|Vitlök
+Rödkålssallad med äpple och valnötter;2;Rödkål;300;30;1.4;6;0.2;Kål|Rödkål
+Rödkålssallad med äpple och valnötter;2;Äpple;150;52;0.3;12;0.2;Äpple|Färskt
+Rödkålssallad med äpple och valnötter;2;Valnötter;40;650;15;7;65;Nötter|Valnötter
+Rödkålssallad med äpple och valnötter;2;Olivolja;15;884;0;0;100;Olja|Olivolja
+Glass med bär;1;Gräddglass;100;210;3.5;24;11;Glass|Gräddglass
+Glass med bär;1;Jordgubbar;100;32;0.7;7;0.3;Bär|Jordgubbar
+Mangosallad med kvarg;1;Mango;150;60;0.8;14;0.4;Frukt|Mango
+Mangosallad med kvarg;1;Mager kvarg;150;60;11;3.5;0.2;Kvarg|Mager 0,2 %
+Mangosallad med kvarg;1;Honung;10;300;0.3;82;0;Socker och honung|Honung
+Kesoplätt med mandel;1;Keso 4 %;200;100;12;3;4;Keso|Normal 4 %
+Kesoplätt med mandel;1;Mandel;20;580;21;9;50;Nötter|Mandel
+Kesoplätt med mandel;1;Ananas;100;50;0.5;12;0.1;Frukt|Ananas
+Rostbiff med potatissallad;2;Magert nötkött (rostbiff);200;120;22;0;3;Nötkött|Magert (innanlår, filé)
+Rostbiff med potatissallad;2;Potatis kokt;300;80;2;17;0.1;Potatis|Kokt
+Rostbiff med potatissallad;2;Gräddfil;100;130;3;4;12;Crème fraiche|Gräddfil 12 %
+Rostbiff med potatissallad;2;Rödlök/gul lök;50;40;1.1;9;0.1;Lök|Gul lök

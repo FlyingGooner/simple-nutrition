@@ -170,11 +170,12 @@ Nötter;;Valnötter;;~^Valnöt
 Frön;solroskärnor,chiafrön,sesamfrön,pumpakärnor,linfrö;Solroskärnor;;Solrosfrö
 Frön;;Chiafrön;;~^Chia
 Frön;;Sesamfrön;;Sesamfrö m. skal
-Kokosmjölk;kokosmjölk,kokosgrädde;Normal;;~^Kokosmjölk
+Kokosmjölk;kokosmjölk,kokosgrädde;Normal 24 %;;~^Kokosmjölk fett ca 24
+Kokosmjölk;kokosmjölk,kokosgrädde;Lätt 6 %;;~^Kokosmjölk fett ca 6
 Ketchup;ketchup;Normal;;Ketchup
 Såser;sojasås,senap,sweet chili,pesto;Sojasås;;Sojasås
 Såser;;Senap;;Senap svensk
-Såser;;Sweet chili;;~^(Sweet chili|Chilisås)
+Såser;;Sweet chili;;~^Sweet chilisås
 Såser;;Pesto;;~^Pesto
 Sylt;sylt,marmelad,lingonsylt;Lingonsylt;;Lingonsylt
 Choklad;choklad,mörk choklad,mjölkchoklad;Mjölkchoklad;;~^Mjölkchoklad$|^Choklad mjölk
