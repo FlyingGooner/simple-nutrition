@@ -1,6 +1,6 @@
 // Import from follow-diet-tracker (Följ planen): an unchanged copy of its store.js validation and unpacking, so a backup from
 // that app is read exactly as the app itself reads it. load()/save() are removed – this file never touches localStorage.
-// Used only by importText() in store.js. Source: ../follow-diet-tracker/store.js (2026-11-09).
+// Used only by importText() in store.js. Source: archive/follow-diet-tracker/store.js (v1.6.3, arkiverad 2026-11-10).
 
 export const OUTCOMES = {
   followed: { icon: '✅', label: 'Följde', score: 1 },

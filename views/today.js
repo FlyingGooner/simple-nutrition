@@ -81,7 +81,7 @@ export function viewToday() {
     stepper('Byt dag', ['prev', 'Föregående dag'], 'today', ['next', 'Nästa dag'], isToday,
       isToday ? [el('span', { class: 'today-badge', text: 'IDAG' }), dateTitle(S.current)] : dateTitle(S.current), null, isToday ? '' : 'not-today'),
     el('div', { class: 'streak' }, el('span', { title: 'Lyckade dagar i rad', text: `🔥 ${st} ${st === 1 ? 'dag' : 'dagar'} i rad` }),
-      isToday ? null : el('button', { class: 'back-today', 'data-act': 'today', text: '↩ Till idag' })),
+      isToday ? null : el('button', { class: 'link back-today', 'data-act': 'today', text: '↩ Till idag' })),
     S.state.settings.planText ? el('p', { class: 'plan', text: S.state.settings.planText }) : null,
     el('div', { class: 'meals' },
       S.state.meals.map((m) => mealCard(m, posts.filter((p) => p.m === m.id))),

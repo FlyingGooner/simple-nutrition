@@ -442,3 +442,5 @@ main .set-group-wrap > .card + .card, main .set-group-wrap > .set-sec + .set-sec
 .set-group-wrap[open] { padding-bottom: 4px; }
 .save-row { display: flex; justify-content: flex-end; margin-top: 8px; }
 .goal-row .weigh-save { flex: none; }
+.back-today { border: 0; font-weight: 500; }
+.back-today:hover { background: var(--surface-container-high); }
