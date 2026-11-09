@@ -21,9 +21,8 @@ function summary(t) {
   const first = S.state.weights[keys[0]];
   return el('section', { class: 'card w-sum' },
     el('div', { class: 'w-sum-top' },
-      el('span', { class: 'w-big', text: `${fmtNum(r1(now))} kg` }),
-      back != null ? el('span', { class: 'w-d' }, delta(now - back)) : null),
-    el('p', { class: 'muted small', text: `7-dagars medel · förändring 4 veckor` }),
+      el('div', {}, el('span', { class: 'w-big', text: `${fmtNum(r1(now))} kg` }), el('p', { class: 'muted small', text: '7-dagars medel' })),
+      back != null ? el('div', { class: 'w-d' }, delta(now - back), el('p', { class: 'muted small', text: '4 veckor' })) : null),
     keys.length > 1 ? el('p', { class: 'small' }, `Totalt ${signed(now - first)} kg sedan ${shortDate(keys[0])}`) : null);
 }
 
@@ -39,16 +38,17 @@ function table() {
     const st = weekStats(S.state, ws), end = addDays(ws, 6) > today() ? today() : addDays(ws, 6);
     return { ws, st, h: habitWeek(S.state, ws), w: avg7(end), cur: ws === weekStart(today()) };
   });
-  const list = rows.filter((r, i) => i < 4 || false).filter((r) => !r.cur || r.st.logged || r.h.count || r.w != null);
+  const list = rows.slice(0, 4).filter((r) => r.st.logged || r.h.count || r.w != null || weekSessions(r.ws).all);
+  if (!list.length) return el('section', { class: 'card' }, el('h2', { text: 'Vecka för vecka' }), el('p', { class: 'muted small', text: 'Inget loggat de senaste veckorna.' }));
   return el('section', { class: 'card' }, el('h2', { text: 'Vecka för vecka' }),
     el('table', { class: 'wk-table' },
       el('thead', {}, el('tr', {}, ['v', 'Vikt', '±', '✅', '🍰', '🏋️', 'kcal/d'].map((h) => el('th', { scope: 'col', text: h })))),
       el('tbody', {}, list.map((r) => {
         const prev = avg7(addDays(r.ws, -1));
         return el('tr', { 'data-act': 'openweek', 'data-val': r.ws },
-          el('td', {}, el('button', { class: 'link wk-open', 'data-act': 'openweek', 'data-val': r.ws, text: String(isoWeek(r.ws)) }), r.cur ? el('small', { text: ' pågår' }) : null),
+          el('td', {}, el('button', { class: 'link wk-open', 'data-act': 'openweek', 'data-val': r.ws, text: String(isoWeek(r.ws)) }), r.cur ? el('small', { class: 'wk-cur', text: 'pågår' }) : null),
           el('td', { text: r.w != null ? fmtNum(r1(r.w)) : '–' }),
-          el('td', {}, r.w != null && prev != null ? delta(r.w - prev) : '–'),
+          el('td', {}, r.w != null && prev != null ? el('span', { class: 'delta' + (r.w - prev < 0 ? ' down' : ''), text: signed(r.w - prev) }) : '–'),
           el('td', { class: r.h.ratio == null ? '' : r.h.ratio >= S.state.settings.successThreshold ? 'good-t' : r.h.ratio >= 0.5 ? 'mid-t' : 'low-t', text: pct(r.h.ratio) }),
           el('td', { text: r.h.count || r.h.extraCheat ? String(r.h.cheat + r.h.extraCheat) : '–' }),
           el('td', { text: (() => { const g = goals(r.ws).find((x) => x.key === 'workoutGoal'); const n = weekSessions(r.ws).all; return g ? `${n}/${g.goal}` : n ? String(n) : '–'; })() }),

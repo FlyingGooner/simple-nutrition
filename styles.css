@@ -444,3 +444,6 @@ main .set-group-wrap > .card + .card, main .set-group-wrap > .set-sec + .set-sec
 .goal-row .weigh-save { flex: none; }
 .back-today { border: 0; font-weight: 500; }
 .back-today:hover { background: var(--surface-container-high); }
+.w-sum-top .w-d { text-align: right; } .w-sum-top .w-d .delta { font-size: 1.25rem; }
+.wk-table .wk-cur { display: block; font-size: .7rem; color: var(--muted); line-height: 1; }
+.wk-table td:first-child { width: 3.5em; }
