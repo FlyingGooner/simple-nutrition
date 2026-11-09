@@ -1,10 +1,13 @@
 // Simple nutrition – no external calls, localStorage only. See CLAUDE.md. Views in views/*.js, shared state in ui.js.
-import { defaults, load, save, validate, addDays, weekStart, setGoal, findRef, cleanText, uid, exportText, importText, MAX_IMPORT_CHARS } from './store.js';
+import { defaults, load, save, validate, addDays, weekStart, setGoal, goalFor, findRef, cleanText, uid, dishTotal, exportText, importText, MAX_IMPORT_CHARS } from './store.js';
 import { today, S, setOpen, el, kcal, shortDate, dateTitle, parseNum } from './ui.js';
 import { viewToday, dayPosts } from './views/today.js';
 import { resultsList, pickGrams } from './views/add.js';
 import { viewWeek } from './views/week.js';
-import { viewSettings, viewSoon } from './views/settings.js';
+import { viewTrend } from './views/trend.js';
+import { viewHistory } from './views/history.js';
+import { viewSettings } from './views/settings.js';
+import { newDraft, draftFrom, dishQ, dishUnit, isBatch } from './views/dishes.js';
 
 document.getElementById('version').textContent = 'v' + self.APP_VERSION;
 
@@ -12,6 +15,7 @@ let view = 'today';
 const app = document.getElementById('app');
 const tabbar = document.querySelector('.tabbar');
 const buzz = () => navigator.vibrate?.(10);
+const errText = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
 
 function persist() {
   if (!save(S.state)) status('Kunde inte spara – lagringen är full eller blockerad.', true);
@@ -51,19 +55,12 @@ function withUndo(label, change) {
   snackbar(label, 'Ångra', () => { S.state = validate(JSON.parse(before)); persist(); render(); });
 }
 
-/* ---------- Router ---------- */
-const VIEWS = { today: viewToday, week: () => viewWeek(), trend: viewSoon('Trend'), history: viewSoon('Historik'), settings: viewSettings };
-const TITLES = { trend: 'Trend', history: 'Historik' };
-const wide = matchMedia('(min-width: 840px)');
-wide.addEventListener('change', () => render());
-
+/* ---------- Router (mobile only, see ../STIL.md) ---------- */
+const VIEWS = { today: viewToday, week: () => viewWeek(), trend: viewTrend, history: viewHistory, settings: viewSettings };
 function render() {
   app.dataset.view = view;
-  const nodes = view === 'today' && wide.matches
-    ? el('div', { class: 'split' }, el('div', { class: 'pane' }, viewToday()),
-      el('aside', { class: 'pane side', 'aria-label': 'Veckan' }, viewWeek(weekStart(S.current), true)))
-    : [TITLES[view] ? el('h1', { class: 'view-title', text: TITLES[view] }) : null, VIEWS[view]()];
-  app.replaceChildren(...[nodes].flat(Infinity).filter(Boolean));
+  const nodes = [view === 'trend' ? el('h1', { class: 'view-title', text: 'Trend' }) : null, VIEWS[view]()];
+  app.replaceChildren(...nodes.flat(Infinity).filter(Boolean));
   for (const t of tabbar.querySelectorAll('[data-view]')) {
     const on = t.dataset.view === view;
     t.classList.toggle('on', on);
@@ -83,6 +80,8 @@ tabbar.addEventListener('click', (ev) => {
   if (!t) return;
   ev.preventDefault();
   if (t.dataset.view === 'today') { S.current = today(); resetDay(); }
+  if (S.add?.target === 'dish') S.add = null;
+  if (t.dataset.view !== 'settings') S.dish = null;
   go(t.dataset.view);
 });
 
@@ -94,9 +93,37 @@ function addPost(p) {
   if (l.length >= 100) { snackbar('Max 100 poster per dag', null, null, 3000); return false; }
   l.push(p); return true;
 }
+function logged(name) { S.add = null; buzz(); persist(); render(); snackbar(`${name} lades till`, null, null, 2500); }
+function openAdd(target, meal) {
+  const tab = target === 'dish' ? 'foods' : S.lastTab || (Object.keys(S.state.log).length ? 'recent' : 'foods');
+  S.add = { target, meal, tab, q: '', all: false, pick: null, dpick: null, alias: false };
+  render(); scrollTo(0, 0);
+  document.getElementById('add-q')?.focus();
+}
 function openPick(food) {
   const u = food.v[0].u;
   S.add.pick = { food, vi: 0, unit: u ? u[0] : 'g', amount: u ? '1' : '100' };
+}
+function pickSumText() {
+  const a = S.add;
+  if (a.dpick) { const q = dishQ(a.dpick); return Number.isFinite(q) ? `${kcal(dishTotal(a.dpick.dish)[0] * q)} kcal` : 'Ange mängd'; }
+  const p = a.pick, v = p.food.v[p.vi], g = pickGrams(p);
+  return Number.isFinite(g) ? `${kcal(v.n[0] * g / 100)} kcal${p.unit !== 'g' && v.u ? ` · ≈ ${Math.round(g)} g` : ''}` : 'Ange mängd';
+}
+
+/* ---------- Dishes ---------- */
+function saveDish() {
+  const d = S.dish, name = cleanText(d.name);
+  const portions = d.batch ? Math.round(parseNum(d.portions)) : 1, cooked = d.cooked.trim() ? Math.round(parseNum(d.cooked)) : null;
+  const err = !name ? 'Ge rätten ett namn.' : !d.items.length ? 'Lägg till minst en ingrediens.'
+    : !(portions >= 1 && portions <= 50) ? 'Ange 2–50 portioner.' : cooked != null && !(cooked >= 1 && cooked <= 20000) ? 'Färdig vikt: 1–20 000 g, eller tomt.' : '';
+  if (err) { errText('d-error', err); return; }
+  const dish = { id: d.id || uid(), name, portions, items: d.items };
+  if (cooked) dish.cooked = cooked;
+  const i = S.state.dishes.findIndex((x) => x.id === dish.id);
+  if (i >= 0) S.state.dishes[i] = dish; else S.state.dishes.push(dish);
+  S.dish = null; persist(); render();
+  snackbar(`${name} sparad`, null, null, 2500);
 }
 
 app.addEventListener('click', (ev) => {
@@ -112,9 +139,15 @@ app.addEventListener('click', (ev) => {
       const p = dayPosts().find((x) => x.id === id);
       if (!p) return;
       const v = parseNum(document.getElementById('p-amount')?.value);
-      const ok = p.q != null ? v > 0 && v <= 1 : v > 0 && v <= 10000;
-      if (!ok) { document.getElementById('p-error').textContent = p.q != null ? 'Ange en andel mellan 0 och 1, t.ex. 0,25.' : 'Ange gram, t.ex. 150.'; return; }
-      if (p.q != null) p.q = v; else { p.g = Math.round(v * 10) / 10; delete p.u; }
+      if (p.q != null) {
+        const base = p.u ? p.u[1] : p.q, q = p.q * v / base;
+        if (!(v > 0 && q > 0 && q <= 50)) { errText('p-error', 'Ange en mängd större än 0.'); return; }
+        p.n = p.n.map((x) => Math.round(x * q / p.q * 10) / 10); p.q = Math.round(q * 10000) / 10000;
+        if (p.u) p.u = [p.u[0], Math.round(v * 100) / 100];
+      } else {
+        if (!(v > 0 && v <= 10000)) { errText('p-error', 'Ange gram, t.ex. 150.'); return; }
+        p.g = Math.round(v * 10) / 10; delete p.u;
+      }
       const m = document.getElementById('p-meal')?.value;
       if (S.state.meals.some((x) => x.id === m)) p.m = m;
       S.open = null; buzz(); persist(); break;
@@ -128,6 +161,12 @@ app.addEventListener('click', (ev) => {
     case 'clearday':
       withUndo(`${dateTitle(S.current).replace(/^Igår · /, '')} rensad`, () => { delete S.state.log[S.current]; delete S.state.weights[S.current]; S.open = null; });
       return;
+    case 'copyprev': {
+      const src = S.state.log[addDays(S.current, -1)] || [];
+      S.state.log[S.current] = src.slice(0, 100).map((p) => ({ ...p, id: uid() + Math.random().toString(36).slice(2, 5), n: [...p.n], ...(p.u ? { u: [...p.u] } : {}) }));
+      buzz(); persist(); render(); snackbar(`${src.length} poster kopierade från igår`, 'Ångra', () => { delete S.state.log[S.current]; persist(); render(); });
+      return;
+    }
     case 'weightsave': {
       const v = parseNum(document.getElementById('weight')?.value);
       if (v >= 20 && v <= 400) S.state.weights[S.current] = Math.round(v * 10) / 10;
@@ -135,43 +174,113 @@ app.addEventListener('click', (ev) => {
       persist(); break;
     }
     // Lägg till
-    case 'addopen': S.add = { meal: id, tab: S.lastTab || (dayPosts().length || Object.keys(S.state.log).length ? 'recent' : 'foods'), q: '', all: false, pick: null }; S.open = null; render(); scrollTo(0, 0); document.getElementById('add-q')?.focus(); return;
+    case 'addopen': S.open = null; openAdd('meal', id); return;
     case 'addclose': S.add = null; break;
-    case 'addtab': S.add.tab = S.lastTab = val; S.add.pick = null; render(); document.getElementById('add-q')?.focus(); return;
+    case 'addtab': S.add.tab = S.lastTab = val; S.add.q = ''; S.add.pick = S.add.dpick = null; render(); document.getElementById('add-q')?.focus(); return;
     case 'showall': S.add.all = true; redrawResults(); return;
     case 'pick': { const f = findRef(S.state, t.dataset.ref); if (!f) return; openPick(f); render(); document.getElementById('amount')?.select(); return; }
     case 'variant': S.add.pick.vi = Number(val); if (!S.add.pick.food.v[S.add.pick.vi].u && S.add.pick.unit !== 'g') { S.add.pick.unit = 'g'; S.add.pick.amount = '100'; } break;
-    case 'unit': {
-      const p = S.add.pick;
-      if (p.unit !== val) { p.unit = val; p.amount = val === 'g' ? '100' : '1'; }
-      break;
-    }
-    case 'unpick': S.add.pick = null; break;
+    case 'unit': { const p = S.add.pick; if (p.unit !== val) { p.unit = val; p.amount = val === 'g' ? '100' : '1'; } break; }
+    case 'unpick': S.add.pick = S.add.dpick = null; S.add.alias = false; break;
     case 'addsave': {
       const p = S.add.pick, v = p.food.v[p.vi], g = pickGrams(p);
-      if (!(g > 0 && g <= 10000)) { document.getElementById('add-error').textContent = 'Ange en mängd, t.ex. 150 g eller 2 dl.'; return; }
+      if (!(g > 0 && g <= 10000)) { errText('add-error', 'Ange en mängd, t.ex. 150 g eller 2 dl.'); return; }
       const name = cleanText(v.label ? `${p.food.name}, ${v.label}` : p.food.name);
+      if (S.add.target === 'dish') {
+        if (S.dish.items.length >= 50) { errText('add-error', 'Max 50 ingredienser.'); return; }
+        S.dish.items.push({ ref: v.ref, name, g: Math.round(g * 10) / 10, n: [...v.n] });
+        S.add = null; render(); return;
+      }
       const post = { id: uid(), m: S.add.meal, ref: v.ref, name, g: Math.round(g * 10) / 10, n: [...v.n] };
       if (p.unit !== 'g' && v.u) post.u = [v.u[0], Math.round(parseNum(p.amount) * 100) / 100];
-      if (!addPost(post)) return;
-      S.add = null; buzz(); persist(); render();
-      snackbar(`${name} lades till`, null, null, 2500);
+      if (addPost(post)) logged(name);
       return;
     }
     case 'relog': {
       const src = Object.values(S.state.log).flat().find((x) => x.id === id);
       if (!src) return;
-      const post = { ...src, id: uid(), m: S.add.meal, n: [...src.n] };
-      if (!addPost(post)) return;
-      S.add = null; buzz(); persist(); render();
-      snackbar(`${post.name} lades till`, null, null, 2500);
+      const post = { ...src, id: uid(), m: S.add.meal, n: [...src.n], ...(src.u ? { u: [...src.u] } : {}) };
+      if (addPost(post)) logged(post.name);
       return;
     }
-    // Vecka
+    case 'aliasopen': S.add.alias = !S.add.alias; render(); document.getElementById('alias-word')?.focus(); return;
+    case 'aliassave': {
+      const w = cleanText(document.getElementById('alias-word')?.value, 40).toLowerCase();
+      if (!w || ['__proto__', 'constructor', 'prototype'].includes(w)) { errText('add-error', 'Skriv ett sökord.'); return; }
+      if (Object.keys(S.state.aliases).length >= 1000 && !(w in S.state.aliases)) { errText('add-error', 'Max 1 000 sökord.'); return; }
+      const p = S.add.pick;
+      S.state.aliases[w] = p.food.v[p.vi].ref; S.add.alias = false; persist(); render();
+      snackbar(`Sökordet "${w}" sparat`, null, null, 2500);
+      return;
+    }
+    // Rätter: logga
+    case 'dpick': {
+      const d = S.state.dishes.find((x) => x.id === id);
+      if (!d) return;
+      S.add.dpick = { dish: d, mode: 'port', amount: '1' };
+      render(); document.getElementById('amount')?.select(); return;
+    }
+    case 'dmode': { const p = S.add.dpick; p.mode = val; p.amount = val === 'andel' ? '1/' + p.dish.portions : val === 'g' ? '300' : '1'; break; }
+    case 'dquick': S.add.dpick.amount = val; break;
+    case 'daddsave': {
+      const p = S.add.dpick, q = dishQ(p);
+      if (!Number.isFinite(q)) { errText('add-error', p.mode === 'andel' ? 'Ange en andel, t.ex. 1/5 eller 0,2.' : 'Ange en mängd större än 0.'); return; }
+      const amount = p.mode === 'andel' ? q : parseNum(p.amount);
+      const post = { id: uid(), m: S.add.meal, ref: 'r:' + p.dish.id, name: p.dish.name, q: Math.round(q * 10000) / 10000,
+        n: dishTotal(p.dish).map((x) => Math.round(x * q * 10) / 10), u: [dishUnit(p), Math.round(amount * 100) / 100] };
+      if (addPost(post)) logged(p.dish.name);
+      return;
+    }
+    // Rätter: editor
+    case 'dnew': S.dish = newDraft(); render(); scrollTo(0, 0); document.getElementById('d-name')?.focus(); return;
+    case 'dedit': { const d = S.state.dishes.find((x) => x.id === id); if (!d) return; S.dish = draftFrom(d); render(); scrollTo(0, 0); return; }
+    case 'dcancel': S.dish = null; break;
+    case 'dper': S.dish.batch = false; break;
+    case 'dbatch': S.dish.batch = true; break;
+    case 'diadd': openAdd('dish', null); return;
+    case 'didel': S.dish.items.splice(Number(val), 1); break;
+    case 'dsave': saveDish(); return;
+    case 'ddel': {
+      const d = S.state.dishes.find((x) => x.id === S.dish.id);
+      if (!d) return;
+      withUndo(`${d.name} togs bort – loggade dagar finns kvar`, () => { S.state.dishes = S.state.dishes.filter((x) => x.id !== d.id); S.dish = null; });
+      return;
+    }
+    // Egna produkter och sökord
+    case 'fadd': {
+      const name = cleanText(document.getElementById('f-name').value);
+      const n = ['f-kcal', 'f-p', 'f-k', 'f-f'].map((i) => parseNum(document.getElementById(i).value));
+      const unit = cleanText(document.getElementById('f-unit').value, 10), ug = parseNum(document.getElementById('f-ug').value);
+      const err = !name ? 'Ange ett namn.' : !(n[0] >= 0 && n[0] <= 900) ? 'kcal per 100 g: 0–900.'
+        : n.slice(1).some((x) => !(x >= 0 && x <= 100)) ? 'Protein, kolhydrater och fett: 0–100 g per 100 g.'
+        : unit && !(ug > 0 && ug <= 10000) ? 'Ange gram per mått, eller lämna måttet tomt.' : '';
+      if (err) { errText('f-error', err); return; }
+      const f = { id: uid(), name, n: n.map((x) => Math.round(x * 10) / 10) };
+      if (unit) f.u = [unit, Math.round(ug * 100) / 100];
+      S.state.foods.push(f); persist(); render(); snackbar(`${name} sparad`, null, null, 2500);
+      return;
+    }
+    case 'fdel': {
+      const f = S.state.foods.find((x) => x.id === id);
+      if (!f) return;
+      withUndo(`${f.name} togs bort – loggade dagar finns kvar`, () => { S.state.foods = S.state.foods.filter((x) => x.id !== id); });
+      return;
+    }
+    case 'adel': withUndo(`Sökordet "${val}" togs bort`, () => { delete S.state.aliases[val]; }); return;
+    // Vecka, Trend, Historik
     case 'goto': S.current = val; resetDay(); go('today'); return;
+    case 'openweek': S.week = val; go('week'); return;
     case 'wprev': S.week = addDays(S.week, -7); break;
     case 'wnext': if (S.week < weekStart(today())) S.week = addDays(S.week, 7); break;
     case 'wnow': S.week = weekStart(today()); break;
+    case 'mprev': case 'mnext': {
+      const [y, m] = S.month.split('-').map(Number);
+      const d = new Date(y, m - 1 + (act === 'mprev' ? -1 : 1), 1, 12);
+      const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      if (k <= today().slice(0, 7)) S.month = k;
+      break;
+    }
+    case 'mnow': S.month = today().slice(0, 7); break;
     // Inställningar: meals
     case 'add': {
       if (S.state.meals.length >= 10) return;
@@ -218,16 +327,16 @@ function redrawResults() {
 app.addEventListener('input', (ev) => {
   const t = ev.target;
   if (t.id === 'add-q' && S.add) { S.add.q = t.value; S.add.all = false; redrawResults(); }
-  if (t.id === 'amount' && S.add?.pick) {
-    S.add.pick.amount = t.value;
-    const p = S.add.pick, v = p.food.v[p.vi], g = pickGrams(p);
-    document.getElementById('pick-sum').textContent = Number.isFinite(g)
-      ? `${kcal(v.n[0] * g / 100)} kcal${p.unit !== 'g' && v.u ? ` · ≈ ${Math.round(g)} g` : ''}` : 'Ange mängd';
+  if (t.id === 'amount' && (S.add?.pick || S.add?.dpick)) {
+    (S.add.pick || S.add.dpick).amount = t.value;
+    document.getElementById('pick-sum').textContent = pickSumText();
   }
+  if (t.dataset.act === 'dname' && S.dish) S.dish.name = t.value;
 });
 app.addEventListener('keydown', (ev) => {
-  if (ev.key === 'Enter' && ev.target.id === 'amount') { ev.preventDefault(); app.querySelector('[data-act="addsave"]')?.click(); }
-  if (ev.key === 'Enter' && ev.target.id === 'add-q') { ev.preventDefault(); app.querySelector('#add-results [data-act="pick"]')?.click(); }
+  if (ev.key !== 'Enter') return;
+  if (ev.target.id === 'amount') { ev.preventDefault(); app.querySelector('[data-act="addsave"], [data-act="daddsave"]')?.click(); }
+  if (ev.target.id === 'add-q') { ev.preventDefault(); app.querySelector('#add-results [data-act="pick"], #add-results [data-act="dpick"]')?.click(); }
 });
 app.addEventListener('toggle', (ev) => {
   const d = ev.target;
@@ -247,8 +356,24 @@ app.addEventListener('change', (ev) => {
     case 'goalkcal': {
       const v = Math.round(parseNum(t.value));
       if (v >= 500 && v <= 10000) { setGoal(S.state, today(), { kcal: v }); persist(); render(); snackbar(`Kalorimål ${kcal(v)} kcal från idag`, null, null, 3000); }
-      else { t.value = String(S.state.goals.at(-1).kcal); snackbar('Ange ett mål mellan 500 och 10 000 kcal', null, null, 3000); }
+      else { t.value = String(goalFor(S.state, today()).kcal); snackbar('Ange ett mål mellan 500 och 10 000 kcal', null, null, 3000); }
       return;
+    }
+    case 'goalmacro': {
+      const k = t.dataset.val, raw = t.value.trim(), v = Math.round(parseNum(raw)), max = k === 'prot' ? 500 : 1000;
+      if (k !== 'prot' && k !== 'kolh') return;
+      if (raw && !(v >= 10 && v <= max)) { t.value = goalFor(S.state, today())[k] ?? ''; snackbar(`Ange 10–${max} g, eller tomt för av`, null, null, 3000); return; }
+      setGoal(S.state, today(), { [k]: raw ? v : undefined });
+      for (const g of S.state.goals) if (g[k] === undefined) delete g[k];
+      persist(); render(); return;
+    }
+    case 'dname': if (S.dish) S.dish.name = t.value; return;
+    case 'dport': if (S.dish) { S.dish.portions = t.value; render(); } return;
+    case 'dcooked': if (S.dish) { S.dish.cooked = t.value; render(); } return;
+    case 'dig': {
+      const it = S.dish?.items[Number(t.dataset.val)], v = parseNum(t.value);
+      if (it && v > 0 && v <= 10000) it.g = Math.round(v * 10) / 10;
+      render(); return;
     }
   }
 });
@@ -257,7 +382,7 @@ app.addEventListener('change', (ev) => {
 let pendingImport = null;
 function startImport(text) {
   const r = importText(text);
-  document.getElementById('import-error').textContent = r.error || '';
+  errText('import-error', r.error || '');
   if (r.error) return;
   pendingImport = r.data;
   const period = r.first ? `, ${shortDate(r.first)} ${r.first.slice(0, 4)}–${shortDate(r.last)} ${r.last.slice(0, 4)}` : '';
@@ -280,7 +405,7 @@ async function readBackup(input) {
   input.value = '';
   if (!file) return;
   const r = await Backup.read(file, MAX_IMPORT_CHARS);
-  if (r.error) { document.getElementById('import-error').textContent = r.error; return; }
+  if (r.error) { errText('import-error', r.error); return; }
   startImport(r.text);
 }
 document.getElementById('imp-ok').addEventListener('click', () => {
@@ -289,17 +414,17 @@ document.getElementById('imp-ok').addEventListener('click', () => {
   if (!next) return;
   if (!save(next)) { status('Kunde inte spara – lagringen är full eller blockerad. Inget ändrades.', true); return; }
   const before = S.state;
-  S.state = next; S.current = today(); resetDay();
+  S.state = next; S.current = today(); resetDay(); S.dish = null;
   render();
   snackbar('Data importerad', 'Ångra', () => { S.state = before; persist(); render(); });
 });
 document.getElementById('cd-ok').addEventListener('click', () => {
-  S.state = defaults(); persist(); S.current = today(); resetDay(); render();
+  S.state = defaults(); persist(); S.current = today(); resetDay(); S.dish = null; render();
   snackbar('All data är raderad', null, null, 3000);
 });
 
 /* ---------- Swipe, install, refresh, service worker ---------- */
-const SWIPE = { today: ['prev', 'next'], week: ['wprev', 'wnext'] };
+const SWIPE = { today: ['prev', 'next'], week: ['wprev', 'wnext'], history: ['mprev', 'mnext'] };
 let touchX = null, touchY = null;
 document.addEventListener('touchstart', (e) => {
   const t = e.target.closest('input, textarea, select, .tabbar, dialog');
@@ -315,14 +440,14 @@ document.addEventListener('touchend', (e) => {
 });
 window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); S.installPrompt = e; if (view === 'settings') render(); });
 
-// Refresh when returning to the app (e.g. after midnight) – but not after the file picker (filePick) or while adding.
+// Refresh when returning to the app (e.g. after midnight) – not after the file picker (filePick) or while adding/editing.
 let filePick = false;
 app.addEventListener('click', (ev) => { if (ev.target.id === 'import-file') filePick = true; }, true);
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible') return;
   if (filePick) { filePick = false; return; }
-  S.state = load();
-  if (!S.add) render();
+  if (S.add || S.dish) return;
+  S.state = load(); render();
 });
 
 go(location.hash.slice(1));

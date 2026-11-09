@@ -110,7 +110,123 @@ T.test('export → import i Inställningar', () => {
   document.getElementById('import-dialog').close();
   T.eq(stored().log['2026-11-09'].length, 3);
 });
-T.test('trend och historik visar kommer snart', async () => {
-  await tab('trend'); T.ok(q('.soon'), 'trend');
-  await tab('history'); T.ok(q('.soon'), 'historik');
+T.test('ny rätt: hel sats med ingrediens, portioner och färdig vikt', async () => {
+  await tab('settings');
+  q('[data-act="dnew"]').click();
+  const nm = q('#d-name'); nm.value = 'Köttfärssås <b>'; nm.dispatchEvent(new Event('input', { bubbles: true }));
+  q('[data-act="diadd"]').click();
+  type(q('#add-q'), 'nötfärs');
+  q('#add-results [data-act="pick"]').click();
+  type(q('#amount'), '500');
+  q('[data-act="addsave"]').click();
+  T.ok(q('#d-name'), 'tillbaka i editorn');
+  T.eq(q('#d-name').value, 'Köttfärssås <b>');
+  const port = q('[data-act="dport"]'); port.value = '5'; port.dispatchEvent(new Event('change', { bubbles: true }));
+  const ck = q('[data-act="dcooked"]'); ck.value = '1000'; ck.dispatchEvent(new Event('change', { bubbles: true }));
+  q('[data-act="dsave"]').click();
+  const d = stored().dishes[0];
+  T.eq([d.name, d.portions, d.cooked, d.items.length, d.items[0].g], ['Köttfärssås <b>', 5, 1000, 1, 500]);
+  T.eq(app.querySelectorAll('b').length, 0);
+});
+T.test('rätt per portion sparas med portions 1', () => {
+  q('[data-act="dnew"]').click();
+  q('#d-name').value = 'Gröt'; q('#d-name').dispatchEvent(new Event('input', { bubbles: true }));
+  q('[data-act="dper"]').click();
+  q('[data-act="diadd"]').click();
+  type(q('#add-q'), 'havregryn');
+  q('#add-results [data-act="pick"]').click();
+  if (q('[data-act="unit"][data-val="g"]')) q('[data-act="unit"][data-val="g"]').click();
+  type(q('#amount'), '60');
+  q('[data-act="addsave"]').click();
+  q('[data-act="dsave"]').click();
+  T.eq(stored().dishes.find((x) => x.name === 'Gröt').portions, 1);
+});
+T.test('logga rätt: portion, andel 1/5 och gram ger rätt q och kcal', async () => {
+  await tab('today');
+  const d = stored().dishes.find((x) => x.portions === 5), tot = d.items[0].n[0] * 5;
+  const logDish = (mode, amount) => {
+    q('[data-act="addopen"][data-id="m4"]').click();
+    q('[data-act="addtab"][data-val="dishes"]').click();
+    q(`[data-act="dpick"][data-id="${d.id}"]`).click();
+    if (mode !== 'port') q(`[data-act="dmode"][data-val="${mode}"]`).click();
+    type(q('#amount'), amount);
+    q('[data-act="daddsave"]').click();
+    return stored().log['2026-11-09'].at(-1);
+  };
+  let p = logDish('port', '1'); T.eq([p.q, p.u, Math.round(p.n[0])], [0.2, ['port.', 1], Math.round(tot / 5)]);
+  p = logDish('andel', '1/4'); T.eq([p.q, p.u[0]], [0.25, 'av satsen']);
+  p = logDish('g', '300'); T.eq([p.q, p.u], [0.3, ['g', 300]]);
+});
+T.test('ändra mängd på loggad rätt skalar kcal', () => {
+  const before = stored().log['2026-11-09'].at(-1);
+  q(`[data-act="popen"][data-id="${before.id}"]`).click();
+  q('#p-amount').value = '150';
+  q('[data-act="psave"]').click();
+  const p = stored().log['2026-11-09'].at(-1);
+  T.eq([p.q, p.u], [0.15, ['g', 150]]);
+  T.eq(Math.round(p.n[0]), Math.round(before.n[0] / 2));
+});
+T.test('ändrad rätt påverkar inte loggad dag', async () => {
+  const n0 = stored().log['2026-11-09'].at(-1).n[0];
+  await tab('settings');
+  q('[data-act="dedit"]').click();
+  const g = q('[data-act="dig"]'); g.value = '1000'; g.dispatchEvent(new Event('change', { bubbles: true }));
+  q('[data-act="dsave"]').click();
+  T.eq(stored().log['2026-11-09'].at(-1).n[0], n0);
+});
+T.test('egen produkt sparas och hittas i sökningen', async () => {
+  const set = (i, v) => { q('#' + i).value = v; };
+  set('f-name', 'Proteinbar typ X'); set('f-kcal', '360'); set('f-p', '33'); set('f-k', '30'); set('f-f', '12'); set('f-unit', 'st'); set('f-ug', '55');
+  q('[data-act="fadd"]').click();
+  T.eq(stored().foods[0].u, ['st', 55]);
+  await tab('today');
+  q('[data-act="addopen"][data-id="m3"]').click();
+  q('[data-act="addtab"][data-val="foods"]').click();
+  type(q('#add-q'), 'proteinbar');
+  T.ok(q('#add-results .food-row').textContent.includes('Proteinbar'), 'hittades');
+  q('#add-results [data-act="pick"]').click();
+  T.eq(q('[data-act="unit"].on').textContent, 'st');
+});
+T.test('eget sökord visar varan först', () => {
+  q('[data-act="aliasopen"]').click();
+  q('#alias-word').value = 'bar';
+  q('[data-act="aliassave"]').click();
+  T.ok(stored().aliases.bar.startsWith('u:'), 'sparat');
+  q('[data-act="addclose"]').click();
+  q('[data-act="addopen"][data-id="m3"]').click();
+  q('[data-act="addtab"][data-val="foods"]').click();
+  type(q('#add-q'), 'bar');
+  T.ok(q('#add-results .food-row').textContent.includes('Proteinbar'), 'först');
+  q('[data-act="addclose"]').click();
+});
+T.test('kopiera från igår på tom dag', () => {
+  T.ok(!q('[data-act="copyprev"]'), 'dagen har poster – ingen knapp');
+  q('[data-act="clearday"]').click();
+  q('[data-act="copyprev"]').click();
+  const l = stored().log['2026-11-09'];
+  T.eq([l.length, l[0].name], [1, '<img src=x onerror=alert(1)>']);
+  T.ok(l[0].id !== 'a2', 'nytt id');
+});
+T.test('proteinmål visas i summan', async () => {
+  await tab('settings');
+  const inp = q('[data-act="goalmacro"][data-val="prot"]');
+  inp.value = '120'; inp.dispatchEvent(new Event('change', { bubbles: true }));
+  T.eq(stored().goals.at(-1).prot, 120);
+  await tab('today');
+  T.ok(q('.macros').textContent.includes('/ 120 g'), q('.macros').textContent);
+});
+T.test('trend: 7-dagars medel, tabell och diagram', async () => {
+  await tab('trend');
+  T.ok(q('.w-big'), 'vikt');
+  T.ok(app.querySelectorAll('.wk-table tbody tr').length >= 2, 'tabell');
+  T.ok(q('.chart .w-line'), 'diagram');
+  q('.wk-table [data-act="openweek"]').click(); await T.wait();
+  T.eq(location.hash, '#week');
+});
+T.test('historik: kalender, färg och streak', async () => {
+  await tab('history');
+  T.ok(app.querySelectorAll('.cal-day').length >= 28, 'dagar');
+  T.ok(q('.cal-day.is-today'), 'idag');
+  q('[data-act="mprev"]').click();
+  T.ok(q('.cal-day.good, .cal-day.over, .cal-day.mid'), 'färgad dag');
 });

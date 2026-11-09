@@ -8,7 +8,9 @@ export const S = {
   current: today(),          // Idag: selected day
   open: null,                // Idag: expanded post id
   add: null,                 // Lägg till: { meal, tab, q, all, pick: { food, vi, unit, amount } } or null
+  dish: null,                // Inställningar: dish draft being edited (views/dishes.js) or null
   week: weekStart(today()),  // Vecka: selected week (Monday)
+  month: today().slice(0, 7),// Historik: YYYY-MM
   installPrompt: null,
 };
 export const setOpen = new Set();   // Inställningar: open sections (data-sec), kept across re-renders
@@ -55,7 +57,7 @@ export function dateTitle(k) {
 }
 // Amount text for a post: "2 dl · 206 g", "120 g", "¼ portion".
 export function amountText(p) {
-  if (p.q != null) return fmtNum(p.q, 2) + ' portion';
+  if (p.q != null) return p.u ? `${fmtNum(p.u[1], 2)} ${p.u[0]}` : `${fmtNum(p.q, 2)} av receptet`;
   const g = fmtNum(p.g, 0) + ' g';
   return p.u ? `${fmtNum(p.u[1], 2)} ${p.u[0]} · ≈ ${g}` : g;
 }

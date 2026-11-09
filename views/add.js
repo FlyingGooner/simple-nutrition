@@ -1,7 +1,8 @@
-// View: Lägg till – shown in place of Idag. Tabs Senaste and Varor (Rätter in v0.2).
-// Search results are redrawn into #add-results on input, so the search field keeps focus.
+// View: Lägg till – shown in place of Idag (or of the dish editor when adding an ingredient: S.add.target === 'dish').
+// Tabs Senaste, Varor, Rätter. Search results are redrawn into #add-results on input, so the search field keeps focus.
 import { searchFoods, recent, findRef, postN } from '../store.js';
 import { S, el, kcal, fmtNum, amountText, mealName, parseNum } from '../ui.js';
+import { dishResults, dishPickCard } from './dishes.js';
 
 // Grams for the current pick, or NaN.
 export function pickGrams(pick) {
@@ -14,12 +15,13 @@ export function pickGrams(pick) {
 function foodRow(f) {
   const v = f.v[0];
   return el('li', {}, el('button', { class: 'food-row', 'data-act': 'pick', 'data-ref': v.ref },
-    el('span', { class: 'post-name' }, f.name, f.v.length > 1 ? el('small', { text: `${f.v.length} varianter` }) : f.more ? el('small', { text: 'Livsmedelsverket' }) : f.own ? el('small', { text: 'Egen' }) : null),
+    el('span', { class: 'post-name' }, f.name, f.v.length > 1 ? el('small', { text: `${f.v.length} varianter` }) : f.more ? el('small', { text: 'Livsmedelsverket' }) : f.own ? el('small', { text: 'Egen produkt' }) : null),
     el('span', { class: 'post-kcal', text: `${kcal(v.n[0])} kcal/100 g` })));
 }
 
 export function resultsList() {
   const a = S.add;
+  if (a.tab === 'dishes') return dishResults(a.q);
   if (a.tab === 'recent') {
     const list = recent(S.state);
     if (!list.length) return [el('p', { class: 'muted small', text: 'Inget loggat ännu. Sök under Varor.' })];
@@ -40,6 +42,7 @@ function pickCard() {
   const g = pickGrams(p);
   const n = Number.isFinite(g) ? Math.round(v.n[0] * g / 100) : null;
   const units = ['g', ...(v.u ? [v.u[0]] : [])];
+  const forDish = S.add.target === 'dish';
   return el('section', { class: 'card pick' },
     el('h2', { text: f.name }),
     f.v.length > 1 ? el('div', { class: 'chips', role: 'group', 'aria-label': 'Variant' }, f.v.map((x, i) =>
@@ -52,20 +55,25 @@ function pickCard() {
     v.u && p.unit !== 'g' ? el('p', { class: 'muted small', text: `≈ ${v.u[1]} g per ${v.u[0]} (uppskattning)` }) : null,
     el('div', { class: 'row-actions' },
       el('button', { class: 'link', 'data-act': 'unpick', text: 'Tillbaka' }),
-      el('button', { class: 'weigh-save', 'data-act': 'addsave', text: `Lägg till i ${mealName(S.add.meal)}` })),
+      el('button', { class: 'weigh-save', 'data-act': 'addsave', text: forDish ? 'Lägg till i rätten' : `Lägg till i ${mealName(S.add.meal)}` })),
+    forDish ? null : el('button', { class: 'link small-link', 'data-act': 'aliasopen', text: 'Spara eget sökord för den här varan' }),
+    S.add.alias ? el('div', { class: 'pick-row' },
+      el('input', { type: 'text', id: 'alias-word', maxlength: 40, placeholder: 'T.ex. fil', 'aria-label': 'Eget sökord', autocomplete: 'off' }),
+      el('button', { class: 'weigh-save', 'data-act': 'aliassave', text: 'Spara sökord' })) : null,
     el('p', { class: 'import-error small', id: 'add-error', role: 'alert' }));
 }
 
 export function viewAdd() {
-  const a = S.add;
+  const a = S.add, forDish = a.target === 'dish';
   const tabBtn = (id, label) => el('button', { class: 'seg' + (a.tab === id ? ' on' : ''), 'data-act': 'addtab', 'data-val': id, 'aria-pressed': a.tab === id ? 'true' : 'false', text: label });
+  const searchable = a.tab === 'foods' || a.tab === 'dishes';
   return [
     el('div', { class: 'add-top' },
       el('button', { class: 'icon', 'data-act': 'addclose', 'aria-label': 'Stäng', text: '✕' }),
-      el('h1', { class: 'add-title', text: `Lägg till i ${mealName(a.meal)}` })),
-    a.pick ? pickCard() : [
-      el('div', { class: 'segs', role: 'group', 'aria-label': 'Välj lista' }, tabBtn('recent', 'Senaste'), tabBtn('foods', 'Varor')),
-      a.tab === 'foods' ? el('input', { type: 'search', id: 'add-q', class: 'search', value: a.q, placeholder: 'Sök livsmedel', 'aria-label': 'Sök livsmedel', autocomplete: 'off', 'data-act': 'search' }) : null,
+      el('h1', { class: 'add-title', text: forDish ? 'Lägg till ingrediens' : `Lägg till i ${mealName(a.meal)}` })),
+    a.pick ? pickCard() : a.dpick ? dishPickCard() : [
+      forDish ? null : el('div', { class: 'segs segs3', role: 'group', 'aria-label': 'Välj lista' }, tabBtn('recent', 'Senaste'), tabBtn('foods', 'Varor'), tabBtn('dishes', 'Rätter')),
+      searchable ? el('input', { type: 'search', id: 'add-q', class: 'search', value: a.q, placeholder: a.tab === 'dishes' ? 'Sök bland dina rätter' : 'Sök livsmedel', 'aria-label': 'Sök', autocomplete: 'off', 'data-act': 'search' }) : null,
       el('div', { id: 'add-results', class: 'card results' }, resultsList()),
     ],
   ];

@@ -1,3 +1,4 @@
+/* Bara mobil (beslut 2026-11-09): en kolumn, bottenmeny; bredare skärmar visar samma vy centrerad. */
 /* Material 3 – shared creator style (see ../STIL.md). Seed colour: #2f697d (petrol). */
 :root {
   /* M3 roles */
@@ -190,44 +191,6 @@ textarea { padding: 12px 16px; resize: vertical; font: inherit; }
 .chart .w-dot-extra { fill: var(--card); stroke: var(--accent); stroke-width: 1.5; }
 .lg-wx { background: none; border: 1.5px solid var(--accent); border-radius: 50%; width: 8px; height: 8px; }
 
-/* ---------- Adaptive layout (M3 window size classes, see ../STIL.md) ----------
-   compact < 600: as above (bottom navigation bar, one column)
-   medium 600–839: navigation rail on the left, wider column
-   expanded ≥ 840: Idag shows the selected day's week alongside (see render() in app.js) */
-.side-title { font-weight: 500; font-size: 1.125rem; margin: 8px 0 12px; min-height: 48px; display: flex; align-items: center; gap: 8px; }
-.side-title small { font-weight: 400; font-size: .8rem; color: var(--muted); }
-
-@media (min-width: 600px) {
-  body { max-width: none; margin: 0; padding: env(safe-area-inset-top) 24px 32px calc(80px + 24px + env(safe-area-inset-left)); }
-  .topbar, main { max-width: 640px; margin-inline: auto; }
-  .tabbar { inset: 0 auto 0 0; width: calc(80px + env(safe-area-inset-left)); flex-direction: column; justify-content: flex-start; gap: 10px;
-    padding: calc(24px + env(safe-area-inset-top)) 0 24px env(safe-area-inset-left); }
-  .tab { min-height: 56px; }
-}
-
-@media (min-width: 840px) {
-  .topbar, main { max-width: 720px; }
-  main[data-view="today"], body:has(main[data-view="today"]) .topbar { max-width: 1080px; }
-  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
-  .side { position: sticky; top: 16px; }
-  .side .card + .card, .side-title + .card { margin-top: 10px; }
-
-  /* Compact logging: name and outcome buttons on one row, lower buttons, single gap between cards */
-  .slots { gap: 8px; }
-  .slots > .card + .card { margin-top: 0; }
-  .slot { padding: 8px 8px 8px 16px; }
-  .slot:not(.logged) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); align-items: center; gap: 10px; }
-  .slot:not(.logged) .slot-head .muted { display: none; }   /* the empty buttons already say "not logged" */
-  .slot:not(.logged) .outcomes { margin-top: 0; }
-  .slot.logged .outcomes { margin-bottom: 4px; }
-  .oc { min-height: 48px; gap: 0; font-size: 1.05rem; border-radius: var(--r-md); }
-  .oc small { font-size: .65rem; white-space: nowrap; }
-  .oc.on { border-radius: var(--r-md); }
-  .weigh-extra { padding: 8px 16px; margin-bottom: 8px; }
-  .extra { min-height: 48px; margin-top: 8px; }
-  .summary { margin: 12px 0 4px; }
-  .streak { margin-bottom: 4px; }
-}
 
 /* ---------- Shared components: <dialog> + snackbar (see ../STANDARD.md) ---------- */
 dialog { border: 0; border-radius: var(--r-xl); padding: 24px; width: min(360px, calc(100vw - 32px)); background: var(--surface-container-high); color: var(--on-surface); }
@@ -242,7 +205,6 @@ dialog h2 { margin: 0 0 4px; font-size: 1.375rem; font-weight: 400; }
 #snack-text { flex: 1; padding: 10px 0; }
 #snack-action { min-height: 40px; padding: 0 12px; border: 0; border-radius: var(--r-md); background: transparent; color: var(--primary-container); font-weight: 500; }
 #snack-action[hidden] { display: none; }
-@media (min-width: 600px) { #snackbar { bottom: calc(24px + env(safe-area-inset-bottom)); } }
 .empty-act { margin: 4px 0 0; } .empty-act .link { display: inline-flex; align-items: center; }
 
 /* Data: export/import text boxes (U5) */
@@ -412,3 +374,32 @@ main .meals > .card + .card { margin-top: 0; }
 .kb-goal { stroke: var(--fg); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .kb-n { text-align: right; font-variant-numeric: tabular-nums; }
 .kb-day { color: var(--muted); }
+
+/* Rätter, egna produkter, sökord (v0.2–v0.4) */
+.segs3 { grid-template-columns: 1fr 1fr 1fr; }
+.dish-ed .segs { margin: 12px 0 0; }
+.dish-nums { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.dish-h { margin: 16px 0 6px; }
+.ing-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .9375rem; }
+.edit-list input.ing-g { flex: 0 0 76px; width: 76px; padding: 0 8px; text-align: right; min-height: 40px; }
+.dish-sum { margin: 12px 0 0; font-variant-numeric: tabular-nums; }
+.dish-sum strong { font-size: 1.25rem; font-weight: 500; }
+.dish-sum small { display: block; color: var(--muted); }
+.guide { margin-top: 12px; border-top: 1px solid var(--line); }
+.guide summary { cursor: pointer; min-height: 40px; padding: 8px 0; color: var(--primary); font-weight: 500; }
+.guide ol { margin: 0 0 8px; padding-left: 20px; font-size: .875rem; }
+.dish-ed .row-actions { align-items: center; margin-top: 12px; }
+.dish-ed .import-error:empty, .set-body .import-error:empty { display: none; }
+.own-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+.own-row .post-name { flex: 1; }
+.own-form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
+.own-form input { min-height: 44px; padding: 0 8px; border: 0; border-bottom: 1px solid var(--outline); border-radius: var(--r-sm) var(--r-sm) 0 0;
+  background: var(--surface-container-high); font-size: .9375rem; color: var(--fg); width: 100%; }
+.own-form #f-name { grid-column: 1 / -1; }
+.own-form #f-unit, .own-form #f-ug { grid-column: span 2; }
+.small-link { font-size: .8125rem; padding: 0 4px; min-height: 36px; margin-top: 4px; }
+.pick .pick-row + .pick-row { margin-top: 8px; }
+.pick .pick-row #alias-word { width: auto; flex: 1; font-size: 1rem; }
+.over { background: var(--outline); }
+.cal-day.over { color: var(--surface); }
+.wk-table td .delta { font-weight: 400; }

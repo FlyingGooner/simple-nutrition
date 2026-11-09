@@ -53,7 +53,7 @@ Samma struktur som follow-diet-tracker (beslut 2026-11-09): bottenmeny med fem f
 ```
 - **Summering överst:** kcal mot dagens mål, stapel och "kvar"/"över" (över visas dämpat, aldrig rött). Protein/kolhydrater visas mot mål bara om de målen är påslagna, annars som rad P · K · F.
 - **Måltider** som rubriker med kcal-summa (samma redigerbara lista som slots i diet: Frukost, Lunch, Mellanmål, Middag). Under varje: posterna och "+ Lägg till". Tomma måltider är hopfällda till en rad.
-- **Lägg till** öppnar ett blad (dialog) med sökfält överst och flikarna **Senaste · Varor · Rätter**:
+- **Lägg till** öppnar en egen vy i stället för dagen (✕ stänger) med sökfält överst och flikarna **Senaste · Varor · Rätter**:
   - Senaste: de 20 senast loggade (vara + mängd), ett tryck loggar samma igen.
   - Varor: sök i kärnvaror och egna produkter + sökord; "Visa fler" söker i övriga. Välj vara → välj variant (chips) → mängd i g eller mått (st/dl/msk, visas "≈"). kcal räknas live.
   - Rätter: välj rätt → andel (¼, ⅓, ½, 1 portion, eller gram av färdig vikt om den finns).
@@ -63,7 +63,6 @@ Samma struktur som follow-diet-tracker (beslut 2026-11-09): bottenmeny med fem f
 - **Kopiera från igår** (knapp när dagen är tom) och **Rensa dagen** längst ner (när något är loggat), med Ångra.
 - Svep byter dag; märket "Idag" / "Till idag" som i diet. Fliken Idag hoppar alltid till idag.
 
-**Bred skärm (≥ 840 px):** Idag till vänster, veckan för vald dag till höger (som Vecka utan bläddring). Lägg till-bladet öppnas som panel i högerkolumnen i stället för dialog.
 
 ### 2. Vecka
 ```
@@ -119,10 +118,8 @@ Hopfällbara sektioner som i diet, grupper Mål, Mat och Appen.
 - **Data:** backup-fil, läs in, visa som text, Radera all data (identiskt med diet).
 - Installera appen, **Hjälp och manual**, snackbar för ny version.
 
-### Layout: mobil, surfplatta, dator
-- **Mobil (< 600 px, test 390 px):** en kolumn, bottenmeny.
-- **Surfplatta (600–839 px, test 820 px):** sidomeny, en kolumn max 640 px centrerad.
-- **Dator (≥ 840 px, test 1280 px):** Idag + vecka sida vid sida; Lägg till som panel; listor i Inställningar skrollar i sitt kort.
+### Layout
+Bara mobil (390 px), beslut 2026-11-09. På bredare skärmar samma vy centrerad (max ~640 px), bottenmenyn kvar. Ingen sidomeny eller tvåkolumnsvy – det som kom med från follow-diet-tracker i v0.1 tas bort i v0.2.
 
 ## Datamodell
 All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt projektets CLAUDE.md). Valideras i `store.js` innan den används; ogiltiga delar hoppas över.
@@ -155,7 +152,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 ### Logg
 ```js
 { id: "x2", m: "m1", ref: "l:151",  name: "Lättmjölk",   g: 206,  n: [39, 3.6, 4.8, 0.5] }  // vara: gram, n per 100 g
-{ id: "x1", m: "m2", ref: "r:a81c", name: "Köttfärssås", q: 0.25, n: [665, 38, 78, 20] }   // rätt: andel, n = totalt för andelen
+{ id: "x1", m: "m2", ref: "r:a81c", name: "Köttfärssås", q: 0.25, n: [665, 38, 78, 20] }   // rätt: q = andel av hela receptet, n = totalt för andelen
 ```
 - **Ögonblicksbild:** `name` och `n` sparas i posten. Gamla dagar ändras aldrig när databanken uppdateras eller en rätt redigeras (antagande – bekräftas av användaren).
 - `m` = måltidens id. Saknas måltiden (borttagen) visas posten under "Övrigt".
@@ -168,8 +165,21 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
   items: [{ ref: "b:…-12", name: "Nötfärs 12 %", g: 500, n: [188, 20, 0, 12] }, …] }
 ```
 - Ingredienser i gram (mått som st/dl räknas om vid inmatning). Ögonblicksbild `n` per 100 g.
-- Andel (¼, ⅕, egen) eller gram av färdig vikt – det senare är exaktare eftersom vatten kokar bort.
-- Tillbehör (pasta, ris) loggas helst som egna poster så portionen blir flexibel.
+- **Inga färdiga rätter i appen** (beslut 2026-11-09). Användaren bygger sina egna rätter.
+- **Två sätt att ange en rätt** (beslut 2026-11-09), valda med en växel i rätteditorn:
+  - **Per portion:** receptet gäller en portion (`portions: 1`), t.ex. en gröt eller en matlåda som lagas en i taget.
+  - **Hel sats:** receptet gäller allt som lagas (`portions: 2–50`), t.ex. köttfärssås på 500 g nötfärs delat på 5.
+- **Loggning av rätt:** `q` = andel av hela receptet (0 < q ≤ 50).
+  - Hel sats: chips ½ portion, 1 portion, 2 portioner (= q 0,5/N, 1/N, 2/N) och egen andel, t.ex. ⅕ av satsen.
+  - Per portion: ½, 1, 1½, 2 portioner (q = 0,5–2).
+  - Har rätten färdig vikt (`cooked`) kan man i stället ange gram av den färdiga rätten: q = gram / `cooked`. Det är exaktast, eftersom vatten kokar bort och portionerna blir olika stora.
+  - Posten får `n` = summan av rättens ingredienser × q (ögonblicksbild). Senare ändringar av rätten påverkar inte loggade dagar.
+- Tillbehör (pasta, ris) loggas helst som egna poster, så att portionen blir flexibel.
+- **Guide i rätteditorn:** en hopfälld rad "Så räknar du" med samma text i Hjälp och `MANUAL.md`:
+  1. Väg råvarorna okokta innan du lagar maten.
+  2. Välj per portion eller hel sats och ange antal portioner.
+  3. Väg gärna hela den färdiga rätten (minus kastrullen) och fyll i färdig vikt. Då kan du logga i gram.
+  4. Vatten, salt och kryddor behöver inte vägas.
 
 ### Egna produkter och sökord
 - `foods`: `{ id, name, n: [kcal, prot, kolh, fett] per 100 g, u?: ["st", 60] }`. Ingår i sökningen bredvid basvarorna.
@@ -210,12 +220,12 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
   - id: `^[A-Za-z0-9_-]{1,40}$`
   - datumnycklar: `^\d{4}-\d{2}-\d{2}$` och giltigt datum
   - `ref`: `^[lbur]:[A-Za-z0-9_.-]{1,40}$`
-  - `n`: exakt 4 ändliga tal, kcal 0–9000 och gram per 100 g 0–100
+  - `n`: exakt 4 ändliga tal. Varor: per 100 g, kcal 0–9000 och gram 0–100. Rätt-poster (`r:`): totalt för andelen, kcal 0–20000 och gram 0–2000
   - `g`: 0–10000
-  - `q`: större än 0 och högst 1
+  - `q`: större än 0 och högst 50 (andel av hela receptet)
   - `portions`: 1–50
   - `cooked`: 1–20000
-  - mått `u`: `[enhet ≤ 10 tecken, gram]` eller saknas
+  - mått `u`: `[enhet ≤ 10 tecken, tal 0,01–10000]` eller saknas. Vara: [mått, antal] (t.ex. ["dl", 2]). Egen produkt: [mått, gram per mått]. Rätt-post: ["port." | "av satsen" | "g", mängd]
   - `goals.kcal`: 500–10000, `prot`/`kolh` frivilliga och inom rimliga gränser
   - `weights`: 20–400 kg
   - `meals`: 1–10 st, och en post vars `m` saknas bland dem visas under Övrigt
@@ -248,9 +258,12 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 - Fungerar offline efter första besöket.
 
 ## Design
-Material Design 3 enligt `../STIL.md`, stil från follow-diet-tracker. Nyckelfärg `#2f697d`. Bottenmeny < 600 px, navigation rail 600–839 px, två kolumner ≥ 840 px. Inga valstress: högst 5 varianter, "Normal" förvald.
+Material Design 3 enligt `../STIL.md`, stil från follow-diet-tracker. Nyckelfärg `#2f697d`. Bottenmeny, bara mobil (390 px). Inga valstress: högst 5 varianter, "Normal" förvald.
 
-## Första bygget (v0.1.0)
+## Byggordning
+**Status 2026-11-09:** v0.1–v0.4 byggda (release 0.4.0). v0.5 (manual med bilder) väntar på CSP-beslut: bilderna bäddas in som `data:` i testfilen, vilket kräver `img-src 'self' data:` som i follow-diet-tracker (förhandsprövning + godkännande).
+
+### Första bygget (v0.1.0)
 Målet är en app som går att använda varje dag redan i första versionen. Det som kräver mest UI får vänta.
 
 **Ingår**
@@ -263,10 +276,10 @@ Målet är en app som går att använda varje dag redan i första versionen. Det
 7. Tester: logga vara i gram och mått (rätt kcal), ögonblicksbild, mål från datum, flytta post, backup tur och retur, sökningen visar kärnvara före övriga.
 
 **Senare, i ordning**
-- v0.2: Rätter (editor i Inställningar + flik i Lägg till, andel eller gram).
+- v0.2: Mina rätter: rätteditor i Inställningar (per portion eller hel sats, färdig vikt, guide), fliken Rätter i Lägg till (portioner, andel eller gram). Inga färdiga rätter.
 - v0.3: Trend och Historik som i diet, 7-dagars viktmedel.
 - v0.4: Mål för protein och kolhydrater, egna produkter, egna sökord, Kopiera från igår.
-- v0.5: Bred skärm med panel, manual med bilder.
+- v0.5: Manual med bilder.
 
 Uppskattning för v0.1: ~120–160k tokens (Lägg till-bladet är största delen).
 
@@ -274,7 +287,7 @@ Uppskattning för v0.1: ~120–160k tokens (Lägg till-bladet är största delen
 - [ ] Installerbar som PWA på Android och iPhone.
 - [ ] Fungerar offline.
 - [ ] Ljust och mörkt tema.
-- [ ] Layout fungerar på 390 px (mobil), 820 px (iPad stående) och 1280 px (dator).
+- [ ] Layout fungerar på 390 px (mobil). Surfplatta och dator är inte krav (beslut 2026-11-09).
 - [ ] `granskning` utan anmärkning.
 - [ ] Datatesterna (`test-maltider.ps1`) godkända.
 

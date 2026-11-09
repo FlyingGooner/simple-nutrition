@@ -30,9 +30,10 @@ export function defaults() {
   };
 }
 
-function cleanN(n) {
+// n = [kcal, prot, kolh, fett]. Foods: per 100 g (kcal ≤ 9000, g ≤ 100). Dish posts: total for the share (kcal ≤ 20000, g ≤ 2000).
+function cleanN(n, dish = false) {
   if (!Array.isArray(n) || n.length !== 4) return null;
-  if (!num(n[0], 0, 9000) || !n.slice(1).every((x) => num(x, 0, 100))) return null;
+  if (!num(n[0], 0, dish ? 20000 : 9000) || !n.slice(1).every((x) => num(x, 0, dish ? 2000 : 100))) return null;
   return n.map((x) => Math.round(x * 10) / 10);
 }
 function cleanUnit(u) {   // [unit name ≤ 10 chars, number]
@@ -42,11 +43,12 @@ function cleanUnit(u) {   // [unit name ≤ 10 chars, number]
 }
 function cleanPost(p) {
   if (!isObj(p) || !ID_RE.test(p.id) || !REF_RE.test(p.ref) || !ID_RE.test(p.m)) return null;
-  const name = cleanText(p.name), n = cleanN(p.n);
+  const dish = p.ref.startsWith('r:');
+  const name = cleanText(p.name), n = cleanN(p.n, dish);
   if (!name || !n) return null;
   const out = { id: p.id, m: p.m, ref: p.ref, name, n };
-  if (num(p.g, 0, 10000)) out.g = Math.round(p.g * 10) / 10;
-  else if (num(p.q, 0.0001, 1) && p.q > 0) out.q = p.q;
+  if (dish) { if (num(p.q, 0.0001, 50)) out.q = Math.round(p.q * 10000) / 10000; else return null; }
+  else if (num(p.g, 0, 10000)) out.g = Math.round(p.g * 10) / 10;
   else return null;
   const u = cleanUnit(p.u);
   if (u) out.u = u;
@@ -218,7 +220,7 @@ export function recent(state, max = 20) {
   for (const k of Object.keys(state.log).sort().reverse()) {
     for (const p of [...state.log[k]].reverse()) {
       const key = p.ref + '|' + (p.g ?? p.q);
-      if (seen.has(key) || p.ref.startsWith('r:')) continue;
+      if (seen.has(key)) continue;
       seen.add(key); out.push(p);
       if (out.length >= max) return out;
     }
@@ -246,4 +248,12 @@ export function importText(text) {
   return { data, posts, weights: Object.keys(data.weights).length, dishes: data.dishes.length,
     first: keys[0] ?? null, last: keys[keys.length - 1] ?? null, skipped: Math.max(0, rawPosts - posts),
     exported: typeof env.exported === 'string' && DATE_RE.test(env.exported) ? env.exported : '' };
+}
+
+/* ---------- Dishes ---------- */
+// Whole recipe: sum of ingredients (n per 100 g × g).
+export const dishTotal = (d) => d.items.reduce((a, it) => a.map((x, i) => x + it.n[i] * it.g / 100), [0, 0, 0, 0]);
+export function searchDishes(state, text) {
+  const q = cleanText(text, 40).toLowerCase();
+  return state.dishes.filter((d) => !q || d.name.toLowerCase().includes(q)).sort((a, b) => a.name.localeCompare(b.name, 'sv'));
 }

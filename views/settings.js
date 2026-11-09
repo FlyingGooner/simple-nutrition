@@ -1,6 +1,8 @@
 // View: Inställningar (Mål, Måltider, Data, Hjälp) and the placeholders for Trend and Historik (v0.3).
-import { goalFor } from '../store.js';
+import { goalFor, findRef } from '../store.js';
 import { today, S, setOpen, el, kcal } from '../ui.js';
+import { dishEditor, dishList } from './dishes.js';
+import { viewAdd } from './add.js';
 
 function editableList(items) {
   return [
@@ -22,8 +24,42 @@ function helpCard() {
   return wrap;
 }
 
+function foodsSection() {
+  const f = S.state.foods;
+  return [
+    f.length ? el('ul', { class: 'posts' }, f.map((x) => el('li', { class: 'own-row' },
+      el('span', { class: 'post-name' }, x.name, el('small', { text: `${kcal(x.n[0])} kcal · P ${x.n[1]} · K ${x.n[2]} · F ${x.n[3]} per 100 g` + (x.u ? ` · 1 ${x.u[0]} ≈ ${x.u[1]} g` : '') })),
+      el('button', { class: 'icon sm danger', 'data-act': 'fdel', 'data-id': x.id, 'aria-label': `Ta bort ${x.name}`, text: '✕' })))) : null,
+    el('p', { class: 'muted small', text: 'Värden per 100 g från förpackningen. Mått (t.ex. 1 st = 40 g) är valfritt.' }),
+    el('div', { class: 'own-form' },
+      el('input', { type: 'text', id: 'f-name', maxlength: 60, placeholder: 'Namn', 'aria-label': 'Namn', autocomplete: 'off' }),
+      ...[['f-kcal', 'kcal'], ['f-p', 'Protein'], ['f-k', 'Kolh.'], ['f-f', 'Fett']].map(([id, l]) =>
+        el('input', { type: 'text', inputmode: 'decimal', id, placeholder: l, 'aria-label': l + ' per 100 g' })),
+      el('input', { type: 'text', id: 'f-unit', maxlength: 10, placeholder: 'Mått (st)', 'aria-label': 'Mått, valfritt' }),
+      el('input', { type: 'text', inputmode: 'decimal', id: 'f-ug', placeholder: 'g per mått', 'aria-label': 'Gram per mått' })),
+    el('p', { class: 'import-error small', id: 'f-error', role: 'alert' }),
+    f.length < 1000 ? el('button', { class: 'link', 'data-act': 'fadd', text: '+ Spara produkt' }) : null,
+  ];
+}
+
+function aliasSection() {
+  const words = Object.keys(S.state.aliases).sort();
+  return [
+    words.length ? el('ul', { class: 'posts' }, words.map((w) => {
+      const f = findRef(S.state, S.state.aliases[w]);
+      return el('li', { class: 'own-row' }, el('span', { class: 'post-name' }, w, el('small', { text: '→ ' + (f ? f.name : 'okänd vara') })),
+        el('button', { class: 'icon sm danger', 'data-act': 'adel', 'data-val': w, 'aria-label': `Ta bort sökordet ${w}`, text: '✕' }));
+    })) : null,
+    el('p', { class: 'muted small', text: 'Spara ett sökord från en vara i Lägg till ("Spara eget sökord"). Ordet visar då varan först.' }),
+  ];
+}
+
 export function viewSettings() {
+  if (S.add?.target === 'dish') return viewAdd();
+  if (S.dish) return dishEditor();
   const g = goalFor(S.state, today());
+  const opt = (k, label) => el('label', { class: 'goal-row' }, el('span', { text: label }),
+    el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: g[k] ? String(g[k]) : '', placeholder: 'Av', 'data-act': 'goalmacro', 'data-val': k, 'aria-label': label }));
   const sec = (id, title, hint, ...kids) => el('details', { class: 'card set-sec', 'data-sec': id, open: setOpen.has(id) },
     el('summary', {}, el('span', { class: 'set-title', text: title }), hint ? el('span', { class: 'set-hint', text: hint }) : null),
     el('div', { class: 'set-body' }, kids));
@@ -33,8 +69,14 @@ export function viewSettings() {
       el('label', { class: 'goal-row' }, el('span', { text: 'kcal per dag' }),
         el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: String(g.kcal), 'data-act': 'goalkcal', 'aria-label': 'Kalorimål per dag' })),
       el('p', { class: 'muted small', text: 'Ändringen gäller från idag. Tidigare dagar jämförs med målet som gällde då.' })),
+    sec('macros', 'Protein och kolhydrater', [g.prot ? `P ${g.prot} g` : '', g.kolh ? `K ${g.kolh} g` : ''].filter(Boolean).join(' · ') || 'Av',
+      opt('prot', 'Protein, g per dag'), opt('kolh', 'Kolhydrater, g per dag'),
+      el('p', { class: 'muted small', text: 'Valfria mål. Lämna tomt för att stänga av. Gäller från idag.' })),
     el('h2', { class: 'set-group', text: 'Mat' }),
+    sec('dishes', 'Mina rätter', `${S.state.dishes.length} st`, dishList()),
     sec('meals', 'Måltider', S.state.meals.map((x) => x.name).join(', '), editableList(S.state.meals)),
+    sec('foods', 'Egna produkter', `${S.state.foods.length} st`, foodsSection()),
+    sec('aliases', 'Egna sökord', `${Object.keys(S.state.aliases).length} st`, aliasSection()),
     el('h2', { class: 'set-group', text: 'Appen' }),
     sec('data', 'Data', 'Backup, import, radera',
       el('p', { class: 'small', text: 'All data sparas bara i den här webbläsaren (localStorage). Rensar du webbplatsdata eller avinstallerar appen försvinner den – spara en backup-fil då och då.' }),

@@ -1,5 +1,5 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
-import { sumN, postN, goalFor } from '../store.js';
+import { sumN, postN, goalFor, addDays } from '../store.js';
 import { today, S, el, svg, stepper, kcal, fmtNum, dateTitle, amountText, mealName } from '../ui.js';
 import { viewAdd } from './add.js';
 
@@ -28,8 +28,8 @@ function postRow(p) {
       el('span', { class: 'post-kcal', text: kcal(postN(p)[0]) })));
   if (open) {
     row.append(el('div', { class: 'post-edit' },
-      el('label', { class: 'field' }, el('span', { text: p.q != null ? 'Andel' : 'Gram' }),
-        el('input', { type: 'text', inputmode: 'decimal', id: 'p-amount', value: p.q != null ? String(p.q) : String(p.g), 'aria-label': 'Mängd' })),
+      el('label', { class: 'field' }, el('span', { text: p.q != null ? (p.u ? 'Mängd, ' + p.u[0] : 'Andel') : 'Gram' }),
+        el('input', { type: 'text', inputmode: 'decimal', id: 'p-amount', value: p.q != null ? String(p.u ? p.u[1] : p.q) : String(p.g), 'aria-label': 'Mängd' })),
       el('label', { class: 'field' }, el('span', { text: 'Måltid' }),
         el('select', { id: 'p-meal', 'aria-label': 'Måltid' }, S.state.meals.map((m) => el('option', { value: m.id, selected: m.id === p.m, text: m.name })))),
       el('div', { class: 'row-actions' },
@@ -74,6 +74,8 @@ export function viewToday() {
     el('div', { class: 'meals' },
       S.state.meals.map((m) => mealCard(m, posts.filter((p) => p.m === m.id))),
       other.length ? mealCard({ id: '_other', name: 'Övrigt' }, other) : null),
+    !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
+      ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera från igår' }) : null,
     weightCard(),
     posts.length || S.state.weights[S.current] != null
       ? el('p', { class: 'clear-day center' }, el('button', { class: 'link danger', 'data-act': 'clearday', text: '🗑 Rensa dagen' })) : null,
