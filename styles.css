@@ -438,5 +438,5 @@ main .meals > .card + .card { margin-top: 0; }
 .set-group-wrap > summary::before { content: "▸"; color: var(--muted); transition: transform .15s; }
 .set-group-wrap[open] > summary::before { transform: rotate(90deg); }
 .set-gtitle { color: var(--fg); font-weight: 500; }
-main .set-group-wrap > .card + .card, main .set-group-wrap > .set-sec + .set-sec { margin-top: 8px; }
+main .set-group-wrap > .card + .card, main .set-group-wrap > .set-sec + .set-sec { margin-top: 10px; }
 .set-group-wrap[open] { padding-bottom: 4px; }
