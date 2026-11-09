@@ -23,7 +23,7 @@ Minimalistisk kaloriräknare med Livsmedelsverkets data för råvaror (kcal, pro
 | Övriga | Resten av Livsmedelsverkets råvaror (`FOODS_MORE`), visas under "Visa fler" |
 | Rätt | Användarens recept: ingredienser i gram + antal portioner |
 | Post | En rad i dagens logg (vara i gram eller andel av rätt) |
-| Mått | Ungefärlig vikt för st/dl/msk, visas "≈" (egna uppskattningar) |
+| Mått | Ungefärlig vikt för st/dl/msk, visas "≈" (egna uppskattningar, `data/indata/matt.csv`). Konserver anges avrunna: "burk avr." (bönor, kikärtor 230 g, tonfisk 120 g) |
 
 ## Skärmar
 Samma struktur som follow-diet-tracker (beslut 2026-11-09): bottenmeny med fem flikar **Idag · Vecka · Trend · Historik · Inställningar**, versionsetikett uppe till höger, samma svep, snackbar med Ångra, haptik och hopfällda kort. Skillnaden är innehållet: kalorier och måltider i stället för följde/fusk.
