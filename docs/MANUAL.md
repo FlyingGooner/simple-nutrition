@@ -46,7 +46,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 
 ## Vecka, Trend och Historik
 - **Vecka:** följsamhet, fusk och vanligaste orsak, träning mot målen och sist kalorier per dag.
-- **Trend:** vikten (7-dagars medel) och förändringen senaste 4 veckorna, en tabell vecka för vecka (vikt, följsamhet, fusk, pass, kcal – tryck för att öppna veckan), viktkurvan för 12 veckor och vad som hänger ihop: bra mot sämre veckor, träning och kalorier (efter 4 veckor).
+- **Trend:** vikten (7-dagars medel) och förändringen senaste 4 veckorna, en tabell vecka för vecka (vikt, följsamhet, fusk, pass, kcal – tryck för att öppna veckan), viktkurvan över hela tiden sedan första vägningen (skalar från veckor till år) och vad som hänger ihop: bra mot sämre veckor, träning och kalorier (efter 4 veckor).
 - **Historik:** månadskalender färgad efter följsamhet, med markering för vägning och träning. Följsamhet 7 och 30 dagar, streaks, pass totalt och kcal-snitt.
 
 ## Flytta från Följ planen

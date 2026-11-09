@@ -314,4 +314,24 @@ T.test('tomt kalorimål + Spara = inget mål, Idag visar bara summan', async () 
   T.ok(!('kcal' in stored().goals.at(-1)), 'inget mål');
   await tab('today');
   T.ok(!q('.sum-left') && !q('.kbar'), 'ingen kvar-text eller stapel');
+});T.test('viktdiagram: hela perioden, skalar över år (ingen ring per vägning, år-etiketter)', async () => {
+  await tab('trend');
+  T.ok(/veckor/.test(q('.chart')?.closest('.card').querySelector('h2').textContent), 'kort period i veckor');
+  T.ok(app.querySelectorAll('.chart .w-dot-extra').length >= 2, 'ringar vid kort period');
+  const weights = {};
+  for (let d = new Date(2024, 0, 1, 12); d < new Date(2026, 10, 1, 12); d.setDate(d.getDate() + 7)) {
+    const p = (n) => String(n).padStart(2, '0');
+    weights[`${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`] = 95 - (d - new Date(2024, 0, 1)) / 864e5 / 100;
+  }
+  await tab('settings');
+  document.getElementById('import-text').value = JSON.stringify({ app: 'simple-nutrition', format: 1, exported: '2026-11-09', data: { weights } });
+  q('[data-act="import"]').click();
+  document.getElementById('imp-ok').click(); document.getElementById('import-dialog').close();
+  await tab('trend');
+  const h2 = q('.chart').closest('.card').querySelector('h2').textContent;
+  T.ok(/år/.test(h2), h2);
+  T.eq(app.querySelectorAll('.chart .w-dot-extra').length, 0);
+  const pts = (q('.chart .w-line').getAttribute('d').match(/[ML]/g) || []).length;
+  T.ok(pts > 50 && pts <= 200, `${pts} punkter`);
+  T.ok([...app.querySelectorAll('.chart .ax')].some((t) => /24/.test(t.textContent)), 'år 2024 på x-axeln');
 });

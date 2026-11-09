@@ -102,7 +102,7 @@ Samma struktur som follow-diet-tracker (beslut 2026-11-09): bottenmeny med fem f
 │ Veckor över mål   +0,1 kg/v  │
 └──────────────────────────────┘
 ```
-- Samma upplägg som Trend i diet: vikt överst, de 4 senaste veckorna som tabell (rad öppnar Vecka), viktdiagram 12 veckor, enkel jämförelse från 4 veckor med data. Inga medicinska råd, ingen röd färg.
+- Samma upplägg som Trend i diet: vikt överst, de 4 senaste veckorna som tabell (rad öppnar Vecka), viktdiagram över hela tiden (från första vägningen, minst 4 veckor; linjen glesas ut till ~180 punkter, ringar per vägning bara upp till 180 dagar, x-axel med datum eller månad + år) – beslut 2026-11-10, enkel jämförelse från 4 veckor med data. Inga medicinska råd, ingen röd färg.
 
 ### 4. Historik
 - Kalender per månad: dag färgad efter kcal mot mål (grön inom mål, gul upp till +10 %, dämpad över, grå ej loggad). Tryck → dagen i Idag.

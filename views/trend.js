@@ -1,5 +1,5 @@
 // View: Trend – weight (7-day average), the last 4 weeks as a table, weight chart 12 weeks, kcal vs weight.
-import { addDays, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
+import { addDays, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
 import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions } from '../ui.js';
 
 // 7-day average of the weights in [k-6, k], or null.
@@ -56,21 +56,37 @@ function table() {
       }))));
 }
 
+// Vikt över hela tiden (beslut 2026-11-10): från första vägningen till idag, minst 4 veckor. Skalar med tiden:
+// 7-dagars medel som linje (glesas ut till högst ~180 punkter), vägningar som ringar bara när de får plats (≤ 180 dagar).
 function chart() {
-  const start = addDays(weekStart(today()), -77), days = [];
-  for (let k = start; k <= today(); k = addDays(k, 1)) days.push(k);
-  const pts = days.map((k, i) => ({ i, w: S.state.weights[k], a: avg7(k) })).filter((p) => p.w != null || p.a != null);
-  if (Object.keys(S.state.weights).filter((k) => k >= start).length < 2) return null;
-  const vals = pts.flatMap((p) => [p.w, p.a]).filter((x) => x != null);
+  const keys = Object.keys(S.state.weights).sort();
+  if (keys.length < 2) return null;
+  const end = today(), first = keys[0] < addDays(end, -27) ? keys[0] : addDays(end, -27);
+  const days = [];
+  for (let k = first; k <= end; k = addDays(k, 1)) days.push(k);
+  const n = days.length, step = Math.max(1, Math.ceil(n / 180));
+  const line = [], dots = [];
+  days.forEach((k, i) => {
+    if (i % step === 0 || i === n - 1) { const a = avg7(k); if (a != null) line.push([i, a]); }
+    if (n <= 180 && S.state.weights[k] != null) dots.push([i, S.state.weights[k]]);
+  });
+  const vals = [...line.map((p) => p[1]), ...dots.map((p) => p[1])];
   const lo = Math.floor(Math.min(...vals) - 0.5), hi = Math.ceil(Math.max(...vals) + 0.5);
-  const W = 320, H = 140, pad = 24, x = (i) => pad + i * (W - pad - 4) / (days.length - 1), y = (v) => 8 + (hi - v) * (H - 24) / (hi - lo);
-  const line = pts.filter((p) => p.a != null).map((p, j) => `${j ? 'L' : 'M'}${Math.round(x(p.i) * 10) / 10},${Math.round(y(p.a) * 10) / 10}`).join(' ');
-  return el('section', { class: 'card' }, el('h2', { text: 'Vikt, 12 veckor' }),
-    svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Viktkurva 12 veckor, 7-dagars medel' },
+  const W = 320, H = 150, pad = 26, bottom = 16;
+  const x = (i) => pad + i * (W - pad - 6) / (n - 1), y = (v) => 8 + (hi - v) * (H - 8 - bottom) / (hi - lo);
+  const r = (v) => Math.round(v * 10) / 10;
+  const d = line.map((p, j) => `${j ? 'L' : 'M'}${r(x(p[0]))},${r(y(p[1]))}`).join(' ');
+  const long = n > 365;
+  const label = (k) => (long ? parseKey(k).toLocaleDateString('sv-SE', { month: 'short', year: '2-digit' }) : shortDate(k));
+  const ticks = [0, Math.round((n - 1) / 2), n - 1];
+  const span = n < 70 ? `${Math.round(n / 7)} veckor` : n < 730 ? `${Math.round(n / 30.4)} månader` : `${fmtNum(r(n / 365))} år`;
+  return el('section', { class: 'card' }, el('h2', {}, 'Vikt över tid ', el('small', { text: `· ${span}` })),
+    svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': `Viktkurva ${span}, 7-dagars medel` },
       [lo, (lo + hi) / 2, hi].map((v) => [svg('line', { class: 'grid', x1: pad, x2: W, y1: y(v), y2: y(v) }), svg('text', { class: 'ax', x: 0, y: y(v) + 3 }, fmtNum(r1(v)))]),
-      pts.filter((p) => p.w != null).map((p) => svg('circle', { class: 'w-dot-extra', cx: x(p.i), cy: y(p.w), r: 2 })),
-      svg('path', { class: 'w-line', d: line })),
-    el('p', { class: 'legend' }, el('span', { class: 'lg lg-w' }), ' 7-dagars medel', el('span', { class: 'lg lg-wx' }), ' vägning'));
+      ticks.map((i, j) => svg('text', { class: 'ax', x: x(i), y: H - 3, 'text-anchor': j === 0 ? 'start' : j === 2 ? 'end' : 'middle' }, label(days[i]))),
+      dots.map((p) => svg('circle', { class: 'w-dot-extra', cx: r(x(p[0])), cy: r(y(p[1])), r: 2 })),
+      svg('path', { class: 'w-line', d })),
+    el('p', { class: 'legend' }, el('span', { class: 'lg lg-w' }), ' 7-dagars medel', dots.length ? [el('span', { class: 'lg lg-wx' }), ' vägning'] : null));
 }
 
 function compare() {
