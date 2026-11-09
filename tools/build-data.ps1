@@ -4,7 +4,7 @@ param([int]$Exempel = 20)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 $utf8 = New-Object Text.UTF8Encoding $false
-$db = [IO.File]::ReadAllText("$root\data\livsmedelsverket.json", [Text.Encoding]::UTF8) | ConvertFrom-Json
+$db = [IO.File]::ReadAllText("$root\data\indata\livsmedelsverket.json", [Text.Encoding]::UTF8) | ConvertFrom-Json
 $all = $db.livsmedel
 $byName = @{}; foreach ($x in $all) { $byName[$x.namn.Trim()] = $x }
 
@@ -13,7 +13,7 @@ $bort = 'rätt|Sås i|Soppa|Dessert|pizza|Barnmat|Choklad|Bageriprodukter|Godis|
 $kand = @($all | Where-Object { $_.grupp -notmatch $bort -and $_.namn -notmatch 'hemlagad|restaurang|smaksatt|m\. socker' })
 
 # 2. Kärnlista från regelfilen
-$rader = Import-Csv "$root\data\varugrupper.csv" -Delimiter ';' -Encoding UTF8
+$rader = Import-Csv "$root\data\indata\varugrupper.csv" -Delimiter ';' -Encoding UTF8
 $varor = [ordered]@{}; $fel = @()
 foreach ($r in $rader) {
   if (-not $varor.Contains($r.vara)) { $varor[$r.vara] = [ordered]@{ vara = $r.vara; sok = @(); varianter = @() } }
@@ -50,7 +50,7 @@ foreach ($r in $rader) {
   $v.varianter += [ordered]@{ etikett = $r.etikett; exempel = $r.exempel; id = $hit.id; lmv = $hit.namn; beraknad = [bool]$hit.beraknad; kcal = $hit.kcal; prot = $hit.prot; kolh = $hit.kolh; fett = $hit.fett }
 }
 # Mått (styckvikt, dl, msk) – egna uppskattningar, ätlig del. Tom variant = gäller alla varianter.
-foreach ($m in (Import-Csv "$root\data\matt.csv" -Delimiter ';' -Encoding UTF8)) {
+foreach ($m in (Import-Csv "$root\data\indata\matt.csv" -Delimiter ';' -Encoding UTF8)) {
   $v = $varor[$m.vara]
   if (-not $v) { $fel += "MÅTT: okänd vara '$($m.vara)'"; continue }
   $traff = @($v.varianter | Where-Object { -not $m.variant -or $_.etikett -eq $m.variant })
@@ -62,7 +62,7 @@ $over = @($varor.Values | Where-Object { $_.varianter.Count -gt 5 })
 if ($over) { Write-Host "FEL: fler än 5 varianter: $($over.vara -join ', ')" -ForegroundColor Red }
 
 $ut = [ordered]@{ kalla = $db.meta; varor = @($varor.Values) }
-[IO.File]::WriteAllText("$root\data\karna.json", ($ut | ConvertTo-Json -Depth 6), $utf8)
+[IO.File]::WriteAllText("$root\data\byggt\karna.json", ($ut | ConvertTo-Json -Depth 6), $utf8)
 
 # 3. Kandidater till Excel (fetthalt och tillagning utlästa ur namnet)
 $iKarna = @{}; foreach ($v in $varor.Values) { foreach ($x in $v.varianter) { $iKarna[[string]$x.id] = $v.vara } }
@@ -75,7 +75,7 @@ $csv = $kand | ForEach-Object {
     i_karna = $iKarna[[string]$_.id]; ta_med = ''; vardagsnamn = ''
   }
 }
-$csv | Export-Csv "$root\data\kandidater.csv" -Delimiter ';' -NoTypeInformation -Encoding UTF8
+$csv | Export-Csv "$root\data\byggt\kandidater.csv" -Delimiter ';' -NoTypeInformation -Encoding UTF8
 
 # 4. foods.js för appen: kärna (med varianter) + övriga råvaror (skarpare filter, ej redan i kärnan)
 $skarp = 'hemlagad|restaurang|tillagad på|värmd|smaksatt|sötningsm|m\. socker|m\. sås|m\. dressing|Barnmat|konc\. drickf|typ .*(burgare|nugget)'

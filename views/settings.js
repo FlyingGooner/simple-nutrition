@@ -64,7 +64,7 @@ export function viewSettings() {
   if (S.dish) return dishEditor();
   const g = goalFor(S.state, today()), s = S.state.settings;
   const opt = (k, label) => el('label', { class: 'goal-row' }, el('span', { text: label }),
-    el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: g[k] ? String(g[k]) : '', placeholder: 'Av', 'data-act': 'goalmacro', 'data-val': k, 'aria-label': label }));
+    el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: g[k] ? String(g[k]) : '', placeholder: 'Av', id: 'g-' + k, 'aria-label': label }));
   const sec = (id, title, hint, ...kids) => el('details', { class: 'card set-sec', 'data-sec': id, open: setOpen.has(id) },
     el('summary', {}, el('span', { class: 'set-title', text: title }), hint ? el('span', { class: 'set-hint', text: hint }) : null),
     el('div', { class: 'set-body' }, kids));
@@ -75,7 +75,8 @@ export function viewSettings() {
   return [
     group('habits', 'Vanor', `Minst ${pct(s.successThreshold)}`,
       sec('plan', 'Min plan', s.planText ? s.planText.split('\n')[0].slice(0, 30) + (s.planText.length > 30 ? '…' : '') : 'Ingen plan',
-        el('textarea', { rows: 3, maxlength: 300, placeholder: 'T.ex. matlåda till lunch, inget godis på vardagar', 'data-act': 'plan', 'aria-label': 'Min plan', text: s.planText }),
+        el('textarea', { rows: 3, maxlength: 300, placeholder: 'T.ex. matlåda till lunch, inget godis på vardagar', id: 'plan-text', 'aria-label': 'Min plan', text: s.planText }),
+        el('div', { class: 'save-row' }, el('button', { class: 'weigh-save', 'data-act': 'plansave', text: 'Spara plan' })),
         el('p', { class: 'muted small', text: 'Visas överst i Idag som påminnelse.' })),
       sec('threshold', 'Lyckad dag', `Minst ${pct(s.successThreshold)}`,
         el('label', { class: 'range' }, el('span', {}, 'Minst ', el('strong', { id: 'thr', text: pct(s.successThreshold) }), ' följsamhet'),
@@ -94,10 +95,12 @@ export function viewSettings() {
     group('kcal', 'Kalorier', g.kcal ? `${kcal(g.kcal)} kcal/dag` : 'Inget mål',
       sec('goal', 'Kalorimål', g.kcal ? `${kcal(g.kcal)} kcal/dag` : 'Inget mål',
         el('label', { class: 'goal-row' }, el('span', { text: 'kcal per dag' }),
-          el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: g.kcal ? String(g.kcal) : '', placeholder: 'Inget mål', 'data-act': 'goalkcal', 'aria-label': 'Kalorimål per dag' })),
+          el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: g.kcal ? String(g.kcal) : '', placeholder: 'Inget mål', id: 'g-kcal', 'aria-label': 'Kalorimål per dag' }),
+          el('button', { class: 'weigh-save', 'data-act': 'goalsave', text: 'Spara' })),
         el('p', { class: 'muted small', text: 'Valfritt – lämna tomt för inget mål. Ändringen gäller från idag; tidigare dagar jämförs med målet som gällde då.' })),
       sec('macros', 'Protein och kolhydrater', [g.prot ? `P ${g.prot} g` : '', g.kolh ? `K ${g.kolh} g` : ''].filter(Boolean).join(' · ') || 'Av',
         opt('prot', 'Protein, g per dag'), opt('kolh', 'Kolhydrater, g per dag'),
+        el('div', { class: 'save-row' }, el('button', { class: 'weigh-save', 'data-act': 'macrosave', text: 'Spara mål' })),
         el('p', { class: 'muted small', text: 'Valfria mål. Lämna tomt för att stänga av. Gäller från idag.' })),
       sec('dishes', 'Mina rätter', `${S.state.dishes.length} st`, dishList()),
       sec('foods', 'Egna produkter', `${S.state.foods.length} st`, foodsSection()),

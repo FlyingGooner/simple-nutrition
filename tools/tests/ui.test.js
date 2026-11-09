@@ -124,8 +124,10 @@ T.test('vecka visar staplar, dag öppnar Idag', async () => {
 });
 T.test('kalorimål ändras från idag', async () => {
   await tab('settings');
-  const inp = q('[data-act="goalkcal"]');
+  const inp = q('#g-kcal');
   inp.value = '1800'; inp.dispatchEvent(new Event('change', { bubbles: true }));
+  T.eq(stored().goals.length, 1, 'inget sparas förrän Spara');
+  q('[data-act="goalsave"]').click();
   const g = stored().goals;
   T.eq(g.at(-1), { from: '2026-11-09', kcal: 1800 });
   T.eq(g[0].kcal, 2000);
@@ -259,8 +261,8 @@ T.test('kopiera från igår på tom dag', () => {
 });
 T.test('proteinmål visas i summan', async () => {
   await tab('settings');
-  const inp = q('[data-act="goalmacro"][data-val="prot"]');
-  inp.value = '120'; inp.dispatchEvent(new Event('change', { bubbles: true }));
+  q('#g-prot').value = '120';
+  q('[data-act="macrosave"]').click();
   T.eq(stored().goals.at(-1).prot, 120);
   await tab('today');
   T.ok(q('.macros').textContent.includes('/ 120 g'), q('.macros').textContent);
@@ -295,4 +297,21 @@ T.test('import från Följ planen i Inställningar: dialog, lägg till, ångra',
   T.ok(Object.keys(s.log).length > 0, 'maten finns kvar');
   document.getElementById('snack-action').click();
   T.eq(JSON.stringify(stored()), before);
+});
+T.test('Min plan sparas med Spara plan och visas i Idag', async () => {
+  await tab('settings');
+  q('#plan-text').value = 'Matlåda till lunch <b>x</b>';
+  q('[data-act="plansave"]').click();
+  T.eq(stored().settings.planText, 'Matlåda till lunch <b>x</b>');
+  await tab('today');
+  T.eq(q('.plan').textContent, 'Matlåda till lunch <b>x</b>');
+  T.eq(app.querySelectorAll('b').length, 0);
+});
+T.test('tomt kalorimål + Spara = inget mål, Idag visar bara summan', async () => {
+  await tab('settings');
+  q('#g-kcal').value = '';
+  q('[data-act="goalsave"]').click();
+  T.ok(!('kcal' in stored().goals.at(-1)), 'inget mål');
+  await tab('today');
+  T.ok(!q('.sum-left') && !q('.kbar'), 'ingen kvar-text eller stapel');
 });

@@ -2,13 +2,13 @@
 param([double]$Tolerans = 10, [string]$Fil = 'test-maltider.csv')
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
-$k = ([IO.File]::ReadAllText("$root\data\karna.json", [Text.Encoding]::UTF8) | ConvertFrom-Json).varor
-$all = ([IO.File]::ReadAllText("$root\data\livsmedelsverket.json", [Text.Encoding]::UTF8) | ConvertFrom-Json).livsmedel
+$k = ([IO.File]::ReadAllText("$root\data\byggt\karna.json", [Text.Encoding]::UTF8) | ConvertFrom-Json).varor
+$all = ([IO.File]::ReadAllText("$root\data\indata\livsmedelsverket.json", [Text.Encoding]::UTF8) | ConvertFrom-Json).livsmedel
 $byId = @{}; foreach ($x in $all) { $byId[[string]$x.id] = $x }
 $idx = @{}; foreach ($v in $k) { foreach ($x in $v.varianter) { $idx["$($v.vara)|$($x.etikett)"] = $x } }
 $inv = [Globalization.CultureInfo]::InvariantCulture
 $fel = 0; $sumE = 0; $sumD = 0
-foreach ($g in (Import-Csv "$root\data\$Fil" -Delimiter ';' -Encoding UTF8 | Group-Object ratt)) {
+foreach ($g in (Import-Csv "$root\data\test\$Fil" -Delimiter ';' -Encoding UTF8 | Group-Object ratt)) {
   $e = @{ kcal = 0; prot = 0; kolh = 0; fett = 0 }; $d = @{ kcal = 0; prot = 0; kolh = 0; fett = 0 }
   foreach ($r in $g.Group) {
     $f = [double]$r.gram / 100

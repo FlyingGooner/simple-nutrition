@@ -440,3 +440,5 @@ main .meals > .card + .card { margin-top: 0; }
 .set-gtitle { color: var(--fg); font-weight: 500; }
 main .set-group-wrap > .card + .card, main .set-group-wrap > .set-sec + .set-sec { margin-top: 10px; }
 .set-group-wrap[open] { padding-bottom: 4px; }
+.save-row { display: flex; justify-content: flex-end; margin-top: 8px; }
+.goal-row .weigh-save { flex: none; }

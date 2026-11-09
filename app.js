@@ -391,6 +391,31 @@ app.addEventListener('click', (ev) => {
       });
       return;
     }
+    // Spara-knappar i Inställningar (beslut 2026-11-10): kalorimål, protein/kolhydrater och Min plan sparas bara på knappen.
+    case 'goalsave': {
+      const raw = document.getElementById('g-kcal')?.value.trim() ?? '';
+      if (!raw) { setGoal(S.state, today(), { kcal: undefined }); persist(); render(); snackbar('Inget kalorimål från idag', null, null, 3000); return; }
+      const v = Math.round(parseNum(raw));
+      if (!(v >= 500 && v <= 10000)) { snackbar('Ange ett mål mellan 500 och 10 000 kcal, eller tomt för inget mål', null, null, 3000); return; }
+      setGoal(S.state, today(), { kcal: v }); persist(); render(); snackbar(`Kalorimål ${kcal(v)} kcal sparat från idag`, null, null, 3000);
+      return;
+    }
+    case 'macrosave': {
+      const patch = {};
+      for (const [k, max] of [['prot', 500], ['kolh', 1000]]) {
+        const raw = document.getElementById('g-' + k)?.value.trim() ?? '', v = Math.round(parseNum(raw));
+        if (raw && !(v >= 10 && v <= max)) { snackbar(`Ange 10–${max} g, eller tomt för av`, null, null, 3000); return; }
+        patch[k] = raw ? v : undefined;
+      }
+      setGoal(S.state, today(), patch); persist(); render(); snackbar('Målen sparade från idag', null, null, 3000);
+      return;
+    }
+    case 'plansave': {
+      const v = document.getElementById('plan-text')?.value ?? '';
+      S.state.settings.planText = v.replace(/[\u0000-\u0009\u000B-\u001F\u007F-\u009F‎‏‪-‮⁦-⁩]/g, '').trim().slice(0, 300);
+      persist(); render(); snackbar('Planen sparad', null, null, 2500);
+      return;
+    }
     case 'install':
       S.installPrompt?.prompt();
       S.installPrompt?.userChoice.finally(() => { S.installPrompt = null; render(); });
@@ -450,7 +475,6 @@ app.addEventListener('change', (ev) => {
       if (v) e.note = v; else delete e.note;
       persist(); return;
     }
-    case 'plan': S.state.settings.planText = t.value.replace(/[\u0000-\u0009\u000B-\u001F\u007F-\u009F‎‏‪-‮⁦-⁩]/g, '').trim().slice(0, 300); persist(); return;
     case 'threshold': S.state.settings.successThreshold = Number(t.value) / 100; persist(); return;
     case 'wgoal': {
       const k = t.dataset.val, v = Number(t.value);
@@ -461,21 +485,6 @@ app.addEventListener('change', (ev) => {
       const it = S.state.settings.workoutTypes.find((x) => x.id === t.dataset.id);
       if (it && (t.value === 'gym' || t.value === 'cardio')) it.kind = t.value;
       persist(); return;
-    }
-    case 'goalkcal': {
-      if (!t.value.trim()) { setGoal(S.state, today(), { kcal: undefined }); persist(); render(); snackbar('Inget kalorimål från idag', null, null, 3000); return; }
-      const v = Math.round(parseNum(t.value));
-      if (v >= 500 && v <= 10000) { setGoal(S.state, today(), { kcal: v }); persist(); render(); snackbar(`Kalorimål ${kcal(v)} kcal från idag`, null, null, 3000); }
-      else { t.value = goalFor(S.state, today()).kcal ? String(goalFor(S.state, today()).kcal) : ''; snackbar('Ange ett mål mellan 500 och 10 000 kcal, eller tomt för inget mål', null, null, 3000); }
-      return;
-    }
-    case 'goalmacro': {
-      const k = t.dataset.val, raw = t.value.trim(), v = Math.round(parseNum(raw)), max = k === 'prot' ? 500 : 1000;
-      if (k !== 'prot' && k !== 'kolh') return;
-      if (raw && !(v >= 10 && v <= max)) { t.value = goalFor(S.state, today())[k] ?? ''; snackbar(`Ange 10–${max} g, eller tomt för av`, null, null, 3000); return; }
-      setGoal(S.state, today(), { [k]: raw ? v : undefined });
-      for (const g of S.state.goals) if (g[k] === undefined) delete g[k];
-      persist(); render(); return;
     }
     case 'dname': if (S.dish) S.dish.name = t.value; return;
     case 'dport': if (S.dish) { S.dish.portions = t.value; render(); } return;
