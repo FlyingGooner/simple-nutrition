@@ -403,3 +403,6 @@ main .meals > .card + .card { margin-top: 0; }
 .over { background: var(--outline); }
 .cal-day.over { color: var(--surface); }
 .wk-table td .delta { font-weight: 400; }
+.meal-head { gap: 8px; }
+.meal-head .meal-name { flex: 1; }
+.meal-dish { min-height: 32px; min-width: 40px; padding: 0 6px; border: 0; border-radius: var(--r-md); background: var(--surface-container-high); font-size: .875rem; }

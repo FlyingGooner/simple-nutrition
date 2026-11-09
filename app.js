@@ -233,6 +233,17 @@ app.addEventListener('click', (ev) => {
     }
     // Rätter: editor
     case 'dnew': S.dish = newDraft(); render(); scrollTo(0, 0); document.getElementById('d-name')?.focus(); return;
+    // Spara en måltid som rätt: varorna (i gram) blir ingredienser i en ny rätt "per portion" som öppnas i editorn.
+    case 'mealdish': {
+      const posts = dayPosts().filter((p) => p.m === id), foods = posts.filter((p) => p.g != null).slice(0, 50);
+      if (!foods.length) return;
+      const meal = S.state.meals.find((x) => x.id === id);
+      S.dish = { ...newDraft(), batch: false, name: meal ? meal.name : '', items: foods.map((p) => ({ ref: p.ref, name: p.name, g: p.g, n: [...p.n] })) };
+      S.open = null; go('settings');
+      document.getElementById('d-name')?.select();
+      if (foods.length < posts.length) snackbar('Rätter i måltiden kan inte ingå i en ny rätt och togs inte med', null, null, 4000);
+      return;
+    }
     case 'dedit': { const d = S.state.dishes.find((x) => x.id === id); if (!d) return; S.dish = draftFrom(d); render(); scrollTo(0, 0); return; }
     case 'dcancel': S.dish = null; break;
     case 'dper': S.dish.batch = false; break;

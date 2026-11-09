@@ -17,6 +17,7 @@ Samma text finns i appen under **Inställningar → Hjälp och manual**. Hjälp 
 - Välj **Per portion** om receptet gäller en portion, eller **Hel sats** och antal portioner, t.ex. köttfärssås på 500 g nötfärs delat på 5.
 - Väg gärna hela den färdiga rätten och fyll i **färdig vikt** – då kan du logga i gram, det blir exaktast.
 - Logga under **Lägg till → Rätter**: portioner (½, 1, 2 …), andel av satsen (t.ex. 1/5) eller gram av färdig rätt.
+- **Spara en måltid som rätt:** tryck **+🍲** vid en måltid i Idag, t.ex. frukost med 100 g yoghurt och 100 g granola. Varorna blir ingredienser i en ny rätt – ge den ett namn och spara. Nästa gång loggar du den med ett tryck under Rätter.
 - Ändrar du en rätt senare påverkas inte dagar som redan är loggade.
 
 ## Egna produkter och sökord

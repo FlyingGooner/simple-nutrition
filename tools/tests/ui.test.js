@@ -174,6 +174,18 @@ T.test('ändrad rätt påverkar inte loggad dag', async () => {
   q('[data-act="dsave"]').click();
   T.eq(stored().log['2026-11-09'].at(-1).n[0], n0);
 });
+T.test('spara måltid som rätt (+🍲) öppnar editorn med varorna', async () => {
+  await tab('today');
+  const btn = q('[data-act="mealdish"]'), mid = btn.dataset.id, mname = stored().meals.find((m) => m.id === mid).name;
+  const foods = stored().log['2026-11-09'].filter((p) => p.m === mid && p.g != null);
+  btn.click(); await T.wait();
+  T.eq(location.hash, '#settings');
+  T.eq([q('#d-name').value, app.querySelectorAll('[data-act="dig"]').length], [mname, foods.length]);
+  q('#d-name').value = 'Min frukost'; q('#d-name').dispatchEvent(new Event('input', { bubbles: true }));
+  q('[data-act="dsave"]').click();
+  const d = stored().dishes.find((x) => x.name === 'Min frukost');
+  T.eq([d.portions, d.items.map((i) => i.g)], [1, foods.map((p) => p.g)]);
+});
 T.test('egen produkt sparas och hittas i sökningen', async () => {
   const set = (i, v) => { q('#' + i).value = v; };
   set('f-name', 'Proteinbar typ X'); set('f-kcal', '360'); set('f-p', '33'); set('f-k', '30'); set('f-f', '12'); set('f-unit', 'st'); set('f-ug', '55');

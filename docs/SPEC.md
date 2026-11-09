@@ -59,6 +59,7 @@ Samma struktur som follow-diet-tracker (beslut 2026-11-09): bottenmeny med fem f
   - Rätter: välj rätt → andel (¼, ⅓, ½, 1 portion, eller gram av färdig vikt om den finns).
   - "Spara" loggar och stänger; bladet kommer ihåg senaste flik.
 - Tryck på en post: ändra mängd, flytta till annan måltid, ta bort (snackbar med Ångra).
+- **Spara måltid som rätt** (+🍲 i måltidens rubrik, när den har varor i gram): varorna blir ingredienser i en ny rätt "per portion" (namn = måltidens), som öppnas i rätteditorn under Inställningar för namn och sparande. Rätt-poster tas inte med (rätter i rätter stöds inte).
 - **Vikt** är ett hopfällt kort längst ner ("Vikt idag (valfritt)"), Spara fäller ihop det. Morgonvikt, en decimal.
 - **Kopiera från igår** (knapp när dagen är tom) och **Rensa dagen** längst ner (när något är loggat), med Ångra.
 - Svep byter dag; märket "Idag" / "Till idag" som i diet. Fliken Idag hoppar alltid till idag.

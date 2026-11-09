@@ -8,4 +8,4 @@ Mobil-först PWA. Spec: `docs/SPEC.md` (läs bara berört avsnitt). Arbetsflöde
 - UI på svenska. Kod och variabelnamn på engelska. Nyckelfärg `#2f697d`.
 - Ny fil som appen behöver → `ASSETS` i `sw.js`. Version bara i `version.js` (sätts av `release.ps1`). Relativa sökvägar.
 - Har appen användardata: bygg kortet Data enligt `../STANDARD.md` punkt 5 (undantag U5) – kopiera mönstret från budget-buddy (`packData`/`unpackData`/`exportText`/`importText` i `store.js`, `backup.js`). **Radera all data** (`#reset`) flyttas då sist i kortet Data. Ritar appen om vid `visibilitychange`: hoppa över den omritningen efter tryck på filfältet (se `follow-diet-tracker/app.js`, `filePick`).
-- Manualen: `docs/MANUAL.md` och Hjälp-kortet har samma text – ändra båda.
+- Manualen: skriv bara i `docs/MANUAL.md`; Hjälp i `index.html` byggs från den med `tools/build-help.ps1`.
