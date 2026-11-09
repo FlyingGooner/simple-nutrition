@@ -1,0 +1,12 @@
+{
+  "sn.data": {
+    "version": 1,
+    "goals": [{ "from": "2000-01-01", "kcal": 2000 }],
+    "meals": [{ "id": "m1", "name": "Frukost" }, { "id": "m2", "name": "Lunch" }, { "id": "m3", "name": "Mellanmål" }, { "id": "m4", "name": "Middag" }],
+    "log": {
+      "2026-11-03": [{ "id": "a1", "m": "m1", "ref": "l:151", "name": "Mjölk, Lätt 0,5 %", "g": 206, "u": ["dl", 2], "n": [39, 3.6, 4.8, 0.5] }],
+      "2026-11-08": [{ "id": "a2", "m": "m2", "ref": "l:1", "name": "<img src=x onerror=alert(1)>", "g": 100, "n": [500, 10, 50, 20] }]
+    },
+    "weights": { "2026-11-08": 84.2 }
+  }
+}

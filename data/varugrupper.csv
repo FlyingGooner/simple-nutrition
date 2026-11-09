@@ -1,0 +1,196 @@
+vara;sokord;etikett;exempel;lmv_namn
+Mjölk;mjölk,lättmjölk,mellanmjölk,standardmjölk;Lätt 0,5 %;;Lättmjölk fett 0,5% berikad
+Mjölk;;Mellan 1,5 %;;Mellanmjölk fett 1,5% berikad
+Mjölk;;Standard 3 %;;Mjölk fett 3% berikad
+Filmjölk;fil,filmjölk,lättfil,mellanfil;Lätt 0,5 %;;Lättfil fett 0,5% berikad
+Filmjölk;;Mellan 1,5 %;;Mellanfil fett 1,5% berikad
+Filmjölk;;Standard 3 %;;Filmjölk fett 3% berikad
+Yoghurt;yoghurt,lättyoghurt,turkisk yoghurt,grekisk yoghurt;Lätt 0,5 %;;Yoghurt naturell lätt fett 0,5% berikad
+Yoghurt;;Standard 3 %;;Yoghurt naturell fett 3% berikad
+Grädde;grädde,matlagningsgrädde,vispgrädde,mellangrädde;Matlagning 15 %;;Matlagningsgrädde fett 15%
+Grädde;;Mellan 27 %;;Mellangrädde fett 27%
+Grädde;;Visp 40 %;;Vispgrädde fett 40%
+Crème fraiche;creme fraiche,crème fraiche,fraiche,gräddfil;Gräddfil 12 %;;Gräddfil fett 12%
+Crème fraiche;;Lätt 13 %;;Crème fraiche lätt fett 13%
+Crème fraiche;;Normal 34 %;;Crème fraiche fett 34%
+Kvarg;kvarg;Mager 0,2 %;;Kvarg naturell fett 0,2%
+Kvarg;;Fet 10 %;;Kvarg färskost fett 10%
+Keso;keso,cottage cheese,grynig färskost;Mager 1,5 %;;=1,5|Färskost cottage cheese naturell fett 4%
+Keso;;Normal 4 %;;Färskost cottage cheese naturell fett 4%
+Färskost;färskost,cream cheese;Lätt 5 %;;Färskost cream cheese extra light fett 5%
+Färskost;;Mellan 15 %;;Färskost cream cheese lätt fett 15%
+Färskost;;Normal 27 %;;Färskost cream cheese fett 27%
+Ost;ost,hårdost,hushållsost,präst,herrgård,grevé,mozzarella;Lätt 17 %;;Ost hårdost fett 17%
+Ost;;Normal 28 %;;Ost hårdost fett 28%
+Ost;;Fet 31 %;;Ost hårdost fett 31%
+Ost;;Mozzarella;;~^Ost mozzarella
+Smörgåsfett;smör,smörgåsfett,margarin,bordsmargarin,matfett,lättmargarin;Lätt 40 %;typ Bregott mindre;Matfettsblandning fett 40% berikad typ Bregott mindre
+Smörgåsfett;;Mellan 60 %;;Matfettsblandning fett 60% berikad
+Smörgåsfett;;Normal 75 %;typ Bregott;Matfettsblandning fett 75% berikad
+Smörgåsfett;;Smör 80 %;;Smör fett 80%
+Ägg;ägg;Rått/kokt;;Ägg rått
+Ägg;;Stekt;;Ägg stekt
+Nötfärs;nötfärs,köttfärs,färs;Mager 5 %;;=5|Nöt innanlår rå|Nöt färs rå fett 10%
+Nötfärs;;Normal 12 %;;=12|Nöt färs rå fett 10%|Nöt färs rå fett 15%
+Blandfärs;blandfärs,köttfärs,färs;Nöt 70 / gris 30;;Blandfärs rå nöt 70% gris 30%
+Blandfärs;;Nöt 50 / gris 50;;Blandfärs rå nöt 50% gris 50%
+Fläskfärs;fläskfärs,grisfärs,färs;Mager 10 %;;=10|Gris färs rå fett 8%|Gris färs rå fett 15%
+Fläskfärs;;Normal 15 %;;Gris färs rå fett 15%
+Kyckling;kyckling,kycklingfilé,kycklinglår,kycklingbröst;Filé;;~^Kyckling bröstfilé rå u\. skinn
+Kyckling;;Lårfilé (utan skinn);;~^Kyckling lår.* rå u\. skinn
+Kyckling;;Kött utan skinn;;Kyckling kött rå u. skinn
+Kyckling;;Kött med skinn;;Kyckling kött rå m. skinn
+Nötkött;nötkött,biff,entrecote,högrev,ryggbiff,oxfilé;Magert (innanlår, filé);;~^Nöt (innanlår|ytterfilé|filé).* rå
+Nötkött;;Ryggbiff/oxfilé;;Nöt ryggbiff rå
+Nötkött;;Högrev;;=12|Nöt högrev rå fett bortskuret
+Nötkött;;Entrecôte (med fettkant);;=15|Nöt entrecôte rå
+Fläskkött;fläsk,fläskkött,karré,kotlett,fläskfilé;Fläskfilé;;Gris fläskfilé rå
+Fläskkött;;Kotlett/karré (med fettkant);;Gris fläskkotlett rå fettkant 5 mm
+Fläskkött;;Sidfläsk;;~^Gris sidfläsk.* rå
+Bacon;bacon;Rått;;Gris bacon rå
+Bacon;;Stekt;;Gris bacon stekt
+Korv;korv,falukorv,prinskorv,grillkorv,wienerkorv,chorizo;Falukorv;;~^Korv falu
+Korv;;Grillkorv/wiener;;~^Korv (grill|wiener)
+Korv;;Prinskorv;;~^Korv prins
+Pålägg kött;skinka,kalkon,pålägg,rökt skinka,kalkonbröst;Skinka;;Gris skinka skivad rökt fett 1-3%
+Pålägg kött;;Kalkon;;~^Kalkon.*(pålägg|rökt|bröst)
+Lax;lax,laxfilé;Rå;;Lax odlad Norge fjordlax rå
+Lax;;Rökt/gravad;;~^Lax (kallrökt|gravad)
+Vit fisk;torsk,sej,kolja,vit fisk,fiskfilé;Torsk;;~^Torsk rå
+Vit fisk;;Sej;;~^Sej rå
+Tonfisk;tonfisk;I vatten;;~^Tonfisk.*vatten
+Tonfisk;;I olja;;~^Tonfisk.*olja
+Räkor;räkor,räka,scampi;Skalade;;~^Räk.*(kokt|skalad)
+Bröd;bröd,limpa,formfranska,baguette,fullkornsbröd,lingongrova,kavring,tortilla,fralla;Ljust;formfranska, baguette;Bröd vitt fibrer ca 5% typ formfranska
+Bröd;;Grovt/fullkorn;vete-råg;Bröd fullkorn vete råg fibrer ca 6%
+Bröd;;Mörkt, sött;kavring, lingongrova;Bröd fullkorn rågsikt fibrer ca 7% typ kavring
+Bröd;;Tortilla;;Bröd vitt vetetortilla
+Knäckebröd;knäcke,knäckebröd,wasa,hårt bröd;Fullkorn råg;;~^Hårt bröd fullkorn råg fibrer ca 14%
+Havregryn;havregryn,havre,gröt;Okokt;;Havregryn fullkorn
+Havregryn;;Gröt (kokt på vatten);;Havregrynsgröt fullkorn
+Flingor;flingor,müsli,granola,cornflakes;Müsli osötad;;~^Frukostflingor flingblandning fullkorn typ basmüsli
+Flingor;;Granola;;Frukostflingor granola m. frukt nötter
+Flingor;;Cornflakes;;~^Frukostflingor majs
+Ris;ris,jasminris,basmatiris,fullkornsris;Okokt;jasmin/basmati;Ris jasmin okokt
+Ris;;Kokt;;Ris jasmin kokt m. salt
+Pasta;pasta,makaroner,spagetti,spaghetti,penne;Okokt;;Pasta okokt
+Pasta;;Kokt;;Pasta kokt u. salt
+Pasta;;Fullkorn okokt;;Pasta fullkorn okokt
+Potatis;potatis,pommes,potatismos;Rå;;Potatis höst rå
+Potatis;;Kokt;;Potatis höst kokt m. salt
+Potatis;;Ugnspommes;;~^Pommes frites.*ugn
+Vetemjöl;mjöl,vetemjöl,dinkel;Vetemjöl;;Vetemjöl
+Bönor och linser;bönor,linser,kikärtor,kidneybönor,svarta bönor;Kikärtor kokta;;~^Kikärt.*(kokt|konserv)
+Bönor och linser;;Kidneybönor kokta;;Kidneybönor röda bönor konserv. u. lag
+Bönor och linser;;Röda linser kokta;;Röda linser torkade kokta m. salt
+Tomat;tomat,krossade tomater,tomatpuré,körsbärstomat;Färsk;;Tomat
+Tomat;;Krossade;;~^Tomat.*krossad
+Tomat;;Puré;;~^Tomatpuré
+Gurka;gurka;Färsk;;Gurka
+Paprika;paprika;Färsk;;Paprika röd
+Lök;lök,gul lök,rödlök;Gul lök;;Lök gul
+Morot;morot,morötter;Rå;;~^Morot( rå)?$
+Broccoli;broccoli;Fryst;;Broccoli frysvara
+Sallad;sallad,isbergssallad,ruccola,spenat;Isberg;;Isbergssallat
+Sallad;;Spenat;;Spenat färsk
+Avokado;avokado;Färsk;;~^Avokado
+Banan;banan;Färsk;;~^Banan
+Äpple;äpple;Färskt;;Äpple m. skal
+Apelsin;apelsin,clementin,mandarin;Apelsin;;~^Apelsin
+Bär;bär,blåbär,hallon,jordgubbar,lingon;Blåbär;;~^Blåbär
+Bär;;Hallon;;~^Hallon
+Bär;;Jordgubbar;;~^Jordgubb
+Olja;olja,rapsolja,olivolja,matolja;Rapsolja;;~^Rapsolja
+Olja;;Olivolja;;~^Olivolja
+Nötter;nötter,mandel,cashew,jordnötter,valnötter;Cashew;;~^Cashew
+Nötter;;Jordnötter;;~^Jordnöt.*(rostad|osaltad)
+Jordnötssmör;jordnötssmör,peanut butter;Normal;;~^Jordnötssmör
+Socker och honung;socker,honung,sirap;Socker;;Socker
+Socker och honung;;Honung;;Honung
+Havredryck;havredryck,havremjölk,oatly,växtdryck;Normal 1,5 %;typ Oatly;Havredryck fett 1,5% berikad
+Majonnäs;majonnäs,majo,aioli;Normal 80 %;;Majonnäs fett 80%
+Majonnäs;;Lätt 30 %;;Majonnäs lätt fett 30%
+Halloumi;halloumi;Normal;;~^(Ost )?halloumi
+Parmesan;parmesan,parmigiano;Normal;;Ost hårdost parmesan fett 30% typ Parmiggiano Reggiano
+Turkisk yoghurt;turkisk yoghurt,grekisk yoghurt;Normal 10 %;;~^Yoghurt.*(turkisk|grekisk|fett 10%)
+Kalkon;kalkon,kalkonfilé,kalkonbröst;Filé rå;;~^Kalkon.*(filé|bröst).* rå
+Lamm;lamm,lammkött,lammfärs;Färs;;Lamm färs rå fett 20%
+Lamm;;Stek/kotlett;;~^Lamm (stek|kotlett).* rå
+Vilt;älg,älgfärs,vilt,rådjur,hjort;Älgfärs;;Älg färs rå
+Strömming;strömming,sill,makrill;Strömming;;Strömming rå
+Strömming;;Inlagd sill;;Sill inlagd u. lag
+Strömming;;Makrill i tomat;;~^Makrill.*tomat
+Fiskpinnar;fiskpinnar,fiskbullar,panerad fisk;Ugnsstekta;;Fiskpinnar ugnsstekta
+Kycklingkorv;kycklingkorv;Normal;;~^Korv.*kyckling
+Kebab;kebab,gyros,kebabkött;Kebabkött;;~^(Kebab|Gyros)
+Vegoprotein;vegofärs,sojafärs,tofu,quorn,mykoprotein,vego;Sojafärs;;~^Sojaprotein färs(?!.*tacokryddad)
+Vegoprotein;;Tofu;;~^Tofu
+Vegoprotein;;Mykoprotein;;~^Mykoprotein
+Grönsaksbiffar;grönsaksbiff,vegobiff,falafel;Grönsaksbiff;;Grönsaksbiff stekt veg.
+Grönsaksbiffar;;Falafel;;Falafel kikärtskroketter stekta
+Bröd;;Hamburgerbröd;;Hamburgerbröd
+Korvbröd;korvbröd,fralla,frallor,baguette,småfranska;Korvbröd;;~^(Korvbröd|Bröd.*korvbröd)
+Korvbröd;;Fralla;;~^(Småfranska|Fralla|Bröd vitt.*fralla)
+Nudlar;nudlar,äggnudlar,glasnudlar,risnudlar;Okokta;;Nudlar äggnudlar okokta
+Nudlar;;Kokta;;Nudlar äggnudlar kokta m. salt
+Couscous och bulgur;couscous,bulgur,quinoa;Couscous okokt;;~^Couscous(?!.*kokt)
+Couscous och bulgur;;Bulgur okokt;;~^Bulgur(?!.*kokt)
+Couscous och bulgur;;Quinoa okokt;;Mjölmålla quinoa okokt
+Ströbröd;ströbröd,panko;Normal;;~^Ströbröd
+Rågmjöl;rågmjöl,rågsikt,majsstärkelse,maizena;Rågmjöl;;Rågmjöl fullkorn
+Rågmjöl;;Majsstärkelse;;~^(Majsstärkelse|Maizena|Stärkelse majs)
+Riskakor och skorpor;riskakor,skorpor;Riskaka;;~^Riskaka
+Riskakor och skorpor;;Skorpor;;~^Skorpor
+Kål;vitkål,rödkål,kål,spetskål;Vitkål;;Vitkål
+Kål;;Rödkål;;~^Rödkål$
+Svamp;champinjoner,svamp,kantareller;Champinjon;;Champinjon
+Blomkål;blomkål;Färsk;;Blomkål
+Zucchini och aubergine;zucchini,squash,aubergine;Zucchini;;~^(Zucchini|Squash)
+Zucchini och aubergine;;Aubergine;;~^Aubergine
+Majs och ärtor;majs,ärtor,gröna ärtor,haricots verts,sockerärtor;Majs;;Majskorn konserv. u. lag
+Majs och ärtor;;Gröna ärtor frysta;;~^Ärt(or)? gröna.*frys|^Gröna ärtor.*frys
+Majs och ärtor;;Haricots verts;;Gröna bönor frysvara
+Rotfrukter;sötpotatis,rotselleri,rödbetor,palsternacka,kålrot;Sötpotatis;;~^Sötpotatis
+Rotfrukter;;Rödbetor;;Rödbeta
+Rotfrukter;;Rotselleri;;~^(Rotselleri|Selleri rot)
+Purjo och vitlök;purjolök,purjo,vitlök;Purjolök;;Purjolök
+Purjo och vitlök;;Vitlök;;~^Vitlök
+Bönor och linser;;Svarta bönor;;~^(Svarta bönor|Bönor svarta)
+Frukt;päron,druvor,kiwi,mango,ananas,melon,citron,lime;Päron;;~^Päron
+Frukt;;Druvor;;~^Vindruvor|^Druvor
+Frukt;;Kiwi;;~^Kiwi
+Frukt;;Mango;;Mango
+Frukt;;Ananas;;~^Ananas(?!.*konserv)
+Torkad frukt;russin,dadlar,torkade aprikoser,torkad frukt;Russin;;~^Russin
+Torkad frukt;;Dadlar;;~^Dad(el|lar)
+Juice;juice,apelsinjuice,äppeljuice;Apelsinjuice;;~^Apelsinjuice
+Juice;;Äppeljuice;;~^Äppeljuice
+Nötter;;Mandel;;Sötmandel
+Nötter;;Valnötter;;~^Valnöt
+Frön;solroskärnor,chiafrön,sesamfrön,pumpakärnor,linfrö;Solroskärnor;;Solrosfrö
+Frön;;Chiafrön;;~^Chia
+Frön;;Sesamfrön;;Sesamfrö m. skal
+Kokosmjölk;kokosmjölk,kokosgrädde;Normal;;~^Kokosmjölk
+Ketchup;ketchup;Normal;;Ketchup
+Såser;sojasås,senap,sweet chili,pesto;Sojasås;;Sojasås
+Såser;;Senap;;Senap svensk
+Såser;;Sweet chili;;~^(Sweet chili|Chilisås)
+Såser;;Pesto;;~^Pesto
+Sylt;sylt,marmelad,lingonsylt;Lingonsylt;;Lingonsylt
+Choklad;choklad,mörk choklad,mjölkchoklad;Mjölkchoklad;;~^Mjölkchoklad$|^Choklad mjölk
+Choklad;;Mörk choklad;;~^(Mörk choklad|Choklad mörk)
+Godis;godis,lösgodis,smågodis,gelégodis;Gelégodis;;Gelégodis
+Godis;;Karameller;;Karameller
+Chips;chips,potatischips,ostbågar;Potatischips;;~^Chips potatis|^Potatischips
+Chips;;Ostbågar;;~^(Ostbågar|Ostkrok)
+Glass;glass,vaniljglass,gräddglass;Gräddglass;;~^Glass.*grädd
+Glass;;Mjukglass;;~^Glass mjuk|^Mjukglass
+Kaffe och te;kaffe,te,latte,cappuccino;Bryggkaffe;;~^Kaffe bryggt|^Kaffe.*bryggkaffe
+Kaffe och te;;Latte;;~^(Kaffe latte|Caffe latte|Kaffedrink latte)
+Läsk;läsk,cola,saft;Läsk med socker;;~^Läsk(?!.*(light|sötningsm))
+Läsk;;Läsk light;;~^Läsk.*(light|sötningsm)
+Läsk;;Saft utspädd;;~^Saft.*(drickf|utspädd)
+Öl och vin;öl,vin,rödvin,vitt vin,cider;Starköl 5 %;;Öl starköl el. exportöl vol. % 5,4
+Öl och vin;;Folköl 3,5 %;;Öl pilsner folköl vol. % 3,5
+Öl och vin;;Rött vin;;Vin rött vol. % 14
+Öl och vin;;Vitt vin;;Vin vitt vol. % 12

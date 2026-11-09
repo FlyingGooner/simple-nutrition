@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#f5fbf9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1415" media="(prefers-color-scheme: dark)">
+  <title>Simple nutrition</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="status" role="status" aria-live="polite"></div>
+  <header class="topbar">
+    <span class="brand">Simple nutrition</span>
+    <span id="version" class="version" aria-label="Appversion"></span>
+  </header>
+  <main id="app"></main>
+  <nav class="tabbar" aria-label="Vyer">
+    <a class="tab" href="#today" data-view="today"><span aria-hidden="true">📅</span>Idag</a>
+    <a class="tab" href="#week" data-view="week"><span aria-hidden="true">📊</span>Vecka</a>
+    <a class="tab" href="#trend" data-view="trend"><span aria-hidden="true">📈</span>Trend</a>
+    <a class="tab" href="#history" data-view="history"><span aria-hidden="true">🗓️</span>Historik</a>
+    <a class="tab" href="#settings" data-view="settings"><span aria-hidden="true">⚙️</span>Inst.</a>
+  </nav>
+  <!-- In-app manual (Inställningar → Hjälp), cloned by helpCard() in views/settings.js. Same text as docs/MANUAL.md – change both together. -->
+  <template id="help-tpl">
+    <section class="card help">
+      <h2>Hjälp</h2>
+      <details><summary>Kom igång</summary>
+        <p>Sätt ditt kalorimål under Inställningar → Kalorimål (2 000 kcal från start). Måltiderna (Frukost, Lunch, Mellanmål, Middag) kan ändras, flyttas och tas bort där.</p></details>
+      <details><summary>Logga mat</summary>
+        <p>Tryck + Lägg till under en måltid i Idag. Under Varor söker du, t.ex. mjölk. Välj variant (Lätt, Mellan …) och mängd i gram eller i mått som dl eller st.</p>
+        <p>Mått är ungefärliga (≈) – väg gärna när det spelar roll. Visa fler söker i hela Livsmedelsverkets lista.</p>
+        <p>Under Senaste loggar du något du ätit förut med ett tryck.</p>
+        <p>Tryck på en post för att ändra mängd, flytta den till en annan måltid eller ta bort den.</p></details>
+      <details><summary>Byta dag</summary>
+        <p>Använd ◀ ▶ eller svep åt vänster/höger. Tryck på datumet, ↩ Till idag eller fliken Idag för att gå tillbaka till idag.</p>
+        <p>🗑 Rensa dagen tar bort dagens poster och vikt. Ångra finns några sekunder efteråt.</p></details>
+      <details><summary>Vikt</summary>
+        <p>Fyll i vikten under Vikt idag, gärna på morgonen. Trenden räknas på 7-dagars medel, så enskilda dagar spelar liten roll.</p></details>
+      <details><summary>Vecka</summary>
+        <p>Snitt kcal per loggad dag, hur många dagar som låg inom målet (högst 5 % över) och en stapel per dag med mållinje. Tryck på en dag för att öppna den.</p></details>
+      <details><summary>Backup och flytt</summary>
+        <p>Under Data: tryck Spara backup-fil. Filen heter t.ex. simple-nutrition-2026-11-09.txt och hamnar bland hämtade filer. Gör det då och då.</p>
+        <p>För att läsa tillbaka: tryck Läs in backup-fil, kontrollera sammanfattningen och tryck Ersätt. All nuvarande data ersätts – Ångra finns direkt efteråt.</p>
+        <p>Går det inte att spara eller välja filen: öppna Visa som text och kopiera eller klistra in.</p>
+        <p>Filen innehåller all din data och är okrypterad. Dela den bara med den du litar på.</p></details>
+      <details><summary>Installera och offline</summary>
+        <p>Android (Chrome): menyn ⋮ → Installera app. iPhone (Safari): Dela → Lägg till på hemskärmen. Installerad fungerar appen helt utan nät.</p></details>
+      <details><summary>Integritet och källa</summary>
+        <p>Appen gör inga anrop – ingen server, ingen analys, inget konto. All data finns bara i den här webbläsaren.</p>
+        <p>Näringsvärdena kommer från Livsmedelsverkets livsmedelsdatabas och finns inbyggda i appen.</p></details>
+    </section>
+  </template>
+  <dialog id="confirm-dialog" aria-labelledby="cd-title">
+    <form method="dialog">
+      <h2 id="cd-title">Radera all data?</h2>
+      <p class="muted">All loggad mat, vikter och inställningar tas bort från den här enheten. Det går inte att ångra – spara en backup-fil först om du vill kunna få tillbaka den.</p>
+      <div class="dlg-actions">
+        <button type="submit" class="btn-text" value="cancel">Avbryt</button>
+        <button type="submit" class="btn-danger" value="ok" id="cd-ok">Radera</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="import-dialog" aria-labelledby="imp-title">
+    <form method="dialog">
+      <h2 id="imp-title">Ersätta all data?</h2>
+      <p id="imp-sum"></p>
+      <p class="muted">All nuvarande data i appen ersätts. Du kan ångra direkt efteråt.</p>
+      <div class="dlg-actions">
+        <button type="submit" class="btn-text" value="cancel">Avbryt</button>
+        <button type="submit" class="btn-filled" value="ok" id="imp-ok">Ersätt</button>
+      </div>
+    </form>
+  </dialog>
+  <div id="snackbar" role="status" aria-live="polite" hidden><span id="snack-text"></span><button type="button" id="snack-action"></button></div>
+  <script src="version.js"></script>
+  <script src="backup.js"></script>
+  <script src="data/foods.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
