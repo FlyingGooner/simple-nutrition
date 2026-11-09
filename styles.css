@@ -1,11 +1,11 @@
 /* Bara mobil (beslut 2026-11-09): en kolumn, bottenmeny; bredare skärmar visar samma vy centrerad. */
-/* Material 3 – shared creator style (see ../STIL.md). Seed colour: #2f697d (petrol). */
+/* Material 3 – shared creator style (see ../STIL.md). Seed colour: #2f7d5b (grön, som follow-diet-tracker – beslut 2026-11-09). */
 :root {
   /* M3 roles */
-  --primary: #1f576c; --on-primary: #ffffff;
-  --primary-container: #a8e6f2; --on-primary-container: #001f29;
-  --surface: #f5fbf9; --surface-container: #e9efed; --surface-container-high: #e3eae8;
-  --on-surface: #171c1d; --on-surface-variant: #404949; --outline: #707979; --outline-variant: #c0c9c7;
+  --primary: #1f6c4c; --on-primary: #ffffff;
+  --primary-container: #a8f2cb; --on-primary-container: #002113;
+  --surface: #f5fbf5; --surface-container: #e9efe9; --surface-container-high: #e3eae3;
+  --on-surface: #171d1a; --on-surface-variant: #404943; --outline: #707973; --outline-variant: #c0c9c1;
   /* Legacy names used across the app, mapped onto roles */
   --bg: var(--surface); --card: var(--surface-container); --fg: var(--on-surface); --muted: var(--on-surface-variant);
   --line: var(--outline-variant); --accent: var(--primary); --accent-soft: var(--primary-container);
@@ -17,10 +17,10 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary: #8cc8d5; --on-primary: #003545;
-    --primary-container: #004d61; --on-primary-container: #a8e6f2;
-    --surface: #0f1415; --surface-container: #1b2021; --surface-container-high: #252a2b;
-    --on-surface: #dee4e2; --on-surface-variant: #c0c9c7; --outline: #8a9392; --outline-variant: #404949;
+    --primary: #8cd5b0; --on-primary: #003824;
+    --primary-container: #005237; --on-primary-container: #a8f2cb;
+    --surface: #0f1512; --surface-container: #1b211e; --surface-container-high: #252b28;
+    --on-surface: #dee4de; --on-surface-variant: #c0c9c1; --outline: #8a938c; --outline-variant: #404943;
     --ok: #8cd5b0; --dev: #ffb95c; --cheat: #ffb1c3; --skip: #8a938c;
   }
 }
@@ -406,3 +406,37 @@ main .meals > .card + .card { margin-top: 0; }
 .meal-head { gap: 8px; }
 .meal-head .meal-name { flex: 1; }
 .meal-dish { min-height: 32px; min-width: 40px; padding: 0 6px; border: 0; border-radius: var(--r-md); background: var(--surface-container-high); font-size: .875rem; }
+
+/* Vanor i fokus (beslut 2026-11-09): utfall per måltid som i follow-diet-tracker, maten hopfälld under */
+.hab { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 6px 0 4px; }
+.hab-b { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; border: 0; border-radius: var(--r-md); background: var(--surface-container-high); font-size: 1.15rem; transition: transform .1s; }
+.hab-b small { font-size: .75rem; font-weight: 500; color: var(--muted); }
+.hab-b:active { transform: scale(.96); }
+.hab-b.on { box-shadow: inset 0 0 0 2px currentColor; }
+.hab-b.on small { color: inherit; }
+.hab-b.oc-followed.on { color: var(--ok); background: color-mix(in srgb, var(--ok) 18%, var(--card)); }
+.hab-b.oc-cheat.on { color: var(--cheat); background: color-mix(in srgb, var(--cheat) 18%, var(--card)); }
+.hab-b.oc-skipped.on { color: var(--skip); background: color-mix(in srgb, var(--skip) 18%, var(--card)); }
+.hab-chips { margin: 6px 0 4px; }
+.hab-note { width: 100%; min-height: 40px; margin: 4px 0; padding: 0 12px; border: 0; border-bottom: 1px solid var(--outline); border-radius: var(--r-sm) var(--r-sm) 0 0; background: var(--surface-container-high); color: var(--fg); font-size: .9375rem; }
+.meal { padding: 8px 14px 4px; }
+.meal-food { border-top: 1px solid var(--line); margin-top: 6px; }
+.meal-food > summary { display: flex; align-items: center; gap: 8px; min-height: 40px; cursor: pointer; list-style: none; font-size: .875rem; color: var(--muted); }
+.meal-food > summary::-webkit-details-marker { display: none; }
+.meal-food > summary::before { content: "▸"; transition: transform .15s; }
+.meal-food[open] > summary::before { transform: rotate(90deg); }
+.meal-food > summary .meal-kcal { margin-left: auto; }
+.meal-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-bottom: 4px; }
+.meal-foot .meal-dish { font-size: .8125rem; padding: 0 10px; }
+.extra-card .meal-head { gap: 8px; }
+.extra-card .meal-head .icon { margin-left: auto; }
+.sum-card { padding: 8px 14px; }
+.sum-big strong { font-size: 1.25rem; }
+.set-group-wrap { margin-top: 10px; }
+.set-group-wrap > summary.set-group { display: flex; align-items: center; gap: 8px; min-height: 48px; margin: 0; padding: 0 4px; cursor: pointer; list-style: none; font-size: .875rem; }
+.set-group-wrap > summary::-webkit-details-marker { display: none; }
+.set-group-wrap > summary::before { content: "▸"; color: var(--muted); transition: transform .15s; }
+.set-group-wrap[open] > summary::before { transform: rotate(90deg); }
+.set-gtitle { color: var(--fg); font-weight: 500; }
+main .set-group-wrap > .card + .card, main .set-group-wrap > .set-sec + .set-sec { margin-top: 8px; }
+.set-group-wrap[open] { padding-bottom: 4px; }

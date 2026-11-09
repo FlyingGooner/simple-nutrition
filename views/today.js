@@ -1,7 +1,8 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
-import { sumN, postN, goalFor, addDays } from '../store.js';
-import { today, S, el, svg, stepper, kcal, fmtNum, dateTitle, amountText, mealName } from '../ui.js';
+import { sumN, postN, goalFor, addDays, habitDay, habitStreak } from '../store.js';
+import { today, S, setOpen, el, svg, stepper, kcal, fmtNum, pct, dateTitle, amountText, mealName } from '../ui.js';
 import { viewAdd } from './add.js';
+import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
 
 export const dayPosts = () => S.state.log[S.current] || [];
 
@@ -42,13 +43,20 @@ function postRow(p) {
 
 function mealCard(m, posts) {
   const total = posts.reduce((a, p) => a + postN(p)[0], 0);
-  return el('section', { class: 'card meal' + (posts.length ? '' : ' empty'), 'aria-label': m.name },
-    el('div', { class: 'meal-head' },
-      el('span', { class: 'meal-name', text: m.name }),
-      posts.some((p) => p.g != null) ? el('button', { class: 'meal-dish', 'data-act': 'mealdish', 'data-id': m.id, 'aria-label': `Spara ${m.name} som rätt`, title: 'Spara som rätt', text: '+🍲' }) : null,
-      posts.length ? el('span', { class: 'meal-kcal', text: kcal(total) }) : null),
-    posts.length ? el('ul', { class: 'posts' }, posts.map(postRow)) : null,
-    m.id === '_other' ? null : el('button', { class: 'link add-btn', 'data-act': 'addopen', 'data-id': m.id, 'aria-label': `Lägg till i ${m.name}`, text: '+ Lägg till' }));
+  // Vanor i fokus (beslut 2026-11-09): ✅ 🍰 ⏭️ först, maten och kcal som stöd under.
+  // Maten är en hopfälld underdel av måltiden: "🍽 Mat · 420 kcal" (öppen-läget sparas i setOpen via data-sec).
+  const other = m.id === '_other', sec = 'food-' + m.id;
+  const open = setOpen.has(sec) || posts.some((p) => p.id === S.open);
+  return el('section', { class: 'card meal', 'aria-label': m.name },
+    el('div', { class: 'meal-head' }, el('span', { class: 'meal-name', text: m.name })),
+    other ? null : outcomeRow(m.id),
+    other ? null : habitDetails(m.id),
+    el('details', { class: 'meal-food', 'data-sec': sec, open },
+      el('summary', {}, el('span', { text: '🍽 Mat' }), el('span', { class: 'meal-kcal', text: posts.length ? `${kcal(total)} kcal` : 'Inget loggat' })),
+      posts.length ? el('ul', { class: 'posts' }, posts.map(postRow)) : null,
+      other ? null : el('div', { class: 'meal-foot' },
+        el('button', { class: 'link add-btn', 'data-act': 'addopen', 'data-id': m.id, 'aria-label': `Lägg till mat i ${m.name}`, text: '+ Lägg till mat' }),
+        posts.some((p) => p.g != null) ? el('button', { class: 'meal-dish', 'data-act': 'mealdish', 'data-id': m.id, 'aria-label': `Spara ${m.name} som rätt`, title: 'Spara som rätt', text: '+🍲 Spara som rätt' }) : null)));
 }
 
 function weightCard() {
@@ -67,18 +75,28 @@ export function viewToday() {
   const posts = dayPosts();
   const known = new Set(S.state.meals.map((m) => m.id));
   const other = posts.filter((p) => !known.has(p.m));
+  const orphanHabits = Object.keys(dayHabits()).filter((k) => !known.has(k) && !k.startsWith('extra-'));
+  const r = habitDay(S.state, S.current), st = habitStreak(S.state, today());
   return [
     stepper('Byt dag', ['prev', 'Föregående dag'], 'today', ['next', 'Nästa dag'], isToday,
       isToday ? [el('span', { class: 'today-badge', text: 'IDAG' }), dateTitle(S.current)] : dateTitle(S.current), null, isToday ? '' : 'not-today'),
-    isToday ? null : el('p', { class: 'streak' }, el('button', { class: 'back-today', 'data-act': 'today', text: '↩ Till idag' })),
-    summaryCard(),
+    el('div', { class: 'streak' }, el('span', { title: 'Lyckade dagar i rad', text: `🔥 ${st} ${st === 1 ? 'dag' : 'dagar'} i rad` }),
+      isToday ? null : el('button', { class: 'back-today', 'data-act': 'today', text: '↩ Till idag' })),
+    S.state.settings.planText ? el('p', { class: 'plan', text: S.state.settings.planText }) : null,
     el('div', { class: 'meals' },
       S.state.meals.map((m) => mealCard(m, posts.filter((p) => p.m === m.id))),
+      orphanHabits.map((k) => el('section', { class: 'card meal', 'aria-label': 'Borttagen måltid' },
+        el('div', { class: 'meal-head' }, el('span', { class: 'meal-name', text: dayHabits()[k].name || 'Borttagen måltid' })), outcomeRow(k), habitDetails(k))),
+      extraCards(),
       other.length ? mealCard({ id: '_other', name: 'Övrigt' }, other) : null),
+    el('div', { class: 'workouts' }, workoutCards()),
+    addRow(),
+    el('p', { class: 'summary' }, r.count ? ['Dagens följsamhet: ', el('strong', { text: `${fmtNum(r.score)}/${r.count}` }), ' · ' + pct(r.ratio)] : 'Inget loggat ännu.'),
+    summaryCard(),
     !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
-      ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera från igår' }) : null,
+      ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera maten från igår' }) : null,
     weightCard(),
-    posts.length || S.state.weights[S.current] != null
+    posts.length || S.state.weights[S.current] != null || S.state.habits[S.current] || S.state.workouts[S.current]
       ? el('p', { class: 'clear-day center' }, el('button', { class: 'link danger', 'data-act': 'clearday', text: '🗑 Rensa dagen' })) : null,
   ];
 }

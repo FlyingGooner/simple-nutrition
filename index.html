@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'">
   <meta name="referrer" content="no-referrer">
-  <meta name="theme-color" content="#f5fbf9" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0f1415" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f5fbf5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1512" media="(prefers-color-scheme: dark)">
   <title>Simple nutrition</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg">
@@ -32,38 +32,56 @@
     <section class="card help">
       <h2>Hjälp</h2>
       <details><summary>Kom igång</summary>
-        <p>Sätt ditt kalorimål under Inställningar → Kalorimål (2 000 kcal från start). Vill du följa protein eller kolhydrater sätter du mål under Protein och kolhydrater – tomt betyder av.</p>
-        <p>Måltiderna (Frukost, Lunch, Mellanmål, Middag) kan ändras, flyttas och tas bort under Måltider.</p>
+        <p>Vanorna är huvudsaken: tryck ✅ Följde, 🍰 Fusk eller ⏭️ Hoppade över på varje måltid i Idag. Kalorierna är ett stöd när du vill räkna på dina basmåltider.</p>
+        <p>Under Inställningar → Vanor skriver du din plan (visas överst i Idag), sätter gränsen för en lyckad dag och ändrar måltider och orsaker.</p>
+        <p>Flyttar du från Följ planen: se Flytta från Följ planen nedan.</p>
       </details>
-      <details><summary>Logga mat</summary>
-        <p>Tryck + Lägg till under en måltid i Idag. Under Varor söker du, t.ex. mjölk. Välj variant (Lätt, Mellan …) och mängd i gram eller i mått som dl eller st.</p>
-        <p>Mått är ungefärliga (≈) – väg gärna när det spelar roll. Visa fler söker i hela Livsmedelsverkets lista.</p>
-        <p>Under Senaste loggar du något du ätit förut med ett tryck. Kopiera från igår fyller en tom dag med gårdagens poster.</p>
+      <details><summary>Vanor</summary>
+        <p>Tryck på utfallet för måltiden. Tryck igen på samma för att ta bort det.</p>
+        <p>Vid 🍰 Fusk: välj en orsak (t.ex. Utemat eller Sug) och skriv gärna en kort anteckning.</p>
+        <p>+ Extra fusk loggar fusk mellan måltiderna.</p>
+        <p>Följsamhet = följda måltider delat med följda + fusk. Hoppade över räknas inte. En dag är lyckad när den når din gräns (80 % från start). 🔥 visar lyckade dagar i rad.</p>
+      </details>
+      <details><summary>Träning</summary>
+        <p>Tryck + Träningspass och välj typ. Push, Pull och Ben kan kombineras – Push + Pull räknas som ett pass. Löpning och Intervaller loggas med sträcka (km) och tid (t.ex. 28:30).</p>
+        <p>Ett sparat pass visas som en rad. Tryck på den för att ta bort passet.</p>
+        <p>Under Inställningar → Träning ändrar du passtyperna och sätter mål per vecka. Målen syns på knappen i Idag och i Vecka.</p>
+      </details>
+      <details><summary>Mat och kalorier</summary>
+        <p>Under varje måltid finns en hopfälld rad 🍽 Mat. Fäll ut den och tryck + Lägg till mat.</p>
+        <p>Under Varor söker du, t.ex. mjölk. Välj variant (Lätt, Mellan …) och mängd i gram eller i mått som dl eller st. Mått är ungefärliga (≈). Visa fler söker i hela Livsmedelsverkets lista.</p>
+        <p>Under Senaste loggar du något du ätit förut med ett tryck. Kopiera maten från igår fyller en tom dag med gårdagens mat.</p>
         <p>Tryck på en post för att ändra mängd, flytta den till en annan måltid eller ta bort den.</p>
+        <p>Kalorimål och valfria mål för protein och kolhydrater sätter du under Inställningar → Kalorier.</p>
       </details>
       <details><summary>Rätter</summary>
-        <p>Bygg dina egna rätter under Inställningar → Mina rätter → + Ny rätt. Lägg till ingredienserna i gram (råvikt).</p>
+        <p>Bygg dina egna rätter under Inställningar → Kalorier → Mina rätter → + Ny rätt. Lägg till ingredienserna i gram (råvikt).</p>
         <p>Välj Per portion om receptet gäller en portion, eller Hel sats och antal portioner, t.ex. köttfärssås på 500 g nötfärs delat på 5.</p>
         <p>Väg gärna hela den färdiga rätten och fyll i färdig vikt – då kan du logga i gram, det blir exaktast.</p>
-        <p>Logga under Lägg till → Rätter: portioner (½, 1, 2 …), andel av satsen (t.ex. 1/5) eller gram av färdig rätt.</p>
-        <p>Spara en måltid som rätt: tryck +🍲 vid en måltid i Idag, t.ex. frukost med 100 g yoghurt och 100 g granola. Varorna blir ingredienser i en ny rätt – ge den ett namn och spara. Nästa gång loggar du den med ett tryck under Rätter.</p>
+        <p>Logga under Lägg till mat → Rätter: portioner (½, 1, 2 …), andel av satsen (t.ex. 1/5) eller gram av färdig rätt.</p>
+        <p>Spara en måltid som rätt: fäll ut 🍽 Mat och tryck +🍲 Spara som rätt, t.ex. frukost med 100 g yoghurt och 100 g granola. Ge rätten ett namn och spara.</p>
         <p>Ändrar du en rätt senare påverkas inte dagar som redan är loggade.</p>
       </details>
       <details><summary>Egna produkter och sökord</summary>
         <p>Saknas en vara: lägg in den under Egna produkter med kcal, protein, kolhydrater och fett per 100 g från förpackningen, och gärna ett mått (t.ex. 1 st = 40 g).</p>
-        <p>Hittar sökningen inte det du menar: välj varan och tryck Spara eget sökord. Ordet visar sedan varan först. Sökorden listas under Egna sökord.</p>
+        <p>Hittar sökningen inte det du menar: välj varan och tryck Spara eget sökord. Ordet visar sedan varan först.</p>
       </details>
       <details><summary>Byta dag</summary>
         <p>Använd ◀ ▶ eller svep åt vänster/höger. Tryck på datumet, ↩ Till idag eller fliken Idag för att gå tillbaka till idag.</p>
-        <p>🗑 Rensa dagen tar bort dagens poster och vikt. Ångra finns några sekunder efteråt.</p>
+        <p>🗑 Rensa dagen tar bort dagens vanor, mat, pass och vikt. Ångra finns några sekunder efteråt.</p>
       </details>
       <details><summary>Vikt</summary>
         <p>Fyll i vikten under Vikt idag, gärna på morgonen. Trenden räknas på 7-dagars medel, så enskilda dagar spelar liten roll.</p>
       </details>
       <details><summary>Vecka, Trend och Historik</summary>
-        <p>Vecka: snitt kcal per loggad dag, hur många dagar som låg inom målet (högst 5 % över) och en stapel per dag med mållinje. Tryck på en dag för att öppna den.</p>
-        <p>Trend: vikten som 7-dagars medel och förändringen senaste 4 veckorna, en tabell vecka för vecka (vikt, kcal per dag, dagar inom mål – tryck för att öppna veckan), viktkurvan för 12 veckor och hur vikten går veckor under jämfört med över målet (efter 4 veckor).</p>
-        <p>Historik: månadskalender i färg efter kcal mot mål, snitt för 7 och 30 dagar och streak (loggade dagar i rad). Tryck på en dag för att öppna den.</p>
+        <p>Vecka: följsamhet, fusk och vanligaste orsak, träning mot målen och sist kalorier per dag.</p>
+        <p>Trend: vikten (7-dagars medel) och förändringen senaste 4 veckorna, en tabell vecka för vecka (vikt, följsamhet, fusk, pass, kcal – tryck för att öppna veckan), viktkurvan för 12 veckor och vad som hänger ihop: bra mot sämre veckor, träning och kalorier (efter 4 veckor).</p>
+        <p>Historik: månadskalender färgad efter följsamhet, med markering för vägning och träning. Följsamhet 7 och 30 dagar, streaks, pass totalt och kcal-snitt.</p>
+      </details>
+      <details><summary>Flytta från Följ planen</summary>
+        <p>Öppna Följ planen → Inställningar → Data → Spara backup-fil.</p>
+        <p>Öppna Simple nutrition → Inställningar → Allmänt → Data → Läs in backup-fil och välj filen (eller klistra in texten under Visa som text).</p>
+        <p>Kontrollera sammanfattningen och tryck Lägg till. Vanor, orsaker, anteckningar, vägningar, träningspass, plan och mål följer med. Måltider med samma namn slås ihop. Inget du redan har i Simple nutrition tas bort – Ångra finns direkt efteråt.</p>
       </details>
       <details><summary>Backup och flytt</summary>
         <p>Under Data: tryck Spara backup-fil. Filen heter t.ex. simple-nutrition-2026-11-09.txt och hamnar bland hämtade filer. Gör det då och då.</p>
@@ -94,7 +112,7 @@
     <form method="dialog">
       <h2 id="imp-title">Ersätta all data?</h2>
       <p id="imp-sum"></p>
-      <p class="muted">All nuvarande data i appen ersätts. Du kan ångra direkt efteråt.</p>
+      <p class="muted" id="imp-note">All nuvarande data i appen ersätts. Du kan ångra direkt efteråt.</p>
       <div class="dlg-actions">
         <button type="submit" class="btn-text" value="cancel">Avbryt</button>
         <button type="submit" class="btn-filled" value="ok" id="imp-ok">Ersätt</button>

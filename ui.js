@@ -8,6 +8,7 @@ export const S = {
   current: today(),          // Idag: selected day
   open: null,                // Idag: expanded post id
   add: null,                 // Lägg till: { meal, tab, q, all, pick: { food, vi, unit, amount } } or null
+  wdraft: null,              // Idag: workout being added { types: [] } or null
   dish: null,                // Inställningar: dish draft being edited (views/dishes.js) or null
   week: weekStart(today()),  // Vecka: selected week (Monday)
   month: today().slice(0, 7),// Historik: YYYY-MM
@@ -60,4 +61,43 @@ export function amountText(p) {
   if (p.q != null) return p.u ? `${fmtNum(p.u[1], 2)} ${p.u[0]}` : `${fmtNum(p.q, 2)} av receptet`;
   const g = fmtNum(p.g, 0) + ' g';
   return p.u ? `${fmtNum(p.u[1], 2)} ${p.u[0]} · ≈ ${g}` : g;
+}
+
+/* ---------- Vanor och träning (from follow-diet-tracker/ui.js) ---------- */
+export const pct = (r) => (r == null ? '–' : Math.round(r * 100) + ' %');
+export const reasonName = (id) => S.state.settings.reasons.find((r) => r.id === id)?.name ?? 'Borttagen orsak';
+export const wType = (id) => S.state.settings.workoutTypes.find((t) => t.id === id);
+export const wName = (id) => wType(id)?.name ?? 'Borttaget pass';
+export const isCardio = (types) => types.some((id) => wType(id)?.kind === 'cardio');
+export function fmtDur(sec) {
+  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), ss = String(sec % 60).padStart(2, '0');
+  return h ? `${h}:${String(m).padStart(2, '0')}:${ss}` : `${m}:${ss}`;
+}
+// "28:30" → 1710, "1:05:00" → 3900, "28" → 1680 (minutes). Invalid → null.
+export function parseDur(t) {
+  const parts = String(t).trim().split(/[:.]/).map((x) => x.trim());
+  if (!parts[0] || parts.some((x) => !/^\d{1,3}$/.test(x)) || parts.length > 3) return null;
+  const n = parts.map(Number);
+  const sec = n.length === 1 ? n[0] * 60 : n.length === 2 ? n[0] * 60 + n[1] : n[0] * 3600 + n[1] * 60 + n[2];
+  return sec > 0 && sec <= 86400 ? sec : null;
+}
+// { all, gym, cardio } sessions Mon–Sun. A session is cardio if it has a cardio type, otherwise gym.
+export function weekSessions(ws) {
+  const c = { all: 0, gym: 0, cardio: 0 };
+  for (let i = 0; i < 7; i++) {
+    for (const w of S.state.workouts[addDays(ws, i)] || []) { c.all++; c[isCardio(w.types) ? 'cardio' : 'gym']++; }
+  }
+  return c;
+}
+// Active goals: [{ key, label, short, goal, n }]
+export function goals(ws) {
+  const s = S.state.settings, c = weekSessions(ws);
+  return [['workoutGoal', 'Träningspass', 'Pass', c.all], ['gymGoal', 'Gympass', 'Gym', c.gym], ['cardioGoal', 'Konditionspass', 'Kond.', c.cardio]]
+    .filter(([k]) => s[k]).map(([key, label, short, n]) => ({ key, label, short, goal: s[key], n }));
+}
+export function sessionText(w) {
+  const parts = [w.types.map(wName).join(' + ')];
+  if (w.km != null) parts.push(fmtNum(w.km) + ' km');
+  if (w.sec != null) parts.push(fmtDur(w.sec));
+  return parts.join(' · ');
 }

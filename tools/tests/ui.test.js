@@ -11,6 +11,44 @@ T.test('appen startar i Idag med summa och fyra måltider', () => {
   T.ok(q('.sum-card'), 'summa'); T.eq(app.querySelectorAll('.meal').length, 4);
   T.ok(/^v\d/.test(document.getElementById('version').textContent), 'version');
 });
+T.test('vanor: följde, fusk med orsak och anteckning, tryck igen tar bort', () => {
+  q('[data-act="outcome"][data-id="m1"][data-val="followed"]').click();
+  T.eq(stored().habits['2026-11-09'].m1.outcome, 'followed');
+  q('[data-act="outcome"][data-id="m2"][data-val="cheat"]').click();
+  q('[data-act="reason"][data-id="m2"][data-val="stress"]').click();
+  const note = q('.hab-note[data-id="m2"]'); note.value = '<b>jobbet</b>'; note.dispatchEvent(new Event('change', { bubbles: true }));
+  T.eq([stored().habits['2026-11-09'].m2.reason, stored().habits['2026-11-09'].m2.note], ['stress', '<b>jobbet</b>']);
+  T.eq(app.querySelectorAll('b').length, 0);
+  T.ok(/1\/2/.test(q('.summary').textContent), q('.summary').textContent);
+  q('[data-act="outcome"][data-id="m1"][data-val="followed"]').click();
+  T.ok(!stored().habits['2026-11-09'].m1, 'borttagen');
+  q('[data-act="outcome"][data-id="m1"][data-val="followed"]').click();
+});
+T.test('extra fusk läggs till och tas bort med ångra', () => {
+  q('[data-act="extra"]').click();
+  const k = Object.keys(stored().habits['2026-11-09']).find((x) => x.startsWith('extra-'));
+  T.ok(k, 'extra');
+  q(`[data-act="remove"][data-id="${k}"]`).click();
+  T.ok(!stored().habits['2026-11-09'][k], 'borta');
+  document.getElementById('snack-action').click();
+  T.ok(stored().habits['2026-11-09'][k], 'ångrad');
+  q(`[data-act="remove"][data-id="${k}"]`).click();
+});
+T.test('träningspass: gym kombineras, kondition med km och tid', () => {
+  q('[data-act="wnew"]').click();
+  q('[data-act="wtype"][data-val="push"]').click(); q('[data-act="wtype"][data-val="pull"]').click();
+  q('[data-act="wsave"]').click();
+  q('[data-act="wnew"]').click();
+  q('[data-act="wtype"][data-val="run"]').click();
+  q('#w-km').value = '5,2'; q('#w-time').value = '28:30';
+  q('[data-act="wsave"]').click();
+  T.eq(stored().workouts['2026-11-09'], [{ types: ['push', 'pull'] }, { types: ['run'], km: 5.2, sec: 1710 }]);
+});
+T.test('maten är hopfälld under måltiden', () => {
+  const d = q('.meal-food');
+  T.ok(d && !d.open, 'stängd från början');
+  T.ok(d.querySelector('[data-act="addopen"]'), '+ Lägg till mat finns i den');
+});
 T.test('sök vara, välj variant och mått, kcal räknas och sparas', () => {
   q('[data-act="addopen"][data-id="m1"]').click();
   foods();
@@ -93,11 +131,11 @@ T.test('kalorimål ändras från idag', async () => {
   T.eq(g[0].kcal, 2000);
 });
 T.test('måltid läggs till, döps om och tas bort', () => {
-  q('[data-act="add"]').click();
-  const inp = [...app.querySelectorAll('[data-act="rename"]')].at(-1);
+  q('[data-act="add"][data-kind="meals"]').click();
+  const inp = [...app.querySelectorAll('[data-act="rename"][data-kind="meals"]')].at(-1);
   inp.value = 'Kvällsmål'; inp.dispatchEvent(new Event('change', { bubbles: true }));
   T.eq(stored().meals.at(-1).name, 'Kvällsmål');
-  [...app.querySelectorAll('[data-act="del"]')].at(-1).click();
+  [...app.querySelectorAll('[data-act="del"][data-kind="meals"]')].at(-1).click();
   T.eq(stored().meals.length, 4);
 });
 T.test('export → import i Inställningar', () => {
@@ -241,4 +279,20 @@ T.test('historik: kalender, färg och streak', async () => {
   T.ok(q('.cal-day.is-today'), 'idag');
   q('[data-act="mprev"]').click();
   T.ok(q('.cal-day.good, .cal-day.over, .cal-day.mid'), 'färgad dag');
+});
+T.test('import från Följ planen i Inställningar: dialog, lägg till, ångra', async () => {
+  await tab('settings');
+  const before = JSON.stringify(stored());
+  const fdt = JSON.stringify({ app: 'follow-diet-tracker', format: 1, exported: '2026-11-09', data: { days: { '2026-11-01': { breakfast: 'f', dinner: { o: 'c', r: 'social' } } }, weighIns: { '2026-11-01': 85 }, workouts: { '2026-11-01': ['legs'] } } });
+  document.getElementById('import-text').value = fdt;
+  q('[data-act="import"]').click();
+  T.ok(document.getElementById('import-dialog').open, 'dialog');
+  T.eq(document.getElementById('imp-ok').textContent, 'Lägg till');
+  T.ok(/2 måltider, 1 vägningar, 1 träningspass/.test(document.getElementById('imp-sum').textContent), document.getElementById('imp-sum').textContent);
+  document.getElementById('imp-ok').click(); document.getElementById('import-dialog').close();
+  const s = stored(), mid = s.meals.find((m) => m.name === 'Middag').id;
+  T.eq([s.habits['2026-11-01'][mid].reason, s.weights['2026-11-01'], s.workouts['2026-11-01'][0].types], ['social', 85, ['legs']]);
+  T.ok(Object.keys(s.log).length > 0, 'maten finns kvar');
+  document.getElementById('snack-action').click();
+  T.eq(JSON.stringify(stored()), before);
 });

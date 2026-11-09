@@ -1,6 +1,7 @@
 // Simple nutrition – no external calls, localStorage only. See CLAUDE.md. Views in views/*.js, shared state in ui.js.
 import { defaults, load, save, validate, addDays, weekStart, setGoal, goalFor, findRef, cleanText, uid, dishTotal, exportText, importText, MAX_IMPORT_CHARS } from './store.js';
-import { today, S, setOpen, el, kcal, shortDate, dateTitle, parseNum } from './ui.js';
+import { today, S, setOpen, el, kcal, shortDate, dateTitle, parseNum, wType, isCardio, parseDur } from './ui.js';
+import { mergeFdt } from './store.js';
 import { viewToday, dayPosts } from './views/today.js';
 import { resultsList, pickGrams } from './views/add.js';
 import { viewWeek } from './views/week.js';
@@ -85,6 +86,13 @@ tabbar.addEventListener('click', (ev) => {
   go(t.dataset.view);
 });
 
+/* ---------- Editable lists in Inställningar ---------- */
+const LIST_MAX = { meals: 10, reasons: 60, workoutTypes: 60 };
+const listOf = (kind) => (kind === 'meals' ? S.state.meals : kind === 'reasons' || kind === 'workoutTypes' ? S.state.settings[kind] : null);
+app.addEventListener('input', (ev) => {
+  if (ev.target.dataset.act === 'threshold') { const o = document.getElementById('thr'); if (o) o.textContent = ev.target.value + ' %'; }
+});
+
 /* ---------- Posts ---------- */
 const dayList = () => (S.state.log[S.current] ??= []);
 function cleanupDay() { if (!dayPosts().length) delete S.state.log[S.current]; }
@@ -159,8 +167,75 @@ app.addEventListener('click', (ev) => {
       return;
     }
     case 'clearday':
-      withUndo(`${dateTitle(S.current).replace(/^Igår · /, '')} rensad`, () => { delete S.state.log[S.current]; delete S.state.weights[S.current]; S.open = null; });
+      withUndo(`${dateTitle(S.current).replace(/^Igår · /, '')} rensad`, () => {
+        for (const k of ['log', 'weights', 'habits', 'workouts']) delete S.state[k][S.current];
+        S.open = null; S.wdraft = null;
+      });
       return;
+    // Vanor (som i follow-diet-tracker): tryck på valt utfall igen för att ta bort det.
+    case 'outcome': {
+      const day = (S.state.habits[S.current] ??= {}), prev = day[id];
+      if (prev?.outcome === val && !id.startsWith('extra-')) { delete day[id]; if (!Object.keys(day).length) delete S.state.habits[S.current]; }
+      else {
+        const name = S.state.meals.find((m) => m.id === id)?.name ?? prev?.name;
+        day[id] = { ...prev, outcome: val, ...(name ? { name } : {}) };
+        if (val !== 'cheat') delete day[id].reason;
+      }
+      buzz(); persist(); break;
+    }
+    case 'reason': {
+      const e = S.state.habits[S.current]?.[id];
+      if (!e) return;
+      if (e.reason === val) delete e.reason; else e.reason = val;
+      buzz(); persist(); break;
+    }
+    case 'remove': {
+      const day = S.state.habits[S.current];
+      if (!day?.[id]) return;
+      withUndo('Extra fusk togs bort', () => { delete day[id]; if (!Object.keys(day).length) delete S.state.habits[S.current]; });
+      return;
+    }
+    case 'extra': {
+      const day = (S.state.habits[S.current] ??= {});
+      if (Object.keys(day).length >= 20) { snackbar('Max 20 per dag', null, null, 3000); return; }
+      day['extra-' + Date.now()] = { outcome: 'cheat' };
+      buzz(); persist(); break;
+    }
+    // Träning (som i follow-diet-tracker)
+    case 'wnew': S.wdraft = { types: [] }; break;
+    case 'wcancel': S.wdraft = null; break;
+    case 'wtype': {
+      if (!S.wdraft) return;
+      const on = S.wdraft.types.includes(val), cardio = wType(val)?.kind === 'cardio';
+      if (on) S.wdraft.types = S.wdraft.types.filter((x) => x !== val);
+      else S.wdraft.types = cardio ? [val] : [...S.wdraft.types.filter((x) => !isCardio([x])), val];
+      buzz(); break;
+    }
+    case 'wsave': {
+      if (!S.wdraft?.types.length) return;
+      const w = { types: [...S.wdraft.types] };
+      if (isCardio(w.types)) {
+        const kmRaw = document.getElementById('w-km')?.value.trim() ?? '', tRaw = document.getElementById('w-time')?.value.trim() ?? '';
+        const km = parseNum(kmRaw), sec = tRaw ? parseDur(tRaw) : null;
+        const err = (kmRaw && !(km > 0 && km <= 500)) ? 'Ange sträckan i km, t.ex. 5,2.' : (tRaw && sec == null) ? 'Ange tiden som min:sek, t.ex. 28:30.' : '';
+        if (err) { errText('w-error', err); return; }
+        if (kmRaw) w.km = Math.round(km * 100) / 100;
+        if (sec != null) w.sec = sec;
+      }
+      const l = (S.state.workouts[S.current] ??= []);
+      if (l.length >= 10) { errText('w-error', 'Max 10 pass per dag.'); return; }
+      l.push(w); S.wdraft = null; buzz(); persist(); break;
+    }
+    case 'wdel': {
+      const i = Number(val);
+      withUndo('Träningspasset togs bort', () => {
+        const l = S.state.workouts[S.current];
+        if (!l) return;
+        l.splice(i, 1);
+        if (!l.length) delete S.state.workouts[S.current];
+      });
+      return;
+    }
     case 'copyprev': {
       const src = S.state.log[addDays(S.current, -1)] || [];
       S.state.log[S.current] = src.slice(0, 100).map((p) => ({ ...p, id: uid() + Math.random().toString(36).slice(2, 5), n: [...p.n], ...(p.u ? { u: [...p.u] } : {}) }));
@@ -294,22 +369,26 @@ app.addEventListener('click', (ev) => {
     case 'mnow': S.month = today().slice(0, 7); break;
     // Inställningar: meals
     case 'add': {
-      if (S.state.meals.length >= 10) return;
-      S.state.meals.push({ id: 'm' + uid(), name: 'Ny måltid' });
+      const kind = t.dataset.kind, l = listOf(kind);
+      if (!l || l.length >= LIST_MAX[kind]) return;
+      l.push(kind === 'workoutTypes' ? { id: 'wt' + uid(), name: 'Nytt pass', kind: 'gym' }
+        : kind === 'reasons' ? { id: 'r' + uid(), name: 'Ny orsak' } : { id: 'm' + uid(), name: 'Ny måltid' });
       persist(); render();
-      const inputs = app.querySelectorAll('[data-act="rename"]');
+      const inputs = app.querySelectorAll(`[data-act="rename"][data-kind="${kind}"]`);
       inputs[inputs.length - 1]?.select();
       return;
     }
     case 'up': {
-      const l = S.state.meals, i = l.findIndex((x) => x.id === id);
+      const l = listOf(t.dataset.kind), i = l ? l.findIndex((x) => x.id === id) : -1;
       if (i > 0) [l[i - 1], l[i]] = [l[i], l[i - 1]];
       persist(); break;
     }
     case 'del': {
-      const it = S.state.meals.find((x) => x.id === id);
-      if (!it || S.state.meals.length <= 1) return;
-      withUndo(`${it.name} togs bort – loggade poster visas under Övrigt`, () => { S.state.meals = S.state.meals.filter((x) => x.id !== id); });
+      const kind = t.dataset.kind, l = listOf(kind), it = l?.find((x) => x.id === id);
+      if (!it || (kind === 'meals' && l.length <= 1)) return;
+      withUndo(`${it.name} togs bort – tidigare loggningar finns kvar`, () => {
+        const ll = listOf(kind); ll.splice(ll.findIndex((x) => x.id === id), 1);
+      });
       return;
     }
     case 'install':
@@ -359,9 +438,28 @@ app.addEventListener('change', (ev) => {
   switch (t.dataset.act) {
     case 'importfile': readBackup(t); return;
     case 'rename': {
-      const it = S.state.meals.find((x) => x.id === t.dataset.id);
+      const it = listOf(t.dataset.kind)?.find((x) => x.id === t.dataset.id);
       const v = cleanText(t.value, 40);
       if (it && v) it.name = v; else t.value = it?.name ?? '';
+      persist(); return;
+    }
+    case 'note': {
+      const e = S.state.habits[S.current]?.[t.dataset.id];
+      if (!e) return;
+      const v = cleanText(t.value, 140);
+      if (v) e.note = v; else delete e.note;
+      persist(); return;
+    }
+    case 'plan': S.state.settings.planText = t.value.replace(/[\u0000-\u0009\u000B-\u001F\u007F-\u009F‎‏‪-‮⁦-⁩]/g, '').trim().slice(0, 300); persist(); return;
+    case 'threshold': S.state.settings.successThreshold = Number(t.value) / 100; persist(); return;
+    case 'wgoal': {
+      const k = t.dataset.val, v = Number(t.value);
+      if (['workoutGoal', 'gymGoal', 'cardioGoal'].includes(k) && Number.isInteger(v) && v >= 0 && v <= 14) S.state.settings[k] = v;
+      persist(); return;
+    }
+    case 'wkind': {
+      const it = S.state.settings.workoutTypes.find((x) => x.id === t.dataset.id);
+      if (it && (t.value === 'gym' || t.value === 'cardio')) it.kind = t.value;
       persist(); return;
     }
     case 'goalkcal': {
@@ -395,6 +493,21 @@ function startImport(text) {
   const r = importText(text);
   errText('import-error', r.error || '');
   if (r.error) return;
+  if (r.fdt) {
+    // Från Följ planen: läggs ihop med det som redan finns här (inget ersätts), därför egen text.
+    pendingImport = mergeFdt(S.state, r.fdt);
+    const period = r.first ? `, ${shortDate(r.first)} ${r.first.slice(0, 4)}–${shortDate(r.last)} ${r.last.slice(0, 4)}` : '';
+    document.getElementById('imp-title').textContent = 'Lägga till data från Följ planen?';
+    document.getElementById('imp-sum').textContent = `${r.meals} måltider, ${r.weighIns} vägningar, ${r.sessions} träningspass${period}.`
+      + ' Din plan, orsaker och passtyper tas över. Det du redan loggat här behålls.' + (r.skipped ? ` ${r.skipped} ogiltiga hoppas över.` : '');
+    document.getElementById('imp-ok').textContent = 'Lägg till';
+    document.getElementById('imp-note').textContent = 'Inget av det du redan har här tas bort. Du kan ångra direkt efteråt.';
+    document.getElementById('import-dialog').showModal();
+    return;
+  }
+  document.getElementById('imp-title').textContent = 'Ersätta all data?';
+  document.getElementById('imp-ok').textContent = 'Ersätt';
+  document.getElementById('imp-note').textContent = 'All nuvarande data i appen ersätts. Du kan ångra direkt efteråt.';
   pendingImport = r.data;
   const period = r.first ? `, ${shortDate(r.first)} ${r.first.slice(0, 4)}–${shortDate(r.last)} ${r.last.slice(0, 4)}` : '';
   document.getElementById('imp-sum').textContent = `${r.posts} poster, ${r.weights} vägningar, ${r.dishes} rätter${period}`

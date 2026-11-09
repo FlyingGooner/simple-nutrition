@@ -122,6 +122,30 @@ Hopfällbara sektioner som i diet, grupper Mål, Mat och Appen.
 ### Layout
 Bara mobil (390 px), beslut 2026-11-09. På bredare skärmar samma vy centrerad (max ~640 px), bottenmenyn kvar. Ingen sidomeny eller tvåkolumnsvy – det som kom med från follow-diet-tracker i v0.1 tas bort i v0.2.
 
+## Vanor, träning och flytt från Följ planen (v0.5, beslut 2026-11-09)
+Simple nutrition ersätter follow-diet-tracker. **Vanorna är fokus**, kalorierna ett stöd för att räkna på basmåltiderna. Färger och stil som follow-diet-tracker (grön `#2f7d5b`).
+
+- **Idag:** 🔥 streak (lyckade dagar i rad) och Min plan överst. Varje måltid är en vana med ✅ Följde · 🍰 Fusk · ⏭️ Hoppade över (tryck igen = ta bort). Vid 🍰: orsakschips och anteckning (140 tecken). Under varje måltid en hopfälld rad **🍽 Mat · 420 kcal** med posterna, "+ Lägg till mat" och "+🍲 Spara som rätt". Därunder + Extra fusk, + Träningspass (med veckomål), "Dagens följsamhet", kcal-summan (smal), vikt och Rensa dagen (tar bort mat, vanor, vikt och pass).
+- **Vecka:** följsamhet, fusk, ✅/⏭️, prickar per dag och vanligaste orsak först; sedan träning mot mål; sist kalorier med stapel per dag.
+- **Trend:** tabellen visar v, vikt (7-d), ±, ✅ %, 🍰, 🏋️ pass och kcal/d. "Vad hänger ihop": bra mot sämre veckor, ≥ passmål mot färre, under mot över kalorimålet.
+- **Historik:** kalendern färgas efter följsamhet (som i follow-diet-tracker), markering för vägning och träning; följsamhet 7/30 dagar, streak, längsta streak, pass totalt, kcal-snitt 7 dagar.
+- **Inställningar:** fyra hopfällbara grupper – **Vanor** (Min plan, Lyckad dag, Måltider, Orsaker), **Träning** (passtyper och mål per vecka), **Kalorier** (kalorimål, protein/kolhydrater, Mina rätter, egna produkter, egna sökord), **Allmänt** (Data, Installera, Hjälp).
+- **Beräkningar:** följsamhet, streak, veckostatistik och längsta streak görs av follow-diet-trackers egna funktioner (`fdt-store.js`) på en vy av datan (`habitView`), så siffrorna blir desamma som i den appen. Extra fusk räknas i följsamheten. Vägningsdag finns inte – vikten är 7-dagars medel.
+
+**Datamodell (tillägg i `sn.data`):**
+```js
+habits:   { "2026-11-09": { m1: { outcome: "cheat", reason: "craving", note: "…", name: "Frukost" }, "extra-1731…": { outcome: "cheat" } } },
+workouts: { "2026-11-09": [{ types: ["push", "pull"] }, { types: ["run"], km: 5.2, sec: 1710 }] },
+settings: { reasons: [{ id, name }], successThreshold: 0.8, planText: "", workoutTypes: [{ id, name, kind: "gym"|"cardio" }], workoutGoal: 0, gymGoal: 0, cardioGoal: 0 }
+```
+Nyckeln i `habits` är måltidens id (`meals`) eller `extra-<tid>`. Valideras med follow-diet-trackers `validate()` (samma gränser: 20 per dag, 10 pass per dag, 60 orsaker/passtyper, datum 2000–2100, objekt utan prototyp).
+
+**Flytt från Följ planen:** spara en backup-fil i follow-diet-tracker och läs in den under Data (fil eller text). Känns igen på `app: "follow-diet-tracker"`, läses och valideras av en oförändrad kopia av dess `store.js` (`fdt-store.js`, utan `load()`/`save()` – rör aldrig `fp:v1`) och läggs sedan **till** (ersätter inget):
+- Måltider matchas på namn (Frukost = Frukost); okända läggs till (max 10).
+- På samma dag vinner det som redan finns i Simple nutrition; Följ planen fyller resten (vanor, vikt, pass).
+- Plan, lyckad dag-gräns, orsaker, passtyper och mål tas över från Följ planen.
+- Dialog "Lägga till data från Följ planen?" med summering, sedan Ångra.
+
 ## Datamodell
 All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt projektets CLAUDE.md). Valideras i `store.js` innan den används; ogiltiga delar hoppas över.
 
@@ -251,6 +275,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
   - export bara från validerat state, filnamn bara prefix + datum, varningstext om att filen är okrypterad
   - `backup.js` är en identisk kopia av `template/backup.js`
 - `FOODS_SOURCE` har ingen webbadress (bara namn och datum). `data/foods.js` och `backup.js` ingår i service workerns `ASSETS`.
+- **Import från Följ planen (v0.5):** samma kontroller som egen import (storlek, BOM, `app`/`format`, allt eller inget, bekräftelse, Ångra). Datan valideras först av follow-diet-trackers egen `validate()` (kopia i `fdt-store.js`, utan lagringsfunktioner) och sedan av `validate()` här. Inga nya lagringsnycklar; `fp:v1` läses eller skrivs aldrig.
 - Ny hämtning från Livsmedelsverket görs manuellt. Ett permanent hämtverktyg kräver förhandsprövning och en post i `$toolNet`.
 
 ## PWA-krav
@@ -259,10 +284,10 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 - Fungerar offline efter första besöket.
 
 ## Design
-Material Design 3 enligt `../STIL.md`, stil från follow-diet-tracker. Nyckelfärg `#2f697d`. Bottenmeny, bara mobil (390 px). Inga valstress: högst 5 varianter, "Normal" förvald.
+Material Design 3 enligt `../STIL.md`, stil från follow-diet-tracker. Nyckelfärg `#2f7d5b` (som follow-diet-tracker). Bottenmeny, bara mobil (390 px). Inga valstress: högst 5 varianter, "Normal" förvald.
 
 ## Byggordning
-**Status 2026-11-09:** v0.1–v0.4 byggda (release 0.4.0). v0.5 (manual med bilder) väntar på CSP-beslut: bilderna bäddas in som `data:` i testfilen, vilket kräver `img-src 'self' data:` som i follow-diet-tracker (förhandsprövning + godkännande).
+**Status 2026-11-09:** v0.1–v0.5 byggda (release 0.5.0: vanor, träning, import från Följ planen, gröna färger). v0.6 (manual med bilder) väntar på CSP-beslut: bilderna bäddas in som `data:` i testfilen, vilket kräver `img-src 'self' data:` som i follow-diet-tracker (förhandsprövning + godkännande).
 
 ### Första bygget (v0.1.0)
 Målet är en app som går att använda varje dag redan i första versionen. Det som kräver mest UI får vänta.

@@ -1,6 +1,6 @@
 // View: Trend – weight (7-day average), the last 4 weeks as a table, weight chart 12 weeks, kcal vs weight.
-import { addDays, weekStart, isoWeek, weekStats } from '../store.js';
-import { today, S, el, svg, kcal, fmtNum, shortDate } from '../ui.js';
+import { addDays, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
+import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions } from '../ui.js';
 
 // 7-day average of the weights in [k-6, k], or null.
 export function avg7(k) {
@@ -37,20 +37,22 @@ function weeks(n) {
 function table() {
   const rows = weeks(5).map((ws) => {
     const st = weekStats(S.state, ws), end = addDays(ws, 6) > today() ? today() : addDays(ws, 6);
-    return { ws, st, w: avg7(end), cur: ws === weekStart(today()) };
+    return { ws, st, h: habitWeek(S.state, ws), w: avg7(end), cur: ws === weekStart(today()) };
   });
-  const list = rows.filter((r, i) => i < 4 || false).filter((r) => !r.cur || r.st.logged || r.w != null);
+  const list = rows.filter((r, i) => i < 4 || false).filter((r) => !r.cur || r.st.logged || r.h.count || r.w != null);
   return el('section', { class: 'card' }, el('h2', { text: 'Vecka för vecka' }),
     el('table', { class: 'wk-table' },
-      el('thead', {}, el('tr', {}, ['v', 'Vikt', '±', 'kcal/d', 'Mål'].map((h) => el('th', { scope: 'col', text: h })))),
+      el('thead', {}, el('tr', {}, ['v', 'Vikt', '±', '✅', '🍰', '🏋️', 'kcal/d'].map((h) => el('th', { scope: 'col', text: h })))),
       el('tbody', {}, list.map((r) => {
         const prev = avg7(addDays(r.ws, -1));
         return el('tr', { 'data-act': 'openweek', 'data-val': r.ws },
           el('td', {}, el('button', { class: 'link wk-open', 'data-act': 'openweek', 'data-val': r.ws, text: String(isoWeek(r.ws)) }), r.cur ? el('small', { text: ' pågår' }) : null),
           el('td', { text: r.w != null ? fmtNum(r1(r.w)) : '–' }),
           el('td', {}, r.w != null && prev != null ? delta(r.w - prev) : '–'),
-          el('td', { text: r.st.avg != null ? kcal(r.st.avg) : '–' }),
-          el('td', { text: r.st.logged ? `${r.st.within}/${r.st.logged}` : '–' }));
+          el('td', { class: r.h.ratio == null ? '' : r.h.ratio >= S.state.settings.successThreshold ? 'good-t' : r.h.ratio >= 0.5 ? 'mid-t' : 'low-t', text: pct(r.h.ratio) }),
+          el('td', { text: r.h.count || r.h.extraCheat ? String(r.h.cheat + r.h.extraCheat) : '–' }),
+          el('td', { text: (() => { const g = goals(r.ws).find((x) => x.key === 'workoutGoal'); const n = weekSessions(r.ws).all; return g ? `${n}/${g.goal}` : n ? String(n) : '–'; })() }),
+          el('td', { text: r.st.avg != null ? kcal(r.st.avg) : '–' }));
       }))));
 }
 
@@ -72,18 +74,23 @@ function chart() {
 }
 
 function compare() {
-  const rows = [];
+  // Veckor med vikt före och efter: följsamhet (vanor), träning och – när maten loggats minst 4 dagar – kcal mot mål.
+  const rows = [], thr = S.state.settings.successThreshold, wg = S.state.settings.workoutGoal || 3;
   for (const ws of weeks(52).slice(1)) {
-    const st = weekStats(S.state, ws), a = avg7(addDays(ws, 6)), b = avg7(addDays(ws, -1));
-    if (st.logged >= 4 && a != null && b != null) rows.push({ under: st.avg <= st.days[6].goal, d: a - b });
+    const st = weekStats(S.state, ws), h = habitWeek(S.state, ws), a = avg7(addDays(ws, 6)), b = avg7(addDays(ws, -1));
+    if (a == null || b == null || (!h.count && st.logged < 4)) continue;
+    rows.push({ good: h.ratio != null ? h.ratio >= thr : null, trained: weekSessions(ws).all >= wg, under: st.logged >= 4 ? st.avg <= st.days[6].goal : null, d: a - b });
   }
-  const body = rows.length < 4 ? [el('p', { class: 'muted small', text: `Fler veckor behövs (${rows.length}/4) – veckor med minst 4 loggade dagar och vikt före och efter.` })] : (() => {
-    const mean = (l) => (l.length ? l.reduce((s, r) => s + r.d, 0) / l.length : null);
-    const u = rows.filter((r) => r.under), o = rows.filter((r) => !r.under);
+  const body = rows.length < 4 ? [el('p', { class: 'muted small', text: `Fler veckor behövs (${rows.length}/4) – veckor med loggning och vikt före och efter.` })] : (() => {
+    const mean = (l) => l.reduce((s, r) => s + r.d, 0) / l.length;
     const row = (label, l) => el('li', {}, el('span', { text: `${label} (${l.length})` }), el('strong', { text: l.length ? `${signed(mean(l))} kg/v` : '–' }));
-    return [el('ul', { class: 'compare' }, row('Veckor under mål', u), row('Veckor över mål', o))];
+    const pair = (k, yes, no) => (rows.some((r) => r[k] != null) ? [row(yes, rows.filter((r) => r[k] === true)), row(no, rows.filter((r) => r[k] === false))] : []);
+    return [el('ul', { class: 'compare' },
+      pair('good', `Bra veckor (≥ ${pct(thr)})`, 'Sämre veckor'),
+      pair('trained', `Med ≥ ${wg} pass`, 'Färre pass'),
+      pair('under', 'Under kalorimålet', 'Över kalorimålet'))];
   })();
-  return el('section', { class: 'card' }, el('h2', { text: 'Kcal mot vikt' }), body);
+  return el('section', { class: 'card' }, el('h2', { text: 'Vad hänger ihop' }), body);
 }
 
 export function viewTrend() {

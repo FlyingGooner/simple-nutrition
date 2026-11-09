@@ -1,16 +1,21 @@
-// View: Inställningar (Mål, Måltider, Data, Hjälp) and the placeholders for Trend and Historik (v0.3).
+// View: Inställningar – grupperna Vanor, Träning, Kalorier och Allmänt, var och en hopfälld för sig (beslut 2026-11-09).
 import { goalFor, findRef } from '../store.js';
-import { today, S, setOpen, el, kcal } from '../ui.js';
+import { today, S, setOpen, el, kcal, pct } from '../ui.js';
 import { dishEditor, dishList } from './dishes.js';
 import { viewAdd } from './add.js';
 
-function editableList(items) {
+const LIMITS = { meals: [1, 10, 'Lägg till måltid'], reasons: [0, 60, 'Lägg till orsak'], workoutTypes: [0, 60, 'Lägg till passtyp'] };
+function editableList(kind, items) {
+  const [min, max, addLabel] = LIMITS[kind];
   return [
     el('ul', { class: 'edit-list' }, items.map((it, i) => el('li', {},
-      el('input', { type: 'text', maxlength: 40, value: it.name, 'data-act': 'rename', 'data-id': it.id, 'aria-label': 'Namn' }),
-      el('button', { class: 'icon sm', 'data-act': 'up', 'data-id': it.id, 'aria-label': 'Flytta upp', disabled: i === 0, text: '↑' }),
-      el('button', { class: 'icon sm danger', 'data-act': 'del', 'data-id': it.id, 'aria-label': `Ta bort ${it.name}`, disabled: items.length <= 1, text: '✕' })))),
-    items.length < 10 ? el('button', { class: 'link', 'data-act': 'add', text: '+ Lägg till måltid' }) : null,
+      el('input', { type: 'text', maxlength: 40, value: it.name, 'data-act': 'rename', 'data-kind': kind, 'data-id': it.id, 'aria-label': 'Namn' }),
+      kind === 'workoutTypes' ? el('select', { class: 'w-kind', 'data-act': 'wkind', 'data-id': it.id, 'aria-label': `Sort för ${it.name}` },
+        el('option', { value: 'gym', selected: it.kind === 'gym', text: 'Gym' }),
+        el('option', { value: 'cardio', selected: it.kind === 'cardio', text: 'Kondition' })) : null,
+      el('button', { class: 'icon sm', 'data-act': 'up', 'data-kind': kind, 'data-id': it.id, 'aria-label': 'Flytta upp', disabled: i === 0, text: '↑' }),
+      el('button', { class: 'icon sm danger', 'data-act': 'del', 'data-kind': kind, 'data-id': it.id, 'aria-label': `Ta bort ${it.name}`, disabled: items.length <= min, text: '✕' })))),
+    items.length < max ? el('button', { class: 'link', 'data-act': 'add', 'data-kind': kind, text: '+ ' + addLabel }) : null,
   ];
 }
 
@@ -57,51 +62,66 @@ function aliasSection() {
 export function viewSettings() {
   if (S.add?.target === 'dish') return viewAdd();
   if (S.dish) return dishEditor();
-  const g = goalFor(S.state, today());
+  const g = goalFor(S.state, today()), s = S.state.settings;
   const opt = (k, label) => el('label', { class: 'goal-row' }, el('span', { text: label }),
     el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: g[k] ? String(g[k]) : '', placeholder: 'Av', 'data-act': 'goalmacro', 'data-val': k, 'aria-label': label }));
   const sec = (id, title, hint, ...kids) => el('details', { class: 'card set-sec', 'data-sec': id, open: setOpen.has(id) },
     el('summary', {}, el('span', { class: 'set-title', text: title }), hint ? el('span', { class: 'set-hint', text: hint }) : null),
     el('div', { class: 'set-body' }, kids));
+  // A group (Vanor, Träning, Kalorier, Allmänt) is itself collapsible; its sections fold inside it.
+  const group = (id, title, hint, ...kids) => el('details', { class: 'set-group-wrap', 'data-sec': 'g-' + id, open: setOpen.has('g-' + id) },
+    el('summary', { class: 'set-group' }, el('span', { class: 'set-gtitle', text: title }), el('span', { class: 'set-hint', text: hint })), kids);
+  const goalHint = [['workoutGoal', 'Alla'], ['gymGoal', 'Gym'], ['cardioGoal', 'Kond.']].filter(([k]) => s[k]).map(([k, l]) => `${l} ${s[k]}`).join(' · ');
   return [
-    el('h2', { class: 'set-group', text: 'Mål' }),
-    sec('goal', 'Kalorimål', `${kcal(g.kcal)} kcal/dag`,
-      el('label', { class: 'goal-row' }, el('span', { text: 'kcal per dag' }),
-        el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: String(g.kcal), 'data-act': 'goalkcal', 'aria-label': 'Kalorimål per dag' })),
-      el('p', { class: 'muted small', text: 'Ändringen gäller från idag. Tidigare dagar jämförs med målet som gällde då.' })),
-    sec('macros', 'Protein och kolhydrater', [g.prot ? `P ${g.prot} g` : '', g.kolh ? `K ${g.kolh} g` : ''].filter(Boolean).join(' · ') || 'Av',
-      opt('prot', 'Protein, g per dag'), opt('kolh', 'Kolhydrater, g per dag'),
-      el('p', { class: 'muted small', text: 'Valfria mål. Lämna tomt för att stänga av. Gäller från idag.' })),
-    el('h2', { class: 'set-group', text: 'Mat' }),
-    sec('dishes', 'Mina rätter', `${S.state.dishes.length} st`, dishList()),
-    sec('meals', 'Måltider', S.state.meals.map((x) => x.name).join(', '), editableList(S.state.meals)),
-    sec('foods', 'Egna produkter', `${S.state.foods.length} st`, foodsSection()),
-    sec('aliases', 'Egna sökord', `${Object.keys(S.state.aliases).length} st`, aliasSection()),
-    el('h2', { class: 'set-group', text: 'Appen' }),
-    sec('data', 'Data', 'Backup, import, radera',
-      el('p', { class: 'small', text: 'All data sparas bara i den här webbläsaren (localStorage). Rensar du webbplatsdata eller avinstallerar appen försvinner den – spara en backup-fil då och då.' }),
-      el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och ligger okrypterad bland hämtade filer, där den kan synkas till molnet. Dela den bara med den du litar på och radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),
-      el('div', { class: 'data-actions' },
-        el('button', { class: 'btn-file btn-filled', 'data-act': 'backupsave', text: 'Spara backup-fil' }),
-        el('label', { class: 'btn-file' }, 'Läs in backup-fil',
-          el('input', { type: 'file', id: 'import-file', accept: '.txt,.json', 'data-act': 'importfile' }))),
-      el('p', { class: 'import-error small', id: 'import-error', role: 'alert' }),
-      el('details', { class: 'data-text' }, el('summary', { text: 'Visa som text' }),
-        el('label', { class: 'data-box' }, el('span', { class: 'small', text: 'Export' }),
-          el('textarea', { id: 'export-text', rows: 4, readonly: true, placeholder: 'Tryck Exportera' })),
-        el('button', { class: 'link', 'data-act': 'export', text: 'Exportera och markera' }),
-        el('label', { class: 'data-box' }, el('span', { class: 'small', text: 'Importera (ersätter all data)' }),
-          el('textarea', { id: 'import-text', rows: 3, autocomplete: 'off', spellcheck: 'false', placeholder: 'Klistra in en exporterad text' })),
-        el('button', { class: 'link', 'data-act': 'import', text: 'Importera' })),
-      el('button', { class: 'link danger', 'data-act': 'wipe', text: 'Radera all data' })),
-    S.installPrompt ? el('section', { class: 'card' }, el('button', { class: 'primary', 'data-act': 'install', text: 'Installera appen' })) : null,
-    helpCard(),
+    group('habits', 'Vanor', `Minst ${pct(s.successThreshold)}`,
+      sec('plan', 'Min plan', s.planText ? s.planText.split('\n')[0].slice(0, 30) + (s.planText.length > 30 ? '…' : '') : 'Ingen plan',
+        el('textarea', { rows: 3, maxlength: 300, placeholder: 'T.ex. matlåda till lunch, inget godis på vardagar', 'data-act': 'plan', 'aria-label': 'Min plan', text: s.planText }),
+        el('p', { class: 'muted small', text: 'Visas överst i Idag som påminnelse.' })),
+      sec('threshold', 'Lyckad dag', `Minst ${pct(s.successThreshold)}`,
+        el('label', { class: 'range' }, el('span', {}, 'Minst ', el('strong', { id: 'thr', text: pct(s.successThreshold) }), ' följsamhet'),
+          el('input', { type: 'range', min: 50, max: 100, step: 5, value: Math.round(s.successThreshold * 100), 'data-act': 'threshold' })),
+        el('p', { class: 'muted small', text: '✅ = 1 poäng, 🍰 = 0, ⏭️ räknas inte. Lyckade dagar i rad = 🔥 streak.' })),
+      sec('meals', 'Måltider', S.state.meals.map((x) => x.name).join(', '), editableList('meals', S.state.meals)),
+      sec('reasons', 'Orsaker', `${s.reasons.length} st`, editableList('reasons', s.reasons))),
+    group('training', 'Träning', goalHint || `${s.workoutTypes.length} passtyper`,
+      sec('workouts', 'Passtyper och mål', goalHint ? `Mål: ${goalHint}` : `${s.workoutTypes.length} typer`, editableList('workoutTypes', s.workoutTypes),
+        el('p', { class: 'muted small', text: 'Gym-typer kan kombineras till ett pass (Push + Pull = 1 pass). Kondition loggas med sträcka och tid.' }),
+        el('h2', { class: 'goal-h', text: 'Mål per vecka' }),
+        [['workoutGoal', 'Alla pass'], ['gymGoal', 'Gympass'], ['cardioGoal', 'Konditionspass']].map(([k, label]) =>
+          el('label', { class: 'goal-row' }, el('span', { text: label }),
+            el('select', { 'data-act': 'wgoal', 'data-val': k, 'aria-label': `Mål per vecka, ${label.toLowerCase()}` },
+              Array.from({ length: 15 }, (_, i) => el('option', { value: i, selected: i === s[k], text: i ? `${i} pass` : 'Inget mål' }))))))),
+    group('kcal', 'Kalorier', `${kcal(g.kcal)} kcal/dag`,
+      sec('goal', 'Kalorimål', `${kcal(g.kcal)} kcal/dag`,
+        el('label', { class: 'goal-row' }, el('span', { text: 'kcal per dag' }),
+          el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: String(g.kcal), 'data-act': 'goalkcal', 'aria-label': 'Kalorimål per dag' })),
+        el('p', { class: 'muted small', text: 'Ändringen gäller från idag. Tidigare dagar jämförs med målet som gällde då.' })),
+      sec('macros', 'Protein och kolhydrater', [g.prot ? `P ${g.prot} g` : '', g.kolh ? `K ${g.kolh} g` : ''].filter(Boolean).join(' · ') || 'Av',
+        opt('prot', 'Protein, g per dag'), opt('kolh', 'Kolhydrater, g per dag'),
+        el('p', { class: 'muted small', text: 'Valfria mål. Lämna tomt för att stänga av. Gäller från idag.' })),
+      sec('dishes', 'Mina rätter', `${S.state.dishes.length} st`, dishList()),
+      sec('foods', 'Egna produkter', `${S.state.foods.length} st`, foodsSection()),
+      sec('aliases', 'Egna sökord', `${Object.keys(S.state.aliases).length} st`, aliasSection())),
+    group('app', 'Allmänt', 'Data, hjälp',
+      sec('data', 'Data', 'Backup, import, radera',
+        el('p', { class: 'small', text: 'All data sparas bara i den här webbläsaren (localStorage). Rensar du webbplatsdata eller avinstallerar appen försvinner den – spara en backup-fil då och då.' }),
+        el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och ligger okrypterad bland hämtade filer, där den kan synkas till molnet. Dela den bara med den du litar på och radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),
+        el('p', { class: 'small', text: 'Flyttar du från Följ planen: spara en backup-fil där och läs in den här. Måltider, orsaker, vägningar och pass läggs till – inget du redan har tas bort.' }),
+        el('div', { class: 'data-actions' },
+          el('button', { class: 'btn-file btn-filled', 'data-act': 'backupsave', text: 'Spara backup-fil' }),
+          el('label', { class: 'btn-file' }, 'Läs in backup-fil',
+            el('input', { type: 'file', id: 'import-file', accept: '.txt,.json', 'data-act': 'importfile' }))),
+        el('p', { class: 'import-error small', id: 'import-error', role: 'alert' }),
+        el('details', { class: 'data-text' }, el('summary', { text: 'Visa som text' }),
+          el('label', { class: 'data-box' }, el('span', { class: 'small', text: 'Export' }),
+            el('textarea', { id: 'export-text', rows: 4, readonly: true, placeholder: 'Tryck Exportera' })),
+          el('button', { class: 'link', 'data-act': 'export', text: 'Exportera och markera' }),
+          el('label', { class: 'data-box' }, el('span', { class: 'small', text: 'Importera (ersätter all data – från Följ planen läggs den till)' }),
+            el('textarea', { id: 'import-text', rows: 3, autocomplete: 'off', spellcheck: 'false', placeholder: 'Klistra in en exporterad text' })),
+          el('button', { class: 'link', 'data-act': 'import', text: 'Importera' })),
+        el('button', { class: 'link danger', 'data-act': 'wipe', text: 'Radera all data' })),
+      S.installPrompt ? el('section', { class: 'card' }, el('button', { class: 'primary', 'data-act': 'install', text: 'Installera appen' })) : null,
+      helpCard()),
     el('p', { class: 'muted small center', text: `Simple nutrition v${self.APP_VERSION} · inga externa anrop · näringsvärden från Livsmedelsverket` }),
   ];
 }
-
-export const viewSoon = (what) => () => [
-  el('section', { class: 'card center soon' },
-    el('p', { class: 'small', text: `${what} kommer i en senare version.` }),
-    el('p', { class: 'muted small', text: 'Logga i Idag så finns datan med när vyn kommer.' })),
-];

@@ -1,6 +1,11 @@
 // Simple nutrition – data model, validation, food search, export/import. ES module; localStorage only (key sn.data).
 // Food data comes from data/foods.js (classic script: FOODS_CORE, FOODS_MORE, FOODS_SOURCE), never from the network.
 const KEY = 'sn.data';
+import { validate as fdtValidate, defaults as fdtDefaults, importText as fdtImportText, OUTCOMES, dayResult, streak as fdtStreak, weekStats as fdtWeekStats, rangeRatio, longestStreak } from './fdt-store.js';
+export { OUTCOMES };
+const FDT_APP = 'follow-diet-tracker';
+// Settings for habits and training (same fields as follow-diet-tracker, minus slots = meals and weighDay).
+const habitSettings = (x) => ({ reasons: x.reasons, successThreshold: x.successThreshold, planText: x.planText, workoutTypes: x.workoutTypes, workoutGoal: x.workoutGoal, gymGoal: x.gymGoal, cardioGoal: x.cardioGoal });
 export const EXPORT_APP = 'simple-nutrition', EXPORT_FORMAT = 1;
 export const MAX_IMPORT_CHARS = 2000000;
 const LIM = { perDay: 100, days: 3650, dishes: 500, ingr: 50, foods: 1000, aliases: 1000, weights: 3650, meals: 10, goals: 100 };
@@ -27,6 +32,7 @@ export function defaults() {
     goals: [{ from: '2000-01-01', kcal: 2000 }],
     meals: [{ id: 'm1', name: 'Frukost' }, { id: 'm2', name: 'Lunch' }, { id: 'm3', name: 'Mellanmål' }, { id: 'm4', name: 'Middag' }],
     log: {}, dishes: [], foods: [], aliases: Object.create(null), weights: {},
+    habits: {}, workouts: {}, settings: habitSettings(fdtDefaults().settings),
   };
 }
 
@@ -118,6 +124,9 @@ export function validate(raw) {
       if (num(raw.weights[k], 20, 400)) s.weights[k] = Math.round(raw.weights[k] * 10) / 10;
     }
   }
+  // Vanor, träning och deras inställningar: samma validering som i follow-diet-tracker (fdt-store.js).
+  const f = fdtValidate({ settings: { ...(isObj(raw.settings) ? raw.settings : {}), slots: s.meals }, days: raw.habits, weighIns: {}, workouts: raw.workouts });
+  s.habits = f.days; s.workouts = f.workouts; s.settings = habitSettings(f.settings);
   return s;
 }
 
@@ -238,7 +247,8 @@ export function importText(text) {
   if (text.length > MAX_IMPORT_CHARS) return { error: 'Texten är för lång (max 2 MB).' };
   let env;
   try { env = JSON.parse(text.replace(/^﻿/, '')); } catch { return { error: 'Texten är inte en giltig export (trasig JSON). Kopiera hela texten igen.' }; }
-  if (!isObj(env) || env.app !== EXPORT_APP) return { error: 'Texten kommer inte från Simple nutrition.' };
+  if (isObj(env) && env.app === FDT_APP) return importFdt(text);
+  if (!isObj(env) || env.app !== EXPORT_APP) return { error: 'Texten kommer inte från Simple nutrition eller Följ planen.' };
   if (env.format !== EXPORT_FORMAT) return { error: 'Okänt exportformat – uppdatera appen och försök igen.' };
   if (!isObj(env.data)) return { error: 'Exporten saknar data.' };
   const data = validate(env.data);
@@ -256,4 +266,44 @@ export const dishTotal = (d) => d.items.reduce((a, it) => a.map((x, i) => x + it
 export function searchDishes(state, text) {
   const q = cleanText(text, 40).toLowerCase();
   return state.dishes.filter((d) => !q || d.name.toLowerCase().includes(q)).sort((a, b) => a.name.localeCompare(b.name, 'sv'));
+}
+
+/* ---------- Vanor (follow-diet-tracker's calculations on a view of this state) ---------- */
+// The fdt functions read { settings: { slots, successThreshold, weighDay }, days, weighIns, workouts }.
+export const habitView = (s) => ({ settings: { ...s.settings, slots: s.meals, weighDay: 1 }, days: s.habits, weighIns: s.weights, workouts: s.workouts });
+export const habitDay = (s, k) => dayResult(habitView(s), k);
+export const habitStreak = (s, k) => fdtStreak(habitView(s), k);
+export const habitWeek = (s, ws) => fdtWeekStats(habitView(s), ws);
+export const habitRange = (s, k, n) => rangeRatio(habitView(s), k, n);
+export const habitLongest = (s) => longestStreak(habitView(s));
+
+/* ---------- Import from follow-diet-tracker (Följ planen) ---------- */
+// Text → { fdt: validated fdt state, meals, sessions, weighIns, first, last, skipped, exported } or { error }. Saves nothing.
+function importFdt(text) {
+  const r = fdtImportText(text);
+  if (r.error) return r;
+  return { ...r, fdt: r.data, data: null };
+}
+// Merges a validated fdt state into a copy of this app's state. Meals are matched by name (Frukost = Frukost);
+// unknown meals are added (max 10). This app's own entries win on the same day; fdt fills the rest.
+export function mergeFdt(state, f) {
+  const s = validate(JSON.parse(JSON.stringify(state)));
+  const map = new Map();
+  for (const slot of f.settings.slots) {
+    let m = s.meals.find((x) => x.name.toLowerCase() === slot.name.toLowerCase());
+    if (!m && s.meals.length < 10 && !s.meals.some((x) => x.id === slot.id)) { m = { id: slot.id, name: cleanText(slot.name, 40) || 'Måltid' }; s.meals.push(m); }
+    if (m) map.set(slot.id, m.id);
+  }
+  for (const [k, day] of Object.entries(f.days)) {
+    const out = { ...(s.habits[k] || {}) };
+    for (const [id, e] of Object.entries(day)) {
+      const key = map.get(id) || id;
+      if (!(key in out)) out[key] = e;
+    }
+    s.habits[k] = out;
+  }
+  for (const [k, w] of Object.entries(f.weighIns)) if (s.weights[k] == null) s.weights[k] = w;
+  for (const [k, l] of Object.entries(f.workouts)) if (!s.workouts[k]) s.workouts[k] = l;
+  s.settings = habitSettings(f.settings);
+  return validate(s);
 }

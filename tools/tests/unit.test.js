@@ -1,5 +1,6 @@
 // Unit tests for store.js (ES module). Run: tools\test.ps1 simple-nutrition
-import { defaults, validate, cleanText, postN, sumN, goalFor, setGoal, weekStats, exportText, importText, addDays, weekStart, isoWeek } from '../../store.js';
+import { defaults, validate, cleanText, postN, sumN, goalFor, setGoal, weekStats, exportText, importText, addDays, weekStart, isoWeek, mergeFdt, habitDay } from '../../store.js';
+const FDT = JSON.stringify({ app: 'follow-diet-tracker', format: 1, exported: '2026-11-09', data: { settings: { planText: 'Plan' }, days: { '2026-11-02': { breakfast: 'f', lunch: { o: 'c', r: 'craving', n: 'jobbet' }, 'extra-1': 'c' } }, weighIns: { '2026-11-02': 84.6, '2026-11-03': 999 }, workouts: { '2026-11-02': ['push,pull', { t: 'run', k: 5, s: 1500 }] } } });
 
 const post = (o) => ({ id: 'p1', m: 'm1', ref: 'l:151', name: 'Mjölk', g: 200, n: [39, 3.6, 4.8, 0.5], ...o });
 
@@ -63,4 +64,35 @@ T.test('import: fel app, fel format, trasig text, BOM', () => {
   T.ok(importText('{"app":"simple-nutrition","format":9,"data":{}}').error);
   T.ok(importText('{trasig').error);
   T.ok(!importText('﻿' + exportText(defaults(), '2026-11-09')).error, 'BOM');
+});
+
+// Import från follow-diet-tracker: exporten görs med appens egen exportText (fdt-store.js = kopia av dess store.js).
+import { exportText as fdtExport, validate as fdtValidate } from '../../fdt-store.js';
+T.test('import från Följ planen: riktig export → måltider matchas på namn, orsak, anteckning, vikt, pass, plan', () => {
+  const r = importText(FDT);
+  T.ok(r.fdt && !r.error, r.error || 'fdt');
+  T.eq([r.meals, r.weighIns, r.sessions], [3, 1, 2]);
+  const s = mergeFdt(defaults(), r.fdt);
+  const day = s.habits['2026-11-02'];
+  T.eq([day.m1.outcome, day.m2.outcome, day.m2.reason, day.m2.note, day['extra-1'].outcome], ['followed', 'cheat', 'craving', 'jobbet', 'cheat']);
+  T.eq(s.meals.length, 4);
+  T.eq(s.weights, { '2026-11-02': 84.6 });
+  T.eq(s.workouts['2026-11-02'], [{ types: ['push', 'pull'] }, { types: ['run'], km: 5, sec: 1500 }]);
+  T.eq(s.settings.planText, 'Plan');
+  T.eq(Math.round(habitDay(s, '2026-11-02').ratio * 100), 33);   // 1 följde av 3 (extra fusk räknas, som i Följ planen)
+});
+T.test('import från Följ planen: egna måltider läggs till, det som finns här vinner', () => {
+  const f = fdtValidate({ settings: { slots: [{ id: 'breakfast', name: 'Frukost' }, { id: 'night', name: 'Kvällsmål' }] },
+    days: { '2026-11-02': { breakfast: { outcome: 'cheat' }, night: { outcome: 'followed' } } }, weighIns: { '2026-11-02': 80 } });
+  const text = fdtExport(f, '2026-11-09');
+  const mine = validate({ habits: { '2026-11-02': { m1: { outcome: 'followed' } } }, weights: { '2026-11-02': 82 } });
+  const s = mergeFdt(mine, importText(text).fdt);
+  T.eq(s.meals.map((m) => m.name), ['Frukost', 'Lunch', 'Mellanmål', 'Middag', 'Kvällsmål']);
+  T.eq([s.habits['2026-11-02'].m1.outcome, s.habits['2026-11-02'].night.outcome, s.weights['2026-11-02']], ['followed', 'followed', 82]);
+});
+T.test('import från Följ planen: trasig eller fel export avvisas utan att något ändras', () => {
+  T.ok(importText('{"app":"follow-diet-tracker","format":2,"data":{}}').error, 'format');
+  T.ok(importText('{"app":"follow-diet-tracker","format":1}').error, 'data saknas');
+  const r = importText(JSON.stringify({ app: 'follow-diet-tracker', format: 1, data: { days: { '__proto__': { x: 'f' }, '9999-01-01': { a: 'f' }, '2026-11-02': { 'bad id!': 'f', ok: 'z' } } } }));
+  T.eq(Object.keys(mergeFdt(defaults(), r.fdt).habits), []);
 });
