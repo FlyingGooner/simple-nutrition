@@ -59,6 +59,7 @@ Ren HTML, CSS och JavaScript – inga ramverk, inga beroenden, inget byggsteg f�
 | `version.js` | Versionsnummer (enda källan) |
 | `sw.js`, `manifest.webmanifest`, `icons/` | Installation som app (PWA) och offline |
 | `docs/SPEC.md` | Specifikation av funktioner och beteende |
+| `docs/DATA.md` | Dataformatet i backup-filen (samma som readme/schema/example i filen) |
 | `docs/presentation.html` | Fristående mobilpresentation av appen |
 | `tools/build-single.ps1` | Bygger testfilen |
 | `CLAUDE.md` | Regler för utveckling |
