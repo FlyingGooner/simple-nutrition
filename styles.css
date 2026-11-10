@@ -451,3 +451,59 @@ main .set-group-wrap > .card + .card, main .set-group-wrap > .set-sec + .set-sec
 main, main .card, main section, .edit-list li > * { min-width: 0; }
 main { overflow-wrap: anywhere; }
 html, body { overflow-x: clip; }
+/* Kortordning (v0.6.0) */
+.lay-list li { min-height: 44px; }
+.lay-name { flex: 1; min-width: 0; font-size: .9375rem; }
+.lay-list li.l-off .lay-name { color: var(--muted); text-decoration: line-through; }
+.lay-list .lay-eye { color: var(--primary); }
+.lay-list li.l-off .lay-eye { color: var(--muted); }
+.set-body > .lay-h:first-of-type { margin-top: 8px; }
+/* Ifylld måltid hopfälld till en rad (v0.5.10) */
+.kb-row.kb-nobar { grid-template-columns: 1.5em 1fr; }
+/* Kompakt viktkort (v0.5.14) – Vecka och Trend */
+main .w-card { padding: 10px 14px; }
+.w-row { display: flex; align-items: baseline; gap: 10px; font-variant-numeric: tabular-nums; }
+.w-label { font-size: .75rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.w-now { font-size: 1.375rem; font-weight: 500; }
+.w-chg { margin-left: auto; font-size: 1rem; font-weight: 500; }
+.w-chg small { color: var(--muted); font-weight: 400; font-size: .8125rem; }
+.w-card .delta:not(.down) { color: var(--muted); }
+.w-sub { margin: 0; font-size: .8125rem; color: var(--muted); }
+.w-card .chart { margin-top: 8px; }
+.w-card .legend { margin-top: 4px; }
+dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
+.bk-status { margin: 12px 0 0; font-size: .875rem; font-weight: 500; }
+.bk-status small { display: block; font-weight: 400; color: var(--dev); }
+/* Historik: följsamhet i viktkortet (v0.6.2) */
+.ov-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); text-align: center; }
+.w-card > .ov-stats:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.ov-s strong { display: block; font-size: 1.25rem; font-weight: 500; line-height: 1.3; font-variant-numeric: tabular-nums; }
+.ov-s span { font-size: .75rem; color: var(--muted); }
+.w-spark { flex: 1; min-width: 40px; height: 26px; align-self: center; }
+.w-spark .sp-wk { stroke: var(--line); stroke-width: 1; vector-effect: non-scaling-stroke; stroke-dasharray: 2 2; }
+.w-spark .sp-line { fill: none; stroke: var(--accent); stroke-width: 1.5; vector-effect: non-scaling-stroke; stroke-linejoin: round; opacity: .8; }
+/* Punkter som noll-långa linjer med runda ändar – förblir runda trots preserveAspectRatio=none (v0.5.17) */
+.w-spark .sp-base, .w-spark .sp-last { stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.w-spark .sp-base { stroke: var(--muted); stroke-width: 6px; }
+.w-spark .sp-last { stroke: var(--accent); stroke-width: 8px; }
+.w-spark + .w-chg { margin-left: 0; }
+.day-table { table-layout: fixed; }
+.day-table th:nth-child(1), .day-table td:nth-child(1) { width: 2.8em; }
+.day-table th:nth-child(2), .day-table td:nth-child(2) { width: 3.6em; }
+.day-table th:nth-child(4), .day-table td:nth-child(4) { width: 3.6em; }
+.day-table th:nth-child(5), .day-table td:nth-child(5) { width: 3.2em; }
+.day-table th:nth-child(3), .day-table td.dt-train { text-align: left; overflow: hidden; text-overflow: ellipsis; padding-left: 8px; }
+.day-table tr.is-today td:first-child { color: var(--primary); }
+.meal-done { padding: 2px 14px; }
+.meal-done > summary { list-style: none; cursor: pointer; min-height: 48px; }
+.meal-done > summary::-webkit-details-marker { display: none; }
+.meal-done > summary .meal-name { min-width: 0; }
+.meal-done > summary .tag { max-width: 45%; flex: none; }
+.meal-done > summary .meal-kcal { flex: none; }
+.meal-done .meal-what { display: block; font-size: .8125rem; font-weight: 400; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.meal-done[open] { padding: 8px 14px 4px; }
+.meal-done[open] .meal-what { display: none; }
+/* Loggad mat syns tydligt i hopfälld rad */
+.meal-food > summary .food-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.meal-food.has-food > summary { color: var(--fg); font-weight: 500; }
+.meal-food.has-food > summary .meal-kcal { color: var(--ok); font-weight: 500; flex: none; }

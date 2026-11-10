@@ -1,8 +1,9 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
 import { sumN, postN, goalFor, addDays, habitDay, habitStreak } from '../store.js';
-import { today, S, setOpen, el, svg, stepper, kcal, fmtNum, pct, dateTitle, amountText, mealName } from '../ui.js';
+import { today, S, setOpen, el, svg, stepper, kcal, fmtNum, pct, dateTitle, amountText, mealName, reasonName, arrange } from '../ui.js';
 import { viewAdd } from './add.js';
 import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
+import { OUTCOMES } from '../fdt-store.js';
 
 export const dayPosts = () => S.state.log[S.current] || [];
 
@@ -45,18 +46,35 @@ function mealCard(m, posts) {
   const total = posts.reduce((a, p) => a + postN(p)[0], 0);
   // Vanor i fokus (beslut 2026-11-09): ✅ 🍰 ⏭️ först, maten och kcal som stöd under.
   // Maten är en hopfälld underdel av måltiden: "🍽 Mat · 420 kcal" (öppen-läget sparas i setOpen via data-sec).
-  const other = m.id === '_other', sec = 'food-' + m.id;
-  const open = setOpen.has(sec) || posts.some((p) => p.id === S.open);
-  return el('section', { class: 'card meal', 'aria-label': m.name },
-    el('div', { class: 'meal-head' }, el('span', { class: 'meal-name', text: m.name })),
+  // v0.6.3: öppet-läget för 🍽 Mat är per dag (förut delat mellan alla dagar och tvingade även det hopfällda måltidskortet att öppnas).
+  const other = m.id === '_other', sec = `food-${S.current}-${m.id}`, editing = posts.some((p) => p.id === S.open);
+  const open = setOpen.has(sec) || editing;
+  const body = [
     other ? null : outcomeRow(m.id),
     other ? null : habitDetails(m.id),
-    el('details', { class: 'meal-food', 'data-sec': sec, open },
-      el('summary', {}, el('span', { text: '🍽 Mat' }), el('span', { class: 'meal-kcal', text: posts.length ? `${kcal(total)} kcal` : 'Inget loggat' })),
+    el('details', { class: 'meal-food' + (posts.length ? ' has-food' : ''), 'data-sec': sec, open },
+      el('summary', {},
+        el('span', { class: 'food-label', text: posts.length ? '✅ Mat' : '🍽 Mat' }),
+        el('span', { class: 'meal-kcal', text: posts.length ? `${kcal(total)} kcal` : 'Inget loggat' })),
       posts.length ? el('ul', { class: 'posts' }, posts.map(postRow)) : null,
       other ? null : el('div', { class: 'meal-foot' },
         el('button', { class: 'link add-btn', 'data-act': 'addopen', 'data-id': m.id, 'aria-label': `Lägg till mat i ${m.name}`, text: '+ Lägg till mat' }),
-        posts.some((p) => p.g != null) ? el('button', { class: 'meal-dish', 'data-act': 'mealdish', 'data-id': m.id, 'aria-label': `Spara ${m.name} som rätt`, title: 'Spara som rätt', text: '+🍲 Spara som rätt' }) : null)));
+        posts.some((p) => p.g != null) ? el('button', { class: 'meal-dish', 'data-act': 'mealdish', 'data-id': m.id, 'aria-label': `Spara ${m.name} som rätt`, title: 'Spara som rätt', text: '+🍲 Spara som rätt' }) : null)),
+  ];
+  const e = other ? null : dayHabits()[m.id];
+  // Ifylld måltid fälls ihop till en rad: val + rätt + kcal (fusk utan orsak hålls öppen tills orsaken är vald).
+  if (!e || !OUTCOMES[e.outcome] || (e.outcome === 'cheat' && !e.reason)) {
+    return el('section', { class: 'card meal', 'aria-label': m.name },
+      el('div', { class: 'meal-head' }, el('span', { class: 'meal-name', text: m.name })), body);
+  }
+  const o = OUTCOMES[e.outcome], msec = `meal-${S.current}-${m.id}`;
+  return el('details', { class: 'card meal meal-done', 'data-sec': msec, open: setOpen.has(msec) || editing, 'aria-label': m.name },
+    el('summary', { class: 'meal-head' },
+      el('span', { class: 'meal-name' }, m.name,
+        posts.length ? el('small', { class: 'meal-what', text: posts.map((p) => p.name).join(', ') }) : null),
+      el('span', { class: `tag tag-${e.outcome}`, text: `${o.icon} ${e.reason ? reasonName(e.reason) : o.label}` }),
+      posts.length ? el('span', { class: 'meal-kcal', text: `${kcal(total)} kcal` }) : null),
+    body);
 }
 
 function weightCard() {
@@ -82,20 +100,21 @@ export function viewToday() {
       isToday ? [el('span', { class: 'today-badge', text: 'IDAG' }), dateTitle(S.current)] : dateTitle(S.current), null, isToday ? '' : 'not-today'),
     el('div', { class: 'streak' }, el('span', { title: 'Lyckade dagar i rad', text: `🔥 ${st} ${st === 1 ? 'dag' : 'dagar'} i rad` }),
       isToday ? null : el('button', { class: 'link back-today', 'data-act': 'today', text: '↩ Till idag' })),
-    S.state.settings.planText ? el('p', { class: 'plan', text: S.state.settings.planText }) : null,
-    el('div', { class: 'meals' },
+    ...arrange('today', {
+    plan: () => S.state.settings.planText ? el('p', { class: 'plan', text: S.state.settings.planText }) : null,
+    meals: () => el('div', { class: 'meals' },
       S.state.meals.map((m) => mealCard(m, posts.filter((p) => p.m === m.id))),
       orphanHabits.map((k) => el('section', { class: 'card meal', 'aria-label': 'Borttagen måltid' },
         el('div', { class: 'meal-head' }, el('span', { class: 'meal-name', text: dayHabits()[k].name || 'Borttagen måltid' })), outcomeRow(k), habitDetails(k))),
       extraCards(),
       other.length ? mealCard({ id: '_other', name: 'Övrigt' }, other) : null),
-    el('div', { class: 'workouts' }, workoutCards()),
-    addRow(),
-    el('p', { class: 'summary' }, r.count ? ['Dagens följsamhet: ', el('strong', { text: `${fmtNum(r.score)}/${r.count}` }), ' · ' + pct(r.ratio)] : 'Inget loggat ännu.'),
-    summaryCard(),
-    !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
-      ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera maten från igår' }) : null,
-    weightCard(),
+    train: () => [el('div', { class: 'workouts' }, workoutCards()), addRow()],
+    score: () => el('p', { class: 'summary' }, r.count ? ['Dagens följsamhet: ', el('strong', { text: `${fmtNum(r.score)}/${r.count}` }), ' · ' + pct(r.ratio)] : 'Inget loggat ännu.'),
+    kcal: () => [summaryCard(),
+      !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
+        ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera maten från igår' }) : null],
+    weight: () => weightCard(),
+    }),
     posts.length || S.state.weights[S.current] != null || S.state.habits[S.current] || S.state.workouts[S.current]
       ? el('p', { class: 'clear-day center' }, el('button', { class: 'link danger', 'data-act': 'clearday', text: '🗑 Rensa dagen' })) : null,
   ];

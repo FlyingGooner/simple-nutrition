@@ -241,6 +241,8 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 - Arbetsytans agent `granskning` bestämmer; nya projekt läggs in i dess undantagstabell.
 - Namn i loggen, rätter, egna produkter och sökord är användarinmatning: valideras (längd, styrtecken) och renderas bara med `textContent`.
 - **Lagring:** bara `sn.data` och `sn.tab` i `localStorage`, cache `sn-<version>`. `sn.tab` valideras mot listan över flikar.
+- **Kortordning (v0.6):** `layout.<today|week|trend|history> = { order, hidden }`, bara id:n `^[a-z]{1,20}$`, högst 20 per lista. `ui.js` `layoutOf()` filtrerar mot kända kort-id:n. Id:n renderas aldrig – bara de fasta namnen i `LAYOUT`.
+- **Backup-påminnelse (v0.7):** `backup = { remind: week|month|off, last?, asked? }` (datum valideras som datumnycklar). Ingen ny lagringsnyckel; dialogtexten sätts med `textContent`.
 - **Validering i `store.js`** per del. Ogiltiga poster hoppas över utan krasch.
   - id: `^[A-Za-z0-9_-]{1,40}$`
   - datumnycklar: `^\d{4}-\d{2}-\d{2}$` och giltigt datum

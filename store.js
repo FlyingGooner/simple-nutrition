@@ -31,7 +31,8 @@ export function defaults() {
     version: 1,
     goals: [{ from: '2000-01-01' }],                    // inget kalorimål från start (beslut 2026-11-10)
     meals: [{ id: 'm1', name: 'Frukost' }, { id: 'm2', name: 'Lunch' }, { id: 'm3', name: 'Mellanmål' }, { id: 'm4', name: 'Middag' }],
-    log: {}, dishes: [], foods: [], aliases: Object.create(null), weights: {},
+    log: {}, dishes: [], foods: [], aliases: Object.create(null), weights: {}, layout: {},
+    backup: { remind: 'month', last: null, asked: null },   // v0.7.0: påminnelse om backup
     habits: {}, workouts: {}, settings: habitSettings(fdtDefaults().settings),
   };
 }
@@ -119,6 +120,18 @@ export function validate(raw) {
       const w = cleanText(k, 40).toLowerCase();
       if (!w || BAD_KEYS.has(w) || !REF_RE.test(raw.aliases[k]) || n >= LIM.aliases) continue;
       s.aliases[w] = raw.aliases[k]; n++;
+    }
+  }
+  if (isObj(raw.backup)) {
+    if (['week', 'month', 'off'].includes(raw.backup.remind)) s.backup.remind = raw.backup.remind;
+    if (validDate(raw.backup.last)) s.backup.last = raw.backup.last;
+    if (validDate(raw.backup.asked)) s.backup.asked = raw.backup.asked;
+  }
+  // Kortordning (v0.6.0): bara struktur valideras här; ui.js layoutOf() filtrerar mot kända kort-id:n.
+  if (isObj(raw.layout)) {
+    const ids = (a) => (Array.isArray(a) ? a.filter((x) => typeof x === 'string' && /^[a-z]{1,20}$/.test(x)).slice(0, 20) : []);
+    for (const v of ['today', 'week', 'trend', 'history']) {
+      if (isObj(raw.layout[v])) s.layout[v] = { order: ids(raw.layout[v].order), hidden: ids(raw.layout[v].hidden) };
     }
   }
   if (isObj(raw.weights)) {

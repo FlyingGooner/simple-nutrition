@@ -1,6 +1,6 @@
 // View: Trend – weight (7-day average), the last 4 weeks as a table, weight chart 12 weeks, kcal vs weight.
 import { addDays, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
-import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions } from '../ui.js';
+import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions, arrange } from '../ui.js';
 
 // 7-day average of the weights in [k-6, k], or null.
 export function avg7(k) {
@@ -19,11 +19,14 @@ function summary(t) {
   let back = avg7(addDays(lastK, -28));
   if (back == null) { const first = keys.find((k) => k >= addDays(lastK, -28)); back = first && first < lastK ? avg7(first) : null; }
   const first = S.state.weights[keys[0]];
-  return el('section', { class: 'card w-sum' },
-    el('div', { class: 'w-sum-top' },
-      el('div', {}, el('span', { class: 'w-big', text: `${fmtNum(r1(now))} kg` }), el('p', { class: 'muted small', text: '7-dagars medel' })),
-      back != null ? el('div', { class: 'w-d' }, delta(now - back), el('p', { class: 'muted small', text: '4 veckor' })) : null),
-    keys.length > 1 ? el('p', { class: 'small' }, `Totalt ${signed(now - first)} kg sedan ${shortDate(keys[0])}`) : null);
+  // Kompakt (v0.5.14): siffror på en rad + kurvan i samma kort.
+  return el('section', { class: 'card w-card' },
+    el('div', { class: 'w-row' },
+      el('span', { class: 'w-label', text: 'Vikt' }),
+      el('span', { class: 'w-now', text: `${fmtNum(r1(now))} kg` }),
+      back != null ? el('span', { class: 'w-chg' }, delta(now - back), el('small', { text: ' 4 v' })) : null),
+    el('p', { class: 'w-sub', text: ['7-dagars medel', keys.length > 1 ? `totalt ${signed(now - first)} kg sedan ${shortDate(keys[0])}` : null].filter(Boolean).join(' · ') }),
+    chart());
 }
 
 function weeks(n) {
@@ -72,7 +75,7 @@ function chart() {
   });
   const vals = [...line.map((p) => p[1]), ...dots.map((p) => p[1])];
   const lo = Math.floor(Math.min(...vals) - 0.5), hi = Math.ceil(Math.max(...vals) + 0.5);
-  const W = 320, H = 150, pad = 26, bottom = 16;
+  const W = 320, H = 110, pad = 26, bottom = 16;
   const x = (i) => pad + i * (W - pad - 6) / (n - 1), y = (v) => 8 + (hi - v) * (H - 8 - bottom) / (hi - lo);
   const r = (v) => Math.round(v * 10) / 10;
   const d = line.map((p, j) => `${j ? 'L' : 'M'}${r(x(p[0]))},${r(y(p[1]))}`).join(' ');
@@ -80,13 +83,12 @@ function chart() {
   const label = (k) => (long ? parseKey(k).toLocaleDateString('sv-SE', { month: 'short', year: '2-digit' }) : shortDate(k));
   const ticks = [0, Math.round((n - 1) / 2), n - 1];
   const span = n < 70 ? `${Math.round(n / 7)} veckor` : n < 730 ? `${Math.round(n / 30.4)} månader` : `${fmtNum(r(n / 365))} år`;
-  return el('section', { class: 'card' }, el('h2', {}, 'Vikt över tid ', el('small', { text: `· ${span}` })),
-    svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': `Viktkurva ${span}, 7-dagars medel` },
+  return [svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': `Viktkurva ${span}, 7-dagars medel` },
       [lo, (lo + hi) / 2, hi].map((v) => [svg('line', { class: 'grid', x1: pad, x2: W, y1: y(v), y2: y(v) }), svg('text', { class: 'ax', x: 0, y: y(v) + 3 }, fmtNum(r1(v)))]),
       ticks.map((i, j) => svg('text', { class: 'ax', x: x(i), y: H - 3, 'text-anchor': j === 0 ? 'start' : j === 2 ? 'end' : 'middle' }, label(days[i]))),
       dots.map((p) => svg('circle', { class: 'w-dot-extra', cx: r(x(p[0])), cy: r(y(p[1])), r: 2 })),
       svg('path', { class: 'w-line', d })),
-    el('p', { class: 'legend' }, el('span', { class: 'lg lg-w' }), ' 7-dagars medel', dots.length ? [el('span', { class: 'lg lg-wx' }), ' vägning'] : null));
+    el('p', { class: 'legend' }, el('span', { class: 'lg lg-w' }), ' 7-dagars medel', dots.length ? [el('span', { class: 'lg lg-wx' }), ' vägning'] : null, ` · ${span}`)];
 }
 
 function compare() {
@@ -110,5 +112,5 @@ function compare() {
 }
 
 export function viewTrend() {
-  return [summary(), table(), chart(), compare()];
+  return arrange('trend', { weight: () => summary(), weeks: table, compare });
 }

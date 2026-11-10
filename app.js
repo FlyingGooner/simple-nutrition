@@ -1,6 +1,6 @@
 // Simple nutrition – no external calls, localStorage only. See CLAUDE.md. Views in views/*.js, shared state in ui.js.
 import { defaults, load, save, validate, addDays, weekStart, setGoal, goalFor, findRef, cleanText, uid, dishTotal, exportText, importText, MAX_IMPORT_CHARS } from './store.js';
-import { today, S, setOpen, el, kcal, shortDate, dateTitle, parseNum, wType, isCardio, parseDur } from './ui.js';
+import { today, S, setOpen, el, kcal, shortDate, dateTitle, parseNum, wType, isCardio, parseDur, layoutOf, LAYOUT_VIEWS } from './ui.js';
 import { mergeFdt } from './store.js';
 import { viewToday, dayPosts } from './views/today.js';
 import { resultsList, pickGrams } from './views/add.js';
@@ -75,7 +75,11 @@ function go(v) {
   render();
   scrollTo(0, 0);
 }
-const resetDay = () => { S.open = null; S.add = null; };
+// v0.6.4: vid dagbyte glöms utfällda måltider och 🍽 Mat – ifyllda måltider visas alltid hopfällda när man kommer till en dag.
+const resetDay = () => {
+  S.open = null; S.add = null;
+  for (const k of [...setOpen]) if (k.startsWith('meal-') || k.startsWith('food-')) setOpen.delete(k);
+};
 tabbar.addEventListener('click', (ev) => {
   const t = ev.target.closest('[data-view]');
   if (!t) return;
@@ -378,6 +382,27 @@ app.addEventListener('click', (ev) => {
       inputs[inputs.length - 1]?.select();
       return;
     }
+    // Kortordning (v0.6.0)
+    case 'lup': case 'ldown': {
+      const v = t.dataset.kind, L = layoutOf(v), i = L.order.indexOf(id), j = act === 'lup' ? i - 1 : i + 1;
+      if (i < 0 || j < 0 || j >= L.order.length) return;
+      [L.order[i], L.order[j]] = [L.order[j], L.order[i]];
+      (S.state.layout ||= {})[v] = L; persist(); break;
+    }
+    case 'lhide': {
+      const v = t.dataset.kind, L = layoutOf(v), off = L.hidden.includes(id);
+      if (!off && L.order.length - L.hidden.length <= 1) return;   // minst ett kort synligt
+      L.hidden = off ? L.hidden.filter((x) => x !== id) : [...L.hidden, id];
+      (S.state.layout ||= {})[v] = L; persist(); break;
+    }
+    case 'lresetall':
+      withUndo('Standardordning återställd i alla vyer', () => { S.state.layout = {}; });
+      return;
+    case 'lreset': {
+      const v = t.dataset.kind;
+      withUndo(`Standardordning för ${LAYOUT_VIEWS[v]} återställd`, () => { if (S.state.layout) delete S.state.layout[v]; });
+      return;
+    }
     case 'up': {
       const l = listOf(t.dataset.kind), i = l ? l.findIndex((x) => x.id === id) : -1;
       if (i > 0) [l[i - 1], l[i]] = [l[i], l[i - 1]];
@@ -475,6 +500,7 @@ app.addEventListener('change', (ev) => {
       if (v) e.note = v; else delete e.note;
       persist(); return;
     }
+    case 'bkremind': if (['week', 'month', 'off'].includes(t.value)) { S.state.backup.remind = t.value; S.state.backup.asked = null; persist(); } return;
     case 'threshold': S.state.settings.successThreshold = Number(t.value) / 100; persist(); return;
     case 'wgoal': {
       const k = t.dataset.val, v = Number(t.value);
@@ -532,8 +558,35 @@ const BACKUP_MSG = {
 };
 async function saveBackup() {
   const r = await Backup.save({ slug: 'simple-nutrition', today: today(), text: exportText(S.state, today()) });
+  if (r === 'saved' || r === 'fallback') {   // v0.7.0: kom ihåg senaste backup för påminnelsen
+    S.state.backup.last = today(); S.state.backup.asked = null; persist();
+    if (view === 'settings') render();
+  }
   if (BACKUP_MSG[r]) snackbar(BACKUP_MSG[r], null, null, 4000);
 }
+/* ---------- Backup-påminnelse (v0.7.0) ---------- */
+// Förfallen när det gått en vecka/månad sedan senaste backup (eller sedan första loggade dagen om ingen backup finns).
+// "Inte nu" frågar igen om 3 dagar. Visas högst en gång per session och aldrig utan data.
+let backupAsked = false;
+function backupDue() {
+  const b = S.state.backup, days = b.remind === 'week' ? 7 : b.remind === 'month' ? 30 : 0;
+  if (!days) return false;
+  const keys = [...Object.keys(S.state.log), ...Object.keys(S.state.habits), ...Object.keys(S.state.weights)].sort();
+  if (!keys.length) return false;
+  if (addDays(b.last || keys[0], days) > today()) return false;
+  return !(b.asked && addDays(b.asked, 3) > today());
+}
+function maybeAskBackup() {
+  if (backupAsked || S.add || S.dish || document.querySelector('dialog[open]') || !backupDue()) return;
+  backupAsked = true;
+  const last = S.state.backup.last;
+  document.getElementById('bk-sum').textContent = last
+    ? `Senaste backup: ${shortDate(last)}. Spara en ny så att du inte tappar din data.`
+    : 'Du har inte sparat någon backup än. Spara en så att du inte tappar din data.';
+  document.getElementById('backup-dialog').showModal();
+}
+document.getElementById('bk-ok').addEventListener('click', () => { saveBackup(); });
+document.getElementById('bk-later').addEventListener('click', () => { S.state.backup.asked = today(); persist(); });
 async function readBackup(input) {
   const file = input.files && input.files[0];
   input.value = '';
@@ -585,6 +638,8 @@ document.addEventListener('visibilitychange', () => {
 });
 
 go(location.hash.slice(1));
+setTimeout(maybeAskBackup, 800);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') setTimeout(maybeAskBackup, 300); });
 
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   const hadController = !!navigator.serviceWorker.controller;

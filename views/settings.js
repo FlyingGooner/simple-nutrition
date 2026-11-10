@@ -1,8 +1,25 @@
 // View: Inställningar – grupperna Vanor, Träning, Kalorier och Allmänt, var och en hopfälld för sig (beslut 2026-11-09).
-import { goalFor, findRef } from '../store.js';
-import { today, S, setOpen, el, kcal, pct } from '../ui.js';
+import { goalFor, findRef, addDays } from '../store.js';
+import { today, S, setOpen, el, kcal, pct, shortDate, LAYOUT, LAYOUT_VIEWS, layoutOf } from '../ui.js';
 import { dishEditor, dishList } from './dishes.js';
 import { viewAdd } from './add.js';
+
+// Kortordning (v0.6.0): en lista per vy, ↑ ↓ flyttar, ●/○ visar/döljer.
+function layoutSection() {
+  return Object.entries(LAYOUT_VIEWS).map(([v, name]) => {
+    const { order, hidden } = layoutOf(v), label = Object.fromEntries(LAYOUT[v]);
+    return [el('h2', { class: 'goal-h lay-h', text: name }),
+      el('ul', { class: 'edit-list lay-list' }, order.map((id, i) => {
+        const off = hidden.includes(id);
+        return el('li', { class: off ? 'l-off' : '' },
+          el('span', { class: 'lay-name', text: label[id] }),
+          el('button', { class: 'icon sm', 'data-act': 'lup', 'data-kind': v, 'data-id': id, disabled: i === 0, 'aria-label': `Flytta upp ${label[id]}`, text: '↑' }),
+          el('button', { class: 'icon sm', 'data-act': 'ldown', 'data-kind': v, 'data-id': id, disabled: i === order.length - 1, 'aria-label': `Flytta ner ${label[id]}`, text: '↓' }),
+          el('button', { class: 'icon sm lay-eye', 'data-act': 'lhide', 'data-kind': v, 'data-id': id, 'aria-pressed': String(!off), 'aria-label': `${off ? 'Visa' : 'Dölj'} ${label[id]}`, text: off ? '○' : '●' }));
+      })),
+      el('button', { class: 'link small-link', 'data-act': 'lreset', 'data-kind': v, text: `Återställ ${name}` })];
+  });
+}
 
 const LIMITS = { meals: [1, 10, 'Lägg till måltid'], reasons: [0, 60, 'Lägg till orsak'], workoutTypes: [0, 60, 'Lägg till passtyp'] };
 function editableList(kind, items) {
@@ -105,11 +122,24 @@ export function viewSettings() {
       sec('dishes', 'Mina rätter', `${S.state.dishes.length} st`, dishList()),
       sec('foods', 'Egna produkter', `${S.state.foods.length} st`, foodsSection()),
       sec('aliases', 'Egna sökord', `${Object.keys(S.state.aliases).length} st`, aliasSection())),
+    group('layout', 'Utseende', 'Kortordning',
+      sec('layout', 'Kortordning', Object.keys(LAYOUT_VIEWS).some((v) => S.state.layout?.[v]) ? 'Egen' : 'Standard',
+        el('p', { class: 'muted small', text: 'Välj ordning på korten i varje vy. ↑ ↓ flyttar, ● visas, ○ dolt.' }),
+        layoutSection(),
+        Object.keys(LAYOUT_VIEWS).some((v) => S.state.layout?.[v])
+          ? el('div', { class: 'save-row' }, el('button', { class: 'link', 'data-act': 'lresetall', text: 'Återställ alla vyer' })) : null)),
     group('app', 'Allmänt', 'Data, hjälp',
       sec('data', 'Data', 'Backup, import, radera',
         el('p', { class: 'small', text: 'All data sparas bara i den här webbläsaren (localStorage). Rensar du webbplatsdata eller avinstallerar appen försvinner den – spara en backup-fil då och då.' }),
         el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och ligger okrypterad bland hämtade filer, där den kan synkas till molnet. Dela den bara med den du litar på och radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),
         el('p', { class: 'small', text: 'Flyttar du från Följ planen: spara en backup-fil där och läs in den här. Måltider, orsaker, vägningar och pass läggs till – inget du redan har tas bort.' }),
+        (() => {   // v0.7.0: status för senaste backup, direkt ovanför knapparna
+          const last = S.state.backup.last, old = !last || addDays(last, 30) <= today();
+          const hasData = Object.keys(S.state.log).length || Object.keys(S.state.habits).length || Object.keys(S.state.weights).length;
+          return el('p', { class: 'bk-status' + (old && hasData ? ' bk-old' : '') },
+            last ? `Senaste backup: ${shortDate(last)}` : 'Ingen backup sparad än',
+            old && hasData ? el('small', { text: last ? 'Mer än en månad sedan – bra idé att göra en ny.' : 'Bra idé att göra en nu.' }) : null);
+        })(),
         el('div', { class: 'data-actions' },
           el('button', { class: 'btn-file btn-filled', 'data-act': 'backupsave', text: 'Spara backup-fil' }),
           el('label', { class: 'btn-file' }, 'Läs in backup-fil',
@@ -122,6 +152,10 @@ export function viewSettings() {
           el('label', { class: 'data-box' }, el('span', { class: 'small', text: 'Importera (ersätter all data – från Följ planen läggs den till)' }),
             el('textarea', { id: 'import-text', rows: 3, autocomplete: 'off', spellcheck: 'false', placeholder: 'Klistra in en exporterad text' })),
           el('button', { class: 'link', 'data-act': 'import', text: 'Importera' })),
+        el('label', { class: 'goal-row' }, el('span', { text: 'Påminn om backup' }),
+          el('select', { 'data-act': 'bkremind', 'aria-label': 'Påminn om backup' },
+            [['week', 'Varje vecka'], ['month', 'Varje månad'], ['off', 'Aldrig']].map(([v, l]) =>
+              el('option', { value: v, selected: S.state.backup.remind === v, text: l })))),
         el('button', { class: 'link danger', 'data-act': 'wipe', text: 'Radera all data' })),
       S.installPrompt ? el('section', { class: 'card' }, el('button', { class: 'primary', 'data-act': 'install', text: 'Installera appen' })) : null,
       helpCard()),

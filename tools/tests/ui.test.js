@@ -269,7 +269,7 @@ T.test('proteinmål visas i summan', async () => {
 });
 T.test('trend: 7-dagars medel, tabell och diagram', async () => {
   await tab('trend');
-  T.ok(q('.w-big'), 'vikt');
+  T.ok(q('.w-card .w-now'), 'vikt');
   T.ok(app.querySelectorAll('.wk-table tbody tr').length >= 2, 'tabell');
   T.ok(q('.chart .w-line'), 'diagram');
   q('.wk-table [data-act="openweek"]').click(); await T.wait();
@@ -316,7 +316,7 @@ T.test('tomt kalorimål + Spara = inget mål, Idag visar bara summan', async () 
   T.ok(!q('.sum-left') && !q('.kbar'), 'ingen kvar-text eller stapel');
 });T.test('viktdiagram: hela perioden, skalar över år (ingen ring per vägning, år-etiketter)', async () => {
   await tab('trend');
-  T.ok(/veckor/.test(q('.chart')?.closest('.card').querySelector('h2').textContent), 'kort period i veckor');
+  T.ok(/veckor/.test(q('.chart')?.closest('.card').querySelector('.legend').textContent), 'kort period i veckor');
   T.ok(app.querySelectorAll('.chart .w-dot-extra').length >= 2, 'ringar vid kort period');
   const weights = {};
   for (let d = new Date(2024, 0, 1, 12); d < new Date(2026, 10, 1, 12); d.setDate(d.getDate() + 7)) {
@@ -328,10 +328,29 @@ T.test('tomt kalorimål + Spara = inget mål, Idag visar bara summan', async () 
   q('[data-act="import"]').click();
   document.getElementById('imp-ok').click(); document.getElementById('import-dialog').close();
   await tab('trend');
-  const h2 = q('.chart').closest('.card').querySelector('h2').textContent;
+  const h2 = q('.chart').closest('.card').querySelector('.legend').textContent;
   T.ok(/år/.test(h2), h2);
   T.eq(app.querySelectorAll('.chart .w-dot-extra').length, 0);
   const pts = (q('.chart .w-line').getAttribute('d').match(/[ML]/g) || []).length;
   T.ok(pts > 50 && pts <= 200, `${pts} punkter`);
   T.ok([...app.querySelectorAll('.chart .ax')].some((t) => /24/.test(t.textContent)), 'år 2024 på x-axeln');
+});
+T.test('ifylld måltid är hopfälld efter dagbyte, även om den var utfälld (v0.6.3–0.6.4)', async () => {
+  await tab('today');
+  if (!q('details.meal-done')) { q('[data-act="outcome"][data-id="m3"][data-val="followed"]').click(); }
+  const d = q('details.meal-done'); T.ok(d, 'hopfälld måltid finns'); T.ok(!d.open, 'stängd från start');
+  d.open = true; await T.wait();
+  const food = q('details.meal-done[open] .meal-food'); if (food) { food.open = true; await T.wait(); }
+  q('[data-act="prev"]').click(); await T.wait();
+  q('[data-act="next"]').click(); await T.wait();
+  T.ok(!q('details.meal-done').open, 'hopfälld igen');
+});
+T.test('kortordning: dölj, flytta, återställ (v0.6)', async () => {
+  await tab('settings');
+  q('[data-act="lhide"][data-kind="week"][data-id="kcal"]').click();
+  T.eq(stored().layout.week.hidden, ['kcal']);
+  q('[data-act="ldown"][data-kind="week"][data-id="weight"]').click();
+  T.eq(stored().layout.week.order.slice(0, 2), ['habits', 'weight']);
+  q('[data-act="lresetall"]').click();
+  T.eq(stored().layout, {});
 });

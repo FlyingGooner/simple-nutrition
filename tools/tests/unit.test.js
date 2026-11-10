@@ -105,3 +105,10 @@ T.test('inget kalorimål: veckan räknar inte "inom mål", tomt mål tas bort fr
   T.eq([goalFor(s, '2026-11-03').kcal, goalFor(s, '2026-11-06').kcal], [1800, undefined]);
   T.ok(!('kcal' in s.goals.at(-1)), 'kcal borttaget');
 });
+T.test('layout och backup valideras (v0.6–0.7)', () => {
+  const s = validate({ layout: { week: { order: ['kcal', 'BAD!', 7, 'weight'], hidden: 'x' }, evil: { order: ['a'] }, trend: 5 },
+    backup: { remind: 'hourly', last: '2026-11-01', asked: 'igår' } });
+  T.eq(s.layout, { week: { order: ['kcal', 'weight'], hidden: [] } });
+  T.eq(s.backup, { remind: 'month', last: '2026-11-01', asked: null });
+  T.eq(validate({ layout: [1, 2] }).layout, {});
+});

@@ -101,3 +101,24 @@ export function sessionText(w) {
   if (w.sec != null) parts.push(fmtDur(w.sec));
   return parts.join(' · ');
 }
+
+// Egen kortordning per vy (v0.6.0). Id:n är fasta; S.state.layout[vy] = { order, hidden }.
+// Okända id:n ignoreras, nya kort (senare versioner) läggs sist, så sparad ordning går aldrig sönder.
+export const LAYOUT = {
+  today: [['plan', 'Min plan'], ['meals', 'Måltider'], ['train', 'Träning och extra fusk'], ['score', 'Dagens följsamhet'], ['kcal', 'Kalorier'], ['weight', 'Vikt']],
+  week: [['weight', 'Vikt'], ['habits', 'Vanor'], ['days', 'Dag för dag'], ['training', 'Träning'], ['kcal', 'Kalorier']],
+  trend: [['weight', 'Vikt och kurva'], ['weeks', 'Vecka för vecka'], ['compare', 'Vad hänger ihop']],
+  history: [['weight', 'Vikt och följsamhet'], ['calendar', 'Kalender'], ['more', 'Träning och kcal']],
+};
+export const LAYOUT_VIEWS = { today: 'Idag', week: 'Vecka', trend: 'Trend', history: 'Historik' };
+export function layoutOf(v) {
+  const def = LAYOUT[v].map(([id]) => id), L = S.state.layout?.[v] || {};
+  const order = (L.order || []).filter((id, i, a) => def.includes(id) && a.indexOf(id) === i);
+  def.forEach((id) => { if (!order.includes(id)) order.push(id); });
+  return { order, hidden: (L.hidden || []).filter((id) => def.includes(id)) };
+}
+// map: { id: () => node } – bara synliga kort byggs.
+export function arrange(v, map) {
+  const { order, hidden } = layoutOf(v);
+  return order.filter((id) => !hidden.includes(id) && map[id]).map((id) => map[id]());
+}

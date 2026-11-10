@@ -10,6 +10,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 ## Vanor
 - Tryck på utfallet för måltiden. Tryck igen på samma för att ta bort det.
 - Vid 🍰 Fusk: välj en orsak (t.ex. Utemat eller Sug) och skriv gärna en kort anteckning.
+- Ifyllda måltider visas hopfällda som en rad (val, rätt och kcal) – tryck på raden för att ändra. 🍰 Fusk utan orsak hålls öppen tills orsaken är vald.
 - **+ Extra fusk** loggar fusk mellan måltiderna.
 - Följsamhet = följda måltider delat med följda + fusk. Hoppade över räknas inte. En dag är lyckad när den når din gräns (80 % från start). 🔥 visar lyckade dagar i rad.
 
@@ -19,7 +20,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Under **Inställningar → Träning** ändrar du passtyperna och sätter mål per vecka. Målen syns på knappen i Idag och i Vecka.
 
 ## Mat och kalorier
-- Under varje måltid finns en hopfälld rad **🍽 Mat**. Fäll ut den och tryck **+ Lägg till mat**.
+- Under varje måltid finns en hopfälld rad **🍽 Mat**. Fäll ut den och tryck **+ Lägg till mat**. När mat är loggad visar raden **✅ Mat** och dagens kcal för måltiden.
 - Under **Varor** söker du, t.ex. mjölk. Välj variant (Lätt, Mellan …) och mängd i gram eller i mått som dl eller st. Mått är ungefärliga (≈). Visa fler söker i hela Livsmedelsverkets lista.
 - **burk avr.** betyder avrunnen vikt: en burk kidneybönor är 400 g med spad men ca 230 g bönor – det är bönorna som räknas.
 - Under **Senaste** loggar du något du ätit förut med ett tryck. **Kopiera maten från igår** fyller en tom dag med gårdagens mat.
@@ -46,9 +47,13 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Fyll i vikten under **Vikt idag**, gärna på morgonen. Trenden räknas på 7-dagars medel, så enskilda dagar spelar liten roll.
 
 ## Vecka, Trend och Historik
-- **Vecka:** följsamhet, fusk och vanligaste orsak, träning mot målen och sist kalorier per dag.
-- **Trend:** vikten (7-dagars medel) och förändringen senaste 4 veckorna, en tabell vecka för vecka (vikt, följsamhet, fusk, pass, kcal – tryck för att öppna veckan), viktkurvan över hela tiden sedan första vägningen (skalar från veckor till år) och vad som hänger ihop: bra mot sämre veckor, träning och kalorier (efter 4 veckor).
-- **Historik:** månadskalender färgad efter följsamhet, med markering för vägning och träning. Följsamhet 7 och 30 dagar, streaks, pass totalt och kcal-snitt.
+- **Vecka:** vikten (senaste vägningen mot första vägningen veckan innan, med minikurva), följsamhet, fusk och vanligaste orsak, dag för dag (vanor, pass, kcal, vikt – tryck för att öppna dagen), träning mot målen och kalorisnitt. Staplar per dag visas bara när ett kalorimål är satt.
+- **Trend:** vikten (7-dagars medel), förändringen senaste 4 veckorna och viktkurvan i samma kort, en tabell vecka för vecka (vikt, följsamhet, fusk, pass, kcal – tryck för att öppna veckan) och vad som hänger ihop: bra mot sämre veckor, träning och kalorier (efter 4 veckor).
+- **Historik:** vikten i månaden mot senaste vägningen månaden innan (med minikurva) och följsamhet 7 och 30 dagar och streaks i samma kort, sedan månadskalendern färgad efter följsamhet med markering för vägning och träning, och sist pass totalt och kcal-snitt.
+- Vecka jämför enskilda vägningar, Trend 7-dagars medel.
+
+## Kortordning
+- Under **Inställningar → Utseende → Kortordning** väljer du ordningen på korten i Idag, Vecka, Trend och Historik. ↑ ↓ flyttar, ● visas, ○ döljer. **Återställ** ger standardordningen tillbaka, för en vy eller för alla vyer längst ner.
 
 ## Flytta från Följ planen
 - Öppna Följ planen → Inställningar → Data → **Spara backup-fil**.
@@ -56,7 +61,8 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Kontrollera sammanfattningen och tryck **Lägg till**. Vanor, orsaker, anteckningar, vägningar, träningspass, plan och mål följer med. Måltider med samma namn slås ihop. Inget du redan har i Simple nutrition tas bort – Ångra finns direkt efteråt.
 
 ## Backup och flytt
-- Under **Data**: tryck **Spara backup-fil**. Filen heter t.ex. simple-nutrition-2026-11-09.txt och hamnar bland hämtade filer. Gör det då och då.
+- Under **Data**: tryck **Spara backup-fil**. Filen heter t.ex. simple-nutrition-2026-11-09.txt och hamnar bland hämtade filer.
+- Appen påminner om backup varje månad (eller vecka). Ändra under **Data → Påminn om backup**.
 - För att läsa tillbaka: tryck **Läs in backup-fil**, kontrollera sammanfattningen och tryck **Ersätt**. All nuvarande data ersätts – Ångra finns direkt efteråt.
 - Går det inte att spara eller välja filen: öppna **Visa som text** och kopiera eller klistra in.
 - Filen innehåller all din data och är okrypterad. Dela den bara med den du litar på.
