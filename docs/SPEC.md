@@ -220,7 +220,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 | `sn.tab` | Senast öppnade flik |
 
 ### Export och import (STANDARD 5)
-- Kuvert `{"app":"simple-nutrition","format":1,"exported":"ÅÅÅÅ-MM-DD","data":{…}}`, kompakt, utan standardvärden och tomma fält.
+- Kuvert `{"app","format":1,"exported","appVersion","readme","schema","example","data"}` (F2, v0.8): `readme`/`schema`/`example` beskriver formatet (se `docs/DATA.md`), `data` kompakt. Importen läser bara `app`, `format` och `data`; övriga nycklar ignoreras.
 - Fil `simple-nutrition-ÅÅÅÅ-MM-DD.txt` via gemensamma `backup.js`; text som reserv.
 - Import: allt eller inget, samma validering som `store.js`, sammanfattning ("214 loggade dagar, 12 rätter, 5 egna produkter, 98 vägningar, jan–nov 2026") → bekräftelse → ersätter → ångra-snackbar.
 
@@ -242,11 +242,12 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 - Namn i loggen, rätter, egna produkter och sökord är användarinmatning: valideras (längd, styrtecken) och renderas bara med `textContent`.
 - **Lagring:** bara `sn.data` och `sn.tab` i `localStorage`, cache `sn-<version>`. `sn.tab` valideras mot listan över flikar.
 - **Kortordning (v0.6):** `layout.<today|week|trend|history> = { order, hidden }`, bara id:n `^[a-z]{1,20}$`, högst 20 per lista. `ui.js` `layoutOf()` filtrerar mot kända kort-id:n. Id:n renderas aldrig – bara de fasta namnen i `LAYOUT`.
+- **Utemat (v0.8):** `q:`-ref bara för id:n i `QUICK_ADD` (store.js), annars hoppas posten över. Valideras som rätt-post (`q`, `n` totalt).
 - **Backup-påminnelse (v0.7):** `backup = { remind: week|month|off, last?, asked? }` (datum valideras som datumnycklar). Ingen ny lagringsnyckel; dialogtexten sätts med `textContent`.
 - **Validering i `store.js`** per del. Ogiltiga poster hoppas över utan krasch.
   - id: `^[A-Za-z0-9_-]{1,40}$`
   - datumnycklar: `^\d{4}-\d{2}-\d{2}$` och giltigt datum
-  - `ref`: `^[lbur]:[A-Za-z0-9_.-]{1,40}$`
+  - `ref`: `^[lburq]:[A-Za-z0-9_.-]{1,40}$`
   - `n`: exakt 4 ändliga tal. Varor: per 100 g, kcal 0–9000 och gram 0–100. Rätt-poster (`r:`): totalt för andelen, kcal 0–20000 och gram 0–2000
   - `g`: 0–10000
   - `q`: större än 0 och högst 50 (andel av hela receptet)

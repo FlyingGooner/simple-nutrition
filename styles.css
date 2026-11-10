@@ -507,3 +507,6 @@ dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
 .meal-food > summary .food-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .meal-food.has-food > summary { color: var(--fg); font-weight: 500; }
 .meal-food.has-food > summary .meal-kcal { color: var(--ok); font-weight: 500; flex: none; }
+/* Lägg till: fyra flikar och Utemat (F3) */
+.segs4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.segs4 .seg { padding: 0 2px; }

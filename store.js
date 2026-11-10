@@ -9,7 +9,7 @@ const habitSettings = (x) => ({ reasons: x.reasons, successThreshold: x.successT
 export const EXPORT_APP = 'simple-nutrition', EXPORT_FORMAT = 1;
 export const MAX_IMPORT_CHARS = 2000000;
 const LIM = { perDay: 100, days: 3650, dishes: 500, ingr: 50, foods: 1000, aliases: 1000, weights: 3650, meals: 10, goals: 100 };
-const ID_RE = /^[A-Za-z0-9_-]{1,40}$/, DATE_RE = /^\d{4}-\d{2}-\d{2}$/, REF_RE = /^[lbur]:[A-Za-z0-9_.-]{1,40}$/;
+const ID_RE = /^[A-Za-z0-9_-]{1,40}$/, DATE_RE = /^\d{4}-\d{2}-\d{2}$/, REF_RE = /^[lburq]:[A-Za-z0-9_.-]{1,40}$/;
 const BAD_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
 export const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -50,10 +50,11 @@ function cleanUnit(u) {   // [unit name ≤ 10 chars, number]
 }
 function cleanPost(p) {
   if (!isObj(p) || !ID_RE.test(p.id) || !REF_RE.test(p.ref) || !ID_RE.test(p.m)) return null;
-  const dish = p.ref.startsWith('r:');
+  const dish = p.ref.startsWith('r:') || p.ref.startsWith('q:');   // q: = Utemat (F3), n totalt som rätt-post
   const name = cleanText(p.name), n = cleanN(p.n, dish);
   if (!name || !n) return null;
   const out = { id: p.id, m: p.m, ref: p.ref, name, n };
+  if (p.ref.startsWith('q:') && !QUICK_ADD.some((x) => 'q:' + x.id === p.ref)) return null;
   if (dish) { if (num(p.q, 0.0001, 50)) out.q = Math.round(p.q * 10000) / 10000; else return null; }
   else if (num(p.g, 0, 10000)) out.g = Math.round(p.g * 10) / 10;
   else return null;
@@ -167,7 +168,7 @@ export function isoWeek(k) {
 /* ---------- Nutrition ---------- */
 // Nutrients of a post: [kcal, prot, kolh, fett]. Food: n per 100 g × g. Dish share: n is the total for the share.
 export function postN(p) {
-  const f = p.g != null && !p.ref.startsWith('r:') ? p.g / 100 : 1;
+  const f = p.g != null && !p.ref.startsWith('r:') && !p.ref.startsWith('q:') ? p.g / 100 : 1;
   return p.n.map((x) => x * f);
 }
 export function sumN(posts) {
@@ -255,9 +256,6 @@ export function recent(state, max = 20) {
 }
 
 /* ---------- Export / import (U5, STANDARD 5) ---------- */
-export function exportText(state, today) {
-  return JSON.stringify({ app: EXPORT_APP, format: EXPORT_FORMAT, exported: today, data: state });
-}
 // Text → { data, posts, weights, dishes, first, last, skipped, exported } or { error }. Saves nothing.
 export function importText(text) {
   if (typeof text !== 'string' || !text.trim()) return { error: 'Klistra in en exporterad text först.' };
@@ -323,4 +321,65 @@ export function mergeFdt(state, f) {
   for (const [k, l] of Object.entries(f.workouts)) if (!s.workouts[k]) s.workouts[k] = l;
   s.settings = habitSettings(f.settings);
   return validate(s);
+}
+
+// Utemat (F3, 2026-11-10): tre snabbval när man äter ute och inte vet exakt. n = [kcal, protein, kolhydrater, fett] totalt (≈).
+export const QUICK_ADD = [
+  { id: 'out-light', name: 'Utemat – Lätt', n: [700, 30, 75, 30], ex: 'Halv pizza + sallad, burgare utan strips, sushi 10–12 bitar, matig sallad' },
+  { id: 'out-std', name: 'Utemat – Standard', n: [1000, 40, 105, 45], ex: 'Hel hamburgermeny, dagens lunch, thaimat med ris, kebab i bröd' },
+  { id: 'out-heavy', name: 'Utemat – Tung', n: [1400, 55, 140, 65], ex: 'Hel pizzeriapizza, kebabtallrik, dubbelburgare med strips, två rätter' },
+];
+// Senast loggade post vars ref matchar (F1: förifyll mängd), eller null.
+export function lastPost(state, match) {
+  for (const k of Object.keys(state.log).sort().reverse()) {
+    const list = state.log[k];
+    for (let i = list.length - 1; i >= 0; i--) if (match(list[i].ref)) return list[i];
+  }
+  return null;
+}
+
+// F2 (2026-11-10): varje exportfil beskriver sitt format, så att någon annan (eller en AI) kan ändra filen och läsa in den igen.
+// Samma regler som validate() ovan – ändras validate(), ändra här och i docs/DATA.md.
+export const EXPORT_README = 'Backup från Simple nutrition. Ändra bara inom "data". Fältbeskrivningar i "schema", ett minimalt giltigt exempel i "example" (går att lägga i "data" och läsa in för sig). Ogiltiga poster hoppas över vid import, inget kraschar. Datum: ÅÅÅÅ-MM-DD. Näringsvärden n = [kcal, protein g, kolhydrater g, fett g]. id: A–Z a–z 0–9 _ -, högst 40 tecken.';
+export const EXPORT_SCHEMA = {
+  version: 'tal, 1',
+  goals: 'lista { from: datum, kcal?: 500–10000, prot?: 10–500, kolh?: 10–1000 }, sorteras på from, mål utan kcal = inget kalorimål från det datumet, max 100',
+  meals: 'lista { id, name ≤ 60 tecken }, 1–10 st',
+  log: 'objekt datum → lista av poster, max 100 poster per dag och 3650 dagar',
+  'post (vara)': '{ id, m: måltids-id, ref: "l:<livsmedel>" | "b:<beräknad>" | "u:<egen produkt-id>", name, g: gram 0–10000, n: per 100 g (kcal ≤ 9000, övriga ≤ 100), u?: [mått, antal] }',
+  'post (rätt)': '{ id, m, ref: "r:<rätt-id>", name, q: andel av satsen 0,0001–50, n: totalt för andelen (kcal ≤ 20000, gram ≤ 2000), u?: ["port." | "av satsen" | "g", mängd] }',
+  'post (utemat)': '{ id, m, ref: "q:out-light" | "q:out-std" | "q:out-heavy", name, q: antal, n: totalt, u?: ["st", antal] }',
+  dishes: 'lista { id, name, portions: 1–50, items: [{ ref, name, g, n per 100 g }] (max 50), cooked?: färdig vikt i gram 1–20000 }, max 500',
+  foods: 'lista { id, name, n per 100 g, u?: [mått, gram per mått] }, egna produkter, max 1000',
+  aliases: 'objekt sökord (gemener, ≤ 40 tecken) → ref, max 1000',
+  weights: 'objekt datum → kg 20–400 (en decimal)',
+  habits: 'objekt datum → { måltids-id | "extra-<n>": { outcome: "followed" | "cheat" | "skipped", reason?: orsaks-id, note?: ≤ 140 tecken } }',
+  workouts: 'objekt datum → lista { types: [passtyp-id], km?, sec? }',
+  settings: '{ reasons: [{ id, name }], successThreshold: 0,5–1, planText ≤ 300, workoutTypes: [{ id, name, kind: "gym" | "cardio" }], workoutGoal, gymGoal, cardioGoal }',
+  layout: '{ today | week | trend | history: { order: [kort-id], hidden: [kort-id] } }, okända kort-id ignoreras',
+  backup: '{ remind: "week" | "month" | "off", last?: datum, asked?: datum }',
+  utemat: QUICK_ADD.map((x) => `${x.id}: ${x.name}, ≈ ${x.n[0]} kcal`).join('; '),
+};
+export const EXPORT_EXAMPLE = {
+  version: 1,
+  goals: [{ from: '2026-11-01' }],
+  meals: [{ id: 'm1', name: 'Frukost' }, { id: 'm2', name: 'Lunch' }],
+  log: { '2026-11-10': [
+    { id: 'p1', m: 'm1', ref: 'u:f1', name: 'Proteinbar X', g: 55, n: [380, 30, 35, 12], u: ['st', 1] },
+    { id: 'p2', m: 'm2', ref: 'r:d1', name: 'Chili con carne', q: 0.2, n: [410, 32, 30, 16], u: ['av satsen', 0.2] },
+    { id: 'p3', m: 'm2', ref: 'q:out-std', name: 'Utemat – Standard', q: 1, n: [1000, 40, 105, 45], u: ['st', 1] },
+  ] },
+  dishes: [{ id: 'd1', name: 'Chili con carne', portions: 5, items: [{ ref: 'u:f1', name: 'Proteinbar X', g: 500, n: [380, 30, 35, 12] }] }],
+  foods: [{ id: 'f1', name: 'Proteinbar X', n: [380, 30, 35, 12], u: ['st', 55] }],
+  aliases: { bar: 'u:f1' },
+  weights: { '2026-11-10': 113 },
+  habits: { '2026-11-10': { m1: { outcome: 'followed' }, m2: { outcome: 'cheat', reason: 'out-lunch', note: 'Jobbmiddag' } } },
+  workouts: { '2026-11-10': [{ types: ['push', 'pull'] }] },
+  layout: { week: { order: ['weight', 'habits', 'days', 'training', 'kcal'], hidden: [] } },
+  backup: { remind: 'month', last: '2026-11-10' },
+};
+export function exportText(state, today) {
+  const J = JSON.stringify;
+  return `{\n "app": ${J(EXPORT_APP)},\n "format": ${EXPORT_FORMAT},\n "exported": ${J(today)},\n "appVersion": ${J(globalThis.APP_VERSION ?? null)},\n` +
+    ` "readme": ${J(EXPORT_README)},\n "schema": ${J(EXPORT_SCHEMA, null, 1).replace(/\n/g, '\n ')},\n "example": ${J(EXPORT_EXAMPLE)},\n "data": ${J(state)}\n}\n`;
 }

@@ -3,7 +3,7 @@
 Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manual**. Hjälp byggs från den här filen med `tools/build-help.ps1` – ändra bara här.
 
 ## Kom igång
-- Vanorna är huvudsaken: tryck ✅ Följde, 🍰 Fusk eller ⏭️ Hoppade över på varje måltid i Idag. Kalorierna är ett stöd när du vill räkna på dina basmåltider.
+- Vanorna är huvudsaken: tryck ✅ Enligt plan, 🍰 Fusk eller ⏭️ Hoppade över på varje måltid i Idag. Kalorierna är ett stöd när du vill räkna på dina basmåltider.
 - Under **Inställningar → Vanor** skriver du din plan (visas överst i Idag), sätter gränsen för en lyckad dag och ändrar måltider och orsaker.
 - Flyttar du från Följ planen: se **Flytta från Följ planen** nedan.
 
@@ -22,6 +22,8 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 ## Mat och kalorier
 - Under varje måltid finns en hopfälld rad **🍽 Mat**. Fäll ut den och tryck **+ Lägg till mat**. När mat är loggad visar raden **✅ Mat** och dagens kcal för måltiden.
 - Under **Varor** söker du, t.ex. mjölk. Välj variant (Lätt, Mellan …) och mängd i gram eller i mått som dl eller st. Mått är ungefärliga (≈). Visa fler söker i hela Livsmedelsverkets lista.
+- Har du ätit varan eller rätten förut är mängden redan ifylld med det du valde senast (står under Senast) – oftast räcker det att trycka Lägg till.
+- **Utemat:** tre snabbval när du äter ute och inte vet exakt – Lätt ≈ 700, Standard ≈ 1 000 och Tung ≈ 1 400 kcal. Ett tryck loggar.
 - **burk avr.** betyder avrunnen vikt: en burk kidneybönor är 400 g med spad men ca 230 g bönor – det är bönorna som räknas.
 - Under **Senaste** loggar du något du ätit förut med ett tryck. **Kopiera maten från igår** fyller en tom dag med gårdagens mat.
 - Tryck på en post för att ändra mängd, flytta den till en annan måltid eller ta bort den.
@@ -66,6 +68,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - För att läsa tillbaka: tryck **Läs in backup-fil**, kontrollera sammanfattningen och tryck **Ersätt**. All nuvarande data ersätts – Ångra finns direkt efteråt.
 - Går det inte att spara eller välja filen: öppna **Visa som text** och kopiera eller klistra in.
 - Filen innehåller all din data och är okrypterad. Dela den bara med den du litar på.
+- Filen beskriver sitt eget format och har ett exempel, så den går att ändra för hand och läsa in igen.
 
 ## Installera och offline
 - **Android (Chrome):** menyn ⋮ → Installera app. **iPhone (Safari):** Dela → Lägg till på hemskärmen. Installerad fungerar appen helt utan nät.

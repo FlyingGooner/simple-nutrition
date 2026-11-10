@@ -112,3 +112,16 @@ T.test('layout och backup valideras (v0.6–0.7)', () => {
   T.eq(s.backup, { remind: 'month', last: '2026-11-01', asked: null });
   T.eq(validate({ layout: [1, 2] }).layout, {});
 });
+T.test('export har readme, schema och exempel; exemplet går att läsa in (F2)', () => {
+  const env = JSON.parse(exportText(defaults(), '2026-11-10'));
+  T.ok(env.readme && env.schema.log && env.example.log, 'beskrivning');
+  const ex = importText(JSON.stringify({ app: 'simple-nutrition', format: 1, exported: '2026-11-10', data: env.example }));
+  T.ok(!ex.error, ex.error); T.eq(ex.posts, 3); T.eq(ex.skipped, 0);
+  T.ok(importText(JSON.stringify({ app: 'simple-nutrition', format: 1, schema: {}, example: {} })).error, 'utan data = fel');
+});
+T.test('utemat: q:-post valideras och räknas som totalt (F3)', () => {
+  const q = { id: 'p9', m: 'm1', ref: 'q:out-light', name: 'Utemat – Lätt', q: 1, n: [700, 30, 75, 30], u: ['st', 1] };
+  const s = validate({ log: { '2026-11-10': [q, { ...q, id: 'p8', ref: 'q:okand' }] } });
+  T.eq(s.log['2026-11-10'].length, 1);
+  T.eq(postN(s.log['2026-11-10'][0])[0], 700);
+});

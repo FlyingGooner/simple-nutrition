@@ -99,6 +99,7 @@ export function dishPickCard() {
       el('span', { text: dishUnit(p) })),
     quick.length ? el('div', { class: 'chips' }, quick.map((v) => el('button', { class: 'chip' + (p.amount === v ? ' on' : ''), 'data-act': 'dquick', 'data-val': v, text: v }))) : null,
     el('p', { class: 'pick-sum', id: 'pick-sum', text: Number.isFinite(q) ? `${kcal(t[0] * q)} kcal` : 'Ange mängd' }),
+    p.last ? el('p', { class: 'muted small', text: `Senast: ${p.last}` }) : null,
     el('div', { class: 'row-actions' },
       el('button', { class: 'link', 'data-act': 'unpick', text: 'Tillbaka' }),
       el('button', { class: 'weigh-save', 'data-act': 'daddsave', text: 'Lägg till' })),

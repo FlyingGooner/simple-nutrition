@@ -1,7 +1,7 @@
 // Simple nutrition – no external calls, localStorage only. See CLAUDE.md. Views in views/*.js, shared state in ui.js.
 import { defaults, load, save, validate, addDays, weekStart, setGoal, goalFor, findRef, cleanText, uid, dishTotal, exportText, importText, MAX_IMPORT_CHARS } from './store.js';
-import { today, S, setOpen, el, kcal, shortDate, dateTitle, parseNum, wType, isCardio, parseDur, layoutOf, LAYOUT_VIEWS } from './ui.js';
-import { mergeFdt } from './store.js';
+import { today, S, setOpen, el, kcal, shortDate, dateTitle, parseNum, wType, isCardio, parseDur, fmtNum, amountText, layoutOf, LAYOUT_VIEWS } from './ui.js';
+import { mergeFdt, lastPost, QUICK_ADD } from './store.js';
 import { viewToday, dayPosts } from './views/today.js';
 import { resultsList, pickGrams } from './views/add.js';
 import { viewWeek } from './views/week.js';
@@ -112,9 +112,28 @@ function openAdd(target, meal) {
   render(); scrollTo(0, 0);
   document.getElementById('add-q')?.focus();
 }
+// F1: tal som går att skriva tillbaka i mängdfältet (komma, ingen tusenavgränsare).
+const amt = (x) => x.toLocaleString('sv-SE', { maximumFractionDigits: 2, useGrouping: false });
 function openPick(food) {
   const u = food.v[0].u;
-  S.add.pick = { food, vi: 0, unit: u ? u[0] : 'g', amount: u ? '1' : '100' };
+  S.add.pick = { food, vi: 0, unit: u ? u[0] : 'g', amount: u ? '1' : '100', last: null };
+  // F1: förifyll med senast loggade mängd för samma vara (någon av dess varianter).
+  const refs = food.v.map((v) => v.ref), lp = lastPost(S.state, (r) => refs.includes(r));
+  if (lp && lp.g > 0) {
+    const vi = refs.indexOf(lp.ref), v = food.v[vi], byUnit = !!(lp.u && v.u && lp.u[0] === v.u[0]);
+    Object.assign(S.add.pick, { vi, unit: byUnit ? v.u[0] : 'g', amount: amt(byUnit ? lp.u[1] : lp.g), last: amountText(lp) });
+  }
+}
+// F1: rätt förifylls med senaste sättet den loggades på (portioner, andel eller gram).
+function openDishPick(d) {
+  S.add.dpick = { dish: d, mode: 'port', amount: '1', last: null };
+  const lp = lastPost(S.state, (r) => r === 'r:' + d.id);
+  if (!lp) return;
+  const mode = { 'port.': 'port', 'av satsen': 'andel', g: 'g' }[lp.u?.[0]] || null;
+  const ok = mode === 'port' || (mode === 'andel' && d.portions > 1) || (mode === 'g' && d.cooked);
+  if (!ok) return;
+  const a = lp.u[1], inv = mode === 'andel' ? Math.round(1 / a) : 0;
+  Object.assign(S.add.dpick, { mode, amount: mode === 'andel' && inv > 1 && Math.abs(1 / inv - a) < 0.001 ? '1/' + inv : amt(a), last: amountText(lp) });
 }
 function pickSumText() {
   const a = S.add;
@@ -257,7 +276,7 @@ app.addEventListener('click', (ev) => {
     case 'addclose': S.add = null; break;
     case 'addtab': S.add.tab = S.lastTab = val; S.add.q = ''; S.add.pick = S.add.dpick = null; render(); document.getElementById('add-q')?.focus(); return;
     case 'showall': S.add.all = true; redrawResults(); return;
-    case 'pick': { const f = findRef(S.state, t.dataset.ref); if (!f) return; openPick(f); render(); document.getElementById('amount')?.select(); return; }
+    case 'pick': { const f = findRef(S.state, t.dataset.ref); if (!f) return; openPick(f); render(); return; }   // F1: inget tangentbord
     case 'variant': S.add.pick.vi = Number(val); if (!S.add.pick.food.v[S.add.pick.vi].u && S.add.pick.unit !== 'g') { S.add.pick.unit = 'g'; S.add.pick.amount = '100'; } break;
     case 'unit': { const p = S.add.pick; if (p.unit !== val) { p.unit = val; p.amount = val === 'g' ? '100' : '1'; } break; }
     case 'unpick': S.add.pick = S.add.dpick = null; S.add.alias = false; break;
@@ -273,6 +292,13 @@ app.addEventListener('click', (ev) => {
       const post = { id: uid(), m: S.add.meal, ref: v.ref, name, g: Math.round(g * 10) / 10, n: [...v.n] };
       if (p.unit !== 'g' && v.u) post.u = [v.u[0], Math.round(parseNum(p.amount) * 100) / 100];
       if (addPost(post)) logged(name);
+      return;
+    }
+    case 'quick': {   // F3: Utemat loggas direkt, n totalt som en rätt-post
+      const x = QUICK_ADD.find((o) => o.id === id);
+      if (!x || !S.add) return;
+      const post = { id: uid(), m: S.add.meal, ref: 'q:' + x.id, name: x.name, q: 1, n: [...x.n], u: ['st', 1] };
+      if (addPost(post)) logged(post.name);
       return;
     }
     case 'relog': {
@@ -296,8 +322,8 @@ app.addEventListener('click', (ev) => {
     case 'dpick': {
       const d = S.state.dishes.find((x) => x.id === id);
       if (!d) return;
-      S.add.dpick = { dish: d, mode: 'port', amount: '1' };
-      render(); document.getElementById('amount')?.select(); return;
+      openDishPick(d);
+      render(); return;
     }
     case 'dmode': { const p = S.add.dpick; p.mode = val; p.amount = val === 'andel' ? '1/' + p.dish.portions : val === 'g' ? '300' : '1'; break; }
     case 'dquick': S.add.dpick.amount = val; break;

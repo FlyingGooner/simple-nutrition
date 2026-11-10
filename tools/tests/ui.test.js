@@ -5,6 +5,7 @@ const q = (s) => app.querySelector(s);
 const stored = () => JSON.parse(localStorage.getItem('sn.data'));
 const tab = async (v) => { document.querySelector(`.tabbar [data-view="${v}"]`).click(); await T.wait(); };
 const type = (el, v) => { el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); };
+const S_TODAY = '2026-11-09';
 const foods = () => { if (!q('#add-q')) q('[data-act="addtab"][data-val="foods"]').click(); };
 
 T.test('appen startar i Idag med summa och fyra måltider', () => {
@@ -353,4 +354,30 @@ T.test('kortordning: dölj, flytta, återställ (v0.6)', async () => {
   T.eq(stored().layout.week.order.slice(0, 2), ['habits', 'weight']);
   q('[data-act="lresetall"]').click();
   T.eq(stored().layout, {});
+});
+T.test('utemat loggas med ett tryck och syns i dagens kcal (F3)', async () => {
+  await tab('today');
+  const n0 = (stored().log[S_TODAY] || []).length;
+  q('[data-act="addopen"]').click(); await T.wait();
+  q('[data-act="addtab"][data-val="out"]').click(); await T.wait();
+  q('[data-act="quick"][data-id="out-std"]').click(); await T.wait();
+  const l = stored().log[S_TODAY];
+  T.eq(l.length, n0 + 1); T.eq(l.at(-1).ref, 'q:out-std'); T.eq(l.at(-1).n[0], 1000);
+});
+T.test('vald vara förifylls med senaste mängd utan tangentbord (F1)', async () => {
+  await tab('today');
+  q('[data-act="addopen"]').click(); await T.wait();
+  q('[data-act="addtab"][data-val="foods"]').click(); await T.wait();
+  type(q('#add-q'), 'mjölk'); await T.wait();
+  q('[data-act="pick"]').click(); await T.wait();
+  q('[data-act="unit"][data-val="g"]')?.click(); await T.wait();
+  type(document.getElementById('amount'), '330'); q('[data-act="addsave"]').click(); await T.wait();
+  q('[data-act="addopen"]').click(); await T.wait();
+  q('[data-act="addtab"][data-val="foods"]').click(); await T.wait();
+  type(q('#add-q'), 'mjölk'); await T.wait();
+  q('[data-act="pick"]').click(); await T.wait();
+  T.eq(document.getElementById('amount').value, '330');
+  T.ok(document.activeElement !== document.getElementById('amount'), 'ingen fokus');
+  T.ok(/Senast: 330 g/.test(q('.pick').textContent), 'Senast-text');
+  q('[data-act="addclose"]').click(); await T.wait();
 });

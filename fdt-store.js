@@ -3,7 +3,7 @@
 // Used only by importText() in store.js. Source: archive/follow-diet-tracker/store.js (v1.6.3, arkiverad 2026-11-10).
 
 export const OUTCOMES = {
-  followed: { icon: '✅', label: 'Följde', score: 1 },
+  followed: { icon: '✅', label: 'Enligt plan', score: 1 },
   cheat: { icon: '🍰', label: 'Fusk', score: 0 },
   skipped: { icon: '⏭️', label: 'Hoppade över', score: null },
 };

@@ -1,6 +1,6 @@
 // View: Lägg till – shown in place of Idag (or of the dish editor when adding an ingredient: S.add.target === 'dish').
 // Tabs Senaste, Varor, Rätter. Search results are redrawn into #add-results on input, so the search field keeps focus.
-import { searchFoods, recent, findRef, postN } from '../store.js';
+import { searchFoods, recent, findRef, postN, QUICK_ADD } from '../store.js';
 import { S, el, kcal, fmtNum, amountText, mealName, parseNum } from '../ui.js';
 import { dishResults, dishPickCard } from './dishes.js';
 
@@ -22,6 +22,9 @@ function foodRow(f) {
 export function resultsList() {
   const a = S.add;
   if (a.tab === 'dishes') return dishResults(a.q);
+  if (a.tab === 'out') return [el('ul', { class: 'posts' }, QUICK_ADD.map((x) => el('li', {}, el('button', { class: 'food-row', 'data-act': 'quick', 'data-id': x.id },
+    el('span', { class: 'post-name' }, x.name.replace('Utemat – ', ''), el('small', { text: x.ex })),
+    el('span', { class: 'post-kcal', text: `≈ ${kcal(x.n[0])} kcal` })))))];
   if (a.tab === 'recent') {
     const list = recent(S.state);
     if (!list.length) return [el('p', { class: 'muted small', text: 'Inget loggat ännu. Sök under Varor.' })];
@@ -53,6 +56,7 @@ function pickCard() {
         el('button', { class: 'chip' + (u === p.unit ? ' on' : ''), 'data-act': 'unit', 'data-val': u, 'aria-pressed': u === p.unit ? 'true' : 'false', text: u }))) : el('span', { text: 'g' })),
     el('p', { class: 'pick-sum', id: 'pick-sum', text: n == null ? 'Ange mängd' : `${kcal(n)} kcal${p.unit !== 'g' && v.u ? ` · ≈ ${fmtNum(g, 0)} g` : ''}` }),
     v.u && p.unit !== 'g' ? el('p', { class: 'muted small', text: `≈ ${v.u[1]} g per ${v.u[0]} (uppskattning)` }) : null,
+    p.last ? el('p', { class: 'muted small', text: `Senast: ${p.last}` }) : null,
     el('div', { class: 'row-actions' },
       el('button', { class: 'link', 'data-act': 'unpick', text: 'Tillbaka' }),
       el('button', { class: 'weigh-save', 'data-act': 'addsave', text: forDish ? 'Lägg till i rätten' : `Lägg till i ${mealName(S.add.meal)}` })),
@@ -72,7 +76,7 @@ export function viewAdd() {
       el('button', { class: 'icon', 'data-act': 'addclose', 'aria-label': 'Stäng', text: '✕' }),
       el('h1', { class: 'add-title', text: forDish ? 'Lägg till ingrediens' : `Lägg till i ${mealName(a.meal)}` })),
     a.pick ? pickCard() : a.dpick ? dishPickCard() : [
-      forDish ? null : el('div', { class: 'segs segs3', role: 'group', 'aria-label': 'Välj lista' }, tabBtn('recent', 'Senaste'), tabBtn('foods', 'Varor'), tabBtn('dishes', 'Rätter')),
+      forDish ? null : el('div', { class: 'segs segs4', role: 'group', 'aria-label': 'Välj lista' }, tabBtn('recent', 'Senaste'), tabBtn('foods', 'Varor'), tabBtn('dishes', 'Rätter'), tabBtn('out', 'Utemat')),
       searchable ? el('input', { type: 'search', id: 'add-q', class: 'search', value: a.q, placeholder: a.tab === 'dishes' ? 'Sök bland dina rätter' : 'Sök livsmedel', 'aria-label': 'Sök', autocomplete: 'off', 'data-act': 'search' }) : null,
       el('div', { id: 'add-results', class: 'card results' }, resultsList()),
     ],
