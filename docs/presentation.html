@@ -6,8 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; require-trusted-types-for 'script'; img-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#f5fbf9" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0f1415" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0f1a15">
 <link rel="icon" href="../icons/icon-192.png">
 <title>Simple nutrition</title>
 <link rel="stylesheet" href="presentation.css">
@@ -16,66 +15,122 @@
 
 <main class="deck" id="deck">
 
-  <section class="band"><div class="slide">
-    <div class="hero-top"><img class="icon" src="../icons/icon-192.png" alt=""><span class="ver">v0.11.1</span></div>
-    <span class="eyebrow">Kost · Livsmedelsverkets data</span>
-    <h1>Simple nutrition</h1>
-    <p class="lead">Kalorier och makron från rena råvaror – utan konto, utan märkesdjungel.</p>
-  </div></section>
-
-  <section><div class="slide">
-    <span class="eyebrow">Problemet</span>
-    <h2>Varför den här appen?</h2>
-    <p class="lead">Kalorappar drunknar i dubbletter och märkesposter. Här finns bara Livsmedelsverkets råvaror, några få tydliga val och dina egna recept.</p>
-  </div></section>
-
-  <section><div class="slide">
-    <span class="eyebrow">Funktioner</span>
-    <h2>Det du faktiskt behöver</h2>
-    <div class="feats">
-      <div class="feat"><div class="k" aria-hidden="true">✓</div><div><h3>Vanor och träning</h3><p>Bocka av vanor och logga pass mot ett veckomål.</p></div></div>
-      <div class="feat"><div class="k" aria-hidden="true">✦</div><div><h3>Rena råvaror</h3><p>Livsmedelsverkets data: kcal, protein, kolhydrater, fett.</p></div></div>
-      <div class="feat"><div class="k" aria-hidden="true">▤</div><div><h3>Egna rätter</h3><p>Recept och matlådor av råvarorna.</p></div></div>
-      <div class="feat"><div class="k" aria-hidden="true">↗</div><div><h3>Vikttrend</h3><p>7-dagars medel, vecka och historik.</p></div></div>
-      <div class="feat"><div class="k" aria-hidden="true">⚿</div><div><h3>Krypterad backup</h3><p>En fil som bara ditt lösenord öppnar.</p></div></div>
-      <div class="feat"><div class="k" aria-hidden="true">⇩</div><div><h3>Offline</h3><p>Fungerar utan nät efter första besöket.</p></div></div>
-      <div class="feat"><div class="k" aria-hidden="true">◐</div><div><h3>Ljust och mörkt</h3><p>Följer telefonens inställning.</p></div></div>
+  <section class="title">
+    <div class="glow"></div><div class="glow g2"></div>
+    <div class="hero">
+      <div class="icons"><img src="../icons/icon-192.png" alt=""><span class="ver">v0.11.1</span></div>
+      <span class="eyebrow">flyinggooner · Hälsa</span>
+      <h1>Simple nutrition</h1>
+      <p class="lead">Vanor först – kalorier som stöd när du vill. Utan konto, utan reklam, utan ramverk.</p>
     </div>
-  </div></section>
+  </section>
 
-  <section><div class="slide">
-    <span class="eyebrow">Under huven</span>
-    <h2>Litet med flit</h2>
-    <div class="facts">
-      <div class="fact"><b>0</b><span>ramverk och byggsteg.</span></div>
-      <div class="fact"><b>0</b><span>annonser, konton eller spårare.</span></div>
-      <div class="fact"><b>100 %</b><span>av datan stannar i telefonen.</span></div>
-      <div class="fact"><b>PWA</b><span>installeras från webben.</span></div>
+  <section>
+    <span class="eyebrow">Filosofi</span>
+    <h2>Tre principer bakom appen</h2>
+    <div class="cols">
+      <div class="card"><div class="ic" aria-hidden="true">🎯</div><h3>Ett tydligt fokus</h3><p>Appen svarar på en enda fråga: äter jag som jag tänkt? Allt annat väljs aktivt bort.</p></div>
+      <div class="card"><div class="ic" aria-hidden="true">🔒</div><h3>Integritet först</h3><p>Ingen inloggning, ingen spårning. Data stannar på telefonen och strikt CSP stänger ute allt externt.</p></div>
+      <div class="card"><div class="ic" aria-hidden="true">⚡</div><h3>Ren webb</h3><p>HTML, CSS och vanlig JavaScript. Inga byggsteg – hela appen kan levereras som en enda fil.</p></div>
     </div>
-  </div></section>
+  </section>
 
-  <section><div class="slide">
-    <span class="eyebrow">Din data</span>
-    <h2>Skyddad på riktigt</h2>
-    <p class="lead">Vanliga kaloriappar sparar datan på företagets servrar bakom ett konto. Här finns den bara i din telefon – och i backup-filer som bara ditt lösenord öppnar.</p>
-    <div class="facts">
-      <div class="fact"><b>AES-256</b><span>krypterar varje backup-fil med ditt lösenord.</span></div>
-      <div class="fact"><b>600 000</b><span>PBKDF2-varv – OWASP:s rekommendation.</span></div>
-      <div class="fact"><b>0</b><span>servrar som har din data.</span></div>
-      <div class="fact"><b>0</b><span>konton som kan läcka.</span></div>
+  <section>
+    <span class="eyebrow">Appen</span>
+    <div class="ph"><img src="../icons/icon-192.png" alt=""><div><p class="name"><strong>Simple nutrition</strong></p><span class="chip">#2f7d5b</span></div></div>
+    <p class="lead"><strong>Vanor först – kalorier som stöd när du vill.</strong></p>
+    <ul class="f">
+      <li>Ett tryck per måltid: Följde · Fusk · Hoppade över</li>
+      <li>Kalorier och makron ur Livsmedelsverkets data</li>
+      <li>Egna rätter per portion eller hel sats</li>
+      <li>Vikt, träning, vecka och trend över tid</li>
+      <li>Krypterad backup, offline, ljust och mörkt tema</li>
+    </ul>
+    <div class="shots">
+      <img src="screenshots/today.png" alt="Idag">
+      <img src="screenshots/week.png" alt="Vecka">
+      <img src="screenshots/trend.png" alt="Trend">
     </div>
-  </div></section>
+    <p class="cap">Idag · Vecka · Trend – påhittad exempeldata</p>
+  </section>
 
-  <section><div class="slide">
+  <section>
+    <span class="eyebrow">Matdatan</span>
+    <h2>Egen matdatabas – utan betal-API</h2>
+    <ol class="steps">
+      <li>Livsmedelsverkets öppna databas hämtades en gång – 2 606 livsmedel med analyserade värden</li>
+      <li>91 vanliga kärnvaror med 195 butiksvarianter, t.ex. nötfärs 5 / 12 / 20 % fett</li>
+      <li>Saknas en variant räknas den fram ur fetthalten – och märks ”beräknad”</li>
+      <li>Egna mått: ”1 dl”, ”1 st”, avrunna burkvikter – så du slipper väga allt</li>
+      <li>Över 100 rätter räknas om automatiskt vid varje release – mot Livsmedelsverkets rätter och allmänna standardvärden</li>
+    </ol>
+  </section>
+
+  <section>
+    <span class="eyebrow">Uppbyggnad</span>
+    <h2>Från gratis data till appen</h2>
+    <div class="flow">
+      <div class="fbox"><b>1 · Livsmedelsverket</b>Öppen data, hämtad en gång och sparad i projektet. Ingen nyckel, ingen kostnad.</div>
+      <div class="farr" aria-hidden="true">↓</div>
+      <div class="fbox"><b>2 · Urval</b>Två tabeller: <i>varugrupper</i> (91 varor, 195 varianter, sökord) och <i>mått</i> (dl, st, burk).</div>
+      <div class="farr" aria-hidden="true">↓</div>
+      <div class="fbox"><b>3 · Byggskript</b>Ett skript utan nätverk slår ihop tabellerna med rådatan, räknar fram saknade fettvarianter och skriver <i>foods.js</i> – en fil som följer med appen.</div>
+      <div class="farr" aria-hidden="true">↓</div>
+      <div class="fbox"><b>4 · Tester</b>Rätter räknas om ur databasen och jämförs med facit. Så hittades t.ex. fel fetthalt på kokosmjölk.</div>
+    </div>
+    <p class="note">Ärligt: standardvärdena i testerna är allmänna uppskattningar, inte mätningar. Livsmedelsverkets färdiga rätter är det oberoende facit.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">Lagring i appen</span>
+    <h2>Allt i telefonen – kopplat med referenser</h2>
+    <div class="flow">
+      <div class="fbox"><b>Databanken (foods.js)</b>Följer med appen, ändras aldrig av dig. Varje vara har ett id: <code>l:</code> Livsmedelsverket, <code>b:</code> beräknad variant.</div>
+      <div class="fbox"><b>Din data (localStorage)</b>
+        <span class="kv"><code>foods</code> egna produkter → <code>u:</code></span>
+        <span class="kv"><code>dishes</code> egna rätter → <code>r:</code></span>
+        <span class="kv"><code>log</code> dag → poster som pekar på en vara eller rätt</span>
+        <span class="kv"><code>goals</code>, <code>weights</code>, <code>meals</code>, vanor och träning</span>
+      </div>
+      <div class="fbox"><b>Ögonblicksbild</b>Varje loggad post sparar också namn och näringsvärden. Ändras en rätt eller databanken, så ändras aldrig gamla dagar.</div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Kvalitet</span>
+    <h2>Hög nivå – och det är testat</h2>
+    <table class="cmp">
+      <tr><th>Test</th><th>Rätter</th><th>Resultat</th></tr>
+      <tr><td>Vardagsrätter mot standardvärden</td><td>30</td><td><b>alla inom ±5 %</b></td></tr>
+      <tr><td>Bredare mix: wok, sallader, frukost, husmanskost</td><td>61</td><td><b>54 inom ±10 %</b> · summa −2 %</td></tr>
+      <tr><td>En hel dag (4 måltider)</td><td>4</td><td>2 348 mot 2 316 kcal · +1,4 %</td></tr>
+      <tr><td>Mot Livsmedelsverkets färdiga rätter</td><td>10</td><td>alla inom ±20 %*</td></tr>
+    </table>
+    <p class="note">Exempel, chili con carne: standardvärde <b>412 kcal</b> · vår databas <b>413 kcal</b> per portion. * Vattnet som kokar bort finns i den färdiga rätten men inte i receptets råvikt.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">Ärlig jämförelse</span>
+    <h2>Mot betaltjänster för kaloriräkning</h2>
+    <table class="cmp">
+      <tr><th></th><th>Simple nutrition</th><th>Typisk betaltjänst</th></tr>
+      <tr><td>Datakälla</td><td>En officiell källa, labbanalyserad</td><td>Stor databas, ofta användarinlagd</td></tr>
+      <tr><td>Råvaror och hemlagat</td><td><b>I nivå</b> – testat inom ±5–10 %</td><td>Bra, men samma vara i många versioner</td></tr>
+      <tr><td>Märkesvaror och streckkod</td><td>Saknas – lägg in egen produkt</td><td><b>Bättre</b></td></tr>
+      <tr><td>Integritet</td><td><b>Bättre</b> – inget konto, all data på telefonen</td><td>Konto i molnet</td></tr>
+      <tr><td>Kostnad</td><td><b>Gratis</b>, ingen reklam</td><td>Månadsavgift</td></tr>
+    </table>
+    <p class="note">Jämfört mot Livsmedelsverket och allmänna standardvärden – inte mot betaltjänsternas egna databaser.</p>
+  </section>
+
+  <section>
     <span class="eyebrow">Kvalitetsstämpel</span>
     <h2>Säkerhetstestad</h2>
-    <p class="lead">Automatiska tester körs före varje commit och push. Underkänt test = ingen release.</p>
+    <p>Automatiska tester körs före varje commit och push. Underkänt test = ingen release.</p>
     <h3 class="checks-h">Säkerhetskontroll</h3>
     <ul class="checks">
-      <li><b>S</b><span>t</span></li>
-      <li><b>i</b><span>n</span></li>
-      <li><b>I</b><span>n</span></li>
-      <li><b>a</b><span>p</span></li>
+      <li><b>Strikt innehållspolicy</b><span>ingen kod utifrån, inga inline-skript.</span></li>
+      <li><b>Inga nätverksanrop</b><span>appen pratar inte med någon server.</span></li>
       <li><b>Bara egen lagring</b><span>egna nycklar i telefonen, inga farliga API:er som eval.</span></li>
       <li><b>Service worker</b><span>cachar bara appens egna filer.</span></li>
       <li><b>Krypterad backup</b><span>AES-256-GCM, PBKDF2 600 000 varv, lösenordet sparas aldrig.</span></li>
@@ -85,17 +140,56 @@
       <li><b>Import valideras</b><span>fel app, fel format och manipulerade fält avvisas.</span></li>
       <li><b>Text, aldrig HTML</b><span>data visas som text – inget kan köras via innehåll.</span></li>
       <li><b>Export och import</b><span>backup tur och retur ger samma data; styrtecken rensas.</span></li>
+      <li><b>Matdatan</b><span>över 100 rätter räknas om mot facit vid varje release.</span></li>
     </ul>
-  </div></section>
+  </section>
 
-  <section class="band"><div class="slide">
-    <span class="eyebrow">Kom igång</span>    <h2>Installera på 30 sekunder</h2>
+  <section>
+    <span class="eyebrow">Design</span>
+    <h2>Material Design 3, byggd för mobilen</h2>
+    <div class="card">
+      <h3>Färg via roller</h3>
+      <p>Nyckelfärgen styr allt. Ljust och mörkt tema följer telefonen. Nästan kantigt och tätt.</p>
+      <div class="palette"><div class="sw p">primary</div><div class="sw c">container</div><div class="sw s">surface</div><div class="sw d">dark</div></div>
+      <div class="shapes"><div class="shape r8">Kort · 8 px</div><div class="shape r4">Chip · 4 px</div><div class="shape r6">Knapp · 6 px</div><div class="shape r12">Dialog · 12 px</div></div>
+      <p class="note">Bottenmeny för tummen · tryckytor ≥ 48 px · systemtypsnitt</p>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Arbetssätt</span>
+    <h2>Samma struktur, varje gång</h2>
+<pre><em>index.html</em>  styles.css  app.js
+store.js  version.js  <em>sw.js</em>
+<em>docs/</em>   SPEC · MANUAL · presentation
+<em>tools/</em>  tester · bygge
+<em>dist/</em>   testfil med allt inbakat</pre>
+    <ol class="steps">
+      <li>SPEC först – idé, mål, icke-mål</li>
+      <li>Säkerhet: förhandsprövning före bygget, efterkontroll före push</li>
+      <li>Release kör kontroll och alla tester – underkänt stoppar</li>
+      <li>Det som blir bättre här förs in i alla appar</li>
+    </ol>
+  </section>
+
+  <section>
+    <span class="eyebrow">Kom igång</span>
+    <h2>Installera på 30 sekunder</h2>
     <ol class="steps">
       <li><span>Öppna adressen i Chrome på mobilen:<br><span class="url">flyinggooner.github.io/simple-nutrition</span></span></li>
       <li><span>Tryck på ⋮ och välj <b>Installera app</b>. På iPhone: Dela → <b>Lägg till på hemskärmen</b>.</span></li>
       <li><span>Öppna appen från hemskärmen. Den startar i eget fönster.</span></li>
     </ol>
-  </div></section>
+  </section>
+
+  <section class="title">
+    <div class="glow"></div><div class="glow g2"></div>
+    <div class="hero">
+      <span class="eyebrow">Sammanfattning</span>
+      <h1>Enkelt för användaren.<br>Genomtänkt bakom kulisserna.</h1>
+      <p class="lead">Rena råvaror, dina vanor och din data – bara i din telefon.</p>
+    </div>
+  </section>
 
 </main>
 <nav class="nav" aria-label="Bläddra">
