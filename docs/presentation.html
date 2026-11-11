@@ -69,15 +69,22 @@
   <section><div class="slide">
     <span class="eyebrow">Kvalitetsstämpel</span>
     <h2>Säkerhetstestad</h2>
+    <p class="lead">Automatiska tester körs före varje commit och push. Underkänt test = ingen release.</p>
+    <h3 class="checks-h">Säkerhetskontroll</h3>
     <ul class="checks">
-      <li><b>Strikt innehållspolicy (CSP)</b><span>ingen kod utifrån, inga inline-skript.</span></li>
-      <li><b>Inga nätverksanrop</b><span>appen pratar inte med någon server.</span></li>
-      <li><b>Data bara i telefonen</b><span>inget konto, ingen server, inga spårare.</span></li>
-      <li><b>Importer valideras</b><span>ogiltiga eller manipulerade fält avvisas, styrtecken rensas.</span></li>
-      <li><b>Data visas som text</b><span>aldrig som HTML – inget kan köras via innehåll.</span></li>
+      <li><b>S</b><span>t</span></li>
+      <li><b>i</b><span>n</span></li>
+      <li><b>I</b><span>n</span></li>
+      <li><b>a</b><span>p</span></li>
+      <li><b>Bara egen lagring</b><span>egna nycklar i telefonen, inga farliga API:er som eval.</span></li>
+      <li><b>Service worker</b><span>cachar bara appens egna filer.</span></li>
       <li><b>Krypterad backup</b><span>AES-256-GCM, PBKDF2 600 000 varv, lösenordet sparas aldrig.</span></li>
-      <li><b>Offline med egna filer</b><span>service workern cachar bara appens egna filer.</span></li>
-      <li><b>Kontrolleras automatiskt</b><span>säkerhetskontroll och tester före varje commit och push.</span></li>
+    </ul>
+    <h3 class="checks-h">Funktionstester</h3>
+    <ul class="checks">
+      <li><b>Import valideras</b><span>fel app, fel format och manipulerade fält avvisas.</span></li>
+      <li><b>Text, aldrig HTML</b><span>data visas som text – inget kan köras via innehåll.</span></li>
+      <li><b>Export och import</b><span>backup tur och retur ger samma data; styrtecken rensas.</span></li>
     </ul>
   </div></section>
 
