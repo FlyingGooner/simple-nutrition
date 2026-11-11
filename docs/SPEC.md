@@ -146,6 +146,33 @@ Nyckeln i `habits` är måltidens id (`meals`) eller `extra-<tid>`. Valideras me
 - Plan, lyckad dag-gräns, orsaker, passtyper och mål tas över från Följ planen.
 - Dialog "Lägga till data från Följ planen?" med summering, sedan Ångra.
 
+## Snabbval och fusk i kcal (v0.9, beslut 2026-11-11)
+Snabba uppskattningar när man inte vet exakt – samma idé som Utemat (F3), utökad.
+
+**1. Lägg till → fliken Snabbval** (ersätter fliken Utemat): flikarna blir **Senaste · Varor · Rätter · Snabbval**. Överst en växel **Hemmagjort | Utemat** (kommer ihåg senaste val). Varje rad: nivå, exempel och ≈ kcal; ett tryck loggar (som i dag).
+
+| Grupp | Nivå | ≈ kcal | n [kcal, P, K, F] | Exempel |
+|---|---|---|---|---|
+| Hemmagjort | Lätt | 450 | [450, 35, 35, 18] | Mager fisk/kyckling med grönt, omelett, tonfisksallad, mager färs |
+| Hemmagjort | Standard | 650 | [650, 35, 70, 22] | Köttfärssås med pasta, lax med potatis/sås, kycklinggryta med ris, husman |
+| Hemmagjort | Tung | 850 | [850, 40, 95, 32] | Stor portion pasta/färs, hemmagjord burgare m. klyftpotatis, lasagne |
+| Utemat | Lätt / Standard / Tung | 700 / 1 000 / 1 400 | oförändrat | oförändrat (F3) |
+| Snacks | Lite | 250 | [250, 3, 27, 14] | En Magnum, en kanelbulle, Marabou 45 g (en rad), lösgodis 60 g (en liten skopa), en näve nötter, två kakor |
+| Snacks | Mellan | 500 | [500, 6, 50, 30] | Halv chipspåse (175 g), Marabou 100 g (en hel liten kaka), lösgodis 125 g, en wienerbröd + läsk, halv glasskartong |
+| Snacks | Mycket | 950 | [950, 11, 95, 58] | Hel chipspåse (175 g), Marabou 175 g (nästan en 200 g-kaka), lösgodis 250 g, chips + dipp, hel glasskartong |
+
+Snacks visas inte i Lägg till – bara i fusk (punkt 2–3). Siffrorna är antaganden; justeras av användaren.
+
+**2. 🍰 Fusk på en måltid, orsak Snacks:** under orsakschipsen visas en rad **Lite ≈ 250 · Mellan ≈ 500 · Mycket ≈ 950** (med exemplen under, som i Snabbval). Ett tryck loggar posten i måltidens mat (`m` = måltidens id); tryck igen på samma = ta bort, annan nivå = byt. Byts orsaken från Snacks, eller tas 🍰 bort, tas posten bort.
+
+**3. + Extra fusk:** kortet (orsakschips + anteckning, se skärmbild) får en rad **Hur mycket?** med nivåer att logga kcal. Nivåerna styrs av orsaken: Snacks → Snacks-nivåerna; Utemat → alla tre Utemat-nivåerna; övriga → Hemmagjort-nivåerna. Ingen orsak vald → ingen nivårad. Valfritt – utan nivå räknas fusket bara i följsamheten som i dag. Posten sparas med `m` = extra-nyckeln (`extra-<tid>`) och visas i extrakortet; tas extra fusket bort följer posten med.
+
+**4. Utemat styrs inte av utfallet:** äter man ute och tar det bästa valet (t.ex. Lätt) kan måltiden vara ✅ enligt plan. Alla tre Utemat-nivåerna går därför att logga på en måltid oavsett utfall (✅, 🍰 eller inget) – i Snabbval som i dag, och vid 🍰 med orsak Utemat visas de också under orsakschipsen som för Snacks i punkt 2. Kcal-nivåer sätter aldrig utfall automatiskt; användaren väljer ✅ eller 🍰 själv.
+
+**Data:** inga nya nycklar. Nya id i `QUICK_ADD`: `home-light`, `home-std`, `home-heavy`, `snack-s`, `snack-m`, `snack-l` (ref `q:<id>`, valideras som i dag). Logg-poster får `m` = `extra-<tid>` (valideras: måste finnas i `habits` samma dag, annars visas posten under Övrigt). Följsamheten ändras inte – kcal är bara stöd.
+
+**Test:** Snabbval-fliken loggar Hemmagjort-nivå; Snacks-nivå på måltidsfusk loggas, byts och tas bort med orsaken; extra fusk med nivå loggar post och tar bort den med fusket; export/import behåller posterna.
+
 ## Datamodell
 All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt projektets CLAUDE.md). Valideras i `store.js` innan den används; ogiltiga delar hoppas över.
 

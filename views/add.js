@@ -22,9 +22,13 @@ function foodRow(f) {
 export function resultsList() {
   const a = S.add;
   if (a.tab === 'dishes') return dishResults(a.q);
-  if (a.tab === 'out') return [el('ul', { class: 'posts' }, QUICK_ADD.map((x) => el('li', {}, el('button', { class: 'food-row', 'data-act': 'quick', 'data-id': x.id },
-    el('span', { class: 'post-name' }, x.name.replace('Utemat – ', ''), el('small', { text: x.ex })),
-    el('span', { class: 'post-kcal', text: `≈ ${kcal(x.n[0])} kcal` })))))];
+  if (a.tab === 'out') {   // Snabbval (v0.9): Hemmagjort | Utemat
+    const g = S.quickG || 'home', seg = (id, label) => el('button', { class: 'seg' + (g === id ? ' on' : ''), 'data-act': 'quickg', 'data-val': id, 'aria-pressed': String(g === id), text: label });
+    return [el('div', { class: 'segs qsegs', role: 'group', 'aria-label': 'Hemmagjort eller utemat' }, seg('home', 'Hemmagjort'), seg('out', 'Utemat')),
+      el('ul', { class: 'posts' }, QUICK_ADD.filter((x) => x.g === g).map((x) => el('li', {}, el('button', { class: 'food-row', 'data-act': 'quick', 'data-id': x.id },
+        el('span', { class: 'post-name' }, x.label, el('small', { text: x.ex + (x.id === 'out-light' ? ' · kan vara enligt plan' : '') })),
+        el('span', { class: 'post-kcal', text: `≈ ${kcal(x.n[0])} kcal` })))))];
+  }
   if (a.tab === 'recent') {
     const list = recent(S.state);
     if (!list.length) return [el('p', { class: 'muted small', text: 'Inget loggat ännu. Sök under Varor.' })];
@@ -76,7 +80,7 @@ export function viewAdd() {
       el('button', { class: 'icon', 'data-act': 'addclose', 'aria-label': 'Stäng', text: '✕' }),
       el('h1', { class: 'add-title', text: forDish ? 'Lägg till ingrediens' : `Lägg till i ${mealName(a.meal)}` })),
     a.pick ? pickCard() : a.dpick ? dishPickCard() : [
-      forDish ? null : el('div', { class: 'segs segs4', role: 'group', 'aria-label': 'Välj lista' }, tabBtn('recent', 'Senaste'), tabBtn('foods', 'Varor'), tabBtn('dishes', 'Rätter'), tabBtn('out', 'Utemat')),
+      forDish ? null : el('div', { class: 'segs segs4', role: 'group', 'aria-label': 'Välj lista' }, tabBtn('recent', 'Senaste'), tabBtn('foods', 'Varor'), tabBtn('dishes', 'Rätter'), tabBtn('out', 'Snabbval')),
       searchable ? el('input', { type: 'search', id: 'add-q', class: 'search', value: a.q, placeholder: a.tab === 'dishes' ? 'Sök bland dina rätter' : 'Sök livsmedel', 'aria-label': 'Sök', autocomplete: 'off', 'data-act': 'search' }) : null,
       el('div', { id: 'add-results', class: 'card results' }, resultsList()),
     ],

@@ -9,9 +9,9 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 
 ## Vanor
 - Tryck på utfallet för måltiden. Tryck igen på samma för att ta bort det.
-- Vid 🍰 Fusk: välj en orsak (t.ex. Utemat eller Sug) och skriv gärna en kort anteckning.
+- Vid 🍰 Fusk: välj en orsak (t.ex. Utemat eller Sug) och skriv gärna en kort anteckning. Vid Snacks eller Utemat kan du välja hur mycket (t.ex. Lite ≈ 250, en Magnum) – då loggas kcal i måltiden. Tryck igen för att ta bort.
 - Ifyllda måltider visas hopfällda som en rad (val, rätt och kcal) – tryck på raden för att ändra. 🍰 Fusk utan orsak hålls öppen tills orsaken är vald.
-- **+ Extra fusk** loggar fusk mellan måltiderna.
+- **+ Extra fusk** loggar fusk mellan måltiderna. Välj orsak och, om du vill, hur mycket: Snacks (Lite ≈ 250 · Mellan ≈ 500 · Mycket ≈ 950), Utemat eller annars Hemmagjort.
 - Följsamhet = följda måltider delat med följda + fusk. Hoppade över räknas inte. En dag är lyckad när den når din gräns (80 % från start). 🔥 visar lyckade dagar i rad.
 
 ## Träning
@@ -23,7 +23,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Under varje måltid finns en hopfälld rad **🍽 Mat**. Fäll ut den och tryck **+ Lägg till mat**. När mat är loggad visar raden **✅ Mat** och dagens kcal för måltiden.
 - Under **Varor** söker du, t.ex. mjölk. Välj variant (Lätt, Mellan …) och mängd i gram eller i mått som dl eller st. Mått är ungefärliga (≈). Visa fler söker i hela Livsmedelsverkets lista.
 - Har du ätit varan eller rätten förut är mängden redan ifylld med det du valde senast (står under Senast) – oftast räcker det att trycka Lägg till.
-- **Utemat:** tre snabbval när du äter ute och inte vet exakt – Lätt ≈ 700, Standard ≈ 1 000 och Tung ≈ 1 400 kcal. Ett tryck loggar.
+- **Snabbval:** när du inte vet exakt. Hemmagjort: Lätt ≈ 450, Standard ≈ 650, Tung ≈ 850 kcal. Utemat: Lätt ≈ 700, Standard ≈ 1 000, Tung ≈ 1 400 kcal. Ett tryck loggar. Tar du Lätt när du äter ute kan måltiden ändå vara ✅ enligt plan – du väljer själv.
 - **burk avr.** betyder avrunnen vikt: en burk kidneybönor är 400 g med spad men ca 230 g bönor – det är bönorna som räknas.
 - Under **Senaste** loggar du något du ätit förut med ett tryck. **Kopiera maten från igår** fyller en tom dag med gårdagens mat.
 - Tryck på en post för att ändra mängd, flytta den till en annan måltid eller ta bort den.

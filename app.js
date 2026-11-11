@@ -1,7 +1,7 @@
 // Simple nutrition – no external calls, localStorage only. See CLAUDE.md. Views in views/*.js, shared state in ui.js.
 import { defaults, load, save, validate, addDays, weekStart, setGoal, goalFor, findRef, cleanText, uid, dishTotal, exportText, importText, MAX_IMPORT_CHARS } from './store.js';
 import { today, S, setOpen, el, kcal, shortDate, dateTitle, parseNum, wType, isCardio, parseDur, fmtNum, amountText, layoutOf, LAYOUT_VIEWS } from './ui.js';
-import { mergeFdt, lastPost, QUICK_ADD } from './store.js';
+import { mergeFdt, lastPost, QUICK_ADD, setLevel, dropLevels, quickGroup } from './store.js';
 import { viewToday, dayPosts } from './views/today.js';
 import { resultsList, pickGrams } from './views/add.js';
 import { viewWeek } from './views/week.js';
@@ -204,18 +204,26 @@ app.addEventListener('click', (ev) => {
         day[id] = { ...prev, outcome: val, ...(name ? { name } : {}) };
         if (val !== 'cheat') delete day[id].reason;
       }
+      const e = S.state.habits[S.current]?.[id];
+      dropLevels(S.state, S.current, id, e?.outcome === 'cheat' ? quickGroup(e.reason, id.startsWith('extra-')) : null);
       buzz(); persist(); break;
     }
     case 'reason': {
       const e = S.state.habits[S.current]?.[id];
       if (!e) return;
       if (e.reason === val) delete e.reason; else e.reason = val;
+      dropLevels(S.state, S.current, id, quickGroup(e.reason, id.startsWith('extra-')));
+      buzz(); persist(); break;
+    }
+    case 'level': {   // v0.9: kcal-nivå för fusk
+      if (!S.state.habits[S.current]?.[id]) return;
+      setLevel(S.state, S.current, id, val, uid());
       buzz(); persist(); break;
     }
     case 'remove': {
       const day = S.state.habits[S.current];
       if (!day?.[id]) return;
-      withUndo('Extra fusk togs bort', () => { delete day[id]; if (!Object.keys(day).length) delete S.state.habits[S.current]; });
+      withUndo('Extra fusk togs bort', () => { delete day[id]; if (!Object.keys(day).length) delete S.state.habits[S.current]; dropLevels(S.state, S.current, id, null); });
       return;
     }
     case 'extra': {
@@ -294,6 +302,7 @@ app.addEventListener('click', (ev) => {
       if (addPost(post)) logged(name);
       return;
     }
+    case 'quickg': S.quickG = val; redrawResults(); return;
     case 'quick': {   // F3: Utemat loggas direkt, n totalt som en rätt-post
       const x = QUICK_ADD.find((o) => o.id === id);
       if (!x || !S.add) return;

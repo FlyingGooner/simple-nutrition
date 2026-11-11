@@ -360,9 +360,42 @@ T.test('utemat loggas med ett tryck och syns i dagens kcal (F3)', async () => {
   const n0 = (stored().log[S_TODAY] || []).length;
   q('[data-act="addopen"]').click(); await T.wait();
   q('[data-act="addtab"][data-val="out"]').click(); await T.wait();
+  q('[data-act="quickg"][data-val="out"]').click(); await T.wait();
   q('[data-act="quick"][data-id="out-std"]').click(); await T.wait();
   const l = stored().log[S_TODAY];
   T.eq(l.length, n0 + 1); T.eq(l.at(-1).ref, 'q:out-std'); T.eq(l.at(-1).n[0], 1000);
+});
+T.test('Snabbval: Hemmagjort först och loggar med ett tryck (v0.9)', async () => {
+  await tab('today');
+  q('[data-act="addopen"]').click(); await T.wait();
+  q('[data-act="addtab"][data-val="out"]').click(); await T.wait();
+  q('[data-act="quickg"][data-val="home"]').click(); await T.wait();
+  q('[data-act="quick"][data-id="home-std"]').click(); await T.wait();
+  const l = stored().log[S_TODAY];
+  T.eq(l.at(-1).ref, 'q:home-std'); T.eq(l.at(-1).n[0], 650);
+});
+T.test('fusk med Snacks: nivå loggas och tas bort när orsaken byts (v0.9)', async () => {
+  await tab('today');
+  const id = 'm4', has = (ref) => (stored().log[S_TODAY] || []).some((p) => p.m === id && p.ref === ref);
+  const h = stored().habits[S_TODAY]?.[id];
+  if (h?.outcome !== 'cheat') { q(`[data-act="outcome"][data-id="${id}"][data-val="cheat"]`).click(); await T.wait(); }
+  q(`[data-act="reason"][data-id="${id}"][data-val="snacks"]`).click(); await T.wait();
+  q(`[data-act="level"][data-id="${id}"][data-val="snack-s"]`).click(); await T.wait();
+  T.ok(has('q:snack-s'), 'Lite loggad');
+  q(`[data-act="level"][data-id="${id}"][data-val="snack-l"]`).click(); await T.wait();
+  T.ok(has('q:snack-l') && !has('q:snack-s'), 'bytt till Mycket');
+  q(`[data-act="reason"][data-id="${id}"][data-val="craving"]`).click(); await T.wait();
+  T.ok(!has('q:snack-l'), 'borta vid annan orsak');
+});
+T.test('extra fusk: nivå efter orsak och följer med när extra tas bort (v0.9)', async () => {
+  await tab('today');
+  q('[data-act="extra"]').click(); await T.wait();
+  const key = Object.keys(stored().habits[S_TODAY]).filter((k) => k.startsWith('extra-')).sort().at(-1);
+  q(`[data-act="reason"][data-id="${key}"][data-val="stress"]`).click(); await T.wait();
+  q(`[data-act="level"][data-id="${key}"][data-val="home-heavy"]`).click(); await T.wait();
+  T.ok(stored().log[S_TODAY].some((p) => p.m === key && p.n[0] === 850), 'Hemmagjort Tung');
+  q(`[data-act="remove"][data-id="${key}"]`).click(); await T.wait();
+  T.ok(!(stored().log[S_TODAY] || []).some((p) => p.m === key), 'post borta');
 });
 T.test('vald vara förifylls med senaste mängd utan tangentbord (F1)', async () => {
   await tab('today');

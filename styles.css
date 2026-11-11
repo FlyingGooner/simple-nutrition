@@ -510,3 +510,9 @@ dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
 /* Lägg till: fyra flikar och Utemat (F3) */
 .segs4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .segs4 .seg { padding: 0 2px; }
+/* Snabbval och fusknivåer (v0.9) */
+.qsegs { margin: 4px 0 6px; }
+.lvl { margin: 4px 0; }
+.lvl-h { margin: 6px 0 0; font-size: .8125rem; color: var(--muted); }
+.lvl .food-row.on { background: color-mix(in srgb, var(--cheat) 14%, transparent); border-radius: var(--r-sm); }
+.lvl .food-row.on .post-name { color: var(--cheat); font-weight: 500; }

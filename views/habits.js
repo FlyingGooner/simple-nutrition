@@ -1,7 +1,7 @@
 // Vanor och träning i Idag (porterat från follow-diet-tracker/views/today.js). Rendering via el() only.
 import { OUTCOMES } from '../fdt-store.js';
-import { weekStart } from '../store.js';
-import { S, el, reasonName, isCardio, goals, sessionText } from '../ui.js';
+import { weekStart, QUICK_ADD, quickGroup } from '../store.js';
+import { S, el, kcal, reasonName, isCardio, goals, sessionText } from '../ui.js';
 
 export const dayHabits = () => S.state.habits[S.current] || {};
 
@@ -20,8 +20,22 @@ export function habitDetails(id) {
   return [
     e.outcome === 'cheat' ? el('div', { class: 'chips hab-chips', role: 'group', 'aria-label': 'Orsak' }, S.state.settings.reasons.map((r) =>
       el('button', { class: 'chip' + (e.reason === r.id ? ' on' : ''), 'data-act': 'reason', 'data-id': id, 'data-val': r.id, 'aria-pressed': String(e.reason === r.id), text: r.name }))) : null,
+    e.outcome === 'cheat' ? levelList(id, quickGroup(e.reason, id.startsWith('extra-'))) : null,
     e.outcome === 'cheat' || e.note ? el('input', { type: 'text', class: 'hab-note', maxlength: 140, placeholder: 'Anteckning (valfritt)', value: e.note || '', 'data-act': 'note', 'data-id': id, 'aria-label': 'Anteckning' }) : null,
   ];
+}
+
+// v0.9: "Hur mycket?" – kcal-nivå för fusket (tryck igen = ta bort). Vald nivå = q:-post i samma måltid/extra.
+function levelList(id, g) {
+  if (!g) return null;
+  const refs = new Set((S.state.log[S.current] || []).filter((p) => p.m === id).map((p) => p.ref));
+  return el('div', { class: 'lvl' }, el('p', { class: 'lvl-h', text: 'Hur mycket? (valfritt)' }),
+    el('ul', { class: 'posts' }, QUICK_ADD.filter((x) => x.g === g).map((x) => {
+      const on = refs.has('q:' + x.id);
+      return el('li', {}, el('button', { class: 'food-row' + (on ? ' on' : ''), 'data-act': 'level', 'data-id': id, 'data-val': x.id, 'aria-pressed': String(on) },
+        el('span', { class: 'post-name' }, (on ? '✓ ' : '') + x.label, el('small', { text: x.ex })),
+        el('span', { class: 'post-kcal', text: `≈ ${kcal(x.n[0])}` })));
+    })));
 }
 
 export function extraCards() {

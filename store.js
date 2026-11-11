@@ -324,11 +324,53 @@ export function mergeFdt(state, f) {
 }
 
 // Utemat (F3, 2026-11-10): tre snabbval när man äter ute och inte vet exakt. n = [kcal, protein, kolhydrater, fett] totalt (≈).
+// v0.9 (2026-11-11): grupper Hemmagjort (home), Utemat (out) och Snacks (snack – bara i fusk). g = grupp, label = nivå.
 export const QUICK_ADD = [
-  { id: 'out-light', name: 'Utemat – Lätt', n: [700, 30, 75, 30], ex: 'Halv pizza + sallad, burgare utan strips, sushi 10–12 bitar, matig sallad' },
-  { id: 'out-std', name: 'Utemat – Standard', n: [1000, 40, 105, 45], ex: 'Hel hamburgermeny, dagens lunch, thaimat med ris, kebab i bröd' },
-  { id: 'out-heavy', name: 'Utemat – Tung', n: [1400, 55, 140, 65], ex: 'Hel pizzeriapizza, kebabtallrik, dubbelburgare med strips, två rätter' },
+  { id: 'home-light', g: 'home', label: 'Lätt', name: 'Hemmagjort – Lätt', n: [450, 35, 35, 18], ex: 'Mager fisk/kyckling med grönt, omelett, tonfisksallad, mager färs' },
+  { id: 'home-std', g: 'home', label: 'Standard', name: 'Hemmagjort – Standard', n: [650, 35, 70, 22], ex: 'Köttfärssås med pasta, lax med potatis/sås, kycklinggryta med ris, husman' },
+  { id: 'home-heavy', g: 'home', label: 'Tung', name: 'Hemmagjort – Tung', n: [850, 40, 95, 32], ex: 'Stor portion pasta/färs, hemmagjord burgare m. klyftpotatis, lasagne' },
+  { id: 'out-light', g: 'out', label: 'Lätt', name: 'Utemat – Lätt', n: [700, 30, 75, 30], ex: 'Halv pizza + sallad, burgare utan strips, sushi 10–12 bitar, matig sallad' },
+  { id: 'out-std', g: 'out', label: 'Standard', name: 'Utemat – Standard', n: [1000, 40, 105, 45], ex: 'Hel hamburgermeny, dagens lunch, thaimat med ris, kebab i bröd' },
+  { id: 'out-heavy', g: 'out', label: 'Tung', name: 'Utemat – Tung', n: [1400, 55, 140, 65], ex: 'Hel pizzeriapizza, kebabtallrik, dubbelburgare med strips, två rätter' },
+  { id: 'snack-s', g: 'snack', label: 'Lite', name: 'Snacks – Lite', n: [250, 3, 27, 14], ex: 'En Magnum, en kanelbulle, Marabou 45 g (en rad), lösgodis 60 g, en näve nötter, två kakor' },
+  { id: 'snack-m', g: 'snack', label: 'Mellan', name: 'Snacks – Mellan', n: [500, 6, 50, 30], ex: 'Halv chipspåse (175 g), Marabou 100 g, lösgodis 125 g, wienerbröd + läsk, halv glasskartong' },
+  { id: 'snack-l', g: 'snack', label: 'Mycket', name: 'Snacks – Mycket', n: [950, 11, 95, 58], ex: 'Hel chipspåse (175 g), Marabou 175 g, lösgodis 250 g, chips + dipp, hel glasskartong' },
 ];
+export const quickById = (ref) => QUICK_ADD.find((x) => 'q:' + x.id === ref);
+// Nivåer i fusk styrs av orsaken: Snacks → snack, Utemat → out; i extra fusk annars home, på en måltid annars ingen.
+export function quickGroup(reason, extra) {
+  if (reason === 'snacks') return 'snack';
+  if (reason === 'out-lunch') return 'out';
+  return extra && reason ? 'home' : null;
+}
+// Fusknivå (v0.9) på måltid/extra `key`: samma nivå igen = ta bort, annan i gruppen = byt. Returnerar true om posten lades till.
+export function setLevel(state, day, key, qid, newId) {
+  const x = QUICK_ADD.find((o) => o.id === qid);
+  if (!x) return false;
+  const list = state.log[day] || [], had = list.some((p) => p.m === key && p.ref === 'q:' + x.id);
+  const rest = list.filter((p) => !(p.m === key && quickById(p.ref)?.g === x.g));
+  if (!had) {
+    if (rest.length >= 100) return false;
+    rest.push({ id: newId, m: key, ref: 'q:' + x.id, name: x.name, q: 1, n: [...x.n], u: ['st', 1] });
+  }
+  if (rest.length) state.log[day] = rest; else delete state.log[day];
+  return !had;
+}
+// Tar bort fusknivåer på `key` som inte längre gäller: snacks på en måltid när orsaken inte är Snacks/fusket är borta;
+// i extra fusk allt utom gruppen `keep` (null = allt). Utemat på en måltid tas aldrig bort (kan vara enligt plan).
+export function dropLevels(state, day, key, keep) {
+  const list = state.log[day];
+  if (!list) return;
+  const extra = key.startsWith('extra-');
+  const rest = list.filter((p) => {
+    if (p.m !== key) return true;
+    const g = quickById(p.ref)?.g;
+    if (!g) return true;
+    return extra ? g === keep : g !== 'snack' || keep === 'snack';
+  });
+  if (rest.length) state.log[day] = rest; else delete state.log[day];
+}
+
 // Senast loggade post vars ref matchar (F1: förifyll mängd), eller null.
 export function lastPost(state, match) {
   for (const k of Object.keys(state.log).sort().reverse()) {
@@ -348,7 +390,7 @@ export const EXPORT_SCHEMA = {
   log: 'objekt datum → lista av poster, max 100 poster per dag och 3650 dagar',
   'post (vara)': '{ id, m: måltids-id, ref: "l:<livsmedel>" | "b:<beräknad>" | "u:<egen produkt-id>", name, g: gram 0–10000, n: per 100 g (kcal ≤ 9000, övriga ≤ 100), u?: [mått, antal] }',
   'post (rätt)': '{ id, m, ref: "r:<rätt-id>", name, q: andel av satsen 0,0001–50, n: totalt för andelen (kcal ≤ 20000, gram ≤ 2000), u?: ["port." | "av satsen" | "g", mängd] }',
-  'post (utemat)': '{ id, m, ref: "q:out-light" | "q:out-std" | "q:out-heavy", name, q: antal, n: totalt, u?: ["st", antal] }',
+  'post (snabbval)': '{ id, m: måltids-id eller "extra-<n>" (extra fusk), ref: "q:<id i snabbval>", name, q: antal, n: totalt, u?: ["st", antal] }',
   dishes: 'lista { id, name, portions: 1–50, items: [{ ref, name, g, n per 100 g }] (max 50), cooked?: färdig vikt i gram 1–20000 }, max 500',
   foods: 'lista { id, name, n per 100 g, u?: [mått, gram per mått] }, egna produkter, max 1000',
   aliases: 'objekt sökord (gemener, ≤ 40 tecken) → ref, max 1000',
@@ -358,7 +400,7 @@ export const EXPORT_SCHEMA = {
   settings: '{ reasons: [{ id, name }], successThreshold: 0,5–1, planText ≤ 300, workoutTypes: [{ id, name, kind: "gym" | "cardio" }], workoutGoal, gymGoal, cardioGoal }',
   layout: '{ today | week | trend | history: { order: [kort-id], hidden: [kort-id] } }, okända kort-id ignoreras',
   backup: '{ remind: "week" | "month" | "off", last?: datum, asked?: datum }',
-  utemat: QUICK_ADD.map((x) => `${x.id}: ${x.name}, ≈ ${x.n[0]} kcal`).join('; '),
+  snabbval: QUICK_ADD.map((x) => `${x.id}: ${x.name}, ≈ ${x.n[0]} kcal`).join('; '),
 };
 export const EXPORT_EXAMPLE = {
   version: 1,

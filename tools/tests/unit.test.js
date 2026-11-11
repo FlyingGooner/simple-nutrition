@@ -1,5 +1,5 @@
 // Unit tests for store.js (ES module). Run: tools\test.ps1 simple-nutrition
-import { defaults, validate, cleanText, postN, sumN, goalFor, setGoal, weekStats, exportText, importText, addDays, weekStart, isoWeek, mergeFdt, habitDay } from '../../store.js';
+import { defaults, validate, cleanText, postN, sumN, goalFor, setGoal, weekStats, exportText, importText, addDays, weekStart, isoWeek, mergeFdt, habitDay, setLevel, dropLevels, quickGroup } from '../../store.js';
 const FDT = JSON.stringify({ app: 'follow-diet-tracker', format: 1, exported: '2026-11-09', data: { settings: { planText: 'Plan' }, days: { '2026-11-02': { breakfast: 'f', lunch: { o: 'c', r: 'craving', n: 'jobbet' }, 'extra-1': 'c' } }, weighIns: { '2026-11-02': 84.6, '2026-11-03': 999 }, workouts: { '2026-11-02': ['push,pull', { t: 'run', k: 5, s: 1500 }] } } });
 
 const post = (o) => ({ id: 'p1', m: 'm1', ref: 'l:151', name: 'Mjölk', g: 200, n: [39, 3.6, 4.8, 0.5], ...o });
@@ -124,4 +124,25 @@ T.test('utemat: q:-post valideras och räknas som totalt (F3)', () => {
   const s = validate({ log: { '2026-11-10': [q, { ...q, id: 'p8', ref: 'q:okand' }] } });
   T.eq(s.log['2026-11-10'].length, 1);
   T.eq(postN(s.log['2026-11-10'][0])[0], 700);
+});
+T.test('fusknivåer: orsak styr grupp (v0.9)', () => {
+  T.eq([quickGroup('snacks', false), quickGroup('out-lunch', false), quickGroup('craving', false)], ['snack', 'out', null]);
+  T.eq([quickGroup('snacks', true), quickGroup('out-lunch', true), quickGroup('craving', true), quickGroup(undefined, true)], ['snack', 'out', 'home', null]);
+});
+T.test('fusknivåer: sätt, byt, ta bort med samma, och städa vid byte av orsak (v0.9)', () => {
+  const s = defaults(), d = '2026-11-11';
+  s.log[d] = [post({ id: 'a' }), { id: 'u', m: 'm2', ref: 'q:out-light', name: 'Utemat – Lätt', q: 1, n: [700, 30, 75, 30], u: ['st', 1] }];
+  T.ok(setLevel(s, d, 'm2', 'snack-s', 'x1'), 'lagd');
+  T.ok(setLevel(s, d, 'm2', 'snack-m', 'x2'), 'bytt');
+  T.eq(s.log[d].filter((p) => p.ref.startsWith('q:snack')).map((p) => p.ref), ['q:snack-m']);
+  T.ok(!setLevel(s, d, 'm2', 'snack-m', 'x3'), 'samma igen = bort');
+  T.eq(s.log[d].length, 2);
+  setLevel(s, d, 'm2', 'snack-l', 'x4');
+  dropLevels(s, d, 'm2', 'out');   // orsak bytt från Snacks: snacks bort, utemat kvar
+  T.eq(s.log[d].map((p) => p.id), ['a', 'u']);
+  setLevel(s, d, 'extra-1', 'home-std', 'e1');
+  T.eq(postN(s.log[d].find((p) => p.id === 'e1'))[0], 650);
+  dropLevels(s, d, 'extra-1', null);   // extra fusk borttaget
+  T.eq(s.log[d].map((p) => p.id), ['a', 'u']);
+  T.eq(validate({ log: { [d]: [{ id: 'e2', m: 'extra-1731', ref: 'q:snack-l', name: 'Snacks – Mycket', q: 1, n: [950, 11, 95, 58] }] } }).log[d].length, 1);
 });

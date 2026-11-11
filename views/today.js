@@ -92,7 +92,7 @@ export function viewToday() {
   const isToday = S.current === today();
   const posts = dayPosts();
   const known = new Set(S.state.meals.map((m) => m.id));
-  const other = posts.filter((p) => !known.has(p.m));
+  const other = posts.filter((p) => !known.has(p.m) && !(p.m.startsWith('extra-') && dayHabits()[p.m]));   // extra fuskets kcal visas i nivåraden
   const orphanHabits = Object.keys(dayHabits()).filter((k) => !known.has(k) && !k.startsWith('extra-'));
   const r = habitDay(S.state, S.current), st = habitStreak(S.state, today());
   return [
