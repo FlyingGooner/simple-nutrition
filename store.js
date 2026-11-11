@@ -37,11 +37,12 @@ export function defaults() {
   };
 }
 
-// n = [kcal, prot, kolh, fett]. Foods: per 100 g (kcal ≤ 9000, g ≤ 100). Dish posts: total for the share (kcal ≤ 20000, g ≤ 2000).
+// n = [kcal, prot, kolh, fett]. Foods: per 100 g (kcal ≤ 950, g ≤ 105 each and together; own products in the form: 900 and 100). Dish posts: total for the share (kcal ≤ 20000, g ≤ 2000, 3 decimals so edits do not drift).
 function cleanN(n, dish = false) {
   if (!Array.isArray(n) || n.length !== 4) return null;
-  if (!num(n[0], 0, dish ? 20000 : 9000) || !n.slice(1).every((x) => num(x, 0, dish ? 2000 : 100))) return null;
-  return n.map((x) => Math.round(x * 10) / 10);
+  if (!num(n[0], 0, dish ? 20000 : 950) || !n.slice(1).every((x) => num(x, 0, dish ? 2000 : 105))) return null;
+  if (!dish && n[1] + n[2] + n[3] > 105) return null;   // margin: Livsmedelsverket has Matolja 902 kcal, 102 g
+  return n.map((x) => Math.round(x * (dish ? 1000 : 10)) / (dish ? 1000 : 10));
 }
 function cleanUnit(u) {   // [unit name ≤ 10 chars, number]
   if (!Array.isArray(u) || u.length !== 2) return undefined;
@@ -389,7 +390,7 @@ export const EXPORT_SCHEMA = {
   goals: 'lista { from: datum, kcal?: 500–10000, prot?: 10–500, kolh?: 10–1000 }, sorteras på from, mål utan kcal = inget kalorimål från det datumet, max 100',
   meals: 'lista { id, name ≤ 60 tecken }, 1–10 st',
   log: 'objekt datum → lista av poster, max 100 poster per dag och 3650 dagar',
-  'post (vara)': '{ id, m: måltids-id, ref: "l:<livsmedel>" | "b:<beräknad>" | "u:<egen produkt-id>", name, g: gram 0–10000, n: per 100 g (kcal ≤ 9000, övriga ≤ 100), u?: [mått, antal] }',
+  'post (vara)': '{ id, m: måltids-id, ref: "l:<livsmedel>" | "b:<beräknad>" | "u:<egen produkt-id>", name, g: gram 0–10000, n: per 100 g (kcal ≤ 950, övriga ≤ 105 var och tillsammans), u?: [mått, antal] }',
   'post (rätt)': '{ id, m, ref: "r:<rätt-id>", name, q: andel av satsen 0,0001–50, n: totalt för andelen (kcal ≤ 20000, gram ≤ 2000), u?: ["port." | "av satsen" | "g", mängd] }',
   'post (snabbval)': '{ id, m: måltids-id eller "extra-<n>" (extra fusk), ref: "q:<id i snabbval>", name, q: antal, n: totalt, u?: ["st", antal] }',
   dishes: 'lista { id, name, portions: 1–50, items: [{ ref, name, g, n per 100 g }] (max 50), cooked?: färdig vikt i gram 1–20000 }, max 500',

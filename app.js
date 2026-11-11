@@ -173,11 +173,13 @@ app.addEventListener('click', (ev) => {
       if (p.q != null) {
         const base = p.u ? p.u[1] : p.q, q = p.q * v / base;
         if (!(v > 0 && q > 0 && q <= 50)) { errText('p-error', 'Ange en mängd större än 0.'); return; }
-        p.n = p.n.map((x) => Math.round(x * q / p.q * 10) / 10); p.q = Math.round(q * 10000) / 10000;
+        p.n = p.n.map((x) => Math.round(x * q / p.q * 1000) / 1000); p.q = Math.round(q * 10000) / 10000;
         if (p.u) p.u = [p.u[0], Math.round(v * 100) / 100];
       } else {
-        if (!(v > 0 && v <= 10000)) { errText('p-error', 'Ange gram, t.ex. 150.'); return; }
-        p.g = Math.round(v * 10) / 10; delete p.u;
+        const g = p.u ? v * p.g / p.u[1] : v;   // measured posts (2 dl) keep their unit
+        if (!(v > 0 && g > 0 && g <= 10000)) { errText('p-error', p.u ? 'Ange en mängd större än 0.' : 'Ange gram, t.ex. 150.'); return; }
+        p.g = Math.round(g * 10) / 10;
+        if (p.u) p.u = [p.u[0], Math.round(v * 100) / 100];
       }
       const m = document.getElementById('p-meal')?.value;
       if (S.state.meals.some((x) => x.id === m)) p.m = m;
@@ -345,7 +347,7 @@ app.addEventListener('click', (ev) => {
       if (!Number.isFinite(q)) { errText('add-error', p.mode === 'andel' ? 'Ange en andel, t.ex. 1/5 eller 0,2.' : 'Ange en mängd större än 0.'); return; }
       const amount = p.mode === 'andel' ? q : parseNum(p.amount);
       const post = { id: uid(), m: S.add.meal, ref: 'r:' + p.dish.id, name: p.dish.name, q: Math.round(q * 10000) / 10000,
-        n: dishTotal(p.dish).map((x) => Math.round(x * q * 10) / 10), u: [dishUnit(p), Math.round(amount * 100) / 100] };
+        n: dishTotal(p.dish).map((x) => Math.round(x * q * 1000) / 1000), u: [dishUnit(p), Math.round(amount * 100) / 100] };
       if (addPost(post)) logged(p.dish.name);
       return;
     }
@@ -382,6 +384,7 @@ app.addEventListener('click', (ev) => {
       const unit = cleanText(document.getElementById('f-unit').value, 10), ug = parseNum(document.getElementById('f-ug').value);
       const err = !name ? 'Ange ett namn.' : !(n[0] >= 0 && n[0] <= 900) ? 'kcal per 100 g: 0–900.'
         : n.slice(1).some((x) => !(x >= 0 && x <= 100)) ? 'Protein, kolhydrater och fett: 0–100 g per 100 g.'
+        : n[1] + n[2] + n[3] > 100.05 ? 'Protein, kolhydrater och fett får tillsammans vara högst 100 g.'
         : unit && !(ug > 0 && ug <= 10000) ? 'Ange gram per mått, eller lämna måttet tomt.' : '';
       if (err) { errText('f-error', err); return; }
       const f = { id: uid(), name, n: n.map((x) => Math.round(x * 10) / 10) };

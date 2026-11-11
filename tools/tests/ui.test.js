@@ -95,10 +95,11 @@ T.test('Senaste loggar samma igen', () => {
 T.test('ändra mängd och flytta post, sedan ta bort med ångra', () => {
   q('[data-act="popen"]').click();
   const id = q('[data-act="psave"]').dataset.id;
-  q('#p-amount').value = '300'; q('#p-meal').value = 'm3';
+  T.eq([q('#p-amount').value, q('.post-edit .field span').textContent], ['2', 'Mängd, dl']);
+  q('#p-amount').value = '3'; q('#p-meal').value = 'm3';
   q('[data-act="psave"]').click();
   const p = stored().log['2026-11-09'].find((x) => x.id === id);
-  T.eq([p.g, p.m, 'u' in p], [300, 'm3', false]);
+  T.eq([p.g, p.m, p.u], [309, 'm3', ['dl', 3]]);   // måttet behålls (2 dl → 3 dl)
   app.querySelector(`[data-act="popen"][data-id="${id}"]`).click();
   q('[data-act="pdel"]').click();
   T.eq(stored().log['2026-11-09'].length, 2);
@@ -224,7 +225,7 @@ T.test('backup-fil: fel lösenord och Avbryt ändrar inget', async () => {
   await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
   $id('pw-1').value = 'Fel2026!x'; $id('pw-ok').click();
   await T.real(T.until(() => /Fel lösenord eller skadad fil/.test($id('import-error').textContent), 'felmeddelande saknas'));
-  T.ok(!$id('import-dialog').open, 'dialog öppnades');
+  T.ok(!$id('import-dialog').open, 'dialog öppnades: ' + $id('import-dialog').textContent.slice(0, 300) + ' / ' + $id('import-error').textContent);
   pickFile([encFile]);
   await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
   $id('pw-cancel').click();
@@ -243,14 +244,14 @@ T.test('import: klistrad krypterad text frågar efter lösenord', async () => {
 });
 T.test('backup-fil: okrypterad fil läses in som förut, binärfil avvisas', async () => {
   pickFile([plainText()]);
-  await T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog');
+  await T.real(T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog'));
   T.ok(!$id('pw-dialog').open, 'lösenord krävdes för okrypterad fil');
   await closeImport();
   const before = localStorage.getItem('sn.data');
   $id('import-error').textContent = '';
   pickFile([new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0xff])]);
-  await T.until(() => /teckenkodning/.test($id('import-error').textContent), 'fel saknas');
-  T.ok(!$id('import-dialog').open, 'dialog öppnades');
+  await T.real(T.until(() => /teckenkodning/.test($id('import-error').textContent), 'fel saknas'));
+  T.ok(!$id('import-dialog').open, 'dialog öppnades: ' + $id('import-dialog').textContent.slice(0, 300) + ' / ' + $id('import-error').textContent);
   T.eq(localStorage.getItem('sn.data'), before);
 });
 T.test('ny rätt: hel sats med ingrediens, portioner och färdig vikt', async () => {
@@ -308,6 +309,16 @@ T.test('ändra mängd på loggad rätt skalar kcal', () => {
   const p = stored().log['2026-11-09'].at(-1);
   T.eq([p.q, p.u], [0.15, ['g', 150]]);
   T.eq(Math.round(p.n[0]), Math.round(before.n[0] / 2));
+});
+T.test('rätt redigerad flera gånger driver inte (0,1 → 3 → 1 portion)', () => {
+  const p0 = stored().log['2026-11-09'].at(-1);
+  for (const v of ['15', '4500', '300']) {
+    q(`[data-act="popen"][data-id="${p0.id}"]`).click();
+    q('#p-amount').value = v; q('[data-act="psave"]').click();
+  }
+  const p = stored().log['2026-11-09'].at(-1);
+  T.eq(p.q, 0.3);
+  T.ok(p.n.every((x, i) => Math.abs(x - p0.n[i] * 2) < 0.01), JSON.stringify([p.n, p0.n]));
 });
 T.test('ändrad rätt påverkar inte loggad dag', async () => {
   const n0 = stored().log['2026-11-09'].at(-1).n[0];

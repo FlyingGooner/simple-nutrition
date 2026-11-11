@@ -17,11 +17,13 @@ export const click = {
     if (p.q != null) {
       const base = p.u ? p.u[1] : p.q, q = p.q * v / base;
       if (!(v > 0 && q > 0 && q <= 50)) { c.errText('p-error', 'Ange en mängd större än 0.'); return; }
-      p.n = p.n.map((x) => Math.round(x * q / p.q * 10) / 10); p.q = Math.round(q * 10000) / 10000;
+      p.n = p.n.map((x) => Math.round(x * q / p.q * 1000) / 1000); p.q = Math.round(q * 10000) / 10000;
       if (p.u) p.u = [p.u[0], Math.round(v * 100) / 100];
     } else {
-      if (!(v > 0 && v <= 10000)) { c.errText('p-error', 'Ange gram, t.ex. 150.'); return; }
-      p.g = Math.round(v * 10) / 10; delete p.u;
+      const g = p.u ? v * p.g / p.u[1] : v;   // measured posts (2 dl) keep their unit
+      if (!(v > 0 && g > 0 && g <= 10000)) { c.errText('p-error', p.u ? 'Ange en mängd större än 0.' : 'Ange gram, t.ex. 150.'); return; }
+      p.g = Math.round(g * 10) / 10;
+      if (p.u) p.u = [p.u[0], Math.round(v * 100) / 100];
     }
     const m = document.getElementById('p-meal')?.value;
     if (S.state.meals.some((x) => x.id === m)) p.m = m;

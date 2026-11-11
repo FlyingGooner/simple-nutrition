@@ -30,8 +30,8 @@ function postRow(p) {
       el('span', { class: 'post-kcal', text: kcal(postN(p)[0]) })));
   if (open) {
     row.append(el('div', { class: 'post-edit' },
-      el('label', { class: 'field' }, el('span', { text: p.q != null ? (p.u ? 'Mängd, ' + p.u[0] : 'Andel') : 'Gram' }),
-        el('input', { type: 'text', inputmode: 'decimal', id: 'p-amount', value: p.q != null ? String(p.u ? p.u[1] : p.q) : String(p.g), 'aria-label': 'Mängd' })),
+      el('label', { class: 'field' }, el('span', { text: p.u ? 'Mängd, ' + p.u[0] : p.q != null ? 'Andel' : 'Gram' }),
+        el('input', { type: 'text', inputmode: 'decimal', id: 'p-amount', value: String(p.u ? p.u[1] : p.q != null ? p.q : p.g), 'aria-label': 'Mängd' })),
       el('label', { class: 'field' }, el('span', { text: 'Måltid' }),
         el('select', { id: 'p-meal', 'aria-label': 'Måltid' }, S.state.meals.map((m) => el('option', { value: m.id, selected: m.id === p.m, text: m.name })))),
       el('div', { class: 'row-actions' },

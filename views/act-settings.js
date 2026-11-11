@@ -56,6 +56,7 @@ export const click = {
     const unit = cleanText(val('f-unit'), 10), ug = parseNum(val('f-ug'));
     const err = !name ? 'Ange ett namn.' : !(n[0] >= 0 && n[0] <= 900) ? 'kcal per 100 g: 0–900.'
       : n.slice(1).some((x) => !(x >= 0 && x <= 100)) ? 'Protein, kolhydrater och fett: 0–100 g per 100 g.'
+        : n[1] + n[2] + n[3] > 100.05 ? 'Protein, kolhydrater och fett får tillsammans vara högst 100 g.'
       : unit && !(ug > 0 && ug <= 10000) ? 'Ange gram per mått, eller lämna måttet tomt.' : '';
     if (err) { c.errText('f-error', err); return; }
     const f = { id: uid(), name, n: n.map((x) => Math.round(x * 10) / 10) };

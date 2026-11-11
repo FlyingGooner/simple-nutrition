@@ -82,7 +82,7 @@ export const click = {
     if (!Number.isFinite(q)) { c.errText('add-error', p.mode === 'andel' ? 'Ange en andel, t.ex. 1/5 eller 0,2.' : 'Ange en mängd större än 0.'); return; }
     const amount = p.mode === 'andel' ? q : parseNum(p.amount);
     const post = { id: uid(), m: S.add.meal, ref: 'r:' + p.dish.id, name: p.dish.name, q: Math.round(q * 10000) / 10000,
-      n: dishTotal(p.dish).map((x) => Math.round(x * q * 10) / 10), u: [dishUnit(p), Math.round(amount * 100) / 100] };
+      n: dishTotal(p.dish).map((x) => Math.round(x * q * 1000) / 1000), u: [dishUnit(p), Math.round(amount * 100) / 100] };
     if (addPost(post, c)) logged(p.dish.name, c);
   },
 };

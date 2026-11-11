@@ -43,6 +43,10 @@ T.test('mål från datum: gamla dagar behåller gammalt mål', () => {
   setGoal(s, '2026-11-09', { kcal: 1700 });
   T.eq(s.goals.length, 2);
 });
+T.test('import: kcal och makron per 100 g som i formuläret, med marginal för Matolja', () => {
+  const s = validate({ log: { '2026-11-09': [post({ n: [9000, 0, 0, 0] }), post({ n: [400, 100, 100, 100] }), post({ id: 'p2', n: [902, 0, 0, 102] })] } });
+  T.eq(s.log['2026-11-09'].map((x) => x.id), ['p2']);
+});
 T.test('ögonblicksbild: posten behåller sitt n', () => {
   const s = validate({ log: { '2026-11-09': [post({ n: [40, 3, 5, 1] })] } });
   T.eq(s.log['2026-11-09'][0].n, [40, 3, 5, 1]);
