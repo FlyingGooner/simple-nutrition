@@ -30,7 +30,7 @@
     <h2>Tre principer bakom appen</h2>
     <div class="cols">
       <div class="card"><div class="ic" aria-hidden="true">🎯</div><h3>Ett tydligt fokus</h3><p>Appen svarar på en enda fråga: äter jag som jag tänkt? Allt annat väljs aktivt bort.</p></div>
-      <div class="card"><div class="ic" aria-hidden="true">🔒</div><h3>Integritet först</h3><p>Ingen inloggning, ingen spårning. Data stannar på telefonen och strikt CSP stänger ute allt externt.</p></div>
+      <div class="card"><div class="ic" aria-hidden="true">🔒</div><h3>Integritet först</h3><p>Ingen inloggning, ingen spårning. Data stannar på telefonen, och webbläsaren stänger ute allt som inte är appens eget.</p></div>
       <div class="card"><div class="ic" aria-hidden="true">⚡</div><h3>Ren webb</h3><p>HTML, CSS och vanlig JavaScript. Inga byggsteg – hela appen kan levereras som en enda fil.</p></div>
     </div>
   </section>
@@ -129,16 +129,16 @@
     <p>Automatiska tester körs före varje commit och push. Underkänt test = ingen release.</p>
     <h3 class="checks-h">Säkerhetskontroll</h3>
     <ul class="checks">
-      <li><b>Strikt innehållspolicy</b><span>ingen kod utifrån, inga inline-skript.</span></li>
-      <li><b>Inga nätverksanrop</b><span>appen pratar inte med någon server.</span></li>
-      <li><b>Bara egen lagring</b><span>egna nycklar i telefonen, inga farliga API:er som eval.</span></li>
-      <li><b>Service worker</b><span>cachar bara appens egna filer.</span></li>
-      <li><b>Krypterad backup</b><span>AES-256-GCM, PBKDF2 600 000 varv, lösenordet sparas aldrig.</span></li>
+      <li><b>Bara appens egen kod körs</b><span>webbläsaren blockerar allt annat, även om någon försöker smyga in något.</span></li>
+      <li><b>Inget lämnar telefonen</b><span>appen pratar aldrig med någon server.</span></li>
+      <li><b>Din data stannar hos dig</b><span>sparas bara i telefonen; appen rör bara sina egna uppgifter.</span></li>
+      <li><b>Fungerar utan nät</b><span>med bara appens egna filer – inget hämtas utifrån i smyg.</span></li>
+      <li><b>Låst backup</b><span>bara ditt lösenord öppnar filen – samma typ av kryptering som banker använder. Lösenordet sparas aldrig.</span></li>
     </ul>
     <h3 class="checks-h">Funktionstester</h3>
     <ul class="checks">
-      <li><b>Import valideras</b><span>fel app, fel format och manipulerade fält avvisas.</span></li>
-      <li><b>Text, aldrig HTML</b><span>data visas som text – inget kan köras via innehåll.</span></li>
+      <li><b>Trasiga filer stoppas</b><span>en backup från fel app, eller som någon ändrat i, läses inte in.</span></li>
+      <li><b>Inget innehåll kan bli kod</b><span>allt visas som vanlig text, även konstiga namn.</span></li>
       <li><b>Export och import</b><span>backup tur och retur ger samma data; styrtecken rensas.</span></li>
       <li><b>Matdatan</b><span>över 100 rätter räknas om mot facit vid varje release.</span></li>
     </ul>
