@@ -70,5 +70,160 @@
     return { text };
   }
 
-  self.Backup = Object.freeze({ fileName, save, read });
+  // ---------- Password encryption of the backup file (U5, extended 2026-11-11) ----------
+  // Only built-in crypto.subtle: AES-GCM 256, PBKDF2-SHA256, new salt and IV per export, AAD app|format|iter.
+  // The key is non-extractable. The password is never stored or logged; the dialog fields are cleared on close.
+  const ITER = 600000, ITER_MIN = 100000, ITER_MAX = 2000000, KDF = 'PBKDF2-SHA256';
+  const ENV_KEYS = ['app', 'data', 'encrypted', 'format', 'iter', 'iv', 'kdf', 'salt'];
+  const B64_RE = /^[A-Za-z0-9+/]*={0,2}$/;
+  const DATA_MAX = 11000000;   // base64 chars: above the 8 MB file limit, so never the limit that bites
+  const PWD_MAX = 200;
+  const BAD = 'Fel lösenord eller skadad fil.';
+
+  // '' = ok, otherwise the reason. Export rule (the user's choice): 8+ chars, lower and upper case letter, digit, special char.
+  function checkPassword(pwd) {
+    if (typeof pwd !== 'string' || pwd.length < 8) return 'Lösenordet måste ha minst 8 tecken.';
+    if (pwd.length > PWD_MAX) return `Lösenordet får ha högst ${PWD_MAX} tecken.`;
+    if (!/\p{Ll}/u.test(pwd) || !/\p{Lu}/u.test(pwd)) return 'Lösenordet måste ha både stor och liten bokstav.';
+    if (!/\p{N}/u.test(pwd)) return 'Lösenordet måste ha en siffra.';
+    if (!/[^\p{L}\p{N}\s]/u.test(pwd)) return 'Lösenordet måste ha ett specialtecken, t.ex. ! ? # %.';
+    return '';
+  }
+  const hasCrypto = () => !!(self.crypto && self.crypto.subtle && typeof self.crypto.getRandomValues === 'function');
+
+  function toB64(bytes) {
+    let s = '';
+    for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(s);
+  }
+  function fromB64(s, max) {
+    if (typeof s !== 'string' || s.length > max || s.length % 4 || !B64_RE.test(s)) return null;
+    try {
+      const bin = atob(s), out = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+      return out;
+    } catch { return null; }
+  }
+  async function deriveKey(pwd, salt, iter) {
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pwd), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: iter }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  }
+  const aad = (app, iter) => new TextEncoder().encode(`${app}|1|${iter}`);
+
+  // Is this text an encryption envelope? Cheap check before JSON.parse in the app's own import.
+  function isEncrypted(text) {
+    if (typeof text !== 'string' || !/^\s*\{/.test(text) || !/"encrypted"\s*:\s*true/.test(text)) return false;
+    try { const o = JSON.parse(text); return !!o && typeof o === 'object' && o.encrypted === true; } catch { return false; }
+  }
+
+  // → envelope text. Throws if crypto is missing or the password breaks the rule.
+  async function encrypt(text, pwd, slug) {
+    if (!NAME_RE.test(slug) || typeof text !== 'string' || !text) throw new Error('Backup.encrypt: ogiltig indata');
+    if (checkPassword(pwd)) throw new Error('Backup.encrypt: ogiltigt lösenord');
+    if (!hasCrypto()) throw new Error('Backup.encrypt: kryptering saknas');
+    const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await deriveKey(pwd, salt, ITER);
+    const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: aad(slug, ITER) }, key, new TextEncoder().encode(text)));
+    return JSON.stringify({ app: slug, format: 1, encrypted: true, kdf: KDF, iter: ITER, salt: toB64(salt), iv: toB64(iv), data: toB64(ct) });
+  }
+
+  // → { text } | { error }. One message for every failure: no oracle about what was wrong.
+  async function decrypt(envText, pwd, slug, maxChars) {
+    if (!hasCrypto()) return { error: 'Den här webbläsaren kan inte öppna krypterade filer.' };
+    if (typeof pwd !== 'string' || !pwd.length || pwd.length > PWD_MAX || typeof envText !== 'string' || envText.length > DATA_MAX + 1000) return { error: BAD };
+    let o;
+    try { o = JSON.parse(envText); } catch { return { error: BAD }; }
+    if (!o || typeof o !== 'object' || Array.isArray(o) || Object.keys(o).sort().join() !== ENV_KEYS.join()) return { error: BAD };
+    if (o.app !== slug || o.format !== 1 || o.encrypted !== true || o.kdf !== KDF) return { error: BAD };
+    if (!Number.isInteger(o.iter) || o.iter < ITER_MIN || o.iter > ITER_MAX) return { error: BAD };
+    const salt = fromB64(o.salt, 24), iv = fromB64(o.iv, 16), ct = fromB64(o.data, DATA_MAX);
+    if (!salt || salt.length !== 16 || !iv || iv.length !== 12 || !ct || ct.length < 17) return { error: BAD };
+    let text;
+    try {
+      const key = await deriveKey(pwd, salt, o.iter);
+      const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv, additionalData: aad(o.app, o.iter) }, key, ct);
+      text = new TextDecoder('utf-8', { fatal: true }).decode(pt);
+    } catch { return { error: BAD }; }
+    if (!text.trim() || text.length > maxChars) return { error: BAD };
+    return { text };
+  }
+
+  // Password dialog: #pw-dialog lives in each app's index.html (the app's own classes, fixed ids).
+  // mode 'export' → { pwd } | { plain: true } | null (cancelled); mode 'import' → { pwd } | null.
+  // The fields are cleared on every close (button, Esc, cancel).
+  function askPassword(mode) {
+    const $ = (id) => document.getElementById(id);
+    const dlg = $('pw-dialog');
+    if (!dlg || typeof dlg.showModal !== 'function') return Promise.resolve(null);
+    const exp = mode === 'export';
+    const enc = $('pw-enc'), p1 = $('pw-1'), p2 = $('pw-2'), err = $('pw-error'), ok = $('pw-ok'), cancel = $('pw-cancel');
+    const crypt = hasCrypto();
+    $('pw-title').textContent = exp ? 'Spara backup-fil' : 'Krypterad backup';
+    $('pw-text').textContent = exp ? '' : 'Filen är krypterad. Skriv lösenordet du valde när du sparade den.';
+    $('pw-enc-row').hidden = !exp;
+    enc.checked = crypt;   // förvalt; utan kryptering i webbläsaren går bara okrypterat, efter varningen nedan
+    enc.disabled = !crypt;
+    err.textContent = '';
+    p1.autocomplete = exp ? 'new-password' : 'current-password';
+    const sync = () => {
+      const on = !exp || enc.checked;
+      $('pw-1-row').hidden = !on;
+      $('pw-2-row').hidden = !exp || !on;
+      $('pw-hint').hidden = !exp || !on;
+      $('pw-warn').textContent = !exp ? ''
+        : !crypt ? 'Den här webbläsaren kan inte kryptera. Filen blir oskyddad och kan läsas av alla som kommer åt den.'
+        : on ? 'Glömmer du lösenordet går backupen inte att öppna. Spara det t.ex. i en lösenordshanterare.'
+        : 'Filen blir oskyddad och kan läsas av alla som kommer åt den.';
+      ok.textContent = !exp ? 'Öppna' : on ? 'Spara krypterad' : 'Spara okrypterad';
+      err.textContent = '';
+    };
+    sync();
+    return new Promise((resolve) => {
+      let result = null;
+      const onOk = () => {
+        if (exp && !enc.checked) { result = { plain: true }; dlg.close(); return; }
+        const pwd = p1.value;
+        const bad = exp ? checkPassword(pwd) || (pwd !== p2.value ? 'Lösenorden är inte lika.' : '')
+          : !pwd ? 'Skriv lösenordet.' : pwd.length > PWD_MAX ? BAD : '';
+        if (bad) { err.textContent = bad; return; }
+        result = { pwd }; dlg.close();
+      };
+      const onCancel = () => { result = null; dlg.close(); };
+      const onKey = (e) => { if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT' && e.target.type === 'password') { e.preventDefault(); onOk(); } };
+      const onClose = () => {
+        p1.value = ''; p2.value = ''; err.textContent = '';
+        ok.removeEventListener('click', onOk); cancel.removeEventListener('click', onCancel);
+        enc.removeEventListener('change', sync); dlg.removeEventListener('keydown', onKey);
+        resolve(result);
+      };
+      ok.addEventListener('click', onOk);
+      cancel.addEventListener('click', onCancel);
+      enc.addEventListener('change', sync);
+      dlg.addEventListener('keydown', onKey);
+      dlg.addEventListener('close', onClose, { once: true });
+      p1.value = ''; p2.value = '';
+      dlg.showModal();
+      if (!exp || enc.checked) p1.focus();
+    });
+  }
+
+  // Whole flows for the apps. saveWithPassword → same codes as save(), plus 'cancelled'.
+  async function saveWithPassword({ slug, today, text }) {
+    const a = await askPassword('export');
+    if (!a) return 'cancelled';
+    if (a.plain) return save({ slug, today, text });
+    let env;
+    try { env = await encrypt(text, a.pwd, slug); } catch { return 'error'; }
+    return save({ slug, today, text: env });
+  }
+  // Plain text → { text } as is; envelope → asks for the password → { text } | { error } | { cancelled: true }.
+  async function openText(text, slug, maxChars) {
+    if (!isEncrypted(text)) return { text };
+    if (!hasCrypto()) return { error: 'Den här webbläsaren kan inte öppna krypterade filer.' };
+    const a = await askPassword('import');
+    if (!a) return { cancelled: true };
+    return decrypt(text, a.pwd, slug, maxChars);
+  }
+
+  self.Backup = Object.freeze({ fileName, save, read, checkPassword, isEncrypted, encrypt, decrypt, askPassword, saveWithPassword, openText });
 })();

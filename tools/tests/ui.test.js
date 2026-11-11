@@ -141,15 +141,124 @@ T.test('måltid läggs till, döps om och tas bort', () => {
   [...app.querySelectorAll('[data-act="del"][data-kind="meals"]')].at(-1).click();
   T.eq(stored().meals.length, 4);
 });
-T.test('export → import i Inställningar', () => {
+T.test('export → import i Inställningar', async () => {
   q('[data-act="export"]').click();
   document.getElementById('import-text').value = document.getElementById('export-text').value;
   q('[data-act="import"]').click();
-  T.ok(document.getElementById('import-dialog').open, 'dialog');
+  await T.until(() => document.getElementById('import-dialog').open, 'dialog');
   T.ok(/poster/.test(document.getElementById('imp-sum').textContent), 'summering');
   document.getElementById('imp-ok').click();
   document.getElementById('import-dialog').close();
   T.eq(stored().log['2026-11-09'].length, 3);
+});
+// Backup file with password (U5, 2026-11-11). Downloads are caught at <a download> (no host in the test file).
+const $id = (i) => document.getElementById(i);
+const PW = 'Bollen2026!';
+const catchDownload = async (fn) => {
+  let saved = null, blob = null;
+  const realClick = HTMLAnchorElement.prototype.click, realUrl = URL.createObjectURL;
+  HTMLAnchorElement.prototype.click = function () { saved = { href: this.href, name: this.download }; };
+  URL.createObjectURL = (b) => { blob = b; return realUrl.call(URL, b); };   // read the Blob itself: fetch(blob:) is blocked by connect-src
+  try { await fn(); await T.real(T.until(() => saved, 'ingen nedladdning')); }
+  finally { HTMLAnchorElement.prototype.click = realClick; URL.createObjectURL = realUrl; }
+  saved.text = blob ? await blob.text() : null;
+  return saved;
+};
+const pickFile = (parts, name = 'x.txt', type = 'text/plain') => {
+  const input = $id('import-file');
+  const dt = new DataTransfer(); dt.items.add(new File(parts, name, { type }));
+  input.files = dt.files;
+  input.dispatchEvent(new Event('change', { bubbles: true }));
+  return input;
+};
+const closeImport = async () => { $id('import-dialog').querySelector('button[value="cancel"]').click(); await T.until(() => !$id('import-dialog').open, 'importdialogen stängdes inte'); await T.wait(50); };
+let encFile = null;
+T.test('backup-fil: krypterad som standard, simple-nutrition-datum.txt, senaste backup sparas', async () => {
+  await tab('settings');
+  const saved = await catchDownload(async () => {
+    q('[data-act="backupsave"]').click();
+    await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
+    T.ok($id('pw-enc').checked, 'förbockad');
+    $id('pw-1').value = PW; $id('pw-2').value = PW; $id('pw-ok').click();
+  });
+  T.ok(/^simple-nutrition-\d{4}-\d{2}-\d{2}\.txt$/.test(saved.name), 'filnamn ' + saved.name);
+  T.ok(saved.text && Backup.isEncrypted(saved.text) && !saved.text.includes('"log"'), 'filen är krypterad');
+  T.eq([$id('pw-1').value, $id('pw-2').value], ['', ''], 'lösenordsfälten töms');
+  await T.until(() => stored().backup.last, 'senaste backup sparades inte');
+  encFile = saved.text;
+});
+T.test('backup-fil: svagt lösenord stoppas, Avbryt sparar inget', async () => {
+  const last = stored().backup.last;
+  q('[data-act="backupsave"]').click();
+  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
+  $id('pw-1').value = 'kort'; $id('pw-2').value = 'kort'; $id('pw-ok').click();
+  T.ok($id('pw-dialog').open && /minst 8/.test($id('pw-error').textContent), 'fel visas');
+  let clicked = false;
+  const realClick = HTMLAnchorElement.prototype.click;
+  HTMLAnchorElement.prototype.click = function () { clicked = true; };
+  try { $id('pw-cancel').click(); await T.wait(50); } finally { HTMLAnchorElement.prototype.click = realClick; }
+  T.ok(!$id('pw-dialog').open && !clicked, 'avbrutet utan fil');
+  T.eq(stored().backup.last, last);
+});
+T.test('backup-fil: avbockad ger okrypterad fil efter varning', async () => {
+  const saved = await catchDownload(async () => {
+    q('[data-act="backupsave"]').click();
+    await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
+    $id('pw-enc').checked = false; $id('pw-enc').dispatchEvent(new Event('change'));
+    T.ok(/oskyddad/.test($id('pw-warn').textContent), 'varning');
+    $id('pw-ok').click();
+  });
+  T.ok(saved.text && !Backup.isEncrypted(saved.text) && /"app": ?"simple-nutrition"/.test(saved.text), 'okrypterad exporttext');
+});
+T.test('backup-fil: krypterad fil → lösenord → bekräftelse → ersätter', async () => {
+  T.ok(encFile, 'krypterad fil från tidigare test');
+  const before = JSON.stringify(stored().log);
+  const input = pickFile([encFile], 'vad-som-helst.bin', 'image/png');
+  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
+  T.eq(input.value, '', 'filväljaren nollställdes inte');
+  T.ok($id('pw-2-row').hidden && $id('pw-enc-row').hidden, 'bara ett fält vid import');
+  $id('pw-1').value = PW; $id('pw-ok').click();
+  await T.real(T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog'));
+  $id('imp-ok').click();
+  await T.until(() => !$id('import-dialog').open, 'dialogen stängdes inte');
+  T.eq(JSON.stringify(stored().log), before, 'importen ändrade loggen');
+});
+T.test('backup-fil: fel lösenord och Avbryt ändrar inget', async () => {
+  await tab('settings');
+  const before = localStorage.getItem('sn.data');
+  pickFile([encFile]);
+  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
+  $id('pw-1').value = 'Fel2026!x'; $id('pw-ok').click();
+  await T.real(T.until(() => /Fel lösenord eller skadad fil/.test($id('import-error').textContent), 'felmeddelande saknas'));
+  T.ok(!$id('import-dialog').open, 'dialog öppnades');
+  pickFile([encFile]);
+  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
+  $id('pw-cancel').click();
+  await T.wait(50);
+  T.ok(!$id('import-dialog').open, 'dialog öppnades efter Avbryt');
+  T.eq(localStorage.getItem('sn.data'), before);
+});
+T.test('import: klistrad krypterad text frågar efter lösenord', async () => {
+  $id('import-text').value = encFile;
+  q('[data-act="import"]').click();
+  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
+  $id('pw-1').value = PW; $id('pw-ok').click();
+  await T.real(T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog'));
+  await closeImport();
+  $id('import-text').value = '';
+});
+T.test('backup-fil: okrypterad fil läses in som förut, binärfil avvisas', async () => {
+  q('[data-act="export"]').click();
+  pickFile([$id('export-text').value]);
+  await T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog');
+  T.ok(!$id('pw-dialog').open, 'lösenord krävdes för okrypterad fil');
+  await closeImport();
+  const before = localStorage.getItem('sn.data');
+  $id('import-error').textContent = '';
+  pickFile([new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0xff])]);
+  await T.until(() => /teckenkodning/.test($id('import-error').textContent), 'fel saknas');
+  T.ok(!$id('import-dialog').open, 'dialog öppnades');
+  T.eq(localStorage.getItem('sn.data'), before);
 });
 T.test('ny rätt: hel sats med ingrediens, portioner och färdig vikt', async () => {
   await tab('settings');
@@ -289,7 +398,7 @@ T.test('import från Följ planen i Inställningar: dialog, lägg till, ångra',
   const fdt = JSON.stringify({ app: 'follow-diet-tracker', format: 1, exported: '2026-11-09', data: { days: { '2026-11-01': { breakfast: 'f', dinner: { o: 'c', r: 'social' } } }, weighIns: { '2026-11-01': 85 }, workouts: { '2026-11-01': ['legs'] } } });
   document.getElementById('import-text').value = fdt;
   q('[data-act="import"]').click();
-  T.ok(document.getElementById('import-dialog').open, 'dialog');
+  await T.until(() => document.getElementById('import-dialog').open, 'dialog');
   T.eq(document.getElementById('imp-ok').textContent, 'Lägg till');
   T.ok(/2 måltider, 1 vägningar, 1 träningspass/.test(document.getElementById('imp-sum').textContent), document.getElementById('imp-sum').textContent);
   document.getElementById('imp-ok').click(); document.getElementById('import-dialog').close();
@@ -327,6 +436,7 @@ T.test('tomt kalorimål + Spara = inget mål, Idag visar bara summan', async () 
   await tab('settings');
   document.getElementById('import-text').value = JSON.stringify({ app: 'simple-nutrition', format: 1, exported: '2026-11-09', data: { weights } });
   q('[data-act="import"]').click();
+  await T.until(() => document.getElementById('import-dialog').open, 'dialog');
   document.getElementById('imp-ok').click(); document.getElementById('import-dialog').close();
   await tab('trend');
   const h2 = q('.chart').closest('.card').querySelector('.legend').textContent;

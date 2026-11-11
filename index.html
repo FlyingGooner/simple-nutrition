@@ -96,7 +96,7 @@
         <p>Appen påminner om backup varje månad (eller vecka). Ändra under Data → Påminn om backup.</p>
         <p>För att läsa tillbaka: tryck Läs in backup-fil, kontrollera sammanfattningen och tryck Ersätt. All nuvarande data ersätts – Ångra finns direkt efteråt.</p>
         <p>Går det inte att spara eller välja filen: öppna Visa som text och kopiera eller klistra in.</p>
-        <p>Filen innehåller all din data och är okrypterad. Dela den bara med den du litar på.</p>
+        <p>Filen innehåller all din data. Filen krypteras med ett lösenord som du väljer (går att välja bort). Glömmer du lösenordet går filen inte att öppna. Textexporten under Visa som text är alltid okrypterad.</p>
         <p>Filen beskriver sitt eget format och har ett exempel, så den går att ändra för hand och läsa in igen.</p>
       </details>
       <details><summary>Installera och offline</summary>
@@ -115,6 +115,22 @@
       <div class="dlg-actions">
         <button type="submit" class="btn-text" value="cancel">Avbryt</button>
         <button type="submit" class="btn-danger" value="ok" id="cd-ok">Radera</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="pw-dialog" aria-labelledby="pw-title">
+    <form method="dialog" novalidate>
+      <h2 id="pw-title">Spara backup-fil</h2>
+      <p class="muted" id="pw-text"></p>
+      <label class="check" id="pw-enc-row"><input type="checkbox" id="pw-enc" checked> Kryptera med lösenord</label>
+      <label class="field" id="pw-1-row"><span>Lösenord</span><input type="password" id="pw-1" maxlength="200" autocomplete="new-password"></label>
+      <label class="field" id="pw-2-row"><span>Upprepa lösenord</span><input type="password" id="pw-2" maxlength="200" autocomplete="new-password"></label>
+      <p class="muted small" id="pw-hint">Minst 8 tecken med stor och liten bokstav, siffra och specialtecken. Välj inte ett vanligt ord + årtal.</p>
+      <p class="muted" id="pw-warn"></p>
+      <p class="import-error small" id="pw-error" role="alert"></p>
+      <div class="dlg-actions">
+        <button type="button" class="btn-text" id="pw-cancel">Avbryt</button>
+        <button type="button" class="btn-filled" id="pw-ok">Spara krypterad</button>
       </div>
     </form>
   </dialog>

@@ -248,7 +248,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 
 ### Export och import (STANDARD 5)
 - Kuvert `{"app","format":1,"exported","appVersion","readme","schema","example","data"}` (F2, v0.8): `readme`/`schema`/`example` beskriver formatet (se `docs/DATA.md`), `data` kompakt. Importen läser bara `app`, `format` och `data`; övriga nycklar ignoreras.
-- Fil `simple-nutrition-ÅÅÅÅ-MM-DD.txt` via gemensamma `backup.js`; text som reserv.
+- Fil `simple-nutrition-ÅÅÅÅ-MM-DD.txt` via gemensamma `backup.js`, lösenordskrypterad som standard (se Integritet och säkerhet); text som reserv, alltid okrypterad.
 - Import: allt eller inget, samma validering som `store.js`, sammanfattning ("214 loggade dagar, 12 rätter, 5 egna produkter, 98 vägningar, jan–nov 2026") → bekräftelse → ersätter → ångra-snackbar.
 
 ## Datakälla och uppdatering
@@ -271,6 +271,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 - **Kortordning (v0.6):** `layout.<today|week|trend|history> = { order, hidden }`, bara id:n `^[a-z]{1,20}$`, högst 20 per lista. `ui.js` `layoutOf()` filtrerar mot kända kort-id:n. Id:n renderas aldrig – bara de fasta namnen i `LAYOUT`.
 - **Utemat (v0.8):** `q:`-ref bara för id:n i `QUICK_ADD` (store.js), annars hoppas posten över. Valideras som rätt-post (`q`, `n` totalt).
 - **Backup-påminnelse (v0.7):** `backup = { remind: week|month|off, last?, asked? }` (datum valideras som datumnycklar). Ingen ny lagringsnyckel; dialogtexten sätts med `textContent`.
+- **Krypterad backup-fil (U5 utökad 2026-11-11).** **Spara backup-fil** (även från påminnelsen) öppnar lösenordsdialogen `#pw-dialog` (i `index.html`, ingen inline-kod): **Kryptera med lösenord** är förbockad, lösenordet skrivs två gånger (minst 8 tecken, stor och liten bokstav, siffra och specialtecken, högst 200). Avbockning visar varningen att filen blir oskyddad och sparar exporttexten som förut. Kryptering i gemensamma `backup.js` med inbyggda `crypto.subtle`: AES-GCM 256, PBKDF2-SHA256 600 000 iterationer, nytt salt (16 byte) och IV (12 byte) per export, AAD `app|format|iter`, icke-extraherbar nyckel. Kuvert `{app,format:1,encrypted:true,kdf,iter,salt,iv,data}`, ingen klartext. Import (fil eller klistrad text): kuvertet känns igen → lösenord (bara längdkrav) → strikt kuvertkontroll (exakta nycklar, slug, format, kdf, iter 100 000–2 000 000, base64 med längdtak, salt/IV-längd) → dekryptering → samma `importText()`, sammanfattning, bekräftelse och ångra. Alla fel ger "Fel lösenord eller skadad fil." och ändrar inget. Lösenordet sparas och loggas aldrig; fälten töms vid varje stängning. `backup.last` sätts bara när en fil sparats, inte vid Avbryt. Textexporten (Visa som text) är okrypterad. Okrypterade filer läses in som förut. Ingen ny lagringsnyckel, ingen CSP-ändring. Kontrolleras av `check.ps1` (S4c) och de gemensamma testerna i `tools/backup.test.js`.
 - **Validering i `store.js`** per del. Ogiltiga poster hoppas över utan krasch.
   - id: `^[A-Za-z0-9_-]{1,40}$`
   - datumnycklar: `^\d{4}-\d{2}-\d{2}$` och giltigt datum

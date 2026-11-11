@@ -67,7 +67,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Appen påminner om backup varje månad (eller vecka). Ändra under **Data → Påminn om backup**.
 - För att läsa tillbaka: tryck **Läs in backup-fil**, kontrollera sammanfattningen och tryck **Ersätt**. All nuvarande data ersätts – Ångra finns direkt efteråt.
 - Går det inte att spara eller välja filen: öppna **Visa som text** och kopiera eller klistra in.
-- Filen innehåller all din data och är okrypterad. Dela den bara med den du litar på.
+- Filen innehåller all din data. Filen krypteras med ett lösenord som du väljer (går att välja bort). Glömmer du lösenordet går filen inte att öppna. Textexporten under Visa som text är alltid okrypterad.
 - Filen beskriver sitt eget format och har ett exempel, så den går att ändra för hand och läsa in igen.
 
 ## Installera och offline

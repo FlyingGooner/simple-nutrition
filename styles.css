@@ -516,3 +516,6 @@ dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
 .lvl-h { margin: 6px 0 0; font-size: .8125rem; color: var(--muted); }
 .lvl .food-row.on { background: color-mix(in srgb, var(--cheat) 14%, transparent); border-radius: var(--r-sm); }
 .lvl .food-row.on .post-name { color: var(--cheat); font-weight: 500; }
+.check { display: flex; align-items: center; gap: 12px; min-height: 48px; margin: 4px 0; font-size: 1rem; color: var(--on-surface); cursor: pointer; }
+.check input { width: 20px; height: 20px; margin: 0; accent-color: var(--primary); }
+#pw-dialog [hidden] { display: none; }

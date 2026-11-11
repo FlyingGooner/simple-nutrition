@@ -131,7 +131,7 @@ export function viewSettings() {
     group('app', 'Allmänt', 'Data, hjälp',
       sec('data', 'Data', 'Backup, import, radera',
         el('p', { class: 'small', text: 'All data sparas bara i den här webbläsaren (localStorage). Rensar du webbplatsdata eller avinstallerar appen försvinner den – spara en backup-fil då och då.' }),
-        el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och ligger okrypterad bland hämtade filer, där den kan synkas till molnet. Dela den bara med den du litar på och radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),
+        el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och krypteras med ett lösenord du väljer. Glömmer du det går filen inte att öppna. Väljer du bort lösenordet ligger filen oskyddad bland hämtade filer, där den kan synkas till molnet. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),
         el('p', { class: 'small', text: 'Flyttar du från Följ planen: spara en backup-fil där och läs in den här. Måltider, orsaker, vägningar och pass läggs till – inget du redan har tas bort.' }),
         (() => {   // v0.7.0: status för senaste backup, direkt ovanför knapparna
           const last = S.state.backup.last, old = !last || addDays(last, 30) <= today();

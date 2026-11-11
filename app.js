@@ -492,7 +492,7 @@ app.addEventListener('click', (ev) => {
       snackbar('Markerat – kopiera texten och spara den', null, null, 4000);
       return;
     }
-    case 'import': startImport(document.getElementById('import-text').value); return;
+    case 'import': openImport(document.getElementById('import-text').value); return;
     case 'backupsave': saveBackup(); return;
     default: return;
   }
@@ -596,7 +596,7 @@ const BACKUP_MSG = {
   error: 'Kunde inte spara filen – använd Visa som text',
 };
 async function saveBackup() {
-  const r = await Backup.save({ slug: 'simple-nutrition', today: today(), text: exportText(S.state, today()) });
+  const r = await Backup.saveWithPassword({ slug: 'simple-nutrition', today: today(), text: exportText(S.state, today()) });
   if (r === 'saved' || r === 'fallback') {   // v0.7.0: kom ihåg senaste backup för påminnelsen
     S.state.backup.last = today(); S.state.backup.asked = null; persist();
     if (view === 'settings') render();
@@ -631,6 +631,13 @@ async function readBackup(input) {
   input.value = '';
   if (!file) return;
   const r = await Backup.read(file, MAX_IMPORT_CHARS);
+  if (r.error) { errText('import-error', r.error); return; }
+  openImport(r.text);
+}
+// Encrypted backup (U5, 2026-11-11): an envelope asks for the password, then the same checks as plain text.
+async function openImport(text) {
+  const r = await Backup.openText(text, 'simple-nutrition', MAX_IMPORT_CHARS);
+  if (r.cancelled) return;
   if (r.error) { errText('import-error', r.error); return; }
   startImport(r.text);
 }
