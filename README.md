@@ -8,7 +8,7 @@
 
 ### [▶ Öppna appen](https://flyinggooner.github.io/simple-nutrition/)
 
-[📱 Presentation av appen](https://flyinggooner.github.io/simple-nutrition/docs/presentation.html)
+[📱 Presentation av appen](https://flyinggooner.github.io/simple-nutrition/docs/presentation.html) · [🛡️ Små appar, hög nivå](https://flyinggooner.github.io/simple-nutrition/docs/standard.html)
 
 </div>
 
@@ -105,6 +105,7 @@ Ren HTML, CSS och JavaScript – inga ramverk, inga beroenden, inget byggsteg f�
 | `docs/SPEC.md` | Specifikation av funktioner och beteende |
 | `docs/DATA.md` | Dataformatet i backup-filen (samma som readme/schema/example i filen) |
 | `docs/presentation.html` | Fristående mobilpresentation av appen |
+| `docs/standard.html` | Små appar, hög nivå – det alla appar har gemensamt (synkas från mallen) |
 | `tools/build-single.ps1` | Bygger testfilen |
 | `tools/tests/` | Enhets- och flödestester (körs i headless Edge, körs automatiskt före varje release och push) |
 | `CLAUDE.md` | Regler för utveckling |
