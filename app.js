@@ -485,13 +485,6 @@ app.addEventListener('click', (ev) => {
       S.installPrompt?.userChoice.finally(() => { S.installPrompt = null; render(); });
       return;
     case 'wipe': document.getElementById('confirm-dialog').showModal(); return;
-    case 'export': {
-      const box = document.getElementById('export-text');
-      box.value = exportText(S.state, today());
-      box.focus(); box.select();
-      snackbar('Markerat – kopiera texten och spara den', null, null, 4000);
-      return;
-    }
     case 'import': openImport(document.getElementById('import-text').value); return;
     case 'backupsave': saveBackup(); return;
     default: return;
@@ -592,8 +585,9 @@ function startImport(text) {
 const BACKUP_MSG = {
   saved: 'Backup-filen sparades',
   busy: 'Ett sparfönster är redan öppet',
-  fallback: 'Backup-filen laddas ner – syns den inte, använd Visa som text',
-  error: 'Kunde inte spara filen – använd Visa som text',
+  fallback: 'Backup-filen laddas ner',
+  error: 'Kunde inte spara filen',
+  nocrypto: 'Den här webbläsaren kan inte kryptera – ingen fil sparades',
 };
 async function saveBackup() {
   const r = await Backup.saveWithPassword({ slug: 'simple-nutrition', today: today(), text: exportText(S.state, today()) });

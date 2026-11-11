@@ -149,39 +149,29 @@
   }
 
   // Password dialog: #pw-dialog lives in each app's index.html (the app's own classes, fixed ids).
-  // mode 'export' → { pwd } | { plain: true } | null (cancelled); mode 'import' → { pwd } | null.
-  // The fields are cleared on every close (button, Esc, cancel).
+  // mode 'export' → { pwd } | null (cancelled); mode 'import' → { pwd } | null. Encryption is mandatory (2026-11-11).
+  // #pw-show shows the password as text; on every close (button, Esc, cancel) the fields are cleared and hidden again.
   function askPassword(mode) {
     const $ = (id) => document.getElementById(id);
     const dlg = $('pw-dialog');
     if (!dlg || typeof dlg.showModal !== 'function') return Promise.resolve(null);
     const exp = mode === 'export';
-    const enc = $('pw-enc'), p1 = $('pw-1'), p2 = $('pw-2'), err = $('pw-error'), ok = $('pw-ok'), cancel = $('pw-cancel');
-    const crypt = hasCrypto();
+    const show = $('pw-show'), p1 = $('pw-1'), p2 = $('pw-2'), err = $('pw-error'), ok = $('pw-ok'), cancel = $('pw-cancel');
     $('pw-title').textContent = exp ? 'Spara backup-fil' : 'Krypterad backup';
-    $('pw-text').textContent = exp ? '' : 'Filen är krypterad. Skriv lösenordet du valde när du sparade den.';
-    $('pw-enc-row').hidden = !exp;
-    enc.checked = crypt;   // förvalt; utan kryptering i webbläsaren går bara okrypterat, efter varningen nedan
-    enc.disabled = !crypt;
+    $('pw-text').textContent = exp ? 'Filen krypteras med ett lösenord som du väljer.' : 'Filen är krypterad. Skriv lösenordet du valde när du sparade den.';
+    $('pw-2-row').hidden = !exp;
+    $('pw-hint').hidden = !exp;
+    $('pw-warn').textContent = exp ? 'Glömmer du lösenordet går backupen inte att öppna. Spara det t.ex. i en lösenordshanterare.' : '';
+    ok.textContent = exp ? 'Spara krypterad' : 'Öppna';
     err.textContent = '';
     p1.autocomplete = exp ? 'new-password' : 'current-password';
-    const sync = () => {
-      const on = !exp || enc.checked;
-      $('pw-1-row').hidden = !on;
-      $('pw-2-row').hidden = !exp || !on;
-      $('pw-hint').hidden = !exp || !on;
-      $('pw-warn').textContent = !exp ? ''
-        : !crypt ? 'Den här webbläsaren kan inte kryptera. Filen blir oskyddad och kan läsas av alla som kommer åt den.'
-        : on ? 'Glömmer du lösenordet går backupen inte att öppna. Spara det t.ex. i en lösenordshanterare.'
-        : 'Filen blir oskyddad och kan läsas av alla som kommer åt den.';
-      ok.textContent = !exp ? 'Öppna' : on ? 'Spara krypterad' : 'Spara okrypterad';
-      err.textContent = '';
-    };
-    sync();
+    const fields = [p1, p2];
+    const hide = () => { show.checked = false; for (const f of fields) f.type = 'password'; };
+    const onShow = () => { for (const f of fields) f.type = show.checked ? 'text' : 'password'; };
+    hide();
     return new Promise((resolve) => {
       let result = null;
       const onOk = () => {
-        if (exp && !enc.checked) { result = { plain: true }; dlg.close(); return; }
         const pwd = p1.value;
         const bad = exp ? checkPassword(pwd) || (pwd !== p2.value ? 'Lösenorden är inte lika.' : '')
           : !pwd ? 'Skriv lösenordet.' : pwd.length > PWD_MAX ? BAD : '';
@@ -189,29 +179,30 @@
         result = { pwd }; dlg.close();
       };
       const onCancel = () => { result = null; dlg.close(); };
-      const onKey = (e) => { if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT' && e.target.type === 'password') { e.preventDefault(); onOk(); } };
+      const onKey = (e) => { if (e.key === 'Enter' &&(e.target === p1 || e.target === p2)) { e.preventDefault(); onOk(); } };
       const onClose = () => {
-        p1.value = ''; p2.value = ''; err.textContent = '';
+        p1.value = ''; p2.value = ''; err.textContent = ''; hide();
         ok.removeEventListener('click', onOk); cancel.removeEventListener('click', onCancel);
-        enc.removeEventListener('change', sync); dlg.removeEventListener('keydown', onKey);
+        show.removeEventListener('change', onShow); dlg.removeEventListener('keydown', onKey);
         resolve(result);
       };
       ok.addEventListener('click', onOk);
       cancel.addEventListener('click', onCancel);
-      enc.addEventListener('change', sync);
+      show.addEventListener('change', onShow);
       dlg.addEventListener('keydown', onKey);
       dlg.addEventListener('close', onClose, { once: true });
       p1.value = ''; p2.value = '';
       dlg.showModal();
-      if (!exp || enc.checked) p1.focus();
+      p1.focus();
     });
   }
 
-  // Whole flows for the apps. saveWithPassword → same codes as save(), plus 'cancelled'.
+  // Whole flows for the apps. saveWithPassword → same codes as save(), plus 'cancelled' and 'nocrypto'.
+  // Never an unencrypted file: without crypto.subtle nothing is saved.
   async function saveWithPassword({ slug, today, text }) {
+    if (!hasCrypto()) return 'nocrypto';
     const a = await askPassword('export');
     if (!a) return 'cancelled';
-    if (a.plain) return save({ slug, today, text });
     let env;
     try { env = await encrypt(text, a.pwd, slug); } catch { return 'error'; }
     return save({ slug, today, text: env });

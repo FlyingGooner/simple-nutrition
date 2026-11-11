@@ -141,9 +141,10 @@ T.test('måltid läggs till, döps om och tas bort', () => {
   [...app.querySelectorAll('[data-act="del"][data-kind="meals"]')].at(-1).click();
   T.eq(stored().meals.length, 4);
 });
-T.test('export → import i Inställningar', async () => {
-  q('[data-act="export"]').click();
-  document.getElementById('import-text').value = document.getElementById('export-text').value;
+const plainText = () => JSON.stringify({ app: 'simple-nutrition', format: 1, data: stored() });   // an old unencrypted backup
+T.test('ingen okrypterad export, inklistrad text importeras i Inställningar', async () => {
+  T.ok(!document.getElementById('export-text') && !q('[data-act="export"]'), 'textexporten finns kvar');
+  document.getElementById('import-text').value = plainText();
   q('[data-act="import"]').click();
   await T.until(() => document.getElementById('import-dialog').open, 'dialog');
   T.ok(/poster/.test(document.getElementById('imp-sum').textContent), 'summering');
@@ -178,12 +179,15 @@ T.test('backup-fil: krypterad som standard, simple-nutrition-datum.txt, senaste 
   const saved = await catchDownload(async () => {
     q('[data-act="backupsave"]').click();
     await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
-    T.ok($id('pw-enc').checked, 'förbockad');
+    T.ok(!$id('pw-enc') && /krypterad/.test($id('pw-ok').textContent), 'inget val att spara okrypterat');
+    $id('pw-show').click();
+    T.eq([$id('pw-1').type, $id('pw-2').type], ['text', 'text'], 'Visa lösenord');
     $id('pw-1').value = PW; $id('pw-2').value = PW; $id('pw-ok').click();
   });
   T.ok(/^simple-nutrition-\d{4}-\d{2}-\d{2}\.txt$/.test(saved.name), 'filnamn ' + saved.name);
   T.ok(saved.text && Backup.isEncrypted(saved.text) && !saved.text.includes('"log"'), 'filen är krypterad');
   T.eq([$id('pw-1').value, $id('pw-2').value], ['', ''], 'lösenordsfälten töms');
+  T.ok($id('pw-1').type === 'password' && !$id('pw-show').checked, 'dolt igen efter stängning');
   await T.until(() => stored().backup.last, 'senaste backup sparades inte');
   encFile = saved.text;
 });
@@ -200,23 +204,13 @@ T.test('backup-fil: svagt lösenord stoppas, Avbryt sparar inget', async () => {
   T.ok(!$id('pw-dialog').open && !clicked, 'avbrutet utan fil');
   T.eq(stored().backup.last, last);
 });
-T.test('backup-fil: avbockad ger okrypterad fil efter varning', async () => {
-  const saved = await catchDownload(async () => {
-    q('[data-act="backupsave"]').click();
-    await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
-    $id('pw-enc').checked = false; $id('pw-enc').dispatchEvent(new Event('change'));
-    T.ok(/oskyddad/.test($id('pw-warn').textContent), 'varning');
-    $id('pw-ok').click();
-  });
-  T.ok(saved.text && !Backup.isEncrypted(saved.text) && /"app": ?"simple-nutrition"/.test(saved.text), 'okrypterad exporttext');
-});
 T.test('backup-fil: krypterad fil → lösenord → bekräftelse → ersätter', async () => {
   T.ok(encFile, 'krypterad fil från tidigare test');
   const before = JSON.stringify(stored().log);
   const input = pickFile([encFile], 'vad-som-helst.bin', 'image/png');
   await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
   T.eq(input.value, '', 'filväljaren nollställdes inte');
-  T.ok($id('pw-2-row').hidden && $id('pw-enc-row').hidden, 'bara ett fält vid import');
+  T.ok($id('pw-2-row').hidden && !$id('pw-show-row').hidden, 'bara ett fält vid import, Visa lösenord finns');
   $id('pw-1').value = PW; $id('pw-ok').click();
   await T.real(T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog'));
   $id('imp-ok').click();
@@ -248,8 +242,7 @@ T.test('import: klistrad krypterad text frågar efter lösenord', async () => {
   $id('import-text').value = '';
 });
 T.test('backup-fil: okrypterad fil läses in som förut, binärfil avvisas', async () => {
-  q('[data-act="export"]').click();
-  pickFile([$id('export-text').value]);
+  pickFile([plainText()]);
   await T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog');
   T.ok(!$id('pw-dialog').open, 'lösenord krävdes för okrypterad fil');
   await closeImport();

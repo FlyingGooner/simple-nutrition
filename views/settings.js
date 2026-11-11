@@ -131,7 +131,7 @@ export function viewSettings() {
     group('app', 'Allmänt', 'Data, hjälp',
       sec('data', 'Data', 'Backup, import, radera',
         el('p', { class: 'small', text: 'All data sparas bara i den här webbläsaren (localStorage). Rensar du webbplatsdata eller avinstallerar appen försvinner den – spara en backup-fil då och då.' }),
-        el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och krypteras med ett lösenord du väljer. Glömmer du det går filen inte att öppna. Väljer du bort lösenordet ligger filen oskyddad bland hämtade filer, där den kan synkas till molnet. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),
+        el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och krypteras alltid med ett lösenord du väljer. Glömmer du det går filen inte att öppna. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),
         el('p', { class: 'small', text: 'Flyttar du från Följ planen: spara en backup-fil där och läs in den här. Måltider, orsaker, vägningar och pass läggs till – inget du redan har tas bort.' }),
         (() => {   // v0.7.0: status för senaste backup, direkt ovanför knapparna
           const last = S.state.backup.last, old = !last || addDays(last, 30) <= today();
@@ -145,12 +145,9 @@ export function viewSettings() {
           el('label', { class: 'btn-file' }, 'Läs in backup-fil',
             el('input', { type: 'file', id: 'import-file', accept: '.txt,.json', 'data-act': 'importfile' }))),
         el('p', { class: 'import-error small', id: 'import-error', role: 'alert' }),
-        el('details', { class: 'data-text' }, el('summary', { text: 'Visa som text' }),
-          el('label', { class: 'data-box' }, el('span', { class: 'small', text: 'Export' }),
-            el('textarea', { id: 'export-text', rows: 4, readonly: true, placeholder: 'Tryck Exportera' })),
-          el('button', { class: 'link', 'data-act': 'export', text: 'Exportera och markera' }),
+        el('details', { class: 'data-text' }, el('summary', { text: 'Klistra in text' }),
           el('label', { class: 'data-box' }, el('span', { class: 'small', text: 'Importera (ersätter all data – från Följ planen läggs den till)' }),
-            el('textarea', { id: 'import-text', rows: 3, autocomplete: 'off', spellcheck: 'false', placeholder: 'Klistra in en exporterad text' })),
+            el('textarea', { id: 'import-text', rows: 3, autocomplete: 'off', spellcheck: 'false', placeholder: 'Klistra in innehållet i en backup-fil' })),
           el('button', { class: 'link', 'data-act': 'import', text: 'Importera' })),
         el('label', { class: 'goal-row' }, el('span', { text: 'Påminn om backup' }),
           el('select', { 'data-act': 'bkremind', 'aria-label': 'Påminn om backup' },

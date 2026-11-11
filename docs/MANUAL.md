@@ -59,15 +59,15 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 
 ## Flytta från Följ planen
 - Öppna Följ planen → Inställningar → Data → **Spara backup-fil**.
-- Öppna Simple nutrition → Inställningar → Allmänt → Data → **Läs in backup-fil** och välj filen (eller klistra in texten under Visa som text).
+- Öppna Simple nutrition → Inställningar → Allmänt → Data → **Läs in backup-fil** och välj filen (eller klistra in filens innehåll under Klistra in text).
 - Kontrollera sammanfattningen och tryck **Lägg till**. Vanor, orsaker, anteckningar, vägningar, träningspass, plan och mål följer med. Måltider med samma namn slås ihop. Inget du redan har i Simple nutrition tas bort – Ångra finns direkt efteråt.
 
 ## Backup och flytt
 - Under **Data**: tryck **Spara backup-fil**. Filen heter t.ex. simple-nutrition-2026-11-09.txt och hamnar bland hämtade filer.
 - Appen påminner om backup varje månad (eller vecka). Ändra under **Data → Påminn om backup**.
 - För att läsa tillbaka: tryck **Läs in backup-fil**, kontrollera sammanfattningen och tryck **Ersätt**. All nuvarande data ersätts – Ångra finns direkt efteråt.
-- Går det inte att spara eller välja filen: öppna **Visa som text** och kopiera eller klistra in.
-- Filen innehåller all din data. Filen krypteras med ett lösenord som du väljer (går att välja bort). Glömmer du lösenordet går filen inte att öppna. Textexporten under Visa som text är alltid okrypterad.
+- Går det inte att välja filen: öppna **Klistra in text** och klistra in filens innehåll.
+- Filen innehåller all din data och krypteras alltid med ett lösenord som du väljer. Bocka i **Visa lösenord** om du vill se vad du skriver. Glömmer du lösenordet går filen inte att öppna.
 - Filen beskriver sitt eget format och har ett exempel, så den går att ändra för hand och läsa in igen.
 
 ## Installera och offline
