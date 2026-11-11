@@ -22,15 +22,34 @@ Kalorappar drunknar i dubbletter och märkesposter. Här finns bara Livsmedelsve
 
 | | |
 |---|---|
-| ✨ **Funktion** | Beskrivning. |
-| 📴 **Offline** | Fungerar utan nät efter första besöket. |
+| 🔁 **Vanor** | Bocka av dina vanor varje dag och se hur ofta du lyckas. |
+| 🏋️ **Träning** | Logga gympass och kondition mot ett veckomål. |
+| 🥕 **Mat och kalorier** | Livsmedelsverkets råvaror med kcal, protein, kolhydrater och fett – i gram eller mått. |
+| 🍲 **Rätter** | Bygg egna recept och matlådor av råvarorna. |
+| 🏷️ **Egna produkter** | Lägg till egna varor och sökord. |
+| ⚖️ **Vikt** | Vikttrend med 7-dagars medel. |
+| 📊 **Vecka, Trend, Historik** | Hur veckan och perioden går mot målet. |
+| 💾 **Backup** | Lösenordskrypterad backup-fil med påminnelse; flytt från Följ planen. |
+| ❓ **Hjälp** | Manual direkt i appen. || 📴 **Offline** | Fungerar utan nät efter första besöket. |
 | 🌗 **Tema** | Ljust och mörkt, följer telefonens inställning. |
 
-## Integritet 🔒
+## Integritet och säkerhet 🔒
 
 - **Inget konto, inga cookies.** Allt sparas bara i din webbläsare (`localStorage`).
 - **Inget utifrån.** Ingen analys, inga annonser, inga typsnitt eller skript utifrån – spärras även tekniskt med en Content Security Policy.
+- **Krypterad backup.** Backup-filen krypteras alltid med ett lösenord du väljer: AES-GCM 256 bitar, och nyckeln tas fram med PBKDF2-SHA256 och 600 000 iterationer – den nivå OWASP rekommenderar och samma som förvalet i lösenordshanteraren Bitwarden. Nytt salt och ny IV varje gång, och en fil som ändrats går inte att läsa in. Bara webbläsarens inbyggda krypto används, inga bibliotek utifrån.
 
+### Jämfört med vanliga kaloriappar
+
+| | Den här appen | Vanliga kaloriappar |
+|---|---|---|
+| Konto | Inget | Krävs, ofta med e-post |
+| Var datan finns | Bara i din telefon | På företagets servrar |
+| Analys, annonser, spårare | Inga – spärrat tekniskt | Vanligt |
+| Backup | Krypterad fil som bara ditt lösenord öppnar | I företagets moln |
+| Om tjänsten läggs ner | Appen och datan finns kvar | Datan kan försvinna |
+
+> **Ärligt om gränserna:** datan i telefonen skyddas av telefonens eget lås, inte av en egen kryptering – lås telefonen. Ett glömt lösenord går inte att återställa, och ett svagt lösenord kan gissas, så välj ett långt. Rensar du webbplatsdata försvinner allt, så spara en backup-fil då och då (Inställningar → Data).
 ## Installera på mobilen
 
 **Android (Chrome)**

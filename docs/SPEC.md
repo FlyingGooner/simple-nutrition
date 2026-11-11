@@ -116,7 +116,7 @@ Hopfällbara sektioner som i diet, grupper Mål, Mat och Appen.
 - **Egna produkter:** namn + kcal/P/K/F per 100 g, valfritt mått.
 - **Egna sökord:** ord → vara (t.ex. "fil" → Filmjölk).
 - Borttagning direkt med snackbar Ångra.
-- **Data:** backup-fil, läs in, visa som text, Radera all data (identiskt med diet).
+- **Data:** backup-fil, läs in, klistra in text (import), Radera all data (identiskt med diet).
 - Installera appen, **Hjälp och manual**, snackbar för ny version.
 
 ### Layout
@@ -303,7 +303,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
   - samma validering som i `store.js`
   - allt eller inget, med bekräftelse före sparning och ångra efteråt
   - misslyckad `save()` behåller den gamla datan och visas i `#status`
-  - export bara från validerat state, filnamn bara prefix + datum, varningstext om att filen är okrypterad
+  - export bara från validerat state, filnamn bara prefix + datum, filen alltid krypterad med användarens lösenord (sedan v0.11.0)
   - `backup.js` är en identisk kopia av `template/backup.js`
 - `FOODS_SOURCE` har ingen webbadress (bara namn och datum). `data/foods.js` och `backup.js` ingår i service workerns `ASSETS`.
 - **Import från Följ planen (v0.5):** samma kontroller som egen import (storlek, BOM, `app`/`format`, allt eller inget, bekräftelse, Ångra). Datan valideras först av follow-diet-trackers egen `validate()` (kopia i `fdt-store.js`, utan lagringsfunktioner) och sedan av `validate()` här. Inga nya lagringsnycklar; `fp:v1` läses eller skrivs aldrig.
