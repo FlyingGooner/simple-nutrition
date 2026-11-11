@@ -14,6 +14,13 @@
 
 <!-- Skärmbilder: lägg i docs/ och visa här -->
 
+<p align="center">
+<img src="docs/screenshots/today.png" width="200" alt="Idag-vyn">
+<img src="docs/screenshots/week.png" width="200" alt="Vecka-vyn">
+<img src="docs/screenshots/trend.png" width="200" alt="Trend-vyn">
+</p>
+<p align="center"><sub>Påhittad exempeldata</sub></p>
+
 ## Varför?
 
 Kalorappar drunknar i dubbletter och märkesposter. Här finns bara Livsmedelsverkets råvaror, några få tydliga val och dina egna recept.
@@ -50,6 +57,24 @@ Kalorappar drunknar i dubbletter och märkesposter. Här finns bara Livsmedelsve
 | Om tjänsten läggs ner | Appen och datan finns kvar | Datan kan försvinna |
 
 > **Ärligt om gränserna:** datan i telefonen skyddas av telefonens eget lås, inte av en egen kryptering – lås telefonen. Ett glömt lösenord går inte att återställa, och ett svagt lösenord kan gissas, så välj ett långt. Rensar du webbplatsdata försvinner allt, så spara en backup-fil då och då (Inställningar → Data).
+### Säkerhetstestad ✅
+
+Automatiska tester körs före varje ny version och varje uppladdning. Underkänt test = ingen release.
+
+**Säkerhetskontroll**
+- [x] **Bara appens egen kod körs** – webbläsaren blockerar allt annat.
+- [x] **Inget lämnar telefonen** – appen pratar aldrig med någon server.
+- [x] **Din data stannar hos dig** – sparas bara i telefonen; appen rör bara sina egna uppgifter.
+- [x] **Fungerar utan nät** – med bara appens egna filer.
+- [x] **Låst backup** – bara ditt lösenord öppnar filen. Lösenordet sparas aldrig.
+
+**Funktionstester**
+- [x] **Trasiga filer stoppas** – en backup från fel app, eller som någon ändrat i, läses inte in.
+- [x] **Inget innehåll kan bli kod** – allt visas som vanlig text.
+- [x] **Backup tur och retur** – det du sparar är exakt det du får tillbaka.
+- [x] **Matdatan** – över 100 rätter räknas om mot facit vid varje release.
+
+
 ## Installera på mobilen
 
 **Android (Chrome)**
@@ -81,6 +106,7 @@ Ren HTML, CSS och JavaScript – inga ramverk, inga beroenden, inget byggsteg f�
 | `docs/DATA.md` | Dataformatet i backup-filen (samma som readme/schema/example i filen) |
 | `docs/presentation.html` | Fristående mobilpresentation av appen |
 | `tools/build-single.ps1` | Bygger testfilen |
+| `tools/tests/` | Enhets- och flödestester (körs i headless Edge, körs automatiskt före varje release och push) |
 | `CLAUDE.md` | Regler för utveckling |
 
 Publiceras till GitHub Pages från `main`.
