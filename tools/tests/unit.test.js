@@ -127,7 +127,7 @@ T.test('utemat: q:-post valideras och räknas som totalt (F3)', () => {
 });
 T.test('fusknivåer: orsak styr grupp (v0.9)', () => {
   T.eq([quickGroup('snacks', false), quickGroup('out-lunch', false), quickGroup('craving', false)], ['snack', 'out', null]);
-  T.eq([quickGroup('snacks', true), quickGroup('out-lunch', true), quickGroup('craving', true), quickGroup(undefined, true)], ['snack', 'out', 'home', null]);
+  T.eq([quickGroup('snacks', true), quickGroup('out-lunch', true), quickGroup('craving', true), quickGroup(undefined, true)], ['snack', 'snack', 'snack', 'snack']);   // v0.9.1: extra = alltid snacks
 });
 T.test('fusknivåer: sätt, byt, ta bort med samma, och städa vid byte av orsak (v0.9)', () => {
   const s = defaults(), d = '2026-11-11';

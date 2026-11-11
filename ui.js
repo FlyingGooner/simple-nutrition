@@ -8,6 +8,7 @@ export const S = {
   current: today(),          // Idag: selected day
   open: null,                // Idag: expanded post id
   add: null,                 // Lägg till: { meal, tab, q, all, pick: { food, vi, unit, amount } } or null
+  xopen: null,               // Idag: extra fusk som visas öppet (nivåval)
   wdraft: null,              // Idag: workout being added { types: [] } or null
   dish: null,                // Inställningar: dish draft being edited (views/dishes.js) or null
   week: weekStart(today()),  // Vecka: selected week (Monday)

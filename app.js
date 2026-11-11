@@ -217,7 +217,8 @@ app.addEventListener('click', (ev) => {
     }
     case 'level': {   // v0.9: kcal-nivå för fusk
       if (!S.state.habits[S.current]?.[id]) return;
-      setLevel(S.state, S.current, id, val, uid());
+      const added = setLevel(S.state, S.current, id, val, uid());
+      if (id.startsWith('extra-')) S.xopen = added ? null : id;
       buzz(); persist(); break;
     }
     case 'remove': {
@@ -229,9 +230,12 @@ app.addEventListener('click', (ev) => {
     case 'extra': {
       const day = (S.state.habits[S.current] ??= {});
       if (Object.keys(day).length >= 20) { snackbar('Max 20 per dag', null, null, 3000); return; }
-      day['extra-' + Date.now()] = { outcome: 'cheat' };
+      const key = 'extra-' + Date.now();
+      day[key] = { outcome: 'cheat', reason: 'snacks' };
+      S.xopen = key;
       buzz(); persist(); break;
     }
+    case 'xopen': S.xopen = S.xopen === id ? null : id; break;
     // Träning (som i follow-diet-tracker)
     case 'wnew': S.wdraft = { types: [] }; break;
     case 'wcancel': S.wdraft = null; break;

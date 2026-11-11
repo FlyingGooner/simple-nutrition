@@ -1,6 +1,6 @@
 // Vanor och träning i Idag (porterat från follow-diet-tracker/views/today.js). Rendering via el() only.
 import { OUTCOMES } from '../fdt-store.js';
-import { weekStart, QUICK_ADD, quickGroup } from '../store.js';
+import { weekStart, QUICK_ADD, quickGroup, quickById } from '../store.js';
 import { S, el, kcal, reasonName, isCardio, goals, sessionText } from '../ui.js';
 
 export const dayHabits = () => S.state.habits[S.current] || {};
@@ -38,14 +38,19 @@ function levelList(id, g) {
     })));
 }
 
+// v0.9.1: extra fusk = bara snacksnivåer (ingen orsak). Vald nivå → ihopfällt kort; tryck på nivån för att ändra.
 export function extraCards() {
   return Object.keys(dayHabits()).filter((k) => k.startsWith('extra-')).map((k) => {
     const e = dayHabits()[k];
+    const lv = (S.state.log[S.current] || []).filter((p) => p.m === k && quickById(p.ref));
+    const done = lv.length > 0 && S.xopen !== k;
     return el('section', { class: 'card meal extra-card', 'aria-label': 'Extra fusk' },
       el('div', { class: 'meal-head' }, el('span', { class: 'meal-name', text: '🍰 Extra' }),
-        e.reason ? el('span', { class: 'muted small', text: reasonName(e.reason) }) : null,
+        done ? el('button', { class: 'link small', 'data-act': 'xopen', 'data-id': k, 'aria-label': 'Ändra extra',
+          text: `${lv.map((p) => quickById(p.ref).label).join(', ')} ≈ ${kcal(lv.reduce((a, p) => a + p.n[0], 0))}` }) : null,
         el('button', { class: 'icon sm danger', 'data-act': 'remove', 'data-id': k, 'aria-label': 'Ta bort extra', text: '✕' })),
-      habitDetails(k));
+      done ? (e.note ? el('p', { class: 'muted small', text: e.note }) : null)
+        : [levelList(k, 'snack'), el('input', { type: 'text', class: 'hab-note', maxlength: 140, placeholder: 'Anteckning (valfritt)', value: e.note || '', 'data-act': 'note', 'data-id': k, 'aria-label': 'Anteckning' })]);
   });
 }
 

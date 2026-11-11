@@ -165,7 +165,7 @@ Snacks visas inte i Lägg till – bara i fusk (punkt 2–3). Siffrorna är anta
 
 **2. 🍰 Fusk på en måltid, orsak Snacks:** under orsakschipsen visas en rad **Lite ≈ 250 · Mellan ≈ 500 · Mycket ≈ 950** (med exemplen under, som i Snabbval). Ett tryck loggar posten i måltidens mat (`m` = måltidens id); tryck igen på samma = ta bort, annan nivå = byt. Byts orsaken från Snacks, eller tas 🍰 bort, tas posten bort.
 
-**3. + Extra fusk:** kortet (orsakschips + anteckning, se skärmbild) får en rad **Hur mycket?** med nivåer att logga kcal. Nivåerna styrs av orsaken: Snacks → Snacks-nivåerna; Utemat → alla tre Utemat-nivåerna; övriga → Hemmagjort-nivåerna. Ingen orsak vald → ingen nivårad. Valfritt – utan nivå räknas fusket bara i följsamheten som i dag. Posten sparas med `m` = extra-nyckeln (`extra-<tid>`) och visas i extrakortet; tas extra fusket bort följer posten med.
+**3. + Extra fusk (v0.9.1):** kortet har inga orsaker – bara **Hur mycket?** med Snacks-nivåerna (Lite ≈ 250 · Mellan ≈ 500 · Mycket ≈ 950) och anteckning. Orsaken sparas som Snacks. Ett tryck på en nivå sparar och fäller ihop kortet till en rad (nivå ≈ kcal); tryck på raden för att ändra, samma nivå igen = ta bort. Posten sparas med `m` = extra-nyckeln (`extra-<tid>`); tas extra fusket bort följer posten med.
 
 **4. Utemat styrs inte av utfallet:** äter man ute och tar det bästa valet (t.ex. Lätt) kan måltiden vara ✅ enligt plan. Alla tre Utemat-nivåerna går därför att logga på en måltid oavsett utfall (✅, 🍰 eller inget) – i Snabbval som i dag, och vid 🍰 med orsak Utemat visas de också under orsakschipsen som för Snacks i punkt 2. Kcal-nivåer sätter aldrig utfall automatiskt; användaren väljer ✅ eller 🍰 själv.
 

@@ -387,13 +387,16 @@ T.test('fusk med Snacks: nivå loggas och tas bort när orsaken byts (v0.9)', as
   q(`[data-act="reason"][data-id="${id}"][data-val="craving"]`).click(); await T.wait();
   T.ok(!has('q:snack-l'), 'borta vid annan orsak');
 });
-T.test('extra fusk: nivå efter orsak och följer med när extra tas bort (v0.9)', async () => {
+T.test('extra fusk: snacksnivå direkt utan orsak, fälls ihop, följer med när extra tas bort (v0.9.1)', async () => {
   await tab('today');
   q('[data-act="extra"]').click(); await T.wait();
   const key = Object.keys(stored().habits[S_TODAY]).filter((k) => k.startsWith('extra-')).sort().at(-1);
-  q(`[data-act="reason"][data-id="${key}"][data-val="stress"]`).click(); await T.wait();
-  q(`[data-act="level"][data-id="${key}"][data-val="home-heavy"]`).click(); await T.wait();
-  T.ok(stored().log[S_TODAY].some((p) => p.m === key && p.n[0] === 850), 'Hemmagjort Tung');
+  T.ok(!q(`[data-act="reason"][data-id="${key}"]`), 'inga orsaker');
+  q(`[data-act="level"][data-id="${key}"][data-val="snack-m"]`).click(); await T.wait();
+  T.ok(stored().log[S_TODAY].some((p) => p.m === key && p.n[0] === 500), 'Snacks Mellan');
+  T.ok(!q(`[data-act="level"][data-id="${key}"]`) && q(`[data-act="xopen"][data-id="${key}"]`), 'ihopfällt');
+  q(`[data-act="xopen"][data-id="${key}"]`).click(); await T.wait();
+  T.ok(q(`[data-act="level"][data-id="${key}"]`), 'öppnas igen');
   q(`[data-act="remove"][data-id="${key}"]`).click(); await T.wait();
   T.ok(!(stored().log[S_TODAY] || []).some((p) => p.m === key), 'post borta');
 });

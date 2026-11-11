@@ -339,6 +339,7 @@ export const QUICK_ADD = [
 export const quickById = (ref) => QUICK_ADD.find((x) => 'q:' + x.id === ref);
 // Nivåer i fusk styrs av orsaken: Snacks → snack, Utemat → out; i extra fusk annars home, på en måltid annars ingen.
 export function quickGroup(reason, extra) {
+  if (extra) return 'snack';   // v0.9.1: extra fusk = alltid snacks
   if (reason === 'snacks') return 'snack';
   if (reason === 'out-lunch') return 'out';
   return extra && reason ? 'home' : null;

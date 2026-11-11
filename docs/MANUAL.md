@@ -11,7 +11,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Tryck på utfallet för måltiden. Tryck igen på samma för att ta bort det.
 - Vid 🍰 Fusk: välj en orsak (t.ex. Utemat eller Sug) och skriv gärna en kort anteckning. Vid Snacks eller Utemat kan du välja hur mycket (t.ex. Lite ≈ 250, en Magnum) – då loggas kcal i måltiden. Tryck igen för att ta bort.
 - Ifyllda måltider visas hopfällda som en rad (val, rätt och kcal) – tryck på raden för att ändra. 🍰 Fusk utan orsak hålls öppen tills orsaken är vald.
-- **+ Extra fusk** loggar fusk mellan måltiderna. Välj orsak och, om du vill, hur mycket: Snacks (Lite ≈ 250 · Mellan ≈ 500 · Mycket ≈ 950), Utemat eller annars Hemmagjort.
+- **+ Extra fusk** loggar snacks mellan måltiderna. Välj direkt hur mycket: Lite ≈ 250 · Mellan ≈ 500 · Mycket ≈ 950 – då sparas det och kortet fälls ihop. Tryck på raden för att ändra.
 - Följsamhet = följda måltider delat med följda + fusk. Hoppade över räknas inte. En dag är lyckad när den når din gräns (80 % från start). 🔥 visar lyckade dagar i rad.
 
 ## Träning
