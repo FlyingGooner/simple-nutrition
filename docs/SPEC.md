@@ -276,7 +276,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
   - id: `^[A-Za-z0-9_-]{1,40}$`
   - datumnycklar: `^\d{4}-\d{2}-\d{2}$` och giltigt datum
   - `ref`: `^[lburq]:[A-Za-z0-9_.-]{1,40}$`
-  - `n`: exakt 4 ändliga tal. Varor: per 100 g, kcal 0–9000 och gram 0–100. Rätt-poster (`r:`): totalt för andelen, kcal 0–20000 och gram 0–2000
+  - `n`: exakt 4 ändliga tal. Varor: per 100 g, kcal 0–950 och gram 0–105 var för sig och tillsammans (marginal för Livsmedelsverkets Matolja 902 kcal; formuläret för egna produkter: 900 kcal, makron högst 100 g tillsammans). Rätt-poster (`r:`): totalt för andelen, kcal 0–20000 och gram 0–2000, tre decimaler så att upprepad redigering inte driver
   - `g`: 0–10000
   - `q`: större än 0 och högst 50 (andel av hela receptet)
   - `portions`: 1–50
