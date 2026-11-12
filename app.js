@@ -691,7 +691,7 @@ window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); S.in
 // picker, while adding/editing or while a text field still has focus), then ask about backup.
 let filePick = false;
 app.addEventListener('click', (ev) => { if (ev.target.id === 'import-file') filePick = true; }, true);
-const typingField = () => document.activeElement?.matches?.('input, textarea') ? document.activeElement : null;
+const typingField = () => document.activeElement?.matches?.('textarea, input:is([type=text], [type=search], :not([type]))') ? document.activeElement : null;
 S.lastToday = today();
 // v0.12.0: the open day/week/month follows today past midnight, unless the user has browsed elsewhere.
 function rollDay() {
