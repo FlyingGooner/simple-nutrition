@@ -1,16 +1,16 @@
 ﻿id;typ;namn;val;undertext;sökord;enhet;g_per_enhet;densitet;kcal;P;K;F;källa
 lask-socker;produkt;Läsk/energidryck;Socker;t.ex. läsk, energidryck, iste · uppskattning;läsk, cola, energidryck, läskedryck, iste;st;330;1,04;42;0;10,5;0;uppskattning
-lask-sockerfri;produkt;Läsk/energidryck;Sockerfri;t.ex. läsk, energidryck, iste · uppskattning;läsk, cola, energidryck, läskedryck, iste;st;330;1,0;0,8;0;0,2;0;uppskattning
-proteindryck;produkt;Proteindryck/drickyoghurt;;t.ex. drickkvarg, drickyoghurt, proteinshake · uppskattning;proteindryck, drickyoghurt, drickkvarg, proteinshake;st;250;1,04;67,2;9;6,2;0,7;uppskattning (justerad mot referensmedian)
+lask-sockerfri;produkt;Läsk/energidryck;Sockerfri;t.ex. läsk, energidryck, iste · uppskattning;läsk, cola, energidryck, läskedryck, iste;st;330;1,0;1,8;0;0,45;0;uppskattning
+proteindryck;produkt;Proteindryck/drickyoghurt;;t.ex. drickkvarg, drickyoghurt, proteinshake · uppskattning;proteindryck, drickyoghurt, drickkvarg, proteinshake;st;330;1,04;57,6;7,7;5,3;0,6;uppskattning (justerad mot referensmedian)
 proteinbar;produkt;Proteinbar;;t.ex. proteinbar, energibar · uppskattning;proteinbar, energibar;st;55;;370;30;35;12;uppskattning
 proteinpudding;produkt;Proteinpudding;;t.ex. proteinpudding, proteinkräm · uppskattning;proteinpudding, proteinkräm;st;200;;75;10;7;0,9;uppskattning
 proteinpulver;produkt;Proteinpulver;;1 skopa · t.ex. vassle, kasein, vegansk · uppskattning;proteinpulver, vassleprotein, skopa;st;30;;380;75;8;5;uppskattning
-smaksatt-kvarg;produkt;Smaksatt kvarg/yoghurt;;t.ex. vaniljkvarg, fruktyoghurt · uppskattning;smaksatt kvarg, vaniljkvarg, fruktyoghurt, smaksatt yoghurt;st;200;;72,5;6,3;9,1;1,2;uppskattning (justerad mot referensmedian)
-fardigsallad;produkt;Färdigsallad;;t.ex. kycklingsallad, pastasallad · uppskattning;färdigsallad, matsallad, pastasallad, kycklingsallad;st;350;;130;8;10;6,5;uppskattning
-fardigratt;produkt;Färdigrätt;;t.ex. mikromat, matlåda · uppskattning;färdigrätt, mikromat, matlåda;st;400;;125;6;14;5;uppskattning
+smaksatt-kvarg;produkt;Smaksatt kvarg/yoghurt;;t.ex. vaniljkvarg, fruktyoghurt · uppskattning;smaksatt kvarg, vaniljkvarg, fruktyoghurt, smaksatt yoghurt;st;200;;64,5;5,6;8,1;1,1;uppskattning (justerad mot referensmedian)
+fardigsallad;produkt;Färdigsallad;;t.ex. kycklingsallad, pastasallad · uppskattning;färdigsallad, matsallad, pastasallad, kycklingsallad;st;350;;164,6;10,1;12,7;8,2;uppskattning
+fardigratt;produkt;Färdigrätt;;t.ex. mikromat, matlåda · uppskattning;färdigrätt, mikromat, matlåda;st;400;;150;7,2;16,8;6;uppskattning
 wrap-smorgas;produkt;Wrap/smörgås;;t.ex. köpt wrap, baguette, macka · uppskattning;wrap, baguette, köpt smörgås, macka;st;200;;230;10;25;10;uppskattning
 snabblunch;produkt;Snabblunch;;t.ex. snabbnudlar, koppnudlar, pasta i kopp · uppskattning;snabblunch, snabbnudlar, koppnudlar;st;75;;380;7,6;50,7;16;uppskattning (justerad mot referensmedian)
-soppa-kopt;produkt;Soppa (köpt);;t.ex. tomatsoppa, svampsoppa · uppskattning;köpt soppa, färdig soppa;st;500;1,02;50;2;6;2;uppskattning
+soppa-kopt;produkt;Soppa (köpt);;t.ex. tomatsoppa, svampsoppa · uppskattning;köpt soppa, färdig soppa;st;500;1,02;79,2;3,2;9,5;3,2;uppskattning
 smoothie;produkt;Smoothie;;t.ex. fruktsmoothie, bärsmoothie · uppskattning;smoothie;st;250;1,05;55;0,8;12;0,3;uppskattning
 kaffedryck;produkt;Kaffedryck;;t.ex. latte, cappuccino, iskaffe · uppskattning;kaffedryck, latte, cappuccino, caffe latte, iskaffe;kopp;350;1,03;43,4;2,4;4,7;1,6;uppskattning (justerad mot referensmedian)
 fika;produkt;Fika;;t.ex. bulle, kaka, wienerbröd · uppskattning;fika, fikabröd, bakelse;st;80;;256,2;4;33,7;11,5;uppskattning (justerad mot referensmedian)

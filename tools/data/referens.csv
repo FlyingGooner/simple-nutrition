@@ -1,69 +1,69 @@
 ﻿schablon_id;namn;kcal;P;K;F;portion_g;källa;säker
-lask-socker;Coca-Cola Original;42;0;10,6;0;330;förpackning;nej
+lask-socker;Coca-Cola Original;42;0;10,6;0;330;webb coca-cola.co.uk;ja
 lask-socker;Fanta Apelsin;38;0;9,3;0;330;förpackning;nej
-lask-socker;Red Bull Energy Drink;46;0;11;0;250;förpackning;nej
-lask-socker;Monster Energy Original;47;0;12;0;500;förpackning;nej
+lask-socker;Red Bull Energy Drink;46;0;11;0;250;webb redbull.com;ja
+lask-socker;Monster Energy Original;47;0;12;0;500;webb coca-colahellenic.com;ja
 lask-sockerfri;Coca-Cola Zero;0,3;0;0;0;330;förpackning;nej
 lask-sockerfri;Pepsi Max;0,4;0;0;0;330;förpackning;nej
-lask-sockerfri;Nocco BCAA;1;0;0,3;0;330;förpackning;nej
-lask-sockerfri;Celsius;1;0;0,2;0;355;förpackning;nej
-proteindryck;Arla Protein drickyoghurt vanilj;60;8;5,8;0,5;250;förpackning;nej
-proteindryck;Lindahls Kvarg drickkvarg;62;8,8;5,5;0,4;250;förpackning;nej
-proteindryck;ProPud Protein Milkshake;64;8,4;6,5;0,5;330;förpackning;nej
-proteindryck;Barebells Milkshake;55;8,1;3;1;330;förpackning;nej
-proteinbar;Barebells Protein Bar;361;36;35;14;55;förpackning;nej
-proteinbar;Nick's Protein Bar;380;30;30;16;50;förpackning;nej
-proteinbar;Snickers Hi Protein;375;35;34;12;55;förpackning;nej
-proteinbar;Fulfil Protein Bar;365;36;34;12;55;förpackning;nej
-proteinpudding;ProPud Proteinpudding;71;10;6;0,8;200;förpackning;nej
-proteinpudding;Arla Protein pudding;72;10;6,3;0,6;200;förpackning;nej
-proteinpudding;Lindahls Proteinpudding;78;10,5;7,5;1;150;förpackning;nej
-proteinpudding;Gainomax Proteinpudding;80;10;8;1;200;förpackning;nej
-proteinpulver;Star Nutrition Whey-80;385;78;6;5,5;30;förpackning;nej
+lask-sockerfri;Nocco BCAA;4;0,9;0;0;330;webb nocco.com;ja
+lask-sockerfri;Celsius;3;0;0;0;355;webb ica.se;ja
+proteindryck;Arla Protein mjölkdryck vanilj;45;5,3;4,7;0,5;500;webb ica.se;ja
+proteindryck;Lindahls drickkvarg;50;7,6;3,2;0,3;330;webb ica.se;ja
+proteindryck;ProPud Protein Milkshake;58;6,1;4,9;1,5;330;webb apotea.se;ja
+proteindryck;Barebells Milkshake;57;7,3;3,7;1,4;330;webb barebells.com;ja
+proteinbar;Barebells Protein Bar;369;36;35;15;55;webb barebells.com;ja
+proteinbar;Nick's Protein Bar peanut;366;30;30;16;50;webb ica.se;ja
+proteinbar;Snickers Hi Protein;386;36,4;36,2;13,4;55;webb bodyworld.eu;ja
+proteinbar;Fulfil Protein Bar;369;36;34;12;55;webb sainsburys.co.uk;ja
+proteinpudding;ProPud Proteinpudding vanilj;73;10;4,8;1,5;200;webb ica.se;ja
+proteinpudding;Arla Protein pudding;74;10;7,9;1,5;200;webb ica.se;ja
+proteinpudding;Lindahls Proteinpudding vanilj;72;10,3;7,2;0,2;150;webb ah.nl;ja
+proteinpudding;ProPud Proteinpudding choklad;75;10;4,8;1,5;200;webb ica.se;ja
+proteinpulver;Star Nutrition Whey-80;395;75,7;4,3;8,3;30;webb ica.se;ja
 proteinpulver;Tyngre Whey;380;75;7;5;30;förpackning;nej
-proteinpulver;Myprotein Impact Whey;400;82;6;7,5;25;förpackning;nej
-proteinpulver;Bodylab Vegan Protein;375;72;6;6;30;förpackning;nej
-smaksatt-kvarg;Lindahls Kvarg vanilj;68;10;5,3;0,4;150;förpackning;nej
-smaksatt-kvarg;Arla Yoghurt jordgubb;90;3,5;13;2,6;200;förpackning;nej
-smaksatt-kvarg;Yoggi Original vanilj;100;3,3;14;3;150;förpackning;nej
-smaksatt-kvarg;Skånemejerier Kvarg smaksatt;70;9,5;6;0,6;200;förpackning;nej
-fardigsallad;ICA Kycklingsallad;120;8;9;5,5;350;förpackning;nej
-fardigsallad;Coop Pastasallad kyckling pesto;170;7;17;8;350;förpackning;nej
-fardigsallad;Picadeli Matsallad;140;7;11;7;350;förpackning;nej
-fardigsallad;Sallad Kitchen Caesar;150;9;8;9;300;förpackning;nej
-fardigratt;Dafgårds Köttbullar med mos;130;6;14;5,5;350;förpackning;nej
-fardigratt;Findus Pasta Carbonara;140;6;15;6;400;förpackning;nej
-fardigratt;Felix Kyckling tikka masala med ris;115;6;15;3,5;400;förpackning;nej
-fardigratt;Gooh Matlåda;125;6;14;4,5;400;förpackning;nej
-wrap-smorgas;Pågen Baguette ost skinka;250;11;30;9;180;förpackning;nej
-wrap-smorgas;Sandwich Kitchen Kycklingwrap;210;10;22;9;200;förpackning;nej
+proteinpulver;Myprotein Impact Whey;381;75;5,9;6,3;25;webb myprotein.ie;ja
+proteinpulver;Bodylab Vegan Protein;391;79;3,7;6,2;30;webb fatsecret (användardata);nej
+smaksatt-kvarg;Lindahls Kvarg vanilj;60;10;3,5;0,2;150;webb ica.se;ja
+smaksatt-kvarg;Yoggi jordgubb 2 %;77;3,4;11;2;200;webb ica.se;ja
+smaksatt-kvarg;Yoggi Original vanilj;80;3,3;11;2;150;webb openfoodfacts + ica.se;ja
+smaksatt-kvarg;Lindahls Kvarg jordgubb;69;7,1;9,3;0,3;200;webb ica.se;ja
+fardigsallad;ICA Caesar pastasallad kyckling;213;8;16;13;400;webb ica.se;ja
+fardigsallad;Vidinge nudelsallad kyckling;175;5,8;12;11;350;webb ica.se;ja
+fardigsallad;Picadeli Caesarsallad kyckling;129;9;5;8;290;webb ica.se;ja
+fardigsallad;Picadeli Pastasallad varmrökt lax;150;7;11;8,8;360;webb ica.se;ja
+fardigratt;Dafgårds Farfars köttbullar med mos;155;6,5;15;7,5;400;webb ica.se;ja
+fardigratt;Findus Pasta Carbonara;176;6,3;19;8,1;400;webb ica.se;ja
+fardigratt;Topsfood Kyckling tikka masala med ris;135;6,1;16;5;400;webb ica.se;ja
+fardigratt;Gooh Kyckling tikka masala;145;6,9;15;6,3;400;webb ica.se;ja
+wrap-smorgas;ICA Baguette ost skinka;180;8,9;17;8,5;220;webb ica.se;ja
+wrap-smorgas;ICA Wrap kyckling tandoori;189;4,8;23;8,6;300;webb ica.se;ja
 wrap-smorgas;Pressbyrån Fralla räksallad;240;8;24;12;200;förpackning;nej
-wrap-smorgas;7-Eleven Wrap kyckling;220;11;23;9;220;förpackning;nej
-snabblunch;Nissin Cup Noodles;450;9;58;19;64;förpackning;nej
-snabblunch;Samyang Buldak;440;9;63;16;140;förpackning;nej
+wrap-smorgas;Food Collective Wrap chicken kebab;252;7,3;28;12;175;webb ica.se;ja
+snabblunch;Nissin Cup Noodles;453;9,4;64,1;17,2;64;webb openfoodfacts;ja
+snabblunch;Samyang Buldak;379;8,6;60,7;11,4;140;webb piccantino.co.uk;ja
 snabblunch;Mama Nudlar;470;9;62;20;60;förpackning;nej
 snabblunch;Knorr Pasta i kopp (pulver);390;11;65;9;70;förpackning;nej
-soppa-kopt;Felix Tomatsoppa;45;1;6;1,8;500;förpackning;nej
-soppa-kopt;Knorr Svampsoppa (färdig);55;1;5;3,3;500;förpackning;nej
-soppa-kopt;Ica Linssoppa;60;3;8;1,5;500;förpackning;nej
-soppa-kopt;Bong Kycklingsoppa;35;2;4;1,1;500;förpackning;nej
-smoothie;Froosh Mango & Apelsin;55;0,6;12,5;0,1;250;förpackning;nej
-smoothie;God Morgon Smoothie bär;52;0,5;11;0,2;250;förpackning;nej
-smoothie;Innocent Smoothie jordgubb banan;58;0,7;13;0,2;250;förpackning;nej
-smoothie;Bravo Smoothie;55;0,6;12;0,3;250;förpackning;nej
+soppa-kopt;Felix Tomatsoppa italiensk;65;1,2;7,5;3,1;475;webb ica.se;ja
+soppa-kopt;Kelda Skogssvampsoppa;70;1,5;4,5;5;500;webb ica.se;ja
+soppa-kopt;Spoons Indisk linssoppa;120;4,3;15;5,6;475;webb ica.se;ja
+soppa-kopt;Pauluns Soppa kyckling och morot;93;3,4;7,7;4,9;475;webb ica.se;ja
+smoothie;Froosh Mango & Apelsin;57;0,5;12,5;0,1;250;webb apotea.se;ja
+smoothie;God Morgon Wake up smoothie;77;0,3;13,5;0,9;250;webb marli.fi;ja
+smoothie;Innocent Smoothie jordgubb banan;51;0,5;12;0,5;250;webb waitrose.com;ja
+smoothie;Bravo Smoothie hallon jordgubb blåbär;50;0,5;10;0;250;webb openfoodfacts;ja
 kaffedryck;Starbucks Caffè Latte mellanmjölk;45;3;4,5;1,6;350;förpackning;nej
-kaffedryck;Espresso House Cappuccino;42;2,8;4,2;1,5;300;förpackning;nej
-kaffedryck;Arla Iskaffe;65;3;9;1,5;230;förpackning;nej
-kaffedryck;Löfbergs Iskaffe latte;62;2,8;9;1,5;250;förpackning;nej
-fika;Pågen Kanelbulle;360;6;50;15;45;förpackning;nej
-fika;Gille Havreflarn kaka;500;6;60;26;20;förpackning;nej
-fika;Bonjour Wienerbröd;420;6;45;24;90;förpackning;nej
-fika;Delicato Mazarin;450;6;50;25;55;förpackning;nej
-ol;Norrlands Guld lager 5,3 %;44;0,4;3,4;0;330;förpackning;nej
+kaffedryck;Espresso House Cappuccino;56;3;5;2,2;300;webb fddb (användardata);nej
+kaffedryck;Arla Iskaffe latte;59;3;8;1,5;230;webb ica.se;ja
+kaffedryck;Starbucks Caffè Latte (Arla, flaska);70;3;8,7;2,4;220;webb ica.se;ja
+fika;Pågen Gifflar kanel;373;6;52;14;45;webb pagen.com;ja
+fika;Gille Havreflarn;492;5,1;64,9;22,9;20;webb ica.se;ja
+fika;Findus Wienerbröd;393;6;43;22;90;webb ica.se;ja
+fika;Delicato Mazarin;500;5,2;59;27;55;webb fitatu (användardata);nej
+ol;Norrlands Guld 5,3 %;48;0,4;3,6;0;330;webb openfoodfacts (ofullständig);nej
 ol;Mariestads Export;46;0,4;3,6;0;330;förpackning;nej
-ol;Sofiero folköl 3,5 %;32;0,3;3,2;0;330;förpackning;nej
+ol;Norrlands Guld 3,5 %;33;0,3;3,2;0;330;webb ica.se;ja
 ol;Briska Cider päron;50;0;8;0;330;förpackning;nej
-vin;Lindeman's rött vin 13,5 %;83;0,1;2,6;0;150;förpackning;nej
+vin;Rött vin (genomsnitt 9,5–13,5 %);76;0,1;2,6;0;150;webb patient.info;ja
 vin;Gato Negro vitt vin 12,5 %;75;0,1;2;0;150;förpackning;nej
 vin;Mateus Rosé;78;0,1;4;0;150;förpackning;nej
 vin;Jacob's Creek Shiraz;85;0,1;2,6;0;150;förpackning;nej
