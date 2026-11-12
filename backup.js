@@ -247,7 +247,10 @@
       dlg.addEventListener('close', onClose, { once: true });
       p1.value = ''; p2.value = '';
       dlg.showModal();
-      p1.focus();
+      // In an artifact the page can sit in an iframe as tall as the page: the modal is then centred out of sight and the
+      // app looks frozen (mobile, 2026-11-12). Scroll it into view; harmless when the frame is the viewport.
+      try { dlg.scrollIntoView({ block: 'center' }); } catch { /* old browser */ }
+      p1.focus({ preventScroll: true });
     });
   }
 
