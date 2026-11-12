@@ -565,6 +565,13 @@ T.test('backup: slumpat lösenord, förhandsvisning och fält för lösenordshan
   const done = Backup.askPassword('export');
   T.eq([$id('pw-user').value, $id('pw-1').name, $id('pw-2').autocomplete, $id('pw-ok').type], ['Simple nutrition backup', 'password', 'new-password', 'submit']);
   T.ok($id('pw-preview').hidden, 'ingen förhandsvisning när lösenordet är dolt');
+  T.ok($id('pw-copy').disabled, 'Kopiera avstängd före generering (U5)');
+  $id('pw-1').value = 'Eget-Lösen-123!'; $id('pw-1').dispatchEvent(new Event('input'));
+  T.ok($id('pw-copy').disabled, 'eget lösenord kan inte kopieras');
+  $id('pw-gen').click();
+  T.ok(!$id('pw-copy').disabled, 'Kopiera på efter generering');
+  $id('pw-1').value += 'x'; $id('pw-1').dispatchEvent(new Event('input'));
+  T.ok($id('pw-copy').disabled, 'Kopiera av när lösenordet ändras för hand');
   $id('pw-gen').click();
   const pwd = $id('pw-1').value;
   T.ok(pwd && pwd === $id('pw-2').value && $id('pw-show').checked, 'båda fälten ifyllda och synliga');

@@ -251,7 +251,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 ### Export och import (STANDARD 5)
 - Kuvert `{"app","format":1,"exported","appVersion","readme","schema","example","data"}` (F2, v0.8): `readme`/`schema`/`example` beskriver formatet (se `docs/DATA.md`), `data` kompakt. Importen läser bara `app`, `format` och `data`; övriga nycklar ignoreras.
 - Fil `simple-nutrition-ÅÅÅÅ-MM-DD.txt` via gemensamma `backup.js`, lösenordskrypterad (se Integritet och säkerhet), alltid lösenordskrypterad sedan 2026-11-11; inklistrad text kan importeras, ingen textexport.
-- Lösenord (v0.12.0): knapp **Skapa slumpmässigt lösenord** (16 tecken `xxxx-xxxx-xxxx-xxxx`, `crypto.getRandomValues` med rejection sampling, inga `0 O o 1 I l`, sparas aldrig), **Kopiera** (urklipp, annars markering), färgkodad förhandsvisning (`textContent`, `aria-hidden`). Formuläret har dolt användarnamn ”Simple nutrition backup”, `name`/`autocomplete` och submit så att lösenordshanterare kan spara och fylla i.
+- Lösenord (v0.12.0): knapp **Skapa slumpmässigt lösenord** (16 tecken `xxxx-xxxx-xxxx-xxxx`, `crypto.getRandomValues` med rejection sampling, inga `0 O o 1 I l`, sparas aldrig), **Kopiera** (bara genererat lösenord efter tryck, `navigator.clipboard.writeText`, annars markering; varning om att det ligger kvar i urklipp; U5 2026-11-13), färgkodad förhandsvisning (`textContent`, `aria-hidden`). Formuläret har dolt användarnamn ”Simple nutrition backup”, `name`/`autocomplete` och submit så att lösenordshanterare kan spara och fylla i.
 - Import: allt eller inget, samma validering som `store.js`, sammanfattning ("214 loggade dagar, 12 rätter, 5 egna produkter, 98 vägningar, jan–nov 2026") → bekräftelse → ersätter → ångra-snackbar.
 
 ## Datakälla och uppdatering
