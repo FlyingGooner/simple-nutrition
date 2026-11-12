@@ -1525,7 +1525,7 @@ const FOODS_PRODUCTS = [
 {name:"Soppa (köpt)",sub:"t.ex. tomatsoppa, svampsoppa · uppskattning",q:["köpt soppa","färdig soppa"],v:[{l:"",id:"soppa-kopt",n:[79.2,3.2,9.5,3.2],u:["st",500],d:1.02}]},
 {name:"Smoothie",sub:"t.ex. fruktsmoothie, bärsmoothie · uppskattning",q:["smoothie"],v:[{l:"",id:"smoothie",n:[55,0.8,12,0.3],u:["st",250],d:1.05}]},
 {name:"Kaffedryck",sub:"t.ex. latte, cappuccino, iskaffe · uppskattning",q:["kaffedryck","latte","cappuccino","caffe latte","iskaffe"],v:[{l:"",id:"kaffedryck",n:[43.4,2.4,4.7,1.6],u:["kopp",350],d:1.03}]},
-{name:"Fika",sub:"t.ex. bulle, kaka, wienerbröd · uppskattning",q:["fika","fikabröd","bakelse"],v:[{l:"",id:"fika",n:[256.2,4,33.7,11.5],u:["st",80]}]},
+{name:"Fika",sub:"1 kanelbulle ≈ 80 g · annat fikabröd: ange vikt · uppskattning",q:["fika","kanelbulle","kanelbullar","fikabröd","bakelse","bulle"],v:[{l:"",id:"fika",n:[350,6,50,13.5],u:["st",80]}]},
 {name:"Öl/vin",sub:"t.ex. lager, ale, cider · uppskattning",q:["öl","vin","cider","starköl","folköl","lättöl","vinglas"],v:[{l:"Öl",id:"ol",n:[43,0.4,3.5,0],u:["st",330],d:1.01},{l:"Vin",id:"vin",n:[80,0.1,2.5,0],u:["glas",150],d:0.99}]},
 {name:"Pannkaka",sub:"uppskattning",q:["pannkaka","pannkakor"],v:[{l:"",id:"pannkaka",n:[165,6.7,17.9,7],u:["st",45]}]},
 {name:"Ärtsoppa",sub:"uppskattning",q:["ärtsoppa"],v:[{l:"",id:"artsoppa",n:[75,5,9,2],u:["dl",105],d:1.05}]},

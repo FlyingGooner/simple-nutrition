@@ -55,10 +55,6 @@ kaffedryck;Starbucks Caffè Latte mellanmjölk;45;3;4,5;1,6;350;förpackning;nej
 kaffedryck;Espresso House Cappuccino;56;3;5;2,2;300;webb fddb (användardata);nej
 kaffedryck;Arla Iskaffe latte;59;3;8;1,5;230;webb ica.se;ja
 kaffedryck;Starbucks Caffè Latte (Arla, flaska);70;3;8,7;2,4;220;webb ica.se;ja
-fika;Pågen Gifflar kanel;373;6;52;14;45;webb pagen.com;ja
-fika;Gille Havreflarn;492;5,1;64,9;22,9;20;webb ica.se;ja
-fika;Findus Wienerbröd;393;6;43;22;90;webb ica.se;ja
-fika;Delicato Mazarin;500;5,2;59;27;55;webb fitatu (användardata);nej
 ol;Norrlands Guld 5,3 %;48;0,4;3,6;0;330;webb openfoodfacts (ofullständig);nej
 ol;Mariestads Export;46;0,4;3,6;0;330;förpackning;nej
 ol;Norrlands Guld 3,5 %;33;0,3;3,2;0;330;webb ica.se;ja
@@ -148,3 +144,7 @@ sushi;Sushi rulle m. crabfish gurka;147;4,4;30,2;0,4;30;LV 1366;ja
 sushi;Sushi veg.;158;2,6;30,9;2,2;30;LV 2758;ja
 kokt-ris;Ris långkornigt kokt m. salt;113;2,6;24,6;0,3;70;LV 2515;ja
 kokt-ris;Ris basmati kokt m. salt;121;2,9;26;0,4;70;LV 2513;ja
+fika;Kanelbulle hembakad;324;5,8;45,4;12,7;80;LV 1594;ja
+fika;Pågen Gifflar kanel;373;6;52;14;45;webb pagen.com;ja
+fika;Espresso House kanelbulle;400;6;55;17;90;webb fddb (användardata);nej
+fika;Espresso House kanelbulle (2);336;6;48;13;90;webb fatsecret (användardata);nej

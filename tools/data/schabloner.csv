@@ -13,7 +13,7 @@ snabblunch;produkt;Snabblunch;;t.ex. snabbnudlar, koppnudlar, pasta i kopp · up
 soppa-kopt;produkt;Soppa (köpt);;t.ex. tomatsoppa, svampsoppa · uppskattning;köpt soppa, färdig soppa;st;500;1,02;79,2;3,2;9,5;3,2;uppskattning
 smoothie;produkt;Smoothie;;t.ex. fruktsmoothie, bärsmoothie · uppskattning;smoothie;st;250;1,05;55;0,8;12;0,3;uppskattning
 kaffedryck;produkt;Kaffedryck;;t.ex. latte, cappuccino, iskaffe · uppskattning;kaffedryck, latte, cappuccino, caffe latte, iskaffe;kopp;350;1,03;43,4;2,4;4,7;1,6;uppskattning (justerad mot referensmedian)
-fika;produkt;Fika;;t.ex. bulle, kaka, wienerbröd · uppskattning;fika, fikabröd, bakelse;st;80;;256,2;4;33,7;11,5;uppskattning (justerad mot referensmedian)
+fika;produkt;Fika;;1 kanelbulle ≈ 80 g · annat fikabröd: ange vikt · uppskattning;fika, kanelbulle, kanelbullar, fikabröd, bakelse, bulle;st;80;;350;6;50;13,5;median kanelbullar
 ol;produkt;Öl/vin;Öl;t.ex. lager, ale, cider · uppskattning;öl, vin, cider, starköl, folköl, lättöl, vinglas;st;330;1,01;43;0,4;3,5;0;uppskattning
 vin;produkt;Öl/vin;Vin;t.ex. rött, vitt, rosé · uppskattning;öl, vin, cider, starköl, folköl, lättöl, vinglas;glas;150;0,99;80;0,1;2,5;0;uppskattning
 pannkaka;rätt;Pannkaka;;uppskattning;pannkaka, pannkakor;st;45;;165;6,7;17,9;7;LV 733 + mellanmjölk (calc)
