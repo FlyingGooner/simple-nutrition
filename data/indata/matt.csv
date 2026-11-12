@@ -1,91 +1,91 @@
-vara;variant;enhet;gram
-Mjölk;;dl;103
-Filmjölk;;dl;103
-Yoghurt;;dl;105
-Grädde;;dl;100
-Crème fraiche;;msk;15
-Kvarg;;dl;110
-Keso;;dl;100
-Färskost;;msk;15
-Ost;Mozzarella;st;125
-Ost;;skiva;10
-Smörgåsfett;;msk;14
-Ägg;;st;55
-Kyckling;Filé;st;150
-Kyckling;Lårfilé (utan skinn);st;100
-Bacon;;skiva;20
-Korv;Grillkorv/wiener;st;50
-Korv;Falukorv;skiva;30
-Pålägg kött;;skiva;8
-Lax;Rå;bit;125
-Vit fisk;;bit;125
-Tonfisk;;burk avr.;120
-Bröd;Tortilla;st;40
-Bröd;;skiva;35
-Knäckebröd;;skiva;12
-Havregryn;Okokt;dl;35
-Flingor;;dl;30
-Ris;Okokt;dl;85
-Pasta;Okokt;dl;40
-Potatis;Rå;st;80
-Potatis;Kokt;st;80
-Vetemjöl;;dl;60
-Bönor och linser;Kikärtor kokta;burk avr.;230
-Bönor och linser;Kidneybönor kokta;burk avr.;230
-Bönor och linser;Svarta bönor;burk avr.;230
-Bönor och linser;Röda linser kokta;dl;85
-Tomat;Färsk;st;100
-Tomat;Krossade;paket;400
-Tomat;Puré;msk;17
-Gurka;;st;350
-Paprika;;st;150
-Lök;;st;100
-Morot;;st;70
-Broccoli;;dl;35
-Sallad;Spenat;dl;15
-Avokado;;st;140
-Banan;;st;120
-Äpple;;st;150
-Apelsin;;st;150
-Bär;;dl;60
-Olja;;msk;9
-Nötter;;dl;60
-Jordnötssmör;;msk;16
-Socker och honung;Socker;msk;12
-Socker och honung;Honung;msk;21
-Havredryck;;dl;103
-Majonnäs;;msk;15
-Fiskpinnar;;st;25
-Kycklingkorv;;st;50
-Bröd;Hamburgerbröd;st;60
-Korvbröd;Korvbröd;st;35
-Korvbröd;Fralla;st;60
-Riskakor och skorpor;Riskaka;st;8
-Riskakor och skorpor;Skorpor;st;10
-Purjo och vitlök;Purjolök;st;200
-Purjo och vitlök;Vitlök;klyfta;5
-Zucchini och aubergine;;st;300
-Rotfrukter;Sötpotatis;st;300
-Majs och ärtor;;dl;65
-Vegoprotein;Tofu;paket;400
-Frukt;Päron;st;170
-Frukt;Kiwi;st;75
-Frukt;Mango;st;300
-Frukt;Druvor;dl;70
-Torkad frukt;Russin;dl;60
-Torkad frukt;Dadlar;st;8
-Juice;;dl;105
-Frön;;msk;10
-Kokosmjölk;;burk;400
-Ketchup;;msk;17
-Såser;;msk;15
-Sylt;;msk;20
-Glass;Mjukglass;st;100
-Glass;Gräddglass;kula;50
-Kaffe och te;Bryggkaffe;kopp;150
-Kaffe och te;Latte;kopp;250
-Saft;;glas;250
-Öl och vin;Starköl 5 %;burk;500
-Öl och vin;Folköl 3,5 %;burk;330
-Öl och vin;Rött vin;glas;150
-Öl och vin;Vitt vin;glas;150
+vara;variant;enhet;gram;densitet
+Mjölk;;dl;103;1,03
+Filmjölk;;dl;103;1,03
+Yoghurt;;dl;105;1,05
+Grädde;;dl;100;1,0
+Crème fraiche;;msk;15;
+Kvarg;;dl;110;
+Keso;;dl;100;
+Färskost;;msk;15;
+Ost;Mozzarella;st;125;
+Ost;;skiva;10;
+Smörgåsfett;;msk;14;
+Ägg;;st;55;
+Kyckling;Filé;st;150;
+Kyckling;Lårfilé (utan skinn);st;100;
+Bacon;;skiva;20;
+Korv;Grillkorv/wiener;st;50;
+Korv;Falukorv;skiva;30;
+Pålägg kött;;skiva;8;
+Lax;Rå;bit;125;
+Vit fisk;;bit;125;
+Tonfisk;;burk avr.;120;
+Bröd;Tortilla;st;40;
+Bröd;;skiva;35;
+Knäckebröd;;skiva;12;
+Havregryn;Okokt;dl;35;
+Flingor;;dl;30;
+Ris;Okokt;dl;85;
+Pasta;Okokt;dl;40;
+Potatis;Rå;st;80;
+Potatis;Kokt;st;80;
+Vetemjöl;;dl;60;
+Bönor och linser;Kikärtor kokta;burk avr.;230;
+Bönor och linser;Kidneybönor kokta;burk avr.;230;
+Bönor och linser;Svarta bönor;burk avr.;230;
+Bönor och linser;Röda linser kokta;dl;85;
+Tomat;Färsk;st;100;
+Tomat;Krossade;paket;400;
+Tomat;Puré;msk;17;
+Gurka;;st;350;
+Paprika;;st;150;
+Lök;;st;100;
+Morot;;st;70;
+Broccoli;;dl;35;
+Sallad;Spenat;dl;15;
+Avokado;;st;140;
+Banan;;st;120;
+Äpple;;st;150;
+Apelsin;;st;150;
+Bär;;dl;60;
+Olja;;msk;9;
+Nötter;;dl;60;
+Jordnötssmör;;msk;16;
+Socker och honung;Socker;msk;12;
+Socker och honung;Honung;msk;21;
+Havredryck;;dl;103;1,03
+Majonnäs;;msk;15;
+Fiskpinnar;;st;25;
+Kycklingkorv;;st;50;
+Bröd;Hamburgerbröd;st;60;
+Korvbröd;Korvbröd;st;35;
+Korvbröd;Fralla;st;60;
+Riskakor och skorpor;Riskaka;st;8;
+Riskakor och skorpor;Skorpor;st;10;
+Purjo och vitlök;Purjolök;st;200;
+Purjo och vitlök;Vitlök;klyfta;5;
+Zucchini och aubergine;;st;300;
+Rotfrukter;Sötpotatis;st;300;
+Majs och ärtor;;dl;65;
+Vegoprotein;Tofu;paket;400;
+Frukt;Päron;st;170;
+Frukt;Kiwi;st;75;
+Frukt;Mango;st;300;
+Frukt;Druvor;dl;70;
+Torkad frukt;Russin;dl;60;
+Torkad frukt;Dadlar;st;8;
+Juice;;dl;105;1,05
+Frön;;msk;10;
+Kokosmjölk;;burk;400;
+Ketchup;;msk;17;
+Såser;;msk;15;
+Sylt;;msk;20;
+Glass;Mjukglass;st;100;
+Glass;Gräddglass;kula;50;
+Kaffe och te;Bryggkaffe;kopp;150;1,0
+Kaffe och te;Latte;kopp;250;1,0
+Saft;;glas;250;1,0
+Öl och vin;Starköl 5 %;burk;500;
+Öl och vin;Folköl 3,5 %;burk;330;
+Öl och vin;Rött vin;glas;150;0,99
+Öl och vin;Vitt vin;glas;150;0,99

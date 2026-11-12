@@ -54,7 +54,7 @@ foreach ($s in $sch) {
 $enheter = 'g', 'ml', 'st', 'skiva', 'bit', 'dl', 'glas', 'kopp', 'tsk'
 foreach ($s in $sch) {
   if ($s.enhet -notin $enheter) { Fel "$($s.id): enhet '$($s.enhet)' inte tillåten" }
-  elseif ($s.enhet -in 'ml', 'dl', 'glas', 'kopp' -and -not $s.densitet) { Fel "$($s.id): flytande ($($s.enhet)) utan densitet" }
+  elseif ($s.enhet -in 'ml', 'glas', 'kopp' -and -not $s.densitet) { Fel "$($s.id): flytande ($($s.enhet)) utan densitet" }
 }
 
 # 4 märken: första ordet i en förpackningsreferens får inte stå i namn/undertext
@@ -90,7 +90,7 @@ $ps = $js.IndexOf('const FOODS_PRODUCTS')
 if ($ps -lt 0) { Fel 'FOODS_PRODUCTS saknas i foods.js – kör tools\build-data.ps1' }
 else {
   $pjs = $js.Substring($ps, $js.IndexOf('];', $ps) - $ps)
-  $got = @([regex]::Matches($pjs, '\{l:"[^"]*",id:"([^"]+)",n:\[([^,\]]+),[^\]]*\],u:\["[^"]+",([^\]]+)\]\}') | ForEach-Object { "$($_.Groups[1].Value)|$($_.Groups[2].Value)|$($_.Groups[3].Value)" })
+  $got = @([regex]::Matches($pjs, '\{l:"[^"]*",id:"([^"]+)",n:\[([^,\]]+),[^\]]*\],u:\["[^"]+",([^\]]+)\](,d:[^}]+)?\}') | ForEach-Object { "$($_.Groups[1].Value)|$($_.Groups[2].Value)|$($_.Groups[3].Value)" })
   $want = @($sch | ForEach-Object { "$($_.id)|$((Num $_.kcal).ToString([Globalization.CultureInfo]::InvariantCulture))|$((Num $_.g_per_enhet).ToString([Globalization.CultureInfo]::InvariantCulture))" })
   $diff = @(Compare-Object $want $got)
   if ($diff.Count) { Fel "FOODS_PRODUCTS skiljer sig från schabloner.csv: $(($diff | Select-Object -First 3 | ForEach-Object { $_.InputObject }) -join ', ')" }

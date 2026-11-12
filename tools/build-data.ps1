@@ -55,7 +55,7 @@ foreach ($m in (Import-Csv "$root\data\indata\matt.csv" -Delimiter ';' -Encoding
   if (-not $v) { $fel += "MÅTT: okänd vara '$($m.vara)'"; continue }
   $traff = @($v.varianter | Where-Object { -not $m.variant -or $_.etikett -eq $m.variant })
   if (-not $traff) { $fel += "MÅTT: okänd variant '$($m.vara) / $($m.variant)'"; continue }
-  foreach ($x in $traff) { if (-not $x.Contains('matt')) { $x['matt'] = @{ e = $m.enhet; g = [double]$m.gram } } }
+  foreach ($x in $traff) { if (-not $x.Contains('matt')) { $x['matt'] = @{ e = $m.enhet; g = [double]$m.gram; d = $m.densitet } } }
 }
 $fel | ForEach-Object { Write-Host $_ -ForegroundColor Yellow }
 $over = @($varor.Values | Where-Object { $_.varianter.Count -gt 5 })
@@ -83,12 +83,13 @@ $bortGrupp = 'Kötträtt|Fisk- och skaldjursrätt|Grönsaksrätt|Potatisrätt|Ba
 $ovr = @($kand | Where-Object { -not $iKarna.ContainsKey([string]$_.id) -and $_.namn -notmatch $skarp -and $_.grupp -notmatch $bortGrupp })
 function Js([string]$s) { '"' + ($s -replace '\\', '\\' -replace '"', '\"') + '"' }
 function N($x) { if ($null -eq $x) { 0 } else { ([double]$x).ToString([Globalization.CultureInfo]::InvariantCulture) } }
+function Dn([string]$s) { N ([double]::Parse(($s -replace ',', '.'), [Globalization.CultureInfo]::InvariantCulture)) }
 $sb = New-Object Text.StringBuilder
 [void]$sb.AppendLine("// Genererad av tools/build-data.ps1 – redigera inte. Källa: Livsmedelsverkets livsmedelsdatabas (hämtad $($db.meta.hamtad)). Värden per 100 g: [kcal, protein, kolhydrater, fett].")
 [void]$sb.AppendLine("const FOODS_SOURCE = { name: 'Livsmedelsverkets livsmedelsdatabas', fetched: '$($db.meta.hamtad)' };")
 [void]$sb.AppendLine('const FOODS_CORE = [')
 foreach ($v in $varor.Values) {
-  $vs = ($v.varianter | ForEach-Object { "{l:$(Js $_.etikett)$(if ($_.exempel) { ",ex:$(Js $_.exempel)" }),id:$(Js ([string]$_.id)),n:[$(N $_.kcal),$(N $_.prot),$(N $_.kolh),$(N $_.fett)]$(if ($_.beraknad) { ',calc:1' })$(if ($_.matt) { ",u:[$(Js $_.matt.e),$(N $_.matt.g)]" })}" }) -join ','
+  $vs = ($v.varianter | ForEach-Object { "{l:$(Js $_.etikett)$(if ($_.exempel) { ",ex:$(Js $_.exempel)" }),id:$(Js ([string]$_.id)),n:[$(N $_.kcal),$(N $_.prot),$(N $_.kolh),$(N $_.fett)]$(if ($_.beraknad) { ',calc:1' })$(if ($_.matt) { ",u:[$(Js $_.matt.e),$(N $_.matt.g)]$(if ($_.matt.d) { ",d:$(Dn $_.matt.d)" })" })}" }) -join ','
   [void]$sb.AppendLine("{name:$(Js $v.vara),q:[$((($v.sok | Select-Object -Unique) | ForEach-Object { Js $_ }) -join ',')],v:[$vs]},")
 }
 [void]$sb.AppendLine('];')
@@ -97,14 +98,13 @@ foreach ($x in $ovr) { [void]$sb.AppendLine("[$($x.id),$(Js $x.namn.Trim()),$(N 
 [void]$sb.AppendLine('];')
 # Schabloner (Del 2 Steg A): tools/data/schabloner.csv → FOODS_PRODUCTS, en post per namn, val som varianter, ref p:<id>.
 # Enhet g (tallriksrätt) visas som portion: g_per_enhet = portionen.
-function Dn([string]$s) { N ([double]::Parse(($s -replace ',', '.'), [Globalization.CultureInfo]::InvariantCulture)) }
 $sch = Import-Csv "$PSScriptRoot\data\schabloner.csv" -Delimiter ';' -Encoding UTF8
 [void]$sb.AppendLine('const FOODS_PRODUCTS = [')
 foreach ($g in ($sch | Group-Object namn)) {
   $r0 = $g.Group[0]
   $q = @($r0.'sökord' -split ',' | ForEach-Object { $_.Trim().ToLower() } | Where-Object { $_ } | Select-Object -Unique)
   $vs = ($g.Group | ForEach-Object { $e = if ($_.enhet -eq 'g') { 'portion' } else { $_.enhet }
-    "{l:$(Js $_.val),id:$(Js $_.id),n:[$(Dn $_.kcal),$(Dn $_.P),$(Dn $_.K),$(Dn $_.F)],u:[$(Js $e),$(Dn $_.g_per_enhet)]}" }) -join ','
+    "{l:$(Js $_.val),id:$(Js $_.id),n:[$(Dn $_.kcal),$(Dn $_.P),$(Dn $_.K),$(Dn $_.F)],u:[$(Js $e),$(Dn $_.g_per_enhet)]$(if ($_.densitet) { ",d:$(Dn $_.densitet)" })}" }) -join ','
   [void]$sb.AppendLine("{name:$(Js $r0.namn),sub:$(Js $r0.undertext),q:[$(($q | ForEach-Object { Js $_ }) -join ',')],v:[$vs]},")
 }
 [void]$sb.AppendLine('];')

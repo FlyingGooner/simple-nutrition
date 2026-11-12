@@ -4,12 +4,30 @@ import { searchFoods, recent, findRef, postN, QUICK_ADD } from '../store.js';
 import { S, el, kcal, fmtNum, amountText, mealName, parseNum } from '../ui.js';
 import { dishResults, dishPickCard } from './dishes.js';
 
+// Steg B: units for a variant as [name, grams per unit], natural unit first.
+// Liquids (d = g per ml) get dl and ml instead of g; solids always have g.
+export function unitsOf(v) {
+  const out = v.u ? [[v.u[0], v.u[1]]] : [];
+  if (v.d) {
+    if (!out.some((x) => x[0] === 'dl')) out.push(['dl', Math.round(v.d * 1000) / 10]);
+    out.push(['ml', v.d]);
+  } else out.push(['g', 1]);
+  return out;
+}
+export const isBulk = (unit) => unit === 'g' || unit === 'ml';   // default amount 100, whole numbers
 // Grams for the current pick, or NaN.
 export function pickGrams(pick) {
   const a = parseNum(pick.amount);
   if (!(a > 0)) return NaN;
-  const u = pick.food.v[pick.vi].u;
-  return pick.unit === 'g' || !u ? a : a * u[1];
+  const x = unitsOf(pick.food.v[pick.vi]).find((u) => u[0] === pick.unit);
+  return x ? a * x[1] : NaN;
+}
+// "2 st (90 g) · 150 kcal", "150 g · 200 kcal", or "Ange mängd".
+export function pickSum(pick) {
+  const v = pick.food.v[pick.vi], g = pickGrams(pick);
+  if (!Number.isFinite(g)) return 'Ange mängd';
+  const a = fmtNum(parseNum(pick.amount), 2);
+  return `${a} ${pick.unit}${pick.unit === 'g' ? '' : ` (${fmtNum(g, 0)} g)`} · ${kcal(v.n[0] * g / 100)} kcal`;
 }
 
 function foodRow(f) {
@@ -46,9 +64,7 @@ export function resultsList() {
 
 function pickCard() {
   const p = S.add.pick, f = p.food, v = f.v[p.vi];
-  const g = pickGrams(p);
-  const n = Number.isFinite(g) ? Math.round(v.n[0] * g / 100) : null;
-  const units = ['g', ...(v.u ? [v.u[0]] : [])];
+  const units = unitsOf(v).map((x) => x[0]);
   const forDish = S.add.target === 'dish';
   return el('section', { class: 'card pick' },
     el('h2', { text: f.name }),
@@ -57,9 +73,9 @@ function pickCard() {
     el('div', { class: 'pick-row' },
       el('input', { type: 'text', inputmode: 'decimal', id: 'amount', value: p.amount, 'aria-label': 'Mängd', autocomplete: 'off' }),
       units.length > 1 ? el('div', { class: 'chips unit-chips', role: 'group', 'aria-label': 'Enhet' }, units.map((u) =>
-        el('button', { class: 'chip' + (u === p.unit ? ' on' : ''), 'data-act': 'unit', 'data-val': u, 'aria-pressed': u === p.unit ? 'true' : 'false', text: u }))) : el('span', { text: 'g' })),
-    el('p', { class: 'pick-sum', id: 'pick-sum', text: n == null ? 'Ange mängd' : `${kcal(n)} kcal${p.unit !== 'g' && v.u ? ` · ≈ ${fmtNum(g, 0)} g` : ''}` }),
-    v.u && p.unit !== 'g' ? el('p', { class: 'muted small', text: `≈ ${v.u[1]} g per ${v.u[0]} (uppskattning)` }) : null,
+        el('button', { class: 'chip' + (u === p.unit ? ' on' : ''), 'data-act': 'unit', 'data-val': u, 'aria-pressed': u === p.unit ? 'true' : 'false', text: u }))) : el('span', { text: units[0] })),
+    el('p', { class: 'pick-sum', id: 'pick-sum', text: pickSum(p) }),
+    v.u && p.unit === v.u[0] ? el('p', { class: 'muted small', text: `≈ ${v.u[1]} g per ${v.u[0]} (uppskattning)` }) : null,
     p.last ? el('p', { class: 'muted small', text: `Senast: ${p.last}` }) : null,
     el('div', { class: 'row-actions' },
       el('button', { class: 'link', 'data-act': 'unpick', text: 'Tillbaka' }),

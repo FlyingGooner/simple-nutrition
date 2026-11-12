@@ -267,6 +267,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 - Sökordning: egna sökord och produkter, schablon, Livsmedelsverket. Exakt sökord på en schablon döljer LV-raderna (även Visa fler); specifik sökning utan schablon (ugnspannkaka) ger LV.
 - Sökord som krockade flyttades från kärnan (läsk, cola, öl, vin, cider, latte, cappuccino, baguette, fiskpinnar, laxfilé, falukorv, potatismos, gröt). Kärnans Läsk blev Saft (utspädd, glas 250 g).
 - Loggade poster sparar sina värden; ändrade schabloner påverkar inte gamla poster.
+### Enheter i Varor-vyn (v0.13.1)- Fasta varor: naturlig enhet (st, skiva, bit, dl) + g. Flytande (`d` = g per ml, från `densitet` i `matt.csv`/`schabloner.csv`): naturlig enhet + dl + ml, inte g.- Naturlig enhet förvald (1); g/ml förvalt 100. Byte av enhet räknar om talet via gram. Summa: "2 st (90 g) · 150 kcal".- Posten sparar `g` och `u: [enhet, antal]` (även ml); gamla poster och backuper oförändrade.
 
 ### Integritet och säkerhet
 - **Schabloner (v0.13):** ny ref-typ `p:<id>` i ref-regexet (samma teckenregler). Posten bär egna värden som valideras som en vara; id:t slås inte upp vid import. Inga nya lagringsnycklar.

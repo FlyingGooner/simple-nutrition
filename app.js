@@ -3,7 +3,7 @@ import { defaults, load, save, validate, addDays, weekStart, setGoal, goalFor, f
 import { today, S, setOpen, el, kcal, shortDate, dateTitle, parseNum, wType, isCardio, parseDur, fmtNum, amountText, layoutOf, LAYOUT_VIEWS } from './ui.js';
 import { mergeFdt, lastPost, QUICK_ADD, setLevel, dropLevels, quickGroup } from './store.js';
 import { viewToday, dayPosts } from './views/today.js';
-import { resultsList, pickGrams } from './views/add.js';
+import { resultsList, pickGrams, pickSum, unitsOf, isBulk } from './views/add.js';
 import { viewWeek } from './views/week.js';
 import { viewTrend } from './views/trend.js';
 import { viewHistory } from './views/history.js';
@@ -117,13 +117,14 @@ function openAdd(target, meal) {
 // F1: tal som går att skriva tillbaka i mängdfältet (komma, ingen tusenavgränsare).
 const amt = (x) => x.toLocaleString('sv-SE', { maximumFractionDigits: 2, useGrouping: false });
 function openPick(food) {
-  const u = food.v[0].u;
-  S.add.pick = { food, vi: 0, unit: u ? u[0] : 'g', amount: u ? '1' : '100', last: null };
+  const u0 = unitsOf(food.v[0])[0][0];
+  S.add.pick = { food, vi: 0, unit: u0, amount: isBulk(u0) ? '100' : '1', last: null };
   // F1: förifyll med senast loggade mängd för samma vara (någon av dess varianter).
   const refs = food.v.map((v) => v.ref), lp = lastPost(S.state, (r) => refs.includes(r));
   if (lp && lp.g > 0) {
-    const vi = refs.indexOf(lp.ref), v = food.v[vi], byUnit = !!(lp.u && v.u && lp.u[0] === v.u[0]);
-    Object.assign(S.add.pick, { vi, unit: byUnit ? v.u[0] : 'g', amount: amt(byUnit ? lp.u[1] : lp.g), last: amountText(lp) });
+    const vi = refs.indexOf(lp.ref), us = unitsOf(food.v[vi]), byUnit = lp.u && us.find((x) => x[0] === lp.u[0]);
+    const bulk = us[us.length - 1];   // g, or ml for liquids
+    Object.assign(S.add.pick, { vi, unit: byUnit ? byUnit[0] : bulk[0], amount: amt(byUnit ? lp.u[1] : Math.round(lp.g / bulk[1])), last: amountText(lp) });
   }
 }
 // F1: rätt förifylls med senaste sättet den loggades på (portioner, andel eller gram).
@@ -140,8 +141,7 @@ function openDishPick(d) {
 function pickSumText() {
   const a = S.add;
   if (a.dpick) { const q = dishQ(a.dpick); return Number.isFinite(q) ? `${kcal(dishTotal(a.dpick.dish)[0] * q)} kcal` : 'Ange mängd'; }
-  const p = a.pick, v = p.food.v[p.vi], g = pickGrams(p);
-  return Number.isFinite(g) ? `${kcal(v.n[0] * g / 100)} kcal${p.unit !== 'g' && v.u ? ` · ≈ ${Math.round(g)} g` : ''}` : 'Ange mängd';
+  return pickSum(a.pick);
 }
 
 /* ---------- Dishes ---------- */
@@ -293,8 +293,14 @@ app.addEventListener('click', (ev) => {
     case 'addtab': S.add.tab = S.lastTab = val; S.add.q = ''; S.add.pick = S.add.dpick = null; render(); document.getElementById('add-q')?.focus(); return;
     case 'showall': S.add.all = true; redrawResults(); return;
     case 'pick': { const f = findRef(S.state, t.dataset.ref); if (!f) return; openPick(f); render(); return; }   // F1: inget tangentbord
-    case 'variant': S.add.pick.vi = Number(val); if (!S.add.pick.food.v[S.add.pick.vi].u && S.add.pick.unit !== 'g') { S.add.pick.unit = 'g'; S.add.pick.amount = '100'; } break;
-    case 'unit': { const p = S.add.pick; if (p.unit !== val) { p.unit = val; p.amount = val === 'g' ? '100' : '1'; } break; }
+    case 'variant': { const p = S.add.pick; p.vi = Number(val); const us = unitsOf(p.food.v[p.vi]);
+      if (!us.some((x) => x[0] === p.unit)) { p.unit = us[0][0]; p.amount = isBulk(p.unit) ? '100' : '1'; } break; }
+    case 'unit': {   // Steg B: byte av enhet räknar om talet
+      const p = S.add.pick, x = unitsOf(p.food.v[p.vi]).find((u) => u[0] === val);
+      if (!x || p.unit === val) break;
+      const g = pickGrams(p); p.unit = val;
+      p.amount = Number.isFinite(g) ? amt(isBulk(val) ? Math.round(g / x[1]) : Math.round(g / x[1] * 10) / 10) : isBulk(val) ? '100' : '1';
+      break; }
     case 'unpick': S.add.pick = S.add.dpick = null; S.add.alias = false; break;
     case 'addsave': {
       const p = S.add.pick, v = p.food.v[p.vi], g = pickGrams(p);
@@ -306,7 +312,7 @@ app.addEventListener('click', (ev) => {
         S.add = null; render(); return;
       }
       const post = { id: uid(), m: S.add.meal, ref: v.ref, name, g: Math.round(g * 10) / 10, n: [...v.n] };
-      if (p.unit !== 'g' && v.u) post.u = [v.u[0], Math.round(parseNum(p.amount) * 100) / 100];
+      if (p.unit !== 'g') post.u = [p.unit,Math.round(parseNum(p.amount) * 100) / 100];
       if (addPost(post)) logged(name);
       return;
     }

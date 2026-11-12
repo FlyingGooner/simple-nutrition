@@ -60,7 +60,7 @@ T.test('sök vara, välj variant och mått, kcal räknas och sparas', () => {
   q('[data-act="variant"][data-val="1"]').click();
   T.eq(q('[data-act="unit"].on').textContent, 'dl');
   type(q('#amount'), '2');
-  T.ok(/^97 kcal/.test(q('#pick-sum').textContent), q('#pick-sum').textContent);
+  T.ok(/^2 dl \(206 g\) · 97 kcal$/.test(q('#pick-sum').textContent), q('#pick-sum').textContent);
   q('[data-act="addsave"]').click();
   const p = stored().log['2026-11-09'][0];
   T.eq([p.m, p.ref, p.g, p.u, p.name], ['m1', 'l:150', 206, ['dl', 2], 'Mjölk, Mellan 1,5 %']);
@@ -520,7 +520,7 @@ T.test('vald vara förifylls med senaste mängd utan tangentbord (F1)', async ()
   q('[data-act="addtab"][data-val="foods"]').click(); await T.wait();
   type(q('#add-q'), 'mjölk'); await T.wait();
   q('[data-act="pick"]').click(); await T.wait();
-  q('[data-act="unit"][data-val="g"]')?.click(); await T.wait();
+  q('[data-act="unit"][data-val="ml"]')?.click(); await T.wait();
   type(document.getElementById('amount'), '330'); q('[data-act="addsave"]').click(); await T.wait();
   q('[data-act="addopen"]').click(); await T.wait();
   q('[data-act="addtab"][data-val="foods"]').click(); await T.wait();
@@ -528,7 +528,7 @@ T.test('vald vara förifylls med senaste mängd utan tangentbord (F1)', async ()
   q('[data-act="pick"]').click(); await T.wait();
   T.eq(document.getElementById('amount').value, '330');
   T.ok(document.activeElement !== document.getElementById('amount'), 'ingen fokus');
-  T.ok(/Senast: 330 g/.test(q('.pick').textContent), 'Senast-text');
+  T.ok(/Senast: 330 ml/.test(q('.pick').textContent), 'Senast-text');
   q('[data-act="addclose"]').click(); await T.wait();
 });
 
@@ -578,7 +578,7 @@ T.test('schabloner: en rad per livsmedel, först, döljer LV-rader', async () =>
   q('#add-results [data-act="pick"]').click();
   T.eq(app.querySelectorAll('[data-act="variant"]').length, 2, 'Socker/Sockerfri');
   T.eq([q('#amount').value, q('[data-act="unit"].on').textContent], ['1', 'st']);
-  T.ok(/^139 kcal/.test(q('#pick-sum').textContent), q('#pick-sum').textContent);
+  T.ok(/^1 st \(330 g\) · 139 kcal$/.test(q('#pick-sum').textContent), q('#pick-sum').textContent);
   q('[data-act="addsave"]').click();
   const p = stored().log['2026-11-09'].at(-1);
   T.eq([p.ref, p.g, p.n[0]], ['p:lask-socker', 330, 42]);
@@ -590,6 +590,47 @@ T.test('Saft (FOODS_CORE) i glas à 250 g', async () => {
   type(q('#add-q'), 'saft');
   q('#add-results [data-act="pick"]').click();
   T.eq(q('[data-act="unit"].on').textContent, 'glas');
-  T.ok(/^90 kcal/.test(q('#pick-sum').textContent), q('#pick-sum').textContent);
+  T.ok(/· 90 kcal$/.test(q('#pick-sum').textContent), q('#pick-sum').textContent);
+  q('[data-act="addclose"]').click();
+});
+// Steg B: enheter i Varor-vyn
+const units = () => [...app.querySelectorAll('[data-act="unit"]')].map((b) => b.textContent);
+const unit = (u) => q(`[data-act="unit"][data-val="${u}"]`).click();
+T.test('Steg B: st ↔ g räknas om (2 st pannkaka = 90 g)', () => {
+  q('[data-act="addopen"][data-id="m2"]').click();
+  foods();
+  type(q('#add-q'), 'pannkaka');
+  q('#add-results [data-act="pick"]').click();
+  T.eq([units(), q('[data-act="unit"].on').textContent, q('#amount').value], [['st', 'g'], 'st', '1'], 'naturlig enhet förvald');
+  type(q('#amount'), '2');
+  T.ok(/^2 st \(90 g\) · \d+ kcal$/.test(q('#pick-sum').textContent), q('#pick-sum').textContent);
+  unit('g'); T.eq(q('#amount').value, '90', 'byte räknar om');
+  unit('st'); T.eq(q('#amount').value, '2');
+  q('[data-act="addclose"]').click();
+});
+T.test('Steg B: flytande har dl och ml, inte g (1 dl mjölk = 103 g)', () => {
+  q('[data-act="addopen"][data-id="m2"]').click();
+  foods();
+  type(q('#add-q'), 'mjölk');
+  q('#add-results [data-act="pick"]').click();
+  T.eq(units(), ['dl', 'ml']); unit('dl'); type(q('#amount'), '1');
+  T.ok(/^1 dl \(103 g\)/.test(q('#pick-sum').textContent), q('#pick-sum').textContent);
+  unit('ml'); T.eq(q('#amount').value, '100');
+  type(q('#amount'), '250'); T.ok(/^250 ml \(258 g\)/.test(q('#pick-sum').textContent), q('#pick-sum').textContent);
+  q('[data-act="addsave"]').click();
+  const p = stored().log['2026-11-09'].at(-1);
+  T.eq([p.g, p.u], [257.5, ['ml', 250]]);
+});
+T.test('Steg B: läsk st/dl/ml; fast vara utan mått bara g med 100', () => {
+  q('[data-act="addopen"][data-id="m2"]').click();
+  foods();
+  type(q('#add-q'), 'läsk');
+  q('#add-results [data-act="pick"]').click();
+  T.eq(units(), ['st', 'dl', 'ml']);
+  unit('dl'); T.eq(q('#amount').value, '3,2');
+  q('[data-act="addclose"]').click(); q('[data-act="addopen"][data-id="m2"]').click(); foods();
+  type(q('#add-q'), 'potatismos');
+  q('#add-results [data-act="pick"]').click();
+  T.eq(units(), ['dl', 'g'], 'potatismos är inte flytande');
   q('[data-act="addclose"]').click();
 });

@@ -21,7 +21,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 
 ## Mat och kalorier
 - Under varje måltid finns en hopfälld rad **🍽 Mat**. Fäll ut den och tryck **+ Lägg till mat**. När mat är loggad visar raden **✅ Mat** och dagens kcal för måltiden.
-- Under **Varor** söker du, t.ex. mjölk. Välj variant (Lätt, Mellan …) och mängd i gram eller i mått som dl eller st. Mått är ungefärliga (≈). Visa fler söker i hela Livsmedelsverkets lista.
+- Under **Varor** söker du, t.ex. mjölk. Välj variant (Lätt, Mellan …) och mängd. Den naturliga enheten är förvald (st, skiva, bit eller dl); fasta varor kan också anges i gram och drycker i dl eller ml. Byter du enhet räknas talet om, och raden visar t.ex. "2 st (90 g) · 150 kcal". Mått är ungefärliga. Visa fler söker i hela Livsmedelsverkets lista.
 - Har du ätit varan eller rätten förut är mängden redan ifylld med det du valde senast (står under Senast) – oftast räcker det att trycka Lägg till.
 - **Snabbval:** när du inte vet exakt. Hemmagjort: Lätt ≈ 450, Standard ≈ 650, Tung ≈ 850 kcal. Utemat: Lätt ≈ 700, Standard ≈ 1 000, Tung ≈ 1 400 kcal. Ett tryck loggar. Tar du Lätt när du äter ute kan måltiden ändå vara ✅ enligt plan – du väljer själv.
 - **Schabloner:** vanliga varor och rätter har ett ungefärligt värde. Ange antal eller vikt. Vill du ha exakta värden lägger du in varan under Egna produkter.
