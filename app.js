@@ -585,8 +585,8 @@ app.addEventListener('change', (ev) => {
 let pendingImport = null;
 function startImport(text) {
   const r = importText(text);
-  errText('import-error', r.error || '');
-  if (r.error) return;
+  errText('import-error', '');
+  if (r.error) { importError(r.error); return; }
   if (r.fdt) {
     // Från Följ planen: läggs ihop med det som redan finns här (inget ersätts), därför egen text.
     pendingImport = mergeFdt(S.state, r.fdt);
@@ -611,6 +611,7 @@ function startImport(text) {
 const BACKUP_MSG = {
   saved: 'Backup-filen sparades',
   busy: 'Ett sparfönster är redan öppet',
+  declined: 'Ingen fil sparades',
   fallback: 'Backup-filen laddas ner',
   error: 'Kunde inte spara filen',
   nocrypto: 'Den här webbläsaren kan inte kryptera – ingen fil sparades',
@@ -646,19 +647,26 @@ function maybeAskBackup() {
 }
 document.getElementById('bk-ok').addEventListener('click', () => { saveBackup(); });
 document.getElementById('bk-later').addEventListener('click', () => { S.state.backup.asked = today(); persist(); });
+// 2026-11-12: the error is scrolled into view (in an artifact the page can be taller than the screen).
+function importError(msg) {
+  errText('import-error', msg);
+  try { document.getElementById('import-error')?.scrollIntoView({ block: 'center' }); } catch { /* old browser */ }
+}
 async function readBackup(input) {
   const file = input.files && input.files[0];
-  input.value = '';
   if (!file) return;
-  const r = await Backup.read(file, MAX_IMPORT_CHARS);
-  if (r.error) { errText('import-error', r.error); return; }
+  // Read before the field is cleared: some mobile browsers drop access to the chosen file when the input is reset.
+  let r;
+  try { r = await Backup.read(file, MAX_IMPORT_CHARS); } catch { r = { error: 'Kunde inte läsa filen.' }; }
+  input.value = '';
+  if (r.error) { importError(r.error); return; }
   openImport(r.text);
 }
 // Encrypted backup (U5, 2026-11-11): an envelope asks for the password, then the same checks as plain text.
 async function openImport(text) {
   const r = await Backup.openText(text, 'simple-nutrition', MAX_IMPORT_CHARS);
   if (r.cancelled) return;
-  if (r.error) { errText('import-error', r.error); return; }
+  if (r.error) { importError(r.error); return; }
   startImport(r.text);
 }
 document.getElementById('imp-ok').addEventListener('click', () => {

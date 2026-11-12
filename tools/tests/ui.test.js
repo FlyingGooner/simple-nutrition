@@ -224,14 +224,37 @@ T.test('backup-fil: fel lösenord och Avbryt ändrar inget', async () => {
   pickFile([encFile]);
   await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
   $id('pw-1').value = 'Fel2026!x'; $id('pw-ok').click();
-  await T.real(T.until(() => /Fel lösenord eller skadad fil/.test($id('import-error').textContent), 'felmeddelande saknas'));
-  T.ok(!$id('import-dialog').open, 'dialog öppnades: ' + $id('import-dialog').textContent.slice(0, 300) + ' / ' + $id('import-error').textContent);
+  T.ok($id('pw-ok').disabled && $id('pw-cancel').disabled && /Öppnar/.test($id('pw-ok').textContent), 'upptaget-läge under dekryptering');
+  await T.real(T.until(() => /Fel lösenord eller skadad fil/.test($id('pw-error').textContent), 'felmeddelande saknas i dialogen'));
+  T.ok($id('pw-dialog').open && !$id('pw-ok').disabled && $id('pw-ok').textContent === 'Öppna', 'dialogen står kvar för nytt försök');
+  T.ok(!$id('import-dialog').open, 'dialog öppnades: ' + $id('import-dialog').textContent.slice(0, 300));
+  $id('pw-cancel').click();
+  await T.wait(50);
+  T.ok(!$id('pw-dialog').open, 'Avbryt stängde inte');
   pickFile([encFile]);
   await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
   $id('pw-cancel').click();
   await T.wait(50);
   T.ok(!$id('import-dialog').open, 'dialog öppnades efter Avbryt');
   T.eq(localStorage.getItem('sn.data'), before);
+});
+T.test('backup-fil: andra tryck under sparning ger ingen andra dialog eller fil', async () => {
+  await tab('settings');
+  let files = 0;
+  const realClick = HTMLAnchorElement.prototype.click;
+  HTMLAnchorElement.prototype.click = function () { if (this.download) files++; };
+  try {
+    q('[data-act="backupsave"]').click();
+    await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
+    q('[data-act="backupsave"]').click();   // second tap while the dialog is open
+    await T.wait(50);
+    $id('pw-1').value = PW; $id('pw-2').value = PW; $id('pw-ok').click();
+    T.ok($id('pw-ok').disabled && /Krypterar/.test($id('pw-ok').textContent), 'upptaget-läge under kryptering');
+    q('[data-act="backupsave"]').click();   // and while encrypting
+    await T.real(T.until(() => files > 0, 'ingen nedladdning'));
+    await T.real(T.wait(300));
+  } finally { HTMLAnchorElement.prototype.click = realClick; }
+  T.ok(files === 1 && !$id('pw-dialog').open, `en fil (${files}), dialogen stängd`);
 });
 T.test('import: klistrad krypterad text frågar efter lösenord', async () => {
   $id('import-text').value = encFile;
