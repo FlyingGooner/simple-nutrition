@@ -1,5 +1,5 @@
 ﻿# Test: tools/data/schabloner.csv och referens.csv (Del 2 Steg 0). Fel -> exit 1, varningar stoppar inte. Inga nätverksanrop.
-#   1 format  2 sökord  3 enhet/densitet  4 märken  5 makron  6 antal referenser  7 g per enhet (varning)  8 median (varning)  9 val
+#   1 format  2 sökord  3 enhet/densitet  4 märken  5 makron  6 antal referenser  7 g per enhet (varning)  8 median (varning)  9 val  10 densitet
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
 $tools = Split-Path $PSScriptRoot -Parent; $root = Split-Path $tools -Parent; $d = Join-Path $tools 'data'
@@ -96,5 +96,13 @@ else {
   if ($diff.Count) { Fel "FOODS_PRODUCTS skiljer sig från schabloner.csv: $(($diff | Select-Object -First 3 | ForEach-Object { $_.InputObject }) -join ', ')" }
   foreach ($g in ($sch | Group-Object namn)) { if ($pjs -notmatch [regex]::Escape("{name:`"$($g.Name)`"")) { Fel "FOODS_PRODUCTS saknar $($g.Name)" } }
 }
-Write-Output "$($sch.Count) schabloner, $($ref.Count) referenser. Avvikelser: $($script:fel) fel, $($script:varn) varningar"
+# 10 densitet: varje flytande vara (schabloner.csv och data/indata/matt.csv) har referens i densitet.csv, inom 3 %
+$dref = @{}; foreach ($x in (Import-Csv "$d\densitet.csv" -Delimiter ';' -Encoding UTF8)) { $dref[$x.nyckel] = Num $x.densitet }
+$liq = @($sch | Where-Object { $_.densitet } | ForEach-Object { @{ k = $_.id; d = Num $_.densitet } })
+$liq += @(Import-Csv "$root\data\indata\matt.csv" -Delimiter ';' -Encoding UTF8 | Where-Object { $_.densitet } | ForEach-Object { @{ k = if ($_.variant) { "$($_.vara)|$($_.variant)" } else { $_.vara }; d = Num $_.densitet } })
+foreach ($x in $liq) {
+  if (-not $dref.ContainsKey($x.k)) { Fel "densitet: $($x.k) saknar referens i densitet.csv" }
+  elseif ([math]::Abs($x.d - $dref[$x.k]) / $dref[$x.k] -gt 0.03) { Fel "densitet: $($x.k) $($x.d) mot referens $($dref[$x.k])" }
+}
+Write-Output "$($sch.Count) schabloner, $($ref.Count) referenser, $($liq.Count) densiteter. Avvikelser: $($script:fel) fel, $($script:varn) varningar"
 if ($script:fel) { exit 1 }

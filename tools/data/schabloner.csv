@@ -18,21 +18,21 @@ ol;produkt;Öl/vin;Öl;t.ex. lager, ale, cider · uppskattning;öl, vin, cider, 
 vin;produkt;Öl/vin;Vin;t.ex. rött, vitt, rosé · uppskattning;öl, vin, cider, starköl, folköl, lättöl, vinglas;glas;150;0,99;80;0,1;2,5;0;uppskattning
 pannkaka;rätt;Pannkaka;;uppskattning;pannkaka, pannkakor;st;45;;165;6,7;17,9;7;LV 733 + mellanmjölk (calc)
 artsoppa;rätt;Ärtsoppa;;uppskattning;ärtsoppa;dl;105;1,05;75;5;9;2;uppskattning
-kottbullar;rätt;Köttbullar;;uppskattning;köttbullar, köttbulle;st;15;;200;11,3;6,1;14,8;uppskattning (justerad mot referensmedian)
+kottbullar;rätt;Köttbullar;;uppskattning;köttbullar, köttbulle;st;15;;180;10,2;5,5;13,3;uppskattning (justerad mot referensmedian)
 lasagne;rätt;Lasagne;;uppskattning;lasagne;bit;300;;134,7;6,3;11,7;6,7;uppskattning (justerad mot referensmedian)
 spaghetti-kottfarssas;rätt;Spaghetti och köttfärssås;;portion · uppskattning;köttfärssås, spaghetti bolognese, bolognese;g;400;;140;7;18;4,5;uppskattning
 chili;rätt;Chili con carne;;portion · uppskattning;chili con carne, chili;g;350;;110;8;8;5;uppskattning
 tacos;rätt;Tacos;;1 taco med fyllning · uppskattning;tacos, taco;st;130;;178,5;8,5;15,3;9,3;uppskattning (justerad mot referensmedian)
 pyttipanna;rätt;Pyttipanna;;portion · uppskattning;pyttipanna, pytt;g;350;;167,4;6,7;15,6;8,9;uppskattning (justerad mot referensmedian)
-korv-stroganoff;rätt;Korv stroganoff;;portion · uppskattning;korv stroganoff, stroganoff;g;300;;214;8,6;7,1;17,1;uppskattning (justerad mot referensmedian)
+korv-stroganoff;rätt;Korv stroganoff;;portion · uppskattning;korv stroganoff, stroganoff;g;300;;242;9,7;8;19,3;uppskattning (justerad mot referensmedian)
 kycklinggryta;rätt;Kycklinggryta;;portion · uppskattning;kycklinggryta;g;300;;120;11;4;6,5;uppskattning
 fiskpinnar;rätt;Fiskpinnar;;uppskattning;fiskpinnar, fiskpinne;st;25;;210;12;18;10;uppskattning
 laxfile;rätt;Laxfilé;;uppskattning;laxfilé, ugnslax, laxbit;st;125;;233,6;23,4;0;15,2;uppskattning (justerad mot referensmedian)
 falukorv;rätt;Falukorv;;uppskattning;falukorv, falukorvskiva, stekt falukorv;skiva;50;;240;10;5;20;uppskattning
-potatismos;rätt;Potatismos;;uppskattning;potatismos, mos, potatispuré;dl;90;;100;2;13;4,5;uppskattning
+potatismos;rätt;Potatismos;;uppskattning;potatismos, mos, potatispuré;dl;90;;87;1,7;11,3;3,9;uppskattning
 kokt-potatis;rätt;Kokt potatis;;uppskattning;kokt potatis;st;80;;75;2;16;0,1;uppskattning
 kokt-ris;rätt;Kokt ris;;uppskattning;kokt ris;dl;70;;130;2,6;28;0,4;uppskattning
-havregrynsgrot;rätt;Havregrynsgröt;;kokt på vatten · uppskattning;havregrynsgröt, gröt;dl;100;;78;2,9;13,2;1,6;uppskattning (justerad mot referensmedian)
+havregrynsgrot;rätt;Havregrynsgröt;;kokt på vatten · uppskattning;havregrynsgröt, gröt;dl;100;;68;2,5;11,5;1,4;uppskattning (justerad mot referensmedian)
 agg;rätt;Ägg;;uppskattning;kokt ägg, stekt ägg;st;55;;163,6;14,6;0,6;11,7;uppskattning (justerad mot referensmedian)
 blodpudding;rätt;Blodpudding;;uppskattning;blodpudding;skiva;40;;232,5;7,3;34,3;7,3;uppskattning (justerad mot referensmedian)
 raggmunk;rätt;Raggmunk;;uppskattning;raggmunk;st;60;;180;5;18;10;uppskattning

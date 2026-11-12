@@ -1,0 +1,21 @@
+﻿nyckel;namn;densitet;källa;säker
+Mjölk;Mjölk 0,5–3 %;1,03;fysikaliskt standardvärde (1,030–1,035);nej
+Filmjölk;Filmjölk;1,03;som mjölk;nej
+Yoghurt;Yoghurt;1,04;fysikaliskt standardvärde (1,03–1,06);nej
+Grädde;Grädde 15–40 %;1,0;fysikaliskt standardvärde (0,99–1,01);nej
+Havredryck;Havredryck;1,03;förpackning 1 l ≈ 1,03 kg;nej
+Juice;Apelsin-/äppeljuice;1,045;fysikaliskt standardvärde (1,04–1,05);nej
+Kaffe och te|Bryggkaffe;Bryggkaffe;1,0;vatten;nej
+Kaffe och te|Latte;Latte;1,02;mjölk + kaffe;nej
+Saft;Saft utspädd;1,02;sockerlösning ca 9 %;nej
+Öl och vin|Rött vin;Rött vin;0,99;fysikaliskt standardvärde (0,99–1,00);nej
+Öl och vin|Vitt vin;Vitt vin;0,99;fysikaliskt standardvärde;nej
+lask-socker;Läsk med socker;1,04;sockerlösning ca 10 %;nej
+lask-sockerfri;Läsk sockerfri;1,0;vatten;nej
+proteindryck;Proteindryck/drickyoghurt;1,04;som yoghurt;nej
+soppa-kopt;Soppa (köpt);1,03;intervall 1,01–1,05;nej
+smoothie;Smoothie;1,05;fruktpuré;nej
+kaffedryck;Kaffedryck;1,02;mjölk + kaffe;nej
+ol;Öl;1,01;fysikaliskt standardvärde (1,005–1,015);nej
+vin;Vin;0,99;fysikaliskt standardvärde;nej
+artsoppa;Ärtsoppa;1,05;tjock soppa;nej

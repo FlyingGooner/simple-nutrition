@@ -262,7 +262,8 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 - Appen gör inga nätverksanrop; all användardata ligger i `localStorage`.
 
 ### Schabloner (v0.13)
-- `FOODS_PRODUCTS` i `data/foods.js`, skriven av `tools/build-data.ps1` från `tools/data/schabloner.csv` (37 rader, 35 livsmedel; testade mot `referens.csv`). Handändras aldrig.
+- `FOODS_PRODUCTS` i `data/foods.js`, skriven av `tools/build-data.ps1` från `tools/data/schabloner.csv` (37 rader, 35 livsmedel; testade mot 131 referenser i `referens.csv`, rätter med upp till 4 LV-varianter). Handändras aldrig.
+- Densitet (flytande i `schabloner.csv` och `matt.csv`) testas mot `tools/data/densitet.csv` (standardvärden, `säker=nej`), max 3 % ifrån.
 - En rad per livsmedel med undertext och kcal per enhet; val bara för Läsk/energidryck (Socker/Sockerfri) och Öl/vin. Förifyllt 1 st (enhet g i CSV visas som portion).
 - Sökordning: egna sökord och produkter, schablon, Livsmedelsverket. Exakt sökord på en schablon döljer LV-raderna (även Visa fler); specifik sökning utan schablon (ugnspannkaka) ger LV.
 - Sökord som krockade flyttades från kärnan (läsk, cola, öl, vin, cider, latte, cappuccino, baguette, fiskpinnar, laxfilé, falukorv, potatismos, gröt). Kärnans Läsk blev Saft (utspädd, glas 250 g).
