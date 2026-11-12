@@ -563,3 +563,33 @@ T.test('Min plan sparas medan man skriver, högst 300 tecken', async () => {
   await T.until(() => stored().settings.planText === 'Autosparad plan', 'planen sparades inte');
   T.eq(t.maxLength, 300);
 });
+T.test('schabloner: en rad per livsmedel, först, döljer LV-rader', async () => {
+  await tab('today');
+  q('[data-act="addopen"][data-id="m1"]').click();
+  foods();
+  const names = () => [...app.querySelectorAll('#add-results .food-row .post-name')].map((n) => n.firstChild.textContent);
+  type(q('#add-q'), 'pannkaka'); T.eq(names(), ['Pannkaka']); T.ok(!q('[data-act="showall"]'), 'ingen Visa fler');
+  T.ok(/kcal\/st$/.test(q('#add-results .post-kcal').textContent), q('#add-results .post-kcal').textContent);
+  type(q('#add-q'), 'proteinbar'); T.eq(names(), ['Proteinbar']);
+  type(q('#add-q'), 'ugnspannkaka'); T.ok(names().length >= 1 && !names().includes('Pannkaka'), 'LV-raden: ' + names());
+  type(q('#add-q'), 'öl'); T.eq(names(), ['Öl/vin']);
+  type(q('#add-q'), 'cola'); T.eq(names(), ['Läsk/energidryck'], 'cola träffar inte gamla Läsk');
+  type(q('#add-q'), 'läsk'); T.eq(names(), ['Läsk/energidryck']);
+  q('#add-results [data-act="pick"]').click();
+  T.eq(app.querySelectorAll('[data-act="variant"]').length, 2, 'Socker/Sockerfri');
+  T.eq([q('#amount').value, q('[data-act="unit"].on').textContent], ['1', 'st']);
+  T.ok(/^139 kcal/.test(q('#pick-sum').textContent), q('#pick-sum').textContent);
+  q('[data-act="addsave"]').click();
+  const p = stored().log['2026-11-09'].at(-1);
+  T.eq([p.ref, p.g, p.n[0]], ['p:lask-socker', 330, 42]);
+});
+T.test('Saft (FOODS_CORE) i glas à 250 g', async () => {
+  await tab('today');
+  q('[data-act="addopen"][data-id="m2"]').click();
+  foods();
+  type(q('#add-q'), 'saft');
+  q('#add-results [data-act="pick"]').click();
+  T.eq(q('[data-act="unit"].on').textContent, 'glas');
+  T.ok(/^90 kcal/.test(q('#pick-sum').textContent), q('#pick-sum').textContent);
+  q('[data-act="addclose"]').click();
+});

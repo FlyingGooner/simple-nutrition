@@ -24,6 +24,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Under **Varor** söker du, t.ex. mjölk. Välj variant (Lätt, Mellan …) och mängd i gram eller i mått som dl eller st. Mått är ungefärliga (≈). Visa fler söker i hela Livsmedelsverkets lista.
 - Har du ätit varan eller rätten förut är mängden redan ifylld med det du valde senast (står under Senast) – oftast räcker det att trycka Lägg till.
 - **Snabbval:** när du inte vet exakt. Hemmagjort: Lätt ≈ 450, Standard ≈ 650, Tung ≈ 850 kcal. Utemat: Lätt ≈ 700, Standard ≈ 1 000, Tung ≈ 1 400 kcal. Ett tryck loggar. Tar du Lätt när du äter ute kan måltiden ändå vara ✅ enligt plan – du väljer själv.
+- **Schabloner:** vanliga varor och rätter har ett ungefärligt värde. Ange antal eller vikt. Vill du ha exakta värden lägger du in varan under Egna produkter.
 - **burk avr.** betyder avrunnen vikt: en burk kidneybönor är 400 g med spad men ca 230 g bönor – det är bönorna som räknas.
 - Under **Senaste** loggar du något du ätit förut med ett tryck. **Kopiera maten från igår** fyller en tom dag med gårdagens mat.
 - Tryck på en post för att ändra mängd, flytta den till en annan måltid eller ta bort den.

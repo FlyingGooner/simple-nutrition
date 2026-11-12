@@ -15,8 +15,8 @@ export function pickGrams(pick) {
 function foodRow(f) {
   const v = f.v[0];
   return el('li', {}, el('button', { class: 'food-row', 'data-act': 'pick', 'data-ref': v.ref },
-    el('span', { class: 'post-name' }, f.name, f.v.length > 1 ? el('small', { text: `${f.v.length} varianter` }) : f.more ? el('small', { text: 'Livsmedelsverket' }) : f.own ? el('small', { text: 'Egen produkt' }) : null),
-    el('span', { class: 'post-kcal', text: `${kcal(v.n[0])} kcal/100 g` })));
+    el('span', { class: 'post-name' }, f.name, f.product ? el('small', { text: f.sub }) : f.v.length > 1 ? el('small', { text: `${f.v.length} varianter` }) : f.more ? el('small', { text: 'Livsmedelsverket' }) : f.own ? el('small', { text: 'Egen produkt' }) : null),
+    el('span', { class: 'post-kcal', text: f.product && v.u ? `${kcal(v.n[0] * v.u[1] / 100)} kcal/${v.u[0]}` : `${kcal(v.n[0])} kcal/100 g` })));
 }
 
 export function resultsList() {

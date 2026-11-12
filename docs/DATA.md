@@ -15,7 +15,7 @@ Källan för beskrivningen är `EXPORT_SCHEMA` och `EXPORT_EXAMPLE` i `store.js`
 |---|---|
 | `goals` | lista `{ from, kcal?, prot?, kolh? }`, mål utan `kcal` = inget kalorimål |
 | `meals` | 1–10 `{ id, name }` |
-| `log` | datum → poster. Vara `{ id, m, ref: l:/b:/u:, name, g, n per 100 g, u? }`, rätt `{ …, ref: r:, q, n totalt }`, snabbval `{ …, ref: q:home-*/out-*/snack-* (se `QUICK_ADD`), q, n totalt }`; `m` kan vara `extra-<n>` (kcal för extra fusk) |
+| `log` | datum → poster. Vara `{ id, m, ref: l:/b:/u:/p: (p: = schablon), name, g, n per 100 g, u? }`, rätt `{ …, ref: r:, q, n totalt }`, snabbval `{ …, ref: q:home-*/out-*/snack-* (se `QUICK_ADD`), q, n totalt }`; `m` kan vara `extra-<n>` (kcal för extra fusk) |
 | `dishes` | `{ id, name, portions, items: [{ ref, name, g, n }], cooked? }` |
 | `foods` | egna produkter `{ id, name, n, u? }` |
 | `aliases` | sökord → ref |

@@ -63,6 +63,16 @@ T.test('export → import tur och retur', () => {
   T.eq([r.posts, r.weights, r.exported], [1, 1, '2026-11-09']);
   T.eq(r.data.log, s.log);
 });
+T.test('schablon (p:): giltig ref godtas med sina värden, skräp avvisas', () => {
+  const ok = post({ ref: 'p:pannkaka', name: 'Pannkaka', g: 90, n: [165, 6.7, 17.9, 7], u: ['st', 2] });
+  const s = validate({ log: { '2026-11-09': [ok, post({ id: 'p2', ref: 'p:' }), post({ id: 'p3', ref: 'p:a b' }), post({ id: 'p4', ref: 'pp:x' })] } });
+  T.eq(s.log['2026-11-09'], [ok], 'loggad post behåller sina värden');
+});
+T.test('schablon (p:): export → import ger samma data', () => {
+  const s = validate({ log: { '2026-11-09': [post({ ref: 'p:lask-socker', name: 'Läsk/energidryck, Socker', g: 330, n: [42, 0, 10.5, 0], u: ['st', 1] })] } });
+  const r = importText(exportText(s, '2026-11-09'));
+  T.eq([r.posts, r.skipped], [1, 0]); T.eq(r.data.log, s.log);
+});
 T.test('import: fel app, fel format, trasig text, BOM', () => {
   T.ok(importText('{"app":"other","format":1,"data":{}}').error);
   T.ok(importText('{"app":"simple-nutrition","format":9,"data":{}}').error);

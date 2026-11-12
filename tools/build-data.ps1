@@ -95,6 +95,19 @@ foreach ($v in $varor.Values) {
 [void]$sb.AppendLine('const FOODS_MORE = [')
 foreach ($x in $ovr) { [void]$sb.AppendLine("[$($x.id),$(Js $x.namn.Trim()),$(N $x.kcal),$(N $x.prot),$(N $x.kolh),$(N $x.fett)],") }
 [void]$sb.AppendLine('];')
+# Schabloner (Del 2 Steg A): tools/data/schabloner.csv → FOODS_PRODUCTS, en post per namn, val som varianter, ref p:<id>.
+# Enhet g (tallriksrätt) visas som portion: g_per_enhet = portionen.
+function Dn([string]$s) { N ([double]::Parse(($s -replace ',', '.'), [Globalization.CultureInfo]::InvariantCulture)) }
+$sch = Import-Csv "$PSScriptRoot\data\schabloner.csv" -Delimiter ';' -Encoding UTF8
+[void]$sb.AppendLine('const FOODS_PRODUCTS = [')
+foreach ($g in ($sch | Group-Object namn)) {
+  $r0 = $g.Group[0]
+  $q = @($r0.'sökord' -split ',' | ForEach-Object { $_.Trim().ToLower() } | Where-Object { $_ } | Select-Object -Unique)
+  $vs = ($g.Group | ForEach-Object { $e = if ($_.enhet -eq 'g') { 'portion' } else { $_.enhet }
+    "{l:$(Js $_.val),id:$(Js $_.id),n:[$(Dn $_.kcal),$(Dn $_.P),$(Dn $_.K),$(Dn $_.F)],u:[$(Js $e),$(Dn $_.g_per_enhet)]}" }) -join ','
+  [void]$sb.AppendLine("{name:$(Js $r0.namn),sub:$(Js $r0.undertext),q:[$(($q | ForEach-Object { Js $_ }) -join ',')],v:[$vs]},")
+}
+[void]$sb.AppendLine('];')
 [IO.File]::WriteAllText("$root\data\foods.js", $sb.ToString(), $utf8)
 $gr = $ovr | Group-Object grupp | Sort-Object Count -Descending | Select-Object -First 12 | ForEach-Object { "$($_.Name) $($_.Count)" }
 Write-Host "foods.js: kärna $($varor.Count) | övriga $($ovr.Count) | $([int]((Get-Item "$root\data\foods.js").Length/1KB)) KB"

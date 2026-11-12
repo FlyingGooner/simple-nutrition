@@ -49,24 +49,24 @@ Fläskkött;;Kotlett/karré (med fettkant);;Gris fläskkotlett rå fettkant 5 mm
 Fläskkött;;Sidfläsk;;~^Gris sidfläsk.* rå
 Bacon;bacon;Rått;;Gris bacon rå
 Bacon;;Stekt;;Gris bacon stekt
-Korv;korv,falukorv,prinskorv,grillkorv,wienerkorv,chorizo;Falukorv;;~^Korv falu
+Korv;korv,prinskorv,grillkorv,wienerkorv,chorizo;Falukorv;;~^Korv falu
 Korv;;Grillkorv/wiener;;~^Korv (grill|wiener)
 Korv;;Prinskorv;;~^Korv prins
 Pålägg kött;skinka,kalkon,pålägg,rökt skinka,kalkonbröst;Skinka;;Gris skinka skivad rökt fett 1-3%
 Pålägg kött;;Kalkon;;~^Kalkon.*(pålägg|rökt|bröst)
-Lax;lax,laxfilé;Rå;;Lax odlad Norge fjordlax rå
+Lax;lax;Rå;;Lax odlad Norge fjordlax rå
 Lax;;Rökt/gravad;;~^Lax (kallrökt|gravad)
 Vit fisk;torsk,sej,kolja,vit fisk,fiskfilé;Torsk;;~^Torsk rå
 Vit fisk;;Sej;;~^Sej rå
 Tonfisk;tonfisk;I vatten;;~^Tonfisk.*vatten
 Tonfisk;;I olja;;~^Tonfisk.*olja
 Räkor;räkor,räka,scampi;Skalade;;~^Räk.*(kokt|skalad)
-Bröd;bröd,limpa,formfranska,baguette,fullkornsbröd,lingongrova,kavring,tortilla,fralla;Ljust;formfranska, baguette;Bröd vitt fibrer ca 5% typ formfranska
+Bröd;bröd,limpa,formfranska,fullkornsbröd,lingongrova,kavring,tortilla,fralla;Ljust;formfranska, baguette;Bröd vitt fibrer ca 5% typ formfranska
 Bröd;;Grovt/fullkorn;vete-råg;Bröd fullkorn vete råg fibrer ca 6%
 Bröd;;Mörkt, sött;kavring, lingongrova;Bröd fullkorn rågsikt fibrer ca 7% typ kavring
 Bröd;;Tortilla;;Bröd vitt vetetortilla
 Knäckebröd;knäcke,knäckebröd,wasa,hårt bröd;Fullkorn råg;;~^Hårt bröd fullkorn råg fibrer ca 14%
-Havregryn;havregryn,havre,gröt;Okokt;;Havregryn fullkorn
+Havregryn;havregryn,havre;Okokt;;Havregryn fullkorn
 Havregryn;;Gröt (kokt på vatten);;Havregrynsgröt fullkorn
 Flingor;flingor,müsli,granola,cornflakes;Müsli osötad;;~^Frukostflingor flingblandning fullkorn typ basmüsli
 Flingor;;Granola;;Frukostflingor granola m. frukt nötter
@@ -76,7 +76,7 @@ Ris;;Kokt;;Ris jasmin kokt m. salt
 Pasta;pasta,makaroner,spagetti,spaghetti,penne;Okokt;;Pasta okokt
 Pasta;;Kokt;;Pasta kokt u. salt
 Pasta;;Fullkorn okokt;;Pasta fullkorn okokt
-Potatis;potatis,pommes,potatismos;Rå;;Potatis höst rå
+Potatis;potatis,pommes;Rå;;Potatis höst rå
 Potatis;;Kokt;;Potatis höst kokt m. salt
 Potatis;;Ugnspommes;;~^Pommes frites.*ugn
 Vetemjöl;mjöl,vetemjöl,dinkel;Vetemjöl;;Vetemjöl
@@ -120,7 +120,7 @@ Vilt;älg,älgfärs,vilt,rådjur,hjort;Älgfärs;;Älg färs rå
 Strömming;strömming,sill,makrill;Strömming;;Strömming rå
 Strömming;;Inlagd sill;;Sill inlagd u. lag
 Strömming;;Makrill i tomat;;~^Makrill.*tomat
-Fiskpinnar;fiskpinnar,fiskbullar,panerad fisk;Ugnsstekta;;Fiskpinnar ugnsstekta
+Fiskpinnar;fiskbullar,panerad fisk;Ugnsstekta;;Fiskpinnar ugnsstekta
 Kycklingkorv;kycklingkorv;Normal;;~^Korv.*kyckling
 Kebab;kebab,gyros,kebabkött;Kebabkött;;~^(Kebab|Gyros)
 Vegoprotein;vegofärs,sojafärs,tofu,quorn,mykoprotein,vego;Sojafärs;;~^Sojaprotein färs(?!.*tacokryddad)
@@ -129,7 +129,7 @@ Vegoprotein;;Mykoprotein;;~^Mykoprotein
 Grönsaksbiffar;grönsaksbiff,vegobiff,falafel;Grönsaksbiff;;Grönsaksbiff stekt veg.
 Grönsaksbiffar;;Falafel;;Falafel kikärtskroketter stekta
 Bröd;;Hamburgerbröd;;Hamburgerbröd
-Korvbröd;korvbröd,fralla,frallor,baguette,småfranska;Korvbröd;;~^(Korvbröd|Bröd.*korvbröd)
+Korvbröd;korvbröd,fralla,frallor,småfranska;Korvbröd;;~^(Korvbröd|Bröd.*korvbröd)
 Korvbröd;;Fralla;;~^(Småfranska|Fralla|Bröd vitt.*fralla)
 Nudlar;nudlar,äggnudlar,glasnudlar,risnudlar;Okokta;;Nudlar äggnudlar okokta
 Nudlar;;Kokta;;Nudlar äggnudlar kokta m. salt
@@ -186,12 +186,10 @@ Chips;chips,potatischips,ostbågar;Potatischips;;~^Chips potatis|^Potatischips
 Chips;;Ostbågar;;~^(Ostbågar|Ostkrok)
 Glass;glass,vaniljglass,gräddglass;Gräddglass;;~^Glass.*grädd
 Glass;;Mjukglass;;~^Glass mjuk|^Mjukglass
-Kaffe och te;kaffe,te,latte,cappuccino;Bryggkaffe;;~^Kaffe bryggt|^Kaffe.*bryggkaffe
+Kaffe och te;kaffe,te;Bryggkaffe;;~^Kaffe bryggt|^Kaffe.*bryggkaffe
 Kaffe och te;;Latte;;~^(Kaffe latte|Caffe latte|Kaffedrink latte)
-Läsk;läsk,cola,saft;Läsk med socker;;~^Läsk(?!.*(light|sötningsm))
-Läsk;;Läsk light;;~^Läsk.*(light|sötningsm)
-Läsk;;Saft utspädd;;~^Saft.*(drickf|utspädd)
-Öl och vin;öl,vin,rödvin,vitt vin,cider;Starköl 5 %;;Öl starköl el. exportöl vol. % 5,4
+Saft;saft;Saft utspädd;;~^Saft.*(drickf|utspädd)
+Öl och vin;rödvin,vitt vin;Starköl 5 %;;Öl starköl el. exportöl vol. % 5,4
 Öl och vin;;Folköl 3,5 %;;Öl pilsner folköl vol. % 3,5
 Öl och vin;;Rött vin;;Vin rött vol. % 14
 Öl och vin;;Vitt vin;;Vin vitt vol. % 12

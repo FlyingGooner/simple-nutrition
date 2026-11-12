@@ -85,5 +85,16 @@ if (-not $script:fel) {
     if (-not $r.median_ok) { Varn "$($r.id): median $($r.median_kcal) kcal mot $($r.schablon_kcal) ($($r.diff_pct) %), max avvikelse $($r.max_avvik_kcal) kcal" }
   }
 }
+# A1 FOODS_PRODUCTS i foods.js stämmer med schabloner.csv (id, namn, kcal, gram per enhet – ingen handändring)
+$ps = $js.IndexOf('const FOODS_PRODUCTS')
+if ($ps -lt 0) { Fel 'FOODS_PRODUCTS saknas i foods.js – kör tools\build-data.ps1' }
+else {
+  $pjs = $js.Substring($ps, $js.IndexOf('];', $ps) - $ps)
+  $got = @([regex]::Matches($pjs, '\{l:"[^"]*",id:"([^"]+)",n:\[([^,\]]+),[^\]]*\],u:\["[^"]+",([^\]]+)\]\}') | ForEach-Object { "$($_.Groups[1].Value)|$($_.Groups[2].Value)|$($_.Groups[3].Value)" })
+  $want = @($sch | ForEach-Object { "$($_.id)|$((Num $_.kcal).ToString([Globalization.CultureInfo]::InvariantCulture))|$((Num $_.g_per_enhet).ToString([Globalization.CultureInfo]::InvariantCulture))" })
+  $diff = @(Compare-Object $want $got)
+  if ($diff.Count) { Fel "FOODS_PRODUCTS skiljer sig från schabloner.csv: $(($diff | Select-Object -First 3 | ForEach-Object { $_.InputObject }) -join ', ')" }
+  foreach ($g in ($sch | Group-Object namn)) { if ($pjs -notmatch [regex]::Escape("{name:`"$($g.Name)`"")) { Fel "FOODS_PRODUCTS saknar $($g.Name)" } }
+}
 Write-Output "$($sch.Count) schabloner, $($ref.Count) referenser. Avvikelser: $($script:fel) fel, $($script:varn) varningar"
 if ($script:fel) { exit 1 }

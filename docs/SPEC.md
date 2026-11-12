@@ -261,7 +261,15 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 - Kvalitet: `tools/test-maltider.ps1` (30 vardagsrätter + en dag, `-Fil`) och `tools/test-data.ps1` (mot Livsmedelsverkets färdigrätter).
 - Appen gör inga nätverksanrop; all användardata ligger i `localStorage`.
 
+### Schabloner (v0.13)
+- `FOODS_PRODUCTS` i `data/foods.js`, skriven av `tools/build-data.ps1` från `tools/data/schabloner.csv` (37 rader, 35 livsmedel; testade mot `referens.csv`). Handändras aldrig.
+- En rad per livsmedel med undertext och kcal per enhet; val bara för Läsk/energidryck (Socker/Sockerfri) och Öl/vin. Förifyllt 1 st (enhet g i CSV visas som portion).
+- Sökordning: egna sökord och produkter, schablon, Livsmedelsverket. Exakt sökord på en schablon döljer LV-raderna (även Visa fler); specifik sökning utan schablon (ugnspannkaka) ger LV.
+- Sökord som krockade flyttades från kärnan (läsk, cola, öl, vin, cider, latte, cappuccino, baguette, fiskpinnar, laxfilé, falukorv, potatismos, gröt). Kärnans Läsk blev Saft (utspädd, glas 250 g).
+- Loggade poster sparar sina värden; ändrade schabloner påverkar inte gamla poster.
+
 ### Integritet och säkerhet
+- **Schabloner (v0.13):** ny ref-typ `p:<id>` i ref-regexet (samma teckenregler). Posten bär egna värden som valideras som en vara; id:t slås inte upp vid import. Inga nya lagringsnycklar.
 - CSP: grund-CSP:n, `connect-src 'none'`. Inga undantag utöver U5 (export/import), ingen CSP-ändring. Samma krav som budget-buddy och follow-diet-tracker (förhandsprövning 2026-11-09: tillstyrkt med villkoren nedan).
 - `no-referrer`. All extern data och inmatning renderas med `textContent`.
 - Inga hemligheter i koden.

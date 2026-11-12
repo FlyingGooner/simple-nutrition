@@ -9,7 +9,7 @@ const habitSettings = (x) => ({ reasons: x.reasons, successThreshold: x.successT
 export const EXPORT_APP = 'simple-nutrition', EXPORT_FORMAT = 1;
 export const MAX_IMPORT_CHARS = 2000000;
 const LIM = { perDay: 100, days: 3650, dishes: 500, ingr: 50, foods: 1000, aliases: 1000, weights: 3650, meals: 10, goals: 100 };
-const ID_RE = /^[A-Za-z0-9_-]{1,40}$/, DATE_RE = /^\d{4}-\d{2}-\d{2}$/, REF_RE = /^[lburq]:[A-Za-z0-9_.-]{1,40}$/;
+const ID_RE = /^[A-Za-z0-9_-]{1,40}$/, DATE_RE = /^\d{4}-\d{2}-\d{2}$/, REF_RE = /^[lburqp]:[A-Za-z0-9_.-]{1,40}$/;
 const BAD_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
 export const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -209,8 +209,13 @@ function index() {
     name: f.name, words: [f.name.toLowerCase(), ...(f.q || [])],
     v: f.v.map((v) => ({ label: v.l, ref: refOf(v.id), n: v.n, u: v.u })),
   }));
+  // Schabloner (Del 2): ref p:<id>, undertext sub; visas före LV, ett exakt sökord döljer LV-raderna.
+  const products = (typeof FOODS_PRODUCTS !== 'undefined' ? FOODS_PRODUCTS : []).map((f) => ({
+    name: f.name, sub: f.sub, words: [f.name.toLowerCase(), ...(f.q || [])],
+    v: f.v.map((v) => ({ label: v.l, ref: 'p:' + v.id, n: v.n, u: v.u })), product: true,
+  }));
   const more = (typeof FOODS_MORE !== 'undefined' ? FOODS_MORE : []).map((r) => ({ name: r[1], words: [r[1].toLowerCase()], v: [{ label: '', ref: 'l:' + r[0], n: r.slice(2, 6) }], more: true }));
-  return (INDEX = { core, more });
+  return (INDEX = { core, products, more });
 }
 // Own products as foods (ref u:id).
 const ownFoods = (state) => state.foods.map((f) => ({ name: f.name, words: [f.name.toLowerCase()], v: [{ label: '', ref: 'u:' + f.id, n: f.n, u: f.u }], own: true }));
@@ -227,19 +232,22 @@ function score(f, q) {
 export function searchFoods(state, text, all = false, max = 30) {
   const q = cleanText(text, 40).toLowerCase();
   if (!q) return { hits: [], more: 0 };
-  const { core, more } = index();
+  const { core, products, more } = index();
   const rank = (list) => list.map((f) => [score(f, q), f]).filter(([s]) => s > 0)
     .sort((a, b) => b[0] - a[0] || a[1].name.length - b[1].name.length).map(([, f]) => f);
-  const first = rank([...ownFoods(state), ...core]);
+  // Ordning: egna sökord och produkter, schablon, LV. Exakt sökord på en schablon döljer LV (en schablon per livsmedel).
+  const exact = products.some((f) => f.words.includes(q));
+  const first = [...rank(ownFoods(state)), ...rank(products), ...(exact ? [] : rank(core))];
   const alias = state.aliases[q] ? findRef(state, state.aliases[q]) : null;
-  if (alias && !first.includes(alias)) first.unshift(alias);
-  const rest = rank(more);
+  if (alias) { const i = first.indexOf(alias); if (i >= 0) first.splice(i, 1); first.unshift(alias); }
+  const rest = exact ? [] : rank(more);
   if (all || !first.length) return { hits: [...first, ...rest].slice(0, max), more: 0 };
   return { hits: first.slice(0, max), more: rest.length };
 }
 export function findRef(state, ref) {
   if (ref.startsWith('u:')) return ownFoods(state).find((f) => f.v[0].ref === ref) || null;
-  const { core, more } = index();
+  const { core, products, more } = index();
+  if (ref.startsWith('p:')) return products.find((f) => f.v.some((v) => v.ref === ref)) || null;
   return core.find((f) => f.v.some((v) => v.ref === ref)) || more.find((f) => f.v[0].ref === ref) || null;
 }
 // Recently logged (newest first), unique on ref + amount.
@@ -390,7 +398,7 @@ export const EXPORT_SCHEMA = {
   goals: 'lista { from: datum, kcal?: 500–10000, prot?: 10–500, kolh?: 10–1000 }, sorteras på from, mål utan kcal = inget kalorimål från det datumet, max 100',
   meals: 'lista { id, name ≤ 60 tecken }, 1–10 st',
   log: 'objekt datum → lista av poster, max 100 poster per dag och 3650 dagar',
-  'post (vara)': '{ id, m: måltids-id, ref: "l:<livsmedel>" | "b:<beräknad>" | "u:<egen produkt-id>", name, g: gram 0–10000, n: per 100 g (kcal ≤ 950, övriga ≤ 105 var och tillsammans), u?: [mått, antal] }',
+  'post (vara)': '{ id, m: måltids-id, ref: "l:<livsmedel>" | "b:<beräknad>" | "u:<egen produkt-id>" | "p:<schablon-id>", name, g: gram 0–10000, n: per 100 g (kcal ≤ 950, övriga ≤ 105 var och tillsammans), u?: [mått, antal] }',
   'post (rätt)': '{ id, m, ref: "r:<rätt-id>", name, q: andel av satsen 0,0001–50, n: totalt för andelen (kcal ≤ 20000, gram ≤ 2000), u?: ["port." | "av satsen" | "g", mängd] }',
   'post (snabbval)': '{ id, m: måltids-id eller "extra-<n>" (extra fusk), ref: "q:<id i snabbval>", name, q: antal, n: totalt, u?: ["st", antal] }',
   dishes: 'lista { id, name, portions: 1–50, items: [{ ref, name, g, n per 100 g }] (max 50), cooked?: färdig vikt i gram 1–20000 }, max 500',
