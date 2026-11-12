@@ -8,6 +8,7 @@ import { viewWeek } from './views/week.js';
 import { viewTrend } from './views/trend.js';
 import { viewHistory } from './views/history.js';
 import { viewSettings } from './views/settings.js';
+import { PLAN_MAX } from './fdt-store.js';
 import { newDraft, draftFrom, dishQ, dishUnit, isBatch } from './views/dishes.js';
 
 document.getElementById('version').textContent = 'v' + self.APP_VERSION;
@@ -18,6 +19,7 @@ const tabbar = document.querySelector('.tabbar');
 const buzz = () => navigator.vibrate?.(10);
 const errText = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
 
+const cleanPlan = (v) => v.replace(/[\u0000-\u0009\u000B-\u001F\u007F-\u009F‎‏‪-‮⁦-⁩]/g, '').trim().slice(0, PLAN_MAX);
 function persist() {
   if (!save(S.state)) status('Kunde inte spara – lagringen är full eller blockerad.', true);
   else if (saveFailed) updateOnline();
@@ -478,8 +480,7 @@ app.addEventListener('click', (ev) => {
       return;
     }
     case 'plansave': {
-      const v = document.getElementById('plan-text')?.value ?? '';
-      S.state.settings.planText = v.replace(/[\u0000-\u0009\u000B-\u001F\u007F-\u009F‎‏‪-‮⁦-⁩]/g, '').trim().slice(0, 300);
+      S.state.settings.planText = cleanPlan(document.getElementById('plan-text')?.value ?? '');
       persist(); render(); snackbar('Planen sparad', null, null, 2500);
       return;
     }
@@ -508,6 +509,22 @@ app.addEventListener('input', (ev) => {
   }
   if (t.dataset.act === 'dname' && S.dish) S.dish.name = t.value;
 });
+// v0.12.0: note and plan also save while typing (500 ms), since change may never fire when the phone is locked.
+const typing = new Map();
+app.addEventListener('input', (ev) => {
+  const t = ev.target;
+  if (t.dataset.act !== 'note' && t.id !== 'plan-text') return;
+  clearTimeout(typing.get(t));
+  typing.set(t, setTimeout(() => {
+    typing.delete(t);
+    if (t.id === 'plan-text') { S.state.settings.planText = cleanPlan(t.value); persist(); return; }
+    const e = S.state.habits[t.dataset.day || S.current]?.[t.dataset.id];
+    if (!e) return;
+    const v = cleanText(t.value, 140);
+    if (v) e.note = v; else delete e.note;
+    persist();
+  }, 500));
+});
 app.addEventListener('keydown', (ev) => {
   if (ev.key !== 'Enter') return;
   if (ev.target.id === 'amount') { ev.preventDefault(); app.querySelector('[data-act="addsave"], [data-act="daddsave"]')?.click(); }
@@ -529,7 +546,7 @@ app.addEventListener('change', (ev) => {
       persist(); return;
     }
     case 'note': {
-      const e = S.state.habits[S.current]?.[t.dataset.id];
+      const e = S.state.habits[t.dataset.day || S.current]?.[t.dataset.id];
       if (!e) return;
       const v = cleanText(t.value, 140);
       if (v) e.note = v; else delete e.note;
@@ -670,19 +687,38 @@ document.addEventListener('touchend', (e) => {
 });
 window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); S.installPrompt = e; if (view === 'settings') render(); });
 
-// Refresh when returning to the app (e.g. after midnight) – not after the file picker (filePick) or while adding/editing.
+// Hidden: blur the text field so change saves it. Visible: move to the new day after midnight, reload (not after the file
+// picker, while adding/editing or while a text field still has focus), then ask about backup.
 let filePick = false;
 app.addEventListener('click', (ev) => { if (ev.target.id === 'import-file') filePick = true; }, true);
+const typingField = () => document.activeElement?.matches?.('input, textarea') ? document.activeElement : null;
+S.lastToday = today();
+// v0.12.0: the open day/week/month follows today past midnight, unless the user has browsed elsewhere.
+function rollDay() {
+  const now = today(), was = S.lastToday;
+  if (now === was) return false;
+  if (S.current === was) { S.current = now; resetDay(); }
+  if (S.week === weekStart(was)) S.week = weekStart(now);
+  if (S.month === was.slice(0, 7)) S.month = now.slice(0, 7);
+  S.lastToday = now;
+  return true;
+}
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState !== 'visible') return;
+  if (document.visibilityState !== 'visible') { typingField()?.blur(); return; }
   if (filePick) { filePick = false; return; }
-  if (S.add || S.dish) return;
-  S.state = load(); render();
+  if (!typingField()) {
+    const rolled = rollDay();
+    if (!S.add && !S.dish) { S.state = load(); render(); } else if (rolled) render();
+  }
+  setTimeout(maybeAskBackup, 300);
 });
+setInterval(() => {
+  if (document.visibilityState !== 'visible' || typingField() || today() === S.lastToday) return;
+  rollDay(); render();
+}, 60000);
 
 go(location.hash.slice(1));
 setTimeout(maybeAskBackup, 800);
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') setTimeout(maybeAskBackup, 300); });
 
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   const hadController = !!navigator.serviceWorker.controller;

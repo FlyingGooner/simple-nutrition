@@ -1,6 +1,7 @@
 // View: Inställningar – grupperna Vanor, Träning, Kalorier och Allmänt, var och en hopfälld för sig (beslut 2026-11-09).
 import { goalFor, findRef, addDays } from '../store.js';
 import { today, S, setOpen, el, kcal, pct, shortDate, LAYOUT, LAYOUT_VIEWS, layoutOf } from '../ui.js';
+import { PLAN_MAX } from '../fdt-store.js';
 import { dishEditor, dishList } from './dishes.js';
 import { viewAdd } from './add.js';
 
@@ -92,7 +93,7 @@ export function viewSettings() {
   return [
     group('habits', 'Vanor', `Minst ${pct(s.successThreshold)}`,
       sec('plan', 'Min plan', s.planText ? s.planText.split('\n')[0].slice(0, 30) + (s.planText.length > 30 ? '…' : '') : 'Ingen plan',
-        el('textarea', { rows: 3, maxlength: 300, placeholder: 'T.ex. matlåda till lunch, inget godis på vardagar', id: 'plan-text', 'aria-label': 'Min plan', text: s.planText }),
+        el('textarea', { rows: 3, maxlength: PLAN_MAX, placeholder: 'T.ex. matlåda till lunch, inget godis på vardagar', id: 'plan-text', 'aria-label': 'Min plan', text: s.planText }),
         el('div', { class: 'save-row' }, el('button', { class: 'weigh-save', 'data-act': 'plansave', text: 'Spara plan' })),
         el('p', { class: 'muted small', text: 'Visas överst i Idag som påminnelse.' })),
       sec('threshold', 'Lyckad dag', `Minst ${pct(s.successThreshold)}`,
@@ -131,7 +132,7 @@ export function viewSettings() {
     group('app', 'Allmänt', 'Data, hjälp',
       sec('data', 'Data', 'Backup, import, radera',
         el('p', { class: 'small', text: 'All data sparas bara i den här webbläsaren (localStorage). Rensar du webbplatsdata eller avinstallerar appen försvinner den – spara en backup-fil då och då.' }),
-        el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och krypteras alltid med ett lösenord du väljer. Glömmer du det går filen inte att öppna. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),
+        el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och krypteras alltid med ett lösenord du väljer. Du kan också låta appen skapa ett slumpmässigt lösenord. Glömmer du det går filen inte att öppna. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),
         el('p', { class: 'small', text: 'Flyttar du från Följ planen: spara en backup-fil där och läs in den här. Måltider, orsaker, vägningar och pass läggs till – inget du redan har tas bort.' }),
         (() => {   // v0.7.0: status för senaste backup, direkt ovanför knapparna
           const last = S.state.backup.last, old = !last || addDays(last, 30) <= today();

@@ -67,7 +67,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Appen påminner om backup varje månad (eller vecka). Ändra under **Data → Påminn om backup**.
 - För att läsa tillbaka: tryck **Läs in backup-fil**, kontrollera sammanfattningen och tryck **Ersätt**. All nuvarande data ersätts – Ångra finns direkt efteråt.
 - Går det inte att välja filen: öppna **Klistra in text** och klistra in filens innehåll.
-- Filen innehåller all din data och krypteras alltid med ett lösenord som du väljer. Bocka i **Visa lösenord** om du vill se vad du skriver. Glömmer du lösenordet går filen inte att öppna.
+- Filen innehåller all din data och krypteras alltid med ett lösenord som du väljer. Bocka i **Visa lösenord** om du vill se vad du skriver. **Skapa slumpmässigt lösenord** fyller i ett starkt lösenord som du kan kopiera till en lösenordshanterare. Siffror och specialtecken visas i färg så att det är lätt att skriva av. Glömmer du lösenordet går filen inte att öppna.
 - Filen beskriver sitt eget format och har ett exempel, så den går att ändra för hand och läsa in igen.
 
 ## Installera och offline

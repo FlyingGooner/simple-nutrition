@@ -519,3 +519,9 @@ dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
 .check { display: flex; align-items: center; gap: 12px; min-height: 48px; margin: 4px 0; font-size: 1rem; color: var(--on-surface); cursor: pointer; }
 .check input { width: 20px; height: 20px; margin: 0; accent-color: var(--primary); }
 #pw-dialog [hidden] { display: none; }
+/* v0.12.0: backup password – hidden username for password managers, colour-coded preview (colour is an extra cue only). */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.pw-preview-row { display: flex; align-items: center; gap: 8px; }
+.pw-preview { flex: 1; margin: 0; font-family: ui-monospace, Consolas, monospace; font-variant-numeric: slashed-zero; font-size: 1.05rem; letter-spacing: .04em; overflow-wrap: anywhere; }
+.pw-digit { color: var(--primary); font-weight: 700; }
+.pw-special { color: var(--dev); font-weight: 700; }

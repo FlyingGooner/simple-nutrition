@@ -1,3 +1,4 @@
+export const PLAN_MAX = 300; // Plan text limit – textarea, plansave, store and export schema.
 // Import from follow-diet-tracker (Följ planen): an unchanged copy of its store.js validation and unpacking, so a backup from
 // that app is read exactly as the app itself reads it. load()/save() are removed – this file never touches localStorage.
 // Used only by importText() in store.js. Source: archive/follow-diet-tracker/store.js (v1.6.3, arkiverad 2026-11-10).
@@ -120,7 +121,7 @@ export function validate(data) {
     slots: cleanList(s.slots, d.settings.slots),
     reasons: cleanList(s.reasons, d.settings.reasons),
     successThreshold: Number.isFinite(t) && t >= 0 && t <= 1 ? t : d.settings.successThreshold,
-    planText: str(s.planText, 2000),
+    planText: str(s.planText, PLAN_MAX),
     weighDay: Number.isInteger(s.weighDay) && s.weighDay >= 0 && s.weighDay <= 6 ? s.weighDay : d.settings.weighDay,
     reasonsV: 3,
     workoutTypes: cleanTypes(s.workoutTypes, d.settings.workoutTypes),

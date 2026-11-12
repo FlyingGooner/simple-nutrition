@@ -150,3 +150,6 @@ T.test('fusknivåer: sätt, byt, ta bort med samma, och städa vid byte av orsak
   T.eq(s.log[d].map((p) => p.id), ['a', 'u']);
   T.eq(validate({ log: { [d]: [{ id: 'e2', m: 'extra-1731', ref: 'q:snack-l', name: 'Snacks – Mycket', q: 1, n: [950, 11, 95, 58] }] } }).log[d].length, 1);
 });
+T.test('plan: högst 300 tecken även vid import', () => {
+  T.eq(validate({ ...defaults(), settings: { ...defaults().settings, planText: 'x'.repeat(2000) } }).settings.planText.length, 300);
+});

@@ -123,15 +123,19 @@
     <form method="dialog" novalidate>
       <h2 id="pw-title">Spara backup-fil</h2>
       <p class="muted" id="pw-text"></p>
-      <label class="field" id="pw-1-row"><span>Lösenord</span><input type="password" id="pw-1" maxlength="200" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
-      <label class="field" id="pw-2-row"><span>Upprepa lösenord</span><input type="password" id="pw-2" maxlength="200" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+      <input type="text" id="pw-user" name="username" autocomplete="username" value="Simple nutrition backup" readonly tabindex="-1" aria-hidden="true" class="sr-only">
+      <label class="field" id="pw-1-row"><span>Lösenord</span><input type="password" id="pw-1" name="password" maxlength="200" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+      <label class="field" id="pw-2-row"><span>Upprepa lösenord</span><input type="password" id="pw-2" name="confirm-password" maxlength="200" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
       <label class="check" id="pw-show-row"><input type="checkbox" id="pw-show" autocomplete="off"> Visa lösenord</label>
+      <div class="pw-preview-row"><p class="pw-preview" id="pw-preview" aria-hidden="true" hidden></p><button type="button" class="btn-text" id="pw-copy" hidden>Kopiera</button></div>
+      <button type="button" class="btn-text" id="pw-gen">Skapa slumpmässigt lösenord</button>
+      <p class="muted small" id="pw-note" role="status"></p>
       <p class="muted small" id="pw-hint">Minst 8 tecken med stor och liten bokstav, siffra och specialtecken. Välj inte ett vanligt ord + årtal.</p>
       <p class="muted" id="pw-warn"></p>
       <p class="import-error small" id="pw-error" role="alert"></p>
       <div class="dlg-actions">
         <button type="button" class="btn-text" id="pw-cancel">Avbryt</button>
-        <button type="button" class="btn-filled" id="pw-ok">Spara krypterad</button>
+        <button type="submit" class="btn-filled" id="pw-ok">Spara krypterad</button>
       </div>
     </form>
   </dialog>

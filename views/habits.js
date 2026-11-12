@@ -21,7 +21,7 @@ export function habitDetails(id) {
     e.outcome === 'cheat' ? el('div', { class: 'chips hab-chips', role: 'group', 'aria-label': 'Orsak' }, S.state.settings.reasons.map((r) =>
       el('button', { class: 'chip' + (e.reason === r.id ? ' on' : ''), 'data-act': 'reason', 'data-id': id, 'data-val': r.id, 'aria-pressed': String(e.reason === r.id), text: r.name }))) : null,
     e.outcome === 'cheat' ? levelList(id, quickGroup(e.reason, id.startsWith('extra-'))) : null,
-    e.outcome === 'cheat' || e.note ? el('input', { type: 'text', class: 'hab-note', maxlength: 140, placeholder: 'Anteckning (valfritt)', value: e.note || '', 'data-act': 'note', 'data-id': id, 'aria-label': 'Anteckning' }) : null,
+    e.outcome === 'cheat' || e.note ? el('input', { type: 'text', class: 'hab-note', maxlength: 140, placeholder: 'Anteckning (valfritt)', value: e.note || '', 'data-act': 'note', 'data-id': id, 'data-day': S.current, 'aria-label': 'Anteckning' }) : null,
   ];
 }
 
@@ -50,7 +50,7 @@ export function extraCards() {
           text: `${lv.map((p) => quickById(p.ref).label).join(', ')} ≈ ${kcal(lv.reduce((a, p) => a + p.n[0], 0))}` }) : null,
         el('button', { class: 'icon sm danger', 'data-act': 'remove', 'data-id': k, 'aria-label': 'Ta bort extra', text: '✕' })),
       done ? (e.note ? el('p', { class: 'muted small', text: e.note }) : null)
-        : [levelList(k, 'snack'), el('input', { type: 'text', class: 'hab-note', maxlength: 140, placeholder: 'Anteckning (valfritt)', value: e.note || '', 'data-act': 'note', 'data-id': k, 'aria-label': 'Anteckning' })]);
+        : [levelList(k, 'snack'), el('input', { type: 'text', class: 'hab-note', maxlength: 140, placeholder: 'Anteckning (valfritt)', value: e.note || '', 'data-act': 'note', 'data-id': k, 'data-day': S.current, 'aria-label': 'Anteckning' })]);
   });
 }
 

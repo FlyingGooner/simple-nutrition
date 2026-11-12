@@ -531,3 +531,35 @@ T.test('vald vara förifylls med senaste mängd utan tangentbord (F1)', async ()
   T.ok(/Senast: 330 g/.test(q('.pick').textContent), 'Senast-text');
   q('[data-act="addclose"]').click(); await T.wait();
 });
+
+// v0.12.0: password generator, colour preview, password-manager fields.
+T.test('backup: slumpat lösenord, förhandsvisning och fält för lösenordshanterare', async () => {
+  const $id = (id) => document.getElementById(id);
+  for (let i = 0; i < 200; i++) {
+    const p = Backup.generatePassword();
+    T.ok(/^([A-Za-z2-9]{4}-){3}[A-Za-z2-9]{4}$/.test(p) && !/[0Oo1Il]/.test(p) && !Backup.checkPassword(p), 'ogiltigt: ' + p);
+  }
+  const done = Backup.askPassword('export');
+  T.eq([$id('pw-user').value, $id('pw-1').name, $id('pw-2').autocomplete, $id('pw-ok').type], ['Simple nutrition backup', 'password', 'new-password', 'submit']);
+  T.ok($id('pw-preview').hidden, 'ingen förhandsvisning när lösenordet är dolt');
+  $id('pw-gen').click();
+  const pwd = $id('pw-1').value;
+  T.ok(pwd && pwd === $id('pw-2').value && $id('pw-show').checked, 'båda fälten ifyllda och synliga');
+  T.eq([$id('pw-preview').textContent, $id('pw-preview').children.length], [pwd, 19]);
+  T.eq($id('pw-preview').querySelectorAll('.pw-special').length, 3);
+  $id('pw-ok').click();
+  T.eq((await done)?.pwd, pwd);
+  T.eq([$id('pw-1').value, $id('pw-preview').children.length], ['', 0], 'fält och förhandsvisning töms');
+  const imp = Backup.askPassword('import');
+  T.ok($id('pw-2-row').hidden && $id('pw-gen').hidden && $id('pw-1').autocomplete === 'current-password', 'importläge');
+  $id('pw-cancel').click();
+  T.eq(await imp, null);
+});
+T.test('Min plan sparas medan man skriver, högst 300 tecken', async () => {
+  await tab('settings');
+  const t = q('#plan-text');
+  t.value = 'Autosparad plan';
+  t.dispatchEvent(new Event('input', { bubbles: true }));
+  await T.until(() => stored().settings.planText === 'Autosparad plan', 'planen sparades inte');
+  T.eq(t.maxLength, 300);
+});
