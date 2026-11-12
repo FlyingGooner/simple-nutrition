@@ -147,6 +147,7 @@ Nyckeln i `habits` är måltidens id (`meals`) eller `extra-<tid>`. Valideras me
 - Dialog "Lägga till data från Följ planen?" med summering, sedan Ångra.
 
 ## Snabbval och fusk i kcal (v0.9, beslut 2026-11-11)
+- v0.13.7: Extra fusk kan också få vara/rätt från samma Lägg till-meny som måltiderna (`+ Välj vara eller rätt`, post med `m: extra-<n>`). Kortet visar nivå och varor med kcal; tas extrat bort följer alla dess poster med.
 Snabba uppskattningar när man inte vet exakt – samma idé som Utemat (F3), utökad.
 
 **1. Lägg till → fliken Snabbval** (ersätter fliken Utemat): flikarna blir **Senaste · Varor · Rätter · Snabbval**. Överst en växel **Hemmagjort | Utemat** (kommer ihåg senaste val). Varje rad: nivå, exempel och ≈ kcal; ett tryck loggar (som i dag).

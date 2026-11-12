@@ -1,6 +1,6 @@
 // Vanor och träning i Idag (porterat från follow-diet-tracker/views/today.js). Rendering via el() only.
 import { OUTCOMES } from '../fdt-store.js';
-import { weekStart, QUICK_ADD, quickGroup, quickById } from '../store.js';
+import { weekStart, QUICK_ADD, quickGroup, quickById, postN } from '../store.js';
 import { S, el, kcal, reasonName, isCardio, goals, sessionText } from '../ui.js';
 
 export const dayHabits = () => S.state.habits[S.current] || {};
@@ -42,15 +42,20 @@ function levelList(id, g) {
 export function extraCards() {
   return Object.keys(dayHabits()).filter((k) => k.startsWith('extra-')).map((k) => {
     const e = dayHabits()[k];
-    const lv = (S.state.log[S.current] || []).filter((p) => p.m === k && quickById(p.ref));
+    // v0.13.7: nivå (q:) eller vald vara/rätt från samma meny som maten
+    const lv = (S.state.log[S.current] || []).filter((p) => p.m === k);
     const done = lv.length > 0 && S.xopen !== k;
+    const label = (p) => quickById(p.ref)?.label ?? p.name;
     return el('section', { class: 'card meal extra-card', 'aria-label': 'Extra fusk' },
       el('div', { class: 'meal-head' }, el('span', { class: 'meal-name', text: '🍰 Extra' }),
         done ? el('button', { class: 'link small', 'data-act': 'xopen', 'data-id': k, 'aria-label': 'Ändra extra',
-          text: `${lv.map((p) => quickById(p.ref).label).join(', ')} ≈ ${kcal(lv.reduce((a, p) => a + p.n[0], 0))}` }) : null,
+          text: `${lv.map(label).join(', ')} ≈ ${kcal(lv.reduce((a, p) => a + postN(p)[0], 0))}` }) : null,
         el('button', { class: 'icon sm danger', 'data-act': 'remove', 'data-id': k, 'aria-label': 'Ta bort extra', text: '✕' })),
       done ? (e.note ? el('p', { class: 'muted small', text: e.note }) : null)
-        : [levelList(k, 'snack'), el('input', { type: 'text', class: 'hab-note', maxlength: 140, placeholder: 'Anteckning (valfritt)', value: e.note || '', 'data-act': 'note', 'data-id': k, 'data-day': S.current, 'aria-label': 'Anteckning' })]);
+        : [levelList(k, 'snack'),
+          lv.filter((p) => !quickById(p.ref)).map((p) => el('p', { class: 'muted small', text: `✓ ${p.name} · ${kcal(postN(p)[0])} kcal` })),
+          el('button', { class: 'link', 'data-act': 'addopen', 'data-id': k, text: '+ Välj vara eller rätt' }),
+          el('input', { type: 'text', class: 'hab-note', maxlength: 140, placeholder: 'Anteckning (valfritt)', value: e.note || '', 'data-act': 'note', 'data-id': k, 'data-day': S.current, 'aria-label': 'Anteckning' })]);
   });
 }
 

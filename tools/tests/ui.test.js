@@ -514,6 +514,22 @@ T.test('extra fusk: snacksnivå direkt utan orsak, fälls ihop, följer med när
   q(`[data-act="remove"][data-id="${key}"]`).click(); await T.wait();
   T.ok(!(stored().log[S_TODAY] || []).some((p) => p.m === key), 'post borta');
 });
+T.test('extra: välj vara från samma meny som maten, syns i kortet, tas bort med extrat (v0.13.7)', async () => {
+  await tab('today');
+  q('[data-act="extra"]').click(); await T.wait();
+  const key = Object.keys(stored().habits[S_TODAY]).filter((k) => k.startsWith('extra-')).sort().at(-1);
+  q(`[data-act="addopen"][data-id="${key}"]`).click(); await T.wait();
+  T.eq(q('.add-title').textContent, 'Lägg till i Extra');
+  q('[data-act="addtab"][data-val="foods"]').click(); await T.wait();
+  type(q('#add-q'), 'kanelbulle'); await T.wait();
+  q('#add-results [data-act="pick"]').click(); await T.wait();
+  q('[data-act="addsave"]').click(); await T.wait();
+  const p = stored().log[S_TODAY].find((x) => x.m === key);
+  T.eq([p?.ref, p?.g], ['p:fika', 80]);
+  T.ok(/Fika ≈ 280/.test(q(`[data-act="xopen"][data-id="${key}"]`)?.textContent || ''), 'ihopfällt med vara och kcal');
+  q(`[data-act="remove"][data-id="${key}"]`).click(); await T.wait();
+  T.ok(!(stored().log[S_TODAY] || []).some((x) => x.m === key), 'varan togs bort med extrat');
+});
 T.test('vald vara förifylls med senaste mängd utan tangentbord (F1)', async () => {
   await tab('today');
   q('[data-act="addopen"]').click(); await T.wait();

@@ -19,7 +19,7 @@ export const setOpen = new Set();   // Inställningar: open sections (data-sec),
 export const fmtNum = (n, d = 1) => n.toLocaleString('sv-SE', { maximumFractionDigits: d });
 export const kcal = (n) => Math.round(n).toLocaleString('sv-SE');
 export const shortDate = (k) => parseKey(k).toLocaleDateString('sv-SE', { day: 'numeric', month: 'numeric' });
-export const mealName = (id) => S.state.meals.find((m) => m.id === id)?.name ?? 'Övrigt';
+export const mealName = (id) => S.state.meals.find((m) => m.id === id)?.name ?? (String(id).startsWith('extra-') ? 'Extra' : 'Övrigt');
 export const parseNum = (t) => { const v = parseFloat(String(t ?? '').replace(',', '.').trim()); return Number.isFinite(v) ? v : NaN; };
 
 /* ---------- DOM helpers (textContent + setAttribute only – Trusted Types, same as the other apps) ---------- */

@@ -107,7 +107,7 @@ function addPost(p) {
   if (l.length >= 100) { snackbar('Max 100 poster per dag', null, null, 3000); return false; }
   l.push(p); return true;
 }
-function logged(name) { S.add = null; buzz(); persist(); render(); snackbar(`${name} lades till`, null, null, 2500); }
+function logged(name) { if (String(S.add?.meal).startsWith('extra-')) S.xopen = null; S.add = null; buzz(); persist(); render(); snackbar(`${name} lades till`, null, null, 2500); }
 function openAdd(target, meal) {
   const tab = target === 'dish' ? 'foods' : S.lastTab || (Object.keys(S.state.log).length ? 'recent' : 'foods');
   S.add = { target, meal, tab, q: '', all: false, pick: null, dpick: null, alias: false };
@@ -228,7 +228,7 @@ app.addEventListener('click', (ev) => {
     case 'remove': {
       const day = S.state.habits[S.current];
       if (!day?.[id]) return;
-      withUndo('Extra fusk togs bort', () => { delete day[id]; if (!Object.keys(day).length) delete S.state.habits[S.current]; dropLevels(S.state, S.current, id, null); });
+      withUndo('Extra fusk togs bort', () => { delete day[id]; if (!Object.keys(day).length) delete S.state.habits[S.current]; dropLevels(S.state, S.current, id, null); S.state.log[S.current] = dayPosts().filter((p) => p.m !== id); cleanupDay(); });
       return;
     }
     case 'extra': {
