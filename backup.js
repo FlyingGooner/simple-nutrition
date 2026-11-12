@@ -1,4 +1,4 @@
-﻿// Backup as a text file (U5, see ../.claude/agents/granskning.md). Classic script: sets self.Backup.
+// Backup as a text file (U5, see ../.claude/agents/granskning.md). Classic script: sets self.Backup.
 // Identical copy in every U5 project – the original is template/backup.js, spread with tools/sync-shared.ps1.
 // Do not edit a project's copy; check.ps1 compares the hash. No network, no dependencies.
 // The file holds exactly the app's export text, so it can always be opened, copied and pasted into the text import.
