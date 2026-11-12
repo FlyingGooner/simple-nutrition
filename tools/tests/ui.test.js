@@ -57,7 +57,7 @@ T.test('sök vara, välj variant och mått, kcal räknas och sparas', () => {
   T.ok(q('#add-results [data-act="pick"]'), 'träff');
   T.eq(q('#add-results .food-row .post-name').firstChild.textContent, 'Mjölk');
   q('#add-results [data-act="pick"]').click();
-  q('[data-act="variant"][data-val="1"]').click();
+  q('[data-act="variant"][data-val="0"]').click();
   T.eq(q('[data-act="unit"].on').textContent, 'dl');
   type(q('#amount'), '2');
   T.ok(/^2 dl \(206 g\) · 97 kcal$/.test(q('#pick-sum').textContent), q('#pick-sum').textContent);

@@ -1,41 +1,41 @@
 vara;sokord;etikett;exempel;lmv_namn
-Mjölk;mjölk,lättmjölk,mellanmjölk,standardmjölk;Lätt 0,5 %;;Lättmjölk fett 0,5% berikad
-Mjölk;;Mellan 1,5 %;;Mellanmjölk fett 1,5% berikad
+Mjölk;mjölk,lättmjölk,mellanmjölk,standardmjölk;Mellan 1,5 %;;Mellanmjölk fett 1,5% berikad
+Mjölk;;Lätt 0,5 %;;Lättmjölk fett 0,5% berikad
 Mjölk;;Standard 3 %;;Mjölk fett 3% berikad
-Filmjölk;fil,filmjölk,lättfil,mellanfil;Lätt 0,5 %;;Lättfil fett 0,5% berikad
+Filmjölk;fil,filmjölk,lättfil,mellanfil;Standard 3 %;;Filmjölk fett 3% berikad
+Filmjölk;;Lätt 0,5 %;;Lättfil fett 0,5% berikad
 Filmjölk;;Mellan 1,5 %;;Mellanfil fett 1,5% berikad
-Filmjölk;;Standard 3 %;;Filmjölk fett 3% berikad
-Yoghurt;yoghurt,lättyoghurt,turkisk yoghurt,grekisk yoghurt;Lätt 0,5 %;;Yoghurt naturell lätt fett 0,5% berikad
-Yoghurt;;Standard 3 %;;Yoghurt naturell fett 3% berikad
+Yoghurt;yoghurt,lättyoghurt,turkisk yoghurt,grekisk yoghurt;Standard 3 %;;Yoghurt naturell fett 3% berikad
+Yoghurt;;Lätt 0,5 %;;Yoghurt naturell lätt fett 0,5% berikad
 Grädde;grädde,matlagningsgrädde,vispgrädde,mellangrädde;Matlagning 15 %;;Matlagningsgrädde fett 15%
 Grädde;;Mellan 27 %;;Mellangrädde fett 27%
 Grädde;;Visp 40 %;;Vispgrädde fett 40%
-Crème fraiche;creme fraiche,crème fraiche,fraiche,gräddfil;Gräddfil 12 %;;Gräddfil fett 12%
+Crème fraiche;creme fraiche,crème fraiche,fraiche,gräddfil;Normal 34 %;;Crème fraiche fett 34%
+Crème fraiche;;Gräddfil 12 %;;Gräddfil fett 12%
 Crème fraiche;;Lätt 13 %;;Crème fraiche lätt fett 13%
-Crème fraiche;;Normal 34 %;;Crème fraiche fett 34%
 Kvarg;kvarg;Mager 0,2 %;;Kvarg naturell fett 0,2%
 Kvarg;;Fet 10 %;;Kvarg färskost fett 10%
-Keso;keso,cottage cheese,grynig färskost;Mager 1,5 %;;=1,5|Färskost cottage cheese naturell fett 4%
-Keso;;Normal 4 %;;Färskost cottage cheese naturell fett 4%
-Färskost;färskost,cream cheese;Lätt 5 %;;Färskost cream cheese extra light fett 5%
+Keso;keso,cottage cheese,grynig färskost;Normal 4 %;;Färskost cottage cheese naturell fett 4%
+Keso;;Mager 1,5 %;;=1,5|Färskost cottage cheese naturell fett 4%
+Färskost;färskost,cream cheese;Normal 27 %;;Färskost cream cheese fett 27%
+Färskost;;Lätt 5 %;;Färskost cream cheese extra light fett 5%
 Färskost;;Mellan 15 %;;Färskost cream cheese lätt fett 15%
-Färskost;;Normal 27 %;;Färskost cream cheese fett 27%
-Ost;ost,hårdost,hushållsost,präst,herrgård,grevé,mozzarella;Lätt 17 %;;Ost hårdost fett 17%
-Ost;;Normal 28 %;;Ost hårdost fett 28%
+Ost;ost,hårdost,hushållsost,präst,herrgård,grevé,mozzarella;Normal 28 %;;Ost hårdost fett 28%
+Ost;;Lätt 17 %;;Ost hårdost fett 17%
 Ost;;Fet 31 %;;Ost hårdost fett 31%
 Ost;;Mozzarella;;~^Ost mozzarella
-Smörgåsfett;smör,smörgåsfett,margarin,bordsmargarin,matfett,lättmargarin;Lätt 40 %;typ Bregott mindre;Matfettsblandning fett 40% berikad typ Bregott mindre
+Smörgåsfett;smör,smörgåsfett,margarin,bordsmargarin,matfett,lättmargarin;Normal 75 %;typ Bregott;Matfettsblandning fett 75% berikad
+Smörgåsfett;;Lätt 40 %;typ Bregott mindre;Matfettsblandning fett 40% berikad typ Bregott mindre
 Smörgåsfett;;Mellan 60 %;;Matfettsblandning fett 60% berikad
-Smörgåsfett;;Normal 75 %;typ Bregott;Matfettsblandning fett 75% berikad
 Smörgåsfett;;Smör 80 %;;Smör fett 80%
 Ägg;ägg;Rått/kokt;;Ägg rått
 Ägg;;Stekt;;Ägg stekt
-Nötfärs;nötfärs,köttfärs,färs;Mager 5 %;;=5|Nöt innanlår rå|Nöt färs rå fett 10%
-Nötfärs;;Normal 12 %;;=12|Nöt färs rå fett 10%|Nöt färs rå fett 15%
+Nötfärs;nötfärs,köttfärs,färs;Normal 12 %;;=12|Nöt färs rå fett 10%|Nöt färs rå fett 15%
+Nötfärs;;Mager 5 %;;=5|Nöt innanlår rå|Nöt färs rå fett 10%
 Blandfärs;blandfärs,köttfärs,färs;Nöt 70 / gris 30;;Blandfärs rå nöt 70% gris 30%
 Blandfärs;;Nöt 50 / gris 50;;Blandfärs rå nöt 50% gris 50%
-Fläskfärs;fläskfärs,grisfärs,färs;Mager 10 %;;=10|Gris färs rå fett 8%|Gris färs rå fett 15%
-Fläskfärs;;Normal 15 %;;Gris färs rå fett 15%
+Fläskfärs;fläskfärs,grisfärs,färs;Normal 15 %;;Gris färs rå fett 15%
+Fläskfärs;;Mager 10 %;;=10|Gris färs rå fett 8%|Gris färs rå fett 15%
 Kyckling;kyckling,kycklingfilé,kycklinglår,kycklingbröst;Filé;;~^Kyckling bröstfilé rå u\. skinn
 Kyckling;;Lårfilé (utan skinn);;~^Kyckling lår.* rå u\. skinn
 Kyckling;;Kött utan skinn;;Kyckling kött rå u. skinn
@@ -47,8 +47,8 @@ Nötkött;;Entrecôte (med fettkant);;=15|Nöt entrecôte rå
 Fläskkött;fläsk,fläskkött,karré,kotlett,fläskfilé;Fläskfilé;;Gris fläskfilé rå
 Fläskkött;;Kotlett/karré (med fettkant);;Gris fläskkotlett rå fettkant 5 mm
 Fläskkött;;Sidfläsk;;~^Gris sidfläsk.* rå
-Bacon;bacon;Rått;;Gris bacon rå
-Bacon;;Stekt;;Gris bacon stekt
+Bacon;bacon;Stekt;;Gris bacon stekt
+Bacon;;Rått;;Gris bacon rå
 Korv;korv,prinskorv,grillkorv,wienerkorv,chorizo;Falukorv;;~^Korv falu
 Korv;;Grillkorv/wiener;;~^Korv (grill|wiener)
 Korv;;Prinskorv;;~^Korv prins
@@ -71,13 +71,13 @@ Havregryn;;Gröt (kokt på vatten);;Havregrynsgröt fullkorn
 Flingor;flingor,müsli,granola,cornflakes;Müsli osötad;;~^Frukostflingor flingblandning fullkorn typ basmüsli
 Flingor;;Granola;;Frukostflingor granola m. frukt nötter
 Flingor;;Cornflakes;;~^Frukostflingor majs
-Ris;ris,jasminris,basmatiris,fullkornsris;Okokt;jasmin/basmati;Ris jasmin okokt
-Ris;;Kokt;;Ris jasmin kokt m. salt
-Pasta;pasta,makaroner,spagetti,spaghetti,penne;Okokt;;Pasta okokt
-Pasta;;Kokt;;Pasta kokt u. salt
+Ris;ris,jasminris,basmatiris,fullkornsris;Kokt;;Ris jasmin kokt m. salt
+Ris;;Okokt;jasmin/basmati;Ris jasmin okokt
+Pasta;pasta,makaroner,spagetti,spaghetti,penne;Kokt;;Pasta kokt u. salt
+Pasta;;Okokt;;Pasta okokt
 Pasta;;Fullkorn okokt;;Pasta fullkorn okokt
-Potatis;potatis,pommes;Rå;;Potatis höst rå
-Potatis;;Kokt;;Potatis höst kokt m. salt
+Potatis;potatis,pommes;Kokt;;Potatis höst kokt m. salt
+Potatis;;Rå;;Potatis höst rå
 Potatis;;Ugnspommes;;~^Pommes frites.*ugn
 Vetemjöl;mjöl,vetemjöl,dinkel;Vetemjöl;;Vetemjöl
 Bönor och linser;bönor,linser,kikärtor,kidneybönor,svarta bönor;Kikärtor kokta;;~^Kikärt.*(kokt|konserv)

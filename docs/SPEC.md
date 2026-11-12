@@ -258,6 +258,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 - Rådata `data/indata/livsmedelsverket.json` hämtades en gång 2026-11-09. Ny hämtning bara vid ny version; ett permanent hämtverktyg kräver förhandsprövning av `granskning`.
 - `tools/build-data.ps1` (inga nätverksanrop) bygger `data/foods.js` från rådatan, `data/indata/varugrupper.csv` (kärnvaror, varianter, sökord) och `data/indata/matt.csv` (mått).
 - Varianter = vanliga butiksalternativ, högst 5. Saknas en hos Livsmedelsverket beräknas den (bara kött/mejeri): `=fett|A|B` linjärt, `=fett|A` fettjustering (9 kcal/g). Märks `calc` och visas "beräknad från Livsmedelsverkets data".
+- Förvald variant = det vanligaste alternativet (beslut 2026-11-12): t.ex. Mellanmjölk, Normal 75 % (Bregott), ost 28 %, kokt potatis/ris/pasta. Ordningen styrs av `varugrupper.csv` (första raden per vara bär sökorden); scenarier i `app-data.ps1` låser förvalen.
 - Kvalitet: `tools/test-maltider.ps1` (30 vardagsrätter + en dag, `-Fil`) och `tools/test-data.ps1` (mot Livsmedelsverkets färdigrätter).
 - Appen gör inga nätverksanrop; all användardata ligger i `localStorage`.
 

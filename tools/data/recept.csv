@@ -7,16 +7,16 @@ Pizza hemlagad;vetemjöl;;5;dl;900;lv:759, p:pizza;20
 Pizza hemlagad;-;;300;g;;;
 Pizza hemlagad;olja;;30;g;;;
 Pizza hemlagad;krossade tomater;;200;g;;;
-Pizza hemlagad;ost;;200;g;;;
+Pizza hemlagad;ost;Mozzarella;200;g;;;
 Pizza hemlagad;skinka;;150;g;;;
 Pizza hemlagad;champinjoner;;150;g;;;
-Köttbullar;blandfärs;;500;g;680;lv:1106, lv:1102, p:kottbullar;20
+Köttbullar;blandfärs;;500;g;680;lv:1106, lv:1102, p:kottbullar;25
 Köttbullar;ägg;;1;st;;;
 Köttbullar;ströbröd;;1;dl;;;
 Köttbullar;mjölk;Mellan;1;dl;;;
 Köttbullar;lök;;50;g;;;
 Köttbullar;smör;;20;g;;;
-Spaghetti med köttfärssås;spaghetti;;300;g;1700;lv:858, p:spaghetti-kottfarssas;15
+Spaghetti med köttfärssås;spaghetti;Okokt;300;g;1700;lv:858, p:spaghetti-kottfarssas;15
 Spaghetti med köttfärssås;-;;500;g;;;
 Spaghetti med köttfärssås;nötfärs;;500;g;;;
 Spaghetti med köttfärssås;krossade tomater;;400;g;;;
