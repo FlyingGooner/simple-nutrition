@@ -189,7 +189,3 @@ Glass;;Mjukglass;;~^Glass mjuk|^Mjukglass
 Kaffe och te;kaffe,te;Bryggkaffe;;~^Kaffe bryggt|^Kaffe.*bryggkaffe
 Kaffe och te;;Latte;;~^(Kaffe latte|Caffe latte|Kaffedrink latte)
 Saft;saft;Saft utspädd;;~^Saft.*(drickf|utspädd)
-Öl och vin;rödvin,vitt vin;Starköl 5 %;;Öl starköl el. exportöl vol. % 5,4
-Öl och vin;;Folköl 3,5 %;;Öl pilsner folköl vol. % 3,5
-Öl och vin;;Rött vin;;Vin rött vol. % 14
-Öl och vin;;Vitt vin;;Vin vitt vol. % 12

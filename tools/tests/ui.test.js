@@ -579,19 +579,21 @@ T.test('Min plan sparas medan man skriver, högst 300 tecken', async () => {
   await T.until(() => stored().settings.planText === 'Autosparad plan', 'planen sparades inte');
   T.eq(t.maxLength, 300);
 });
-T.test('schabloner: en rad per livsmedel, först, döljer LV-rader', async () => {
+T.test('schabloner: en rad per livsmedel, först, LV-rader visas också', async () => {
   await tab('today');
   q('[data-act="addopen"][data-id="m1"]').click();
   foods();
   const names = () => [...app.querySelectorAll('#add-results .food-row .post-name')].map((n) => n.firstChild.textContent);
-  type(q('#add-q'), 'pannkaka'); T.eq(names(), ['Pannkaka']); T.ok(!q('[data-act="showall"]'), 'ingen Visa fler');
+  const first = (n) => { const a = names(); T.eq(a[0], n, a.join()); T.eq(a.filter((x) => x === n).length, 1, 'en rad: ' + a); };
+  type(q('#add-q'), 'pannkaka'); first('Pannkaka');
   T.ok(/kcal\/st$/.test(q('#add-results .post-kcal').textContent), q('#add-results .post-kcal').textContent);
-  type(q('#add-q'), 'proteinbar'); T.eq(names(), ['Proteinbar']);
-  type(q('#add-q'), 'pizza'); T.eq(names(), ['Pizza']); type(q('#add-q'), 'sushi'); T.eq(names(), ['Sushi']);
+  type(q('#add-q'), 'proteinbar'); first('Proteinbar');
+  type(q('#add-q'), 'pizza'); first('Pizza'); type(q('#add-q'), 'sushi'); first('Sushi');
   type(q('#add-q'), 'ugnspannkaka'); T.ok(names().length >= 1 && !names().includes('Pannkaka'), 'LV-raden: ' + names());
-  type(q('#add-q'), 'öl'); T.eq(names(), ['Öl/vin']);
-  type(q('#add-q'), 'cola'); T.eq(names(), ['Läsk/energidryck'], 'cola träffar inte gamla Läsk');
-  type(q('#add-q'), 'läsk'); T.eq(names(), ['Läsk/energidryck']);
+  type(q('#add-q'), 'ägg'); T.ok(names()[0] === 'Ägg' && names().filter((x) => x === 'Ägg').length === 2, 'schablon + LV-ägg: ' + names());
+  type(q('#add-q'), 'öl'); first('Öl/vin'); T.ok(!names().includes('Öl och vin'), 'gamla Öl och vin borta');
+  type(q('#add-q'), 'cola'); first('Läsk/energidryck');
+  type(q('#add-q'), 'läsk'); first('Läsk/energidryck');
   q('#add-results [data-act="pick"]').click();
   T.eq(app.querySelectorAll('[data-act="variant"]').length, 2, 'Socker/Sockerfri');
   T.eq([q('#amount').value, q('[data-act="unit"].on').textContent], ['1', 'st']);

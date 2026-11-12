@@ -91,7 +91,6 @@ const FOODS_CORE = [
 {name:"Glass",q:["glass","vaniljglass","gräddglass"],v:[{l:"Gräddglass",id:"1689",n:[196,3.2,25.1,9.2],u:["kula",50]},{l:"Mjukglass",id:"1703",n:[154,3.1,19.7,7],u:["st",100]}]},
 {name:"Kaffe och te",q:["kaffe","te"],v:[{l:"Bryggkaffe",id:"1957",n:[2,0,0.5,0],u:["kopp",150],d:1},{l:"Latte",id:"2816",n:[47,2.7,3.9,2.3],u:["kopp",250],d:1}]},
 {name:"Saft",q:["saft"],v:[{l:"Saft utspädd",id:"1820",n:[36,0,8.8,0],u:["glas",250],d:1}]},
-{name:"Öl och vin",q:["rödvin","vitt vin"],v:[{l:"Starköl 5 %",id:"1906",n:[42,0,3,0],u:["burk",500]},{l:"Folköl 3,5 %",id:"1902",n:[40,0.4,4.6,0],u:["burk",330]},{l:"Rött vin",id:"1907",n:[79,0,1,0],u:["glas",150],d:0.99},{l:"Vitt vin",id:"1908",n:[70,0,1,0],u:["glas",150],d:0.99}]},
 ];
 const FOODS_MORE = [
 [1,"Nöt talg",884,0,0,100],
@@ -867,9 +866,13 @@ const FOODS_MORE = [
 [1899,"Sorbitol m. sackarin",235,0,98.5,0],
 [1900,"Svagdricka vol. % 2,3",29,0.2,3.8,0],
 [1901,"Öl lättöl vol. % 2,3",29,0.2,3.8,0],
+[1902,"Öl pilsner folköl vol. % 3,5",40,0.4,4.6,0],
 [1903,"Cider vol. % 1",47,0,10.1,0],
 [1904,"Vin vitt vol. % 1",17,0,2.8,0],
 [1905,"Vin rött el. rosé vol. % 1",17,0,2.8,0],
+[1906,"Öl starköl el. exportöl vol. % 5,4",42,0,3,0],
+[1907,"Vin rött vol. % 14",79,0,1,0],
+[1908,"Vin vitt vol. % 12",70,0,1,0],
 [1909,"Vin vitt el. rhenvin vol. % 10",71,0.1,3.8,0],
 [1912,"Glögg vin vol. % 10",124,0,17,0],
 [1914,"Starkvin vol. % 18 typ Madeira",129,0,7.9,0],

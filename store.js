@@ -235,12 +235,11 @@ export function searchFoods(state, text, all = false, max = 30) {
   const { core, products, more } = index();
   const rank = (list) => list.map((f) => [score(f, q), f]).filter(([s]) => s > 0)
     .sort((a, b) => b[0] - a[0] || a[1].name.length - b[1].name.length).map(([, f]) => f);
-  // Ordning: egna sökord och produkter, schablon, LV. Exakt sökord på en schablon döljer LV (en schablon per livsmedel).
-  const exact = products.some((f) => f.words.includes(q));
-  const first = [...rank(ownFoods(state)), ...rank(products), ...(exact ? [] : rank(core))];
+  // Ordning: egna sökord och produkter, schablon, LV. Schablon och LV visas båda; schablonen först.
+  const first = [...rank(ownFoods(state)), ...rank(products), ...rank(core)];
   const alias = state.aliases[q] ? findRef(state, state.aliases[q]) : null;
   if (alias) { const i = first.indexOf(alias); if (i >= 0) first.splice(i, 1); first.unshift(alias); }
-  const rest = exact ? [] : rank(more);
+  const rest = rank(more);
   if (all || !first.length) return { hits: [...first, ...rest].slice(0, max), more: 0 };
   return { hits: first.slice(0, max), more: rest.length };
 }
