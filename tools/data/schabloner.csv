@@ -1,1 +1,38 @@
 ﻿id;typ;namn;val;undertext;sökord;enhet;g_per_enhet;densitet;kcal;P;K;F;källa
+lask-socker;produkt;Läsk/energidryck;Socker;t.ex. läsk, energidryck, iste · uppskattning;energidryck, läskedryck, iste;st;330;1,04;42;0;10,5;0;uppskattning
+lask-sockerfri;produkt;Läsk/energidryck;Sockerfri;t.ex. läsk, energidryck, iste · uppskattning;energidryck, läskedryck, iste;st;330;1,0;0,8;0;0,2;0;uppskattning
+proteindryck;produkt;Proteindryck/drickyoghurt;;t.ex. drickkvarg, drickyoghurt, proteinshake · uppskattning;proteindryck, drickyoghurt, drickkvarg, proteinshake;st;250;1,04;60;8;5,5;0,6;uppskattning
+proteinbar;produkt;Proteinbar;;t.ex. proteinbar, energibar · uppskattning;proteinbar, energibar;st;55;;370;30;35;12;uppskattning
+proteinpudding;produkt;Proteinpudding;;t.ex. proteinpudding, proteinkräm · uppskattning;proteinpudding, proteinkräm;st;200;;75;10;7;0,9;uppskattning
+proteinpulver;produkt;Proteinpulver;;1 skopa · t.ex. vassle, kasein, vegansk · uppskattning;proteinpulver, vassleprotein, skopa;st;30;;380;75;8;5;uppskattning
+smaksatt-kvarg;produkt;Smaksatt kvarg/yoghurt;;t.ex. vaniljkvarg, fruktyoghurt · uppskattning;smaksatt kvarg, vaniljkvarg, fruktyoghurt, smaksatt yoghurt;st;200;;80;7;10;1,3;uppskattning
+fardigsallad;produkt;Färdigsallad;;t.ex. kycklingsallad, pastasallad · uppskattning;färdigsallad, matsallad, pastasallad, kycklingsallad;st;350;;130;8;10;6,5;uppskattning
+fardigratt;produkt;Färdigrätt;;t.ex. mikromat, matlåda · uppskattning;färdigrätt, mikromat, matlåda;st;400;;125;6;14;5;uppskattning
+wrap-smorgas;produkt;Wrap/smörgås;;t.ex. köpt wrap, baguette, macka · uppskattning;wrap, köpt smörgås, macka;st;200;;230;10;25;10;uppskattning
+snabblunch;produkt;Snabblunch;;t.ex. snabbnudlar, koppnudlar, pasta i kopp · uppskattning;snabblunch, snabbnudlar, koppnudlar;st;75;;450;9;60;19;uppskattning
+soppa-kopt;produkt;Soppa (köpt);;t.ex. tomatsoppa, svampsoppa · uppskattning;köpt soppa, färdig soppa;st;500;1,02;50;2;6;2;uppskattning
+smoothie;produkt;Smoothie;;t.ex. fruktsmoothie, bärsmoothie · uppskattning;smoothie;st;250;1,05;55;0,8;12;0,3;uppskattning
+kaffedryck;produkt;Kaffedryck;;t.ex. latte, cappuccino, iskaffe · uppskattning;kaffedryck, caffe latte, iskaffe;kopp;350;1,03;55;3;6;2;uppskattning
+fika;produkt;Fika;;t.ex. bulle, kaka, wienerbröd · uppskattning;fika, fikabröd, bakelse;st;80;;380;6;50;17;uppskattning
+ol;produkt;Öl/vin;Öl;t.ex. lager, ale, cider · uppskattning;starköl, folköl, lättöl, vinglas;st;330;1,01;43;0,4;3,5;0;uppskattning
+vin;produkt;Öl/vin;Vin;t.ex. rött, vitt, rosé · uppskattning;starköl, folköl, lättöl, vinglas;glas;150;0,99;80;0,1;2,5;0;uppskattning
+pannkaka;rätt;Pannkaka;;uppskattning;pannkaka, pannkakor;st;45;;165;6,7;17,9;7;LV 733 + mellanmjölk (calc)
+artsoppa;rätt;Ärtsoppa;;uppskattning;ärtsoppa;dl;105;1,05;75;5;9;2;uppskattning
+kottbullar;rätt;Köttbullar;;uppskattning;köttbullar, köttbulle;st;15;;230;13;7;17;uppskattning
+lasagne;rätt;Lasagne;;uppskattning;lasagne;bit;300;;150;7;13;7,5;uppskattning
+spaghetti-kottfarssas;rätt;Spaghetti och köttfärssås;;portion · uppskattning;köttfärssås, spaghetti bolognese, bolognese;g;400;;140;7;18;4,5;uppskattning
+chili;rätt;Chili con carne;;portion · uppskattning;chili con carne, chili;g;350;;110;8;8;5;uppskattning
+tacos;rätt;Tacos;;1 taco med fyllning · uppskattning;tacos, taco;st;130;;210;10;18;11;uppskattning
+pyttipanna;rätt;Pyttipanna;;portion · uppskattning;pyttipanna, pytt;g;350;;150;6;14;8;uppskattning
+korv-stroganoff;rätt;Korv stroganoff;;portion · uppskattning;korv stroganoff, stroganoff;g;300;;150;6;5;12;uppskattning
+kycklinggryta;rätt;Kycklinggryta;;portion · uppskattning;kycklinggryta;g;300;;120;11;4;6,5;uppskattning
+fiskpinnar;rätt;Fiskpinnar;;uppskattning;fiskpinne;st;25;;210;12;18;10;uppskattning
+laxfile;rätt;Laxfilé;;uppskattning;ugnslax, laxbit;st;125;;200;20;0;13;uppskattning
+falukorv;rätt;Falukorv;;uppskattning;falukorvskiva, stekt falukorv;skiva;50;;240;10;5;20;uppskattning
+potatismos;rätt;Potatismos;;uppskattning;mos, potatispuré;dl;90;0,9;100;2;13;4,5;uppskattning
+kokt-potatis;rätt;Kokt potatis;;uppskattning;kokt potatis;st;80;;75;2;16;0,1;uppskattning
+kokt-ris;rätt;Kokt ris;;uppskattning;kokt ris;dl;70;0,7;130;2,6;28;0,4;uppskattning
+havregrynsgrot;rätt;Havregrynsgröt;;kokt på vatten · uppskattning;havregrynsgröt;dl;100;1,0;65;2,4;11;1,3;uppskattning
+agg;rätt;Ägg;;uppskattning;kokt ägg, stekt ägg;st;55;;140;12,5;0,5;10;uppskattning
+blodpudding;rätt;Blodpudding;;uppskattning;blodpudding;skiva;40;;190;6;28;6;uppskattning
+raggmunk;rätt;Raggmunk;;uppskattning;raggmunk;st;60;;180;5;18;10;uppskattning
