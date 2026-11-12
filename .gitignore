@@ -2,3 +2,4 @@
 *.log
 dist/
 data/byggt/
+tools/data/jämförelse.csv

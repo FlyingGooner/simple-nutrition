@@ -37,6 +37,7 @@ $codes += Run 'Rätter mot standardvärden' 'test-maltider.ps1'
 $codes += Run 'En hel dag mot standardvärden' 'test-maltider.ps1' @('-Fil', 'test-dag.csv')
 $codes += Run 'Recept mot Livsmedelsverkets rätter' 'test-data.ps1'
 $codes += Run '61 blandade rätter mot standardvärden (bred, ±20 %)' 'test-maltider.ps1' @('-Fil', 'test-ratter50.csv', '-Tolerans', '20')
+$codes += Run 'Schabloner mot referenser (Del 2, tools\data)' 'tests\schabloner.ps1'
 $fail = @($codes | Where-Object { $_ }).Count
 Write-Host "=== Data: $(if ($fail) { "$fail FEL" } else { 'allt ok' })"
 if ($fail) { exit 1 }
