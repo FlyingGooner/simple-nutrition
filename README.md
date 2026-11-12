@@ -32,12 +32,13 @@ Kalorappar drunknar i dubbletter och märkesposter. Här finns bara Livsmedelsve
 | 🔁 **Vanor** | Bocka av dina vanor varje dag och se hur ofta du lyckas. |
 | 🏋️ **Träning** | Logga gympass och kondition mot ett veckomål. |
 | 🥕 **Mat och kalorier** | Livsmedelsverkets råvaror med kcal, protein, kolhydrater och fett – i gram eller mått. |
-| 🍲 **Rätter** | Bygg egna recept och matlådor av råvarorna. |
+| 🍲 **Rätter** | Färdiga vanliga rätter och produkttyper (pizza, kebab, sushi, köttbullar …) kontrollerade mot förpackningsvärden, plus egna recept och matlådor. |
 | 🏷️ **Egna produkter** | Lägg till egna varor och sökord. |
 | ⚖️ **Vikt** | Vikttrend med 7-dagars medel. |
 | 📊 **Vecka, Trend, Historik** | Hur veckan och perioden går mot målet. |
-| 💾 **Backup** | Lösenordskrypterad backup-fil med påminnelse; flytt från Följ planen. |
-| ❓ **Hjälp** | Manual direkt i appen. || 📴 **Offline** | Fungerar utan nät efter första besöket. |
+| 💾 **Backup** | Lösenordskrypterad backup-fil med lösenordsgenerator och påminnelse; flytt från Följ planen. |
+| ❓ **Hjälp** | Manual direkt i appen. |
+| 📴 **Offline** | Fungerar utan nät efter första besöket. |
 | 🌗 **Tema** | Ljust och mörkt, följer telefonens inställning. |
 
 ## Integritet och säkerhet 🔒
