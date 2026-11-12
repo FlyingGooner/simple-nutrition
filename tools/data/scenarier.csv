@@ -1,0 +1,48 @@
+﻿id;sök;val;mängd;enhet;väntad;ref_kcal;tolerans;källa
+läsk-burk;läsk;Socker;1;st;Läsk/energidryck;139;10;Coca-Cola 42 kcal/100 ml × 330
+cola-zero;cola;Sockerfri;1;st;Läsk/energidryck;1;10;Coca-Cola Zero ≈ 0
+läsk-50cl;läsk;Socker;5;dl;Läsk/energidryck;210;10;Coca-Cola 42 × 5 dl
+energidryck;energidryck;Socker;1;st;Läsk/energidryck;152;10;Red Bull 46 kcal/100 ml × 330
+mjölk-2dl;mjölk;Mellan;2;dl;Mjölk;97;5;LV 150, 103 g/dl
+mjölk-glas-ml;mjölk;Mellan;250;ml;Mjölk;121;5;LV 150 × 257 g
+juice-2dl;juice;Apelsin;2;dl;Juice;101;5;LV 641 × 210 g
+proteindryck;proteindryck;;1;st;Proteindryck/drickyoghurt;190;10;ProPud/Barebells 330 ml ≈ 190
+proteinbar;proteinbar;;1;st;Proteinbar;203;10;Barebells 55 g
+proteinpudding;proteinpudding;;1;st;Proteinpudding;146;10;ProPud 200 g × 73
+proteinpulver;proteinpulver;;1;st;Proteinpulver;115;10;Whey 30 g × 385
+kvarg-bagare;vaniljkvarg;;1;st;Smaksatt kvarg/yoghurt;129;20;Lindahls/Yoggi median
+färdigrätt;färdigrätt;;1;st;Färdigrätt;600;20;ICA-sortiment 135–176 kcal/100 g × 400
+färdigsallad;färdigsallad;;1;st;Färdigsallad;576;30;ICA-sortiment 129–213 kcal/100 g
+köpt-soppa;köpt soppa;;1;st;Soppa (köpt);440;15;Pauluns 93 × 475 g
+smoothie-ml;smoothie;;250;ml;Smoothie;143;10;Froosh 57 kcal/100 ml
+öl-burk;öl;Öl;1;st;Öl/vin;142;15;5 % lager ≈ 43 kcal/100 ml
+vin-glas;vin;Vin;1;glas;Öl/vin;115;10;rött vin 76 kcal/100 ml × 150 ml
+fika-bulle;fika;;1;st;Fika;168;30;Pågen kanelbulle 373 × 45 g
+snabbnudlar;snabbnudlar;;1;st;Snabblunch;290;10;Nissin Cup Noodles 64 g
+pannkaka-3st;pannkaka;;3;st;Pannkaka;215;10;LV 733 × 135 g
+pannkaka-gram;pannkaka;;135;g;Pannkaka;215;10;LV 733 × 135 g
+köttbullar-10;köttbullar;;10;st;Köttbullar;266;10;LV 1106 × 150 g
+lasagne-bit;lasagne;;1;bit;Lasagne;400;10;LV 6346 × 300 g
+spaghetti-portion;köttfärssås;;1;portion;Spaghetti och köttfärssås;526;10;LV 858 + recept, median × 400 g
+chili-portion;chili;;1;portion;Chili con carne;385;10;din sats ≈ 2 110 kcal / 5,5
+tacos-3;tacos;;3;st;Tacos;696;20;median LV 1135 (147) och hemmatacos (210) × 390 g
+pytt;pyttipanna;;1;portion;Pyttipanna;586;20;LV 7188/255 median × 350 g
+gröt-3dl;havregrynsgröt;;3;dl;Havregrynsgröt;204;15;LV 2123 × 300 g
+potatis-4;kokt potatis;;4;st;Kokt potatis;227;10;LV 4511 × 320 g
+ris-2dl;kokt ris;;2;dl;Kokt ris;158;10;LV 2514/2515 × 140 g
+ägg-2;ägg;;2;st;Ägg;179;10;median kokt/stekt LV 2205/1233 × 110 g
+falukorv-2;falukorv;;2;skiva;Falukorv;254;10;LV 1487 × 100 g
+lax-filé;laxfilé;;1;st;Laxfilé;290;10;LV 1316 × 125 g
+fiskpinnar-6;fiskpinnar;;6;st;Fiskpinnar;323;10;LV 4602 × 150 g
+pizza-hel;pizza;;1;st;Pizza;1000;10;LV restaurang 238–299 × 400 g
+pizza-halv;pizza;;0,5;st;Pizza;500;10;halv pizza
+pizza-gram;pizza;;300;g;Pizza;750;10;LV median × 300 g
+kebabpizza;kebabpizza;;1;st;Pizza;1000;20;LV 2138/2139
+kebab;kebabrulle;;1;portion;Kebab med bröd/tallrik;940;15;LV 2506/2507 × 400 g
+hamburgare;hamburgare;;1;st;Hamburgare med bröd;518;10;LV 2512 × 200 g
+korv-med-bröd;korv med bröd;;2;st;Korv med bröd;622;10;LV 2509 × 240 g
+sushi-8;sushi;;8;bit;Sushi;370;15;LV 1363–2758 × 240 g
+ost-skiva;ost;;2;skiva;Ost;70;20;hårdost 28 % ≈ 350 kcal/100 g × 20 g
+smör-10g;smör;Smör;10;g;Smörgåsfett;77;5;LV 29 smör 80 %
+bregott-msk;smörgåsfett;Normal;1;msk;Smörgåsfett;94;5;LV 2190 × 14 g
+banan;banan;;1;st;Banan;100;20;LV banan ≈ 95 × 110 g

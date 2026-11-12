@@ -10,6 +10,12 @@
      Två kända avvikelser (vattenförlust vid kokning) räknas inte.
   5. test-maltider.ps1 -Fil test-ratter50.csv: 61 blandade rätter med grova standardvärden, ±20 % (fångar felkopplingar,
      t.ex. lätt kokosmjölk som Normal; 10–16 % skillnad mot Livsmedelsverket för tofu, falafel, sidfläsk m.fl. är normalt).
+  6. testsschabloner.ps1: schabloner mot referenser (median, densitet).
+  7. testspp-data.ps1: loggar som användaren (sökord → träff, mängd + enhet → kcal) mot förpackning/LV (toolsdatascenarier.csv)
+     och bygger rätter av ingredienser mot LV-rätt och schablon (toolsdataecept.csv).
+  6. tests\schabloner.ps1: schabloner mot referenser (median, densitet).
+  7. tests\app-data.ps1: loggar som användaren (sökord -> träff, mängd + enhet -> kcal) mot förpackning/LV
+     (tools\data\scenarier.csv) och bygger rätter av ingredienser mot LV-rätt och schablon (tools\data\recept.csv).
   Skriver en rad per test; -Full visar hela tabellerna. Exit 1 om något test avviker. Inga nätverksanrop.
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File tools\data.ps1
@@ -38,6 +44,7 @@ $codes += Run 'En hel dag mot standardvärden' 'test-maltider.ps1' @('-Fil', 'te
 $codes += Run 'Recept mot Livsmedelsverkets rätter' 'test-data.ps1'
 $codes += Run '61 blandade rätter mot standardvärden (bred, ±20 %)' 'test-maltider.ps1' @('-Fil', 'test-ratter50.csv', '-Tolerans', '20')
 $codes += Run 'Schabloner mot referenser (Del 2, tools\data)' 'tests\schabloner.ps1'
+$codes += Run 'Appens data som användaren loggar (sökord, enheter, rätter) mot referenser' 'tests\app-data.ps1'
 $fail = @($codes | Where-Object { $_ }).Count
 Write-Host "=== Data: $(if ($fail) { "$fail FEL" } else { 'allt ok' })"
 if ($fail) { exit 1 }

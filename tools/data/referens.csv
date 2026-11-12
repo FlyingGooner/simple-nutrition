@@ -97,7 +97,7 @@ potatismos;Potatismos hemlagad;88;2,3;14,1;2,1;90;LV 274;ja
 potatismos;Potatismos med smör och mellanmjölk;105;2,1;13;5;90;recept;nej
 kokt-potatis;Potatis kokt m. salt;83;1,8;17,5;0,1;80;LV 4458;ja
 kokt-potatis;Färskpotatis kokt;71;1,4;14,8;0,1;80;LV 236;ja
-kokt-ris;Jasminris kokt;130;2,7;28,5;0,3;70;recept;nej
+kokt-ris;Ris jasmin kokt m. salt;113;2,6;24,5;0,4;70;LV 2514;ja
 kokt-ris;Ris råris kokt m. salt;107;2,5;21,3;0,9;70;LV 804;ja
 havregrynsgrot;Havregrynsgröt fullkorn;66;1,7;11,3;1,2;100;LV 677;ja
 havregrynsgrot;Havregrynsgröt kokt m. mjölk;89;4,1;12,2;2,3;100;LV 2124;ja
@@ -130,3 +130,21 @@ agg;Ägg kokt;136;12,1;0;9,8;55;LV 2205;ja
 agg;Ägg stekt eko.;189;13,7;0,1;15;55;LV 4134;ja
 blodpudding;Blodpudding fett 14 %;254;11;20;14;40;LV 1428;ja
 blodpudding;Blodpudding tillagad;218;8,6;23;9,4;40;LV 5968;ja
+pizza;Pizza Capricciosa restaurang;267;11;25;13,4;400;LV 763;ja
+pizza;Pizza pan pizza restaurang;238;11,4;26,3;9,2;400;LV 766;ja
+pizza;Pizza Hawaii restaurang;299;16,1;20,6;16,3;400;LV 2139;ja
+pizza;Pizza Margherita hemlagad;246;9;27,6;10,5;400;LV 774;ja
+pizza;Pizza Capricciosa frysvara;248;11,5;27;10,1;400;LV 762;ja
+kebab-ratt;Kebab m. bröd sallad sås;216;7,8;18,8;12;400;LV 2506;ja
+kebab-ratt;Kebabtallrik m. pommes frites;254;6,4;19,2;16,6;400;LV 2507;ja
+hamburgare;Hamburgare dubbel m. bröd ost restaurang;260;16,8;16,3;13,9;200;LV 2510;ja
+hamburgare;Hamburgare 90 g m. bröd restaurang;249;11,9;17,5;14,4;200;LV 2511;ja
+hamburgare;Hamburgare m. bröd ost restaurang;259;14,2;22,9;11,8;200;LV 2512;ja
+korv-med-brod;Korv m. bröd ketchup senap;259;8,5;22,4;14,7;120;LV 2509;ja
+korv-med-brod;Varmkorv 60 g + korvbröd 50 g + ketchup 10 g;257;8;23;14;120;recept (LV 1534 + bröd);nej
+sushi;Sushi nigiri m. lax;184;9,8;22,3;5,9;30;LV 1363;ja
+sushi;Sushi nigiri m. tonfisk;147;8,1;26,6;0,4;30;LV 1365;ja
+sushi;Sushi rulle m. crabfish gurka;147;4,4;30,2;0,4;30;LV 1366;ja
+sushi;Sushi veg.;158;2,6;30,9;2,2;30;LV 2758;ja
+kokt-ris;Ris långkornigt kokt m. salt;113;2,6;24,6;0,3;70;LV 2515;ja
+kokt-ris;Ris basmati kokt m. salt;121;2,9;26;0,4;70;LV 2513;ja

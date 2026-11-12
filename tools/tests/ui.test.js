@@ -571,6 +571,7 @@ T.test('schabloner: en rad per livsmedel, först, döljer LV-rader', async () =>
   type(q('#add-q'), 'pannkaka'); T.eq(names(), ['Pannkaka']); T.ok(!q('[data-act="showall"]'), 'ingen Visa fler');
   T.ok(/kcal\/st$/.test(q('#add-results .post-kcal').textContent), q('#add-results .post-kcal').textContent);
   type(q('#add-q'), 'proteinbar'); T.eq(names(), ['Proteinbar']);
+  type(q('#add-q'), 'pizza'); T.eq(names(), ['Pizza']); type(q('#add-q'), 'sushi'); T.eq(names(), ['Sushi']);
   type(q('#add-q'), 'ugnspannkaka'); T.ok(names().length >= 1 && !names().includes('Pannkaka'), 'LV-raden: ' + names());
   type(q('#add-q'), 'öl'); T.eq(names(), ['Öl/vin']);
   type(q('#add-q'), 'cola'); T.eq(names(), ['Läsk/energidryck'], 'cola träffar inte gamla Läsk');

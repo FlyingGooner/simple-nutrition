@@ -20,7 +20,7 @@ pannkaka;rätt;Pannkaka;;uppskattning;pannkaka, pannkakor;st;45;;165;6,7;17,9;7;
 artsoppa;rätt;Ärtsoppa;;uppskattning;ärtsoppa;dl;105;1,05;75;5;9;2;uppskattning
 kottbullar;rätt;Köttbullar;;uppskattning;köttbullar, köttbulle;st;15;;180;10,2;5,5;13,3;uppskattning (justerad mot referensmedian)
 lasagne;rätt;Lasagne;;uppskattning;lasagne;bit;300;;134,7;6,3;11,7;6,7;uppskattning (justerad mot referensmedian)
-spaghetti-kottfarssas;rätt;Spaghetti och köttfärssås;;portion · uppskattning;köttfärssås, spaghetti bolognese, bolognese;g;400;;140;7;18;4,5;uppskattning
+spaghetti-kottfarssas;rätt;Spaghetti och köttfärssås;;portion · uppskattning;köttfärssås, spaghetti bolognese, bolognese;g;400;;132;6,6;17;4,2;uppskattning
 chili;rätt;Chili con carne;;portion · uppskattning;chili con carne, chili;g;350;;110;8;8;5;uppskattning
 tacos;rätt;Tacos;;1 taco med fyllning · uppskattning;tacos, taco;st;130;;178,5;8,5;15,3;9,3;uppskattning (justerad mot referensmedian)
 pyttipanna;rätt;Pyttipanna;;portion · uppskattning;pyttipanna, pytt;g;350;;167,4;6,7;15,6;8,9;uppskattning (justerad mot referensmedian)
@@ -31,8 +31,13 @@ laxfile;rätt;Laxfilé;;uppskattning;laxfilé, ugnslax, laxbit;st;125;;233,6;23,
 falukorv;rätt;Falukorv;;uppskattning;falukorv, falukorvskiva, stekt falukorv;skiva;50;;240;10;5;20;uppskattning
 potatismos;rätt;Potatismos;;uppskattning;potatismos, mos, potatispuré;dl;90;;87;1,7;11,3;3,9;uppskattning
 kokt-potatis;rätt;Kokt potatis;;uppskattning;kokt potatis;st;80;;75;2;16;0,1;uppskattning
-kokt-ris;rätt;Kokt ris;;uppskattning;kokt ris;dl;70;;130;2,6;28;0,4;uppskattning
+kokt-ris;rätt;Kokt ris;;uppskattning;kokt ris;dl;70;;113;2,3;24,3;0,3;uppskattning
 havregrynsgrot;rätt;Havregrynsgröt;;kokt på vatten · uppskattning;havregrynsgröt, gröt;dl;100;;68;2,5;11,5;1,4;uppskattning (justerad mot referensmedian)
 agg;rätt;Ägg;;uppskattning;kokt ägg, stekt ägg;st;55;;163,6;14,6;0,6;11,7;uppskattning (justerad mot referensmedian)
 blodpudding;rätt;Blodpudding;;uppskattning;blodpudding;skiva;40;;232,5;7,3;34,3;7,3;uppskattning (justerad mot referensmedian)
 raggmunk;rätt;Raggmunk;;uppskattning;raggmunk;st;60;;180;5;18;10;uppskattning
+pizza;rätt;Pizza;;hel pizza från pizzeria · uppskattning;pizza, pizzeria, kebabpizza, vesuvio, capricciosa, margherita, hawaiipizza;st;400;;250;11;25;12,5;LV median (763, 766, 2139, 774, 762)
+kebab-ratt;rätt;Kebab med bröd/tallrik;;rulle, pita eller tallrik med sås · uppskattning;kebabrulle, kebabtallrik, kebab med bröd, rullkebab, gyrostallrik;g;400;;235;7;19;14;LV 2506, 2507
+hamburgare;rätt;Hamburgare med bröd;;restaurang/snabbmat · uppskattning;hamburgare, burgare, cheeseburgare, burger;st;200;;256;14;19;13;LV 2510–2512
+korv-med-brod;rätt;Korv med bröd;;varmkorv med bröd och ketchup/senap · uppskattning;korv med bröd, varmkorv med bröd, gatukök korv;st;120;;259;8,5;22,4;14,7;LV 2509
+sushi;rätt;Sushi;;1 bit nigiri eller maki · uppskattning;sushi, nigiri, maki;bit;30;;155;7;27;2,2;LV median (1363, 1365, 1366, 2758)
