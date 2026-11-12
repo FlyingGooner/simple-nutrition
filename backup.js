@@ -232,9 +232,9 @@
           if (!dlg.open) return;
           if (value && value.error) { err.textContent = value.error; p1.focus({ preventScroll: true }); p1.select?.(); return; }
         }
-        result = work ? { pwd, value } : { pwd }; hide(); dlg.close();
+        result = work ? { pwd, value } : { pwd }; hide(); dlg.close(); finish();
       };
-      const onCancel = () => { if (working) return; result = null; dlg.close(); };
+      const onCancel = () => { if (working) return; result = null; dlg.close(); finish(); };
       const onEsc = (e) => { if (working) e.preventDefault(); };   // Esc must not close mid-work
       const onGen = () => {
         const pwd = generatePassword();
@@ -247,7 +247,15 @@
           .catch(() => { p1.select(); if (note) note.textContent = 'Markera och kopiera lösenordet'; })
           ?? (p1.select(), note && (note.textContent = 'Markera och kopiera lösenordet'));
       };
-      const onClose = () => {
+      // Each opening ends itself synchronously (finish) when it closes the dialog. The close event only covers other
+      // ways out (Esc) and is ignored while the dialog is open: a late close event from the previous opening used to end
+      // a new one at once, so its OK did nothing (found 2026-11-12).
+      let done = false;
+      const onClose = () => { if (!dlg.open) finish(); };
+      const finish = () => {
+        if (done) return;
+        done = true;
+        dlg.removeEventListener('close', onClose);
         busy(false);
         p1.value = ''; p2.value = ''; err.textContent = ''; hide();
         if (note) note.textContent = '';
@@ -267,7 +275,7 @@
       gen?.addEventListener('click', onGen);
       copy?.addEventListener('click', onCopy);
       dlg.addEventListener('cancel', onEsc);
-      dlg.addEventListener('close', onClose, { once: true });
+      dlg.addEventListener('close', onClose);
       p1.value = ''; p2.value = '';
       dlg.showModal();
       // In an artifact the page can sit in an iframe as tall as the page: the modal is then centred out of sight and the
