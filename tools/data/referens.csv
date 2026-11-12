@@ -1,1 +1,109 @@
 ﻿schablon_id;namn;kcal;P;K;F;portion_g;källa;säker
+lask-socker;Coca-Cola Original;42;0;10,6;0;330;förpackning;nej
+lask-socker;Fanta Apelsin;38;0;9,3;0;330;förpackning;nej
+lask-socker;Red Bull Energy Drink;46;0;11;0;250;förpackning;nej
+lask-socker;Monster Energy Original;47;0;12;0;500;förpackning;nej
+lask-sockerfri;Coca-Cola Zero;0,3;0;0;0;330;förpackning;nej
+lask-sockerfri;Pepsi Max;0,4;0;0;0;330;förpackning;nej
+lask-sockerfri;Nocco BCAA;1;0;0,3;0;330;förpackning;nej
+lask-sockerfri;Celsius;1;0;0,2;0;355;förpackning;nej
+proteindryck;Arla Protein drickyoghurt vanilj;60;8;5,8;0,5;250;förpackning;nej
+proteindryck;Lindahls Kvarg drickkvarg;62;8,8;5,5;0,4;250;förpackning;nej
+proteindryck;ProPud Protein Milkshake;64;8,4;6,5;0,5;330;förpackning;nej
+proteindryck;Barebells Milkshake;55;8,1;3;1;330;förpackning;nej
+proteinbar;Barebells Protein Bar;361;36;35;14;55;förpackning;nej
+proteinbar;Nick's Protein Bar;380;30;30;16;50;förpackning;nej
+proteinbar;Snickers Hi Protein;375;35;34;12;55;förpackning;nej
+proteinbar;Fulfil Protein Bar;365;36;34;12;55;förpackning;nej
+proteinpudding;ProPud Proteinpudding;71;10;6;0,8;200;förpackning;nej
+proteinpudding;Arla Protein pudding;72;10;6,3;0,6;200;förpackning;nej
+proteinpudding;Lindahls Proteinpudding;78;10,5;7,5;1;150;förpackning;nej
+proteinpudding;Gainomax Proteinpudding;80;10;8;1;200;förpackning;nej
+proteinpulver;Star Nutrition Whey-80;385;78;6;5,5;30;förpackning;nej
+proteinpulver;Tyngre Whey;380;75;7;5;30;förpackning;nej
+proteinpulver;Myprotein Impact Whey;400;82;6;7,5;25;förpackning;nej
+proteinpulver;Bodylab Vegan Protein;375;72;6;6;30;förpackning;nej
+smaksatt-kvarg;Lindahls Kvarg vanilj;68;10;5,3;0,4;150;förpackning;nej
+smaksatt-kvarg;Arla Yoghurt jordgubb;90;3,5;13;2,6;200;förpackning;nej
+smaksatt-kvarg;Yoggi Original vanilj;100;3,3;14;3;150;förpackning;nej
+smaksatt-kvarg;Skånemejerier Kvarg smaksatt;70;9,5;6;0,6;200;förpackning;nej
+fardigsallad;ICA Kycklingsallad;120;8;9;5,5;350;förpackning;nej
+fardigsallad;Coop Pastasallad kyckling pesto;170;7;17;8;350;förpackning;nej
+fardigsallad;Picadeli Matsallad;140;7;11;7;350;förpackning;nej
+fardigsallad;Sallad Kitchen Caesar;150;9;8;9;300;förpackning;nej
+fardigratt;Dafgårds Köttbullar med mos;130;6;14;5,5;350;förpackning;nej
+fardigratt;Findus Pasta Carbonara;140;6;15;6;400;förpackning;nej
+fardigratt;Felix Kyckling tikka masala med ris;115;6;15;3,5;400;förpackning;nej
+fardigratt;Gooh Matlåda;125;6;14;4,5;400;förpackning;nej
+wrap-smorgas;Pågen Baguette ost skinka;250;11;30;9;180;förpackning;nej
+wrap-smorgas;Sandwich Kitchen Kycklingwrap;210;10;22;9;200;förpackning;nej
+wrap-smorgas;Pressbyrån Fralla räksallad;240;8;24;12;200;förpackning;nej
+wrap-smorgas;7-Eleven Wrap kyckling;220;11;23;9;220;förpackning;nej
+snabblunch;Nissin Cup Noodles;450;9;58;19;64;förpackning;nej
+snabblunch;Samyang Buldak;440;9;63;16;140;förpackning;nej
+snabblunch;Mama Nudlar;470;9;62;20;60;förpackning;nej
+snabblunch;Knorr Pasta i kopp (pulver);390;11;65;9;70;förpackning;nej
+soppa-kopt;Felix Tomatsoppa;45;1;6;1,8;500;förpackning;nej
+soppa-kopt;Knorr Svampsoppa (färdig);55;1;5;3,3;500;förpackning;nej
+soppa-kopt;Ica Linssoppa;60;3;8;1,5;500;förpackning;nej
+soppa-kopt;Bong Kycklingsoppa;35;2;4;1,1;500;förpackning;nej
+smoothie;Froosh Mango & Apelsin;55;0,6;12,5;0,1;250;förpackning;nej
+smoothie;God Morgon Smoothie bär;52;0,5;11;0,2;250;förpackning;nej
+smoothie;Innocent Smoothie jordgubb banan;58;0,7;13;0,2;250;förpackning;nej
+smoothie;Bravo Smoothie;55;0,6;12;0,3;250;förpackning;nej
+kaffedryck;Starbucks Caffè Latte mellanmjölk;45;3;4,5;1,6;350;förpackning;nej
+kaffedryck;Espresso House Cappuccino;42;2,8;4,2;1,5;300;förpackning;nej
+kaffedryck;Arla Iskaffe;65;3;9;1,5;230;förpackning;nej
+kaffedryck;Löfbergs Iskaffe latte;62;2,8;9;1,5;250;förpackning;nej
+fika;Pågen Kanelbulle;360;6;50;15;45;förpackning;nej
+fika;Gille Havreflarn kaka;500;6;60;26;20;förpackning;nej
+fika;Bonjour Wienerbröd;420;6;45;24;90;förpackning;nej
+fika;Delicato Mazarin;450;6;50;25;55;förpackning;nej
+ol;Norrlands Guld lager 5,3 %;44;0,4;3,4;0;330;förpackning;nej
+ol;Mariestads Export;46;0,4;3,6;0;330;förpackning;nej
+ol;Sofiero folköl 3,5 %;32;0,3;3,2;0;330;förpackning;nej
+ol;Briska Cider päron;50;0;8;0;330;förpackning;nej
+vin;Lindeman's rött vin 13,5 %;83;0,1;2,6;0;150;förpackning;nej
+vin;Gato Negro vitt vin 12,5 %;75;0,1;2;0;150;förpackning;nej
+vin;Mateus Rosé;78;0,1;4;0;150;förpackning;nej
+vin;Jacob's Creek Shiraz;85;0,1;2,6;0;150;förpackning;nej
+pannkaka;Pannkaka tunn lättmjölk;159;6,7;18;6,3;45;LV 733;ja
+pannkaka;Pannkaka mellanmjölk hemrecept;165;6,7;17,9;7;45;recept (LV 733 + mellanmjölk);nej
+artsoppa;Ärtsoppa m. fläsk hemlagad;85;6,4;8,9;2,1;105;LV 897;ja
+artsoppa;Ärtsoppa veg.;78;5,1;12;0,3;105;LV 904;ja
+kottbullar;Köttbullar blandfärs stekta hemlagade;177;15,8;5,8;10;15;LV 1106;ja
+kottbullar;Köttbullar frysvara;217;12,3;6,5;15,6;15;LV 1102;ja
+lasagne;Lasagne blandfärs;129;6,6;11,5;6,1;300;LV 2542;ja
+lasagne;Lasagne värmd frysvara;140;6,6;14,4;5,9;300;LV 869;ja
+spaghetti-kottfarssas;Spagetti m. köttfärssås;128;6,7;17;3,3;400;LV 858;ja
+spaghetti-kottfarssas;Spaghetti 200 g + köttfärssås nöt 200 g;135;7;17;4,5;400;recept (LV 1115 + kokt pasta);nej
+chili;Gryta chili con carne;103;7,5;7,8;3,9;350;LV 898;ja
+chili;Användarens chili con carne (≈2 110 kcal/sats);110;8;8;5;350;recept (användaren);nej
+tacos;Taco tacoskal m. köttfärs grönsaker ost;147;7,9;6,6;9,8;130;LV 1135;ja
+tacos;Mjukt tunnbröd + blandfärs + grönsaker + ost;210;10;20;10;130;recept;nej
+pyttipanna;Pytt i panna hemlagad;139;6;15,1;5,6;350;LV 7188;ja
+pyttipanna;Pytt i panna tillagad frysvara;196;4,5;23,3;8,8;350;LV 255;ja
+korv-stroganoff;Korv stroganoff hemlagad;242;7,2;7,5;20,5;300;LV 1544;ja
+korv-stroganoff;Korv stroganoff mager korv;186;7,2;6,3;14,7;300;LV 2174;ja
+kycklinggryta;Kycklinggryta m. grädde/crème fraiche;120;8,8;3;7,9;300;LV 2863;ja
+kycklinggryta;Mormors kycklinggryta m. svamp;118;11,2;2,9;6,8;300;LV 6387;ja
+fiskpinnar;Fiskpinnar stekta;223;11,7;16,8;12,1;25;LV 1294;ja
+fiskpinnar;Fiskpinnar ugnsstekta;207;12,3;19;9,1;25;LV 4602;ja
+laxfile;Lax stekt m. salt;221;24,1;0,8;13,5;125;LV 1316;ja
+laxfile;Lax kokt m. salt;246;23,7;0,8;16,6;125;LV 1317;ja
+falukorv;Falukorv stekt fett 19 %;268;13,4;8,3;20,3;50;LV 1527;ja
+falukorv;Falukorv ugnsstekt;205;9;6,3;15,9;50;LV 1537;ja
+potatismos;Potatismos hemlagad;88;2,3;14,1;2,1;90;LV 274;ja
+potatismos;Potatismos med smör och mellanmjölk;105;2,1;13;5;90;recept;nej
+kokt-potatis;Potatis kokt m. salt;83;1,8;17,5;0,1;80;LV 4458;ja
+kokt-potatis;Färskpotatis kokt;71;1,4;14,8;0,1;80;LV 236;ja
+kokt-ris;Jasminris kokt;130;2,7;28,5;0,3;70;recept;nej
+kokt-ris;Ris råris kokt m. salt;107;2,5;21,3;0,9;70;LV 804;ja
+havregrynsgrot;Havregrynsgröt fullkorn;66;1,7;11,3;1,2;100;LV 677;ja
+havregrynsgrot;Havregrynsgröt kokt m. mjölk;89;4,1;12,2;2,3;100;LV 2124;ja
+agg;Ägg rått (≈ kokt);136;12,1;0;9,8;55;LV 1225;ja
+agg;Ägg stekt;190;13,2;0;15,3;55;LV 1233;ja
+blodpudding;Blodpudding fett 10 %;202;12;17,3;9;40;LV 1430;ja
+blodpudding;Blodpudding stekt fett 13 %;261;11,3;20,5;14,4;40;LV 1431;ja
+raggmunk;Raggmunk hemlagad;149;4,2;20;5,5;60;LV 271;ja
+raggmunk;Raggmunk stekt i rikligt smör;190;4;20;10,5;60;recept;nej
