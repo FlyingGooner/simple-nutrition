@@ -197,3 +197,7 @@ T.test('rubrik efter träff: zucchini ger varianten Zucchini förvald, generiska
   T.ok(searchFoods(ST(), 'lätt').hits.every((f) => f.hit == null), 'lätt ger ingen variantrubrik');
   T.eq(searchFoods(ST(), 'mjölk').hits[0].hit, undefined);
 });
+T.test('Smör har enheterna smörgås (förvald) och msk', () => {
+  const s = searchFoods(ST(), 'smör').hits.find((f) => f.name === 'Smör');
+  T.eq(s.v[0].u, ['smörgås', 5]); T.eq(s.v[0].u2, ['msk', 14]);
+});

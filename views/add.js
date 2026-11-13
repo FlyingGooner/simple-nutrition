@@ -8,6 +8,7 @@ import { dishResults, dishPickCard } from './dishes.js';
 // Liquids (d = g per ml) get dl and ml instead of g; solids always have g.
 export function unitsOf(v) {
   const out = v.u ? [[v.u[0], v.u[1]]] : [];
+  if (v.u2) out.push([v.u2[0], v.u2[1]]);   // second natural unit, e.g. Smör: smörgås + msk
   if (v.d) {
     if (!out.some((x) => x[0] === 'dl')) out.push(['dl', Math.round(v.d * 1000) / 10]);
     out.push(['ml', v.d]);

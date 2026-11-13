@@ -55,7 +55,7 @@ foreach ($m in (Import-Csv "$root\data\indata\matt.csv" -Delimiter ';' -Encoding
   if (-not $v) { $fel += "MÅTT: okänd vara '$($m.vara)'"; continue }
   $traff = @($v.varianter | Where-Object { -not $m.variant -or $_.etikett -eq $m.variant })
   if (-not $traff) { $fel += "MÅTT: okänd variant '$($m.vara) / $($m.variant)'"; continue }
-  foreach ($x in $traff) { if (-not $x.Contains('matt')) { $x['matt'] = @{ e = $m.enhet; g = [double]$m.gram; d = $m.densitet } } }
+  foreach ($x in $traff) { if (-not $x.Contains('matt')) { $x['matt'] = @{ e = $m.enhet; g = [double]$m.gram; d = $m.densitet } } elseif (-not $x.Contains('matt2')) { $x['matt2'] = @{ e = $m.enhet; g = [double]$m.gram } } }
 }
 $fel | ForEach-Object { Write-Host $_ -ForegroundColor Yellow }
 $over = @($varor.Values | Where-Object { $_.varianter.Count -gt 5 })
@@ -89,7 +89,7 @@ $sb = New-Object Text.StringBuilder
 [void]$sb.AppendLine("const FOODS_SOURCE = { name: 'Livsmedelsverkets livsmedelsdatabas', fetched: '$($db.meta.hamtad)' };")
 [void]$sb.AppendLine('const FOODS_CORE = [')
 foreach ($v in $varor.Values) {
-  $vs = ($v.varianter | ForEach-Object { "{l:$(Js $_.etikett)$(if ($_.exempel) { ",ex:$(Js $_.exempel)" }),id:$(Js ([string]$_.id)),n:[$(N $_.kcal),$(N $_.prot),$(N $_.kolh),$(N $_.fett)]$(if ($_.beraknad) { ',calc:1' })$(if ($_.dold) { ',hide:1' })$(if ($_.matt) { ",u:[$(Js $_.matt.e),$(N $_.matt.g)]$(if ($_.matt.d) { ",d:$(Dn $_.matt.d)" })" })}" }) -join ','
+  $vs = ($v.varianter | ForEach-Object { "{l:$(Js $_.etikett)$(if ($_.exempel) { ",ex:$(Js $_.exempel)" }),id:$(Js ([string]$_.id)),n:[$(N $_.kcal),$(N $_.prot),$(N $_.kolh),$(N $_.fett)]$(if ($_.beraknad) { ',calc:1' })$(if ($_.dold) { ',hide:1' })$(if ($_.matt2) { ",u2:[$(Js $_.matt2.e),$(N $_.matt2.g)]" })$(if ($_.matt) { ",u:[$(Js $_.matt.e),$(N $_.matt.g)]$(if ($_.matt.d) { ",d:$(Dn $_.matt.d)" })" })}" }) -join ','
   [void]$sb.AppendLine("{name:$(Js $v.vara),q:[$((($v.sok | Select-Object -Unique) | ForEach-Object { Js $_ }) -join ',')],v:[$vs]},")
 }
 [void]$sb.AppendLine('];')

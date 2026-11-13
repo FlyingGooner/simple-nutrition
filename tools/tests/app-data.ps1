@@ -34,6 +34,7 @@ function Find($q) {
 function Units($v) {   # som views/add.js unitsOf
   $out = [ordered]@{}
   if ($v.u) { $out[$v.u[0]] = [double]$v.u[1] }
+  if ($v.u2) { $out[$v.u2[0]] = [double]$v.u2[1] }
   if ($v.d) { if (-not $out.Contains('dl')) { $out['dl'] = [double]$v.d * 100 }; $out['ml'] = [double]$v.d } else { $out['g'] = 1.0 }
   $out
 }
