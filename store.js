@@ -231,6 +231,7 @@ function score(f, q) {
   return best;
 }
 // → { hits: [food], more: n } – core and own first; FOODS_MORE only when `all` (or no core hit).
+const GENERIC = /^(lätt|mellan|normal|standard|fet|mager|rå|kokt|stekt|okokt|färsk|i )/;   // variant labels that are grades, not names
 export function searchFoods(state, text, all = false, max = 30) {
   const q = cleanText(text, 40).toLowerCase();
   if (!q) return { hits: [], more: 0 };
@@ -242,6 +243,9 @@ export function searchFoods(state, text, all = false, max = 30) {
   const alias = state.aliases[q] ? findRef(state, state.aliases[q]) : null;
   if (alias) { const i = first.indexOf(alias); if (i >= 0) first.splice(i, 1); first.unshift(alias); }
   const rest = rank(more);
+  // Steg B: rubrik efter träff – sökordet träffar en variants namn i en samlingspost → kopia med hit = variantens index.
+  const tag = (f) => { if (f.product || f.own || f.v.length < 2) return f; const i = q.length < 3 || GENERIC.test(q) ? -1 : f.v.findIndex((v) => v.label.toLowerCase().startsWith(q)); return i >= 0 ? { ...f, hit: i } : f; };
+  for (let i = 0; i < first.length; i++) first[i] = tag(first[i]);
   if (all || !first.length) return { hits: [...first, ...rest].slice(0, max), more: 0 };
   return { hits: first.slice(0, max), more: rest.length };
 }

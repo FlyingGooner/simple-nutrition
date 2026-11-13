@@ -117,11 +117,11 @@ function openAdd(target, meal) {
 }
 // F1: tal som går att skriva tillbaka i mängdfältet (komma, ingen tusenavgränsare).
 const amt = (x) => x.toLocaleString('sv-SE', { maximumFractionDigits: 2, useGrouping: false });
-function openPick(food) {
-  const u0 = unitsOf(food.v[0])[0][0];
-  S.add.pick = { food, vi: 0, unit: u0, amount: isBulk(u0) ? '100' : '1', last: null };
+function openPick(food, hit = null) {   // hit: variant index the search word matched (Steg B, rubrik efter träff)
+  const v0 = hit ?? 0, u0 = unitsOf(food.v[v0])[0][0];
+  S.add.pick = { food, vi: v0, unit: u0, amount: isBulk(u0) ? '100' : '1', last: null };
   // F1: förifyll med senast loggade mängd för samma vara (någon av dess varianter).
-  const refs = food.v.map((v) => v.ref), lp = lastPost(S.state, (r) => refs.includes(r));
+  const refs = food.v.map((v) => v.ref), lp = lastPost(S.state, (r) => (hit == null ? refs.includes(r) : r === refs[hit]));
   if (lp && lp.g > 0) {
     const vi = refs.indexOf(lp.ref), us = unitsOf(food.v[vi]), byUnit = lp.u && us.find((x) => x[0] === lp.u[0]);
     const bulk = us[us.length - 1];   // g, or ml for liquids
@@ -293,7 +293,7 @@ app.addEventListener('click', (ev) => {
     case 'addclose': S.add = null; break;
     case 'addtab': S.add.tab = S.lastTab = val; S.add.q = ''; S.add.pick = S.add.dpick = null; render(); document.getElementById('add-q')?.focus(); return;
     case 'showall': S.add.all = true; redrawResults(); return;
-    case 'pick': { const f = findRef(S.state, t.dataset.ref); if (!f) return; openPick(f); render(); return; }   // F1: inget tangentbord
+    case 'pick': { const f = findRef(S.state, t.dataset.ref); if (!f) return; const vi = Number(t.dataset.vi); openPick(f, t.dataset.vi && vi >= 0 && vi < f.v.length ? vi : null); render(); return; }   // F1: inget tangentbord
     case 'variant': { const p = S.add.pick; p.vi = Number(val); const us = unitsOf(p.food.v[p.vi]);
       if (!us.some((x) => x[0] === p.unit)) { p.unit = us[0][0]; p.amount = isBulk(p.unit) ? '100' : '1'; } break; }
     case 'unit': {   // Steg B: byte av enhet räknar om talet

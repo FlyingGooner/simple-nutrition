@@ -189,3 +189,11 @@ T.test('inget sökord på mer än en post i FOODS_CORE och FOODS_PRODUCTS', () =
   for (const f of [...FOODS_CORE, ...FOODS_PRODUCTS]) for (const w of new Set(f.q || [])) { if (seen.has(w) && seen.get(w) !== f.name) dup.push(`${w}: ${seen.get(w)} / ${f.name}`); else seen.set(w, f.name); }
   T.eq(dup, []);
 });
+T.test('rubrik efter träff: zucchini ger varianten Zucchini förvald, generiska ord gör det inte', () => {
+  const h = searchFoods(ST(), 'zucchini').hits.find((f) => f.name === 'Zucchini och aubergine');
+  T.eq(h && h.v[h.hit].label, 'Zucchini');
+  const a = searchFoods(ST(), 'aubergine').hits.find((f) => f.name === 'Zucchini och aubergine');
+  T.eq(a && a.v[a.hit].label, 'Aubergine');
+  T.ok(searchFoods(ST(), 'lätt').hits.every((f) => f.hit == null), 'lätt ger ingen variantrubrik');
+  T.eq(searchFoods(ST(), 'mjölk').hits[0].hit, undefined);
+});
