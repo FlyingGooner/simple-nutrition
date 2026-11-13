@@ -207,7 +207,9 @@ function index() {
   if (INDEX) return INDEX;
   const core = (typeof FOODS_CORE !== 'undefined' ? FOODS_CORE : []).map((f) => ({
     name: f.name, words: [f.name.toLowerCase(), ...(f.q || [])],
-    v: f.v.map((v) => ({ label: v.l, ref: refOf(v.id), n: v.n, u: v.u, d: v.d })),
+    v: f.v.filter((v) => !v.hide).map((v) => ({ label: v.l, ref: refOf(v.id), n: v.n, u: v.u, d: v.d })),
+    // Dolda varianter (hide:1): inte i sökning eller chips, men findRef hittar dem för gamla loggar och backuper.
+    hv: f.v.filter((v) => v.hide).map((v) => ({ label: v.l, ref: refOf(v.id), n: v.n, u: v.u, d: v.d })),
   }));
   // Schabloner (Del 2): ref p:<id>, undertext sub; visas före LV, ett exakt sökord döljer LV-raderna.
   const products = (typeof FOODS_PRODUCTS !== 'undefined' ? FOODS_PRODUCTS : []).map((f) => ({
@@ -247,7 +249,9 @@ export function findRef(state, ref) {
   if (ref.startsWith('u:')) return ownFoods(state).find((f) => f.v[0].ref === ref) || null;
   const { core, products, more } = index();
   if (ref.startsWith('p:')) return products.find((f) => f.v.some((v) => v.ref === ref)) || null;
-  return core.find((f) => f.v.some((v) => v.ref === ref)) || more.find((f) => f.v[0].ref === ref) || null;
+  const c = core.find((f) => f.v.some((v) => v.ref === ref)); if (c) return c;
+  const h = core.find((f) => f.hv.some((v) => v.ref === ref)); if (h) return { ...h, v: [...h.v, ...h.hv] };
+  return more.find((f) => f.v[0].ref === ref) || null;
 }
 // Recently logged (newest first), unique on ref + amount.
 export function recent(state, max = 20) {

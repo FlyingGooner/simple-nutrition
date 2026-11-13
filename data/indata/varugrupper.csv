@@ -1,11 +1,11 @@
-vara;sokord;etikett;exempel;lmv_namn
+vara;sokord;etikett;exempel;lmv_namn;dold
 Mjölk;mjölk,lättmjölk,mellanmjölk,standardmjölk;Mellan 1,5 %;;Mellanmjölk fett 1,5% berikad
 Mjölk;;Lätt 0,5 %;;Lättmjölk fett 0,5% berikad
 Mjölk;;Standard 3 %;;Mjölk fett 3% berikad
 Filmjölk;fil,filmjölk,lättfil,mellanfil;Standard 3 %;;Filmjölk fett 3% berikad
 Filmjölk;;Lätt 0,5 %;;Lättfil fett 0,5% berikad
 Filmjölk;;Mellan 1,5 %;;Mellanfil fett 1,5% berikad
-Yoghurt;yoghurt,lättyoghurt,turkisk yoghurt,grekisk yoghurt;Standard 3 %;;Yoghurt naturell fett 3% berikad
+Yoghurt;yoghurt,lättyoghurt;Standard 3 %;;Yoghurt naturell fett 3% berikad
 Yoghurt;;Lätt 0,5 %;;Yoghurt naturell lätt fett 0,5% berikad
 Grädde;grädde,matlagningsgrädde,vispgrädde,mellangrädde;Matlagning 15 %;;Matlagningsgrädde fett 15%
 Grädde;;Mellan 27 %;;Mellangrädde fett 27%
@@ -24,17 +24,17 @@ Ost;ost,hårdost,hushållsost,präst,herrgård,grevé,mozzarella;Normal 28 %;;Os
 Ost;;Lätt 17 %;;Ost hårdost fett 17%
 Ost;;Fet 31 %;;Ost hårdost fett 31%
 Ost;;Mozzarella;;~^Ost mozzarella
-Smörgåsfett;smör,smörgåsfett,margarin,bordsmargarin,matfett,lättmargarin;Normal 75 %;typ Bregott;Matfettsblandning fett 75% berikad
-Smörgåsfett;;Lätt 40 %;typ Bregott mindre;Matfettsblandning fett 40% berikad typ Bregott mindre
-Smörgåsfett;;Mellan 60 %;;Matfettsblandning fett 60% berikad
-Smörgåsfett;;Smör 80 %;;Smör fett 80%
+Smör;smör,smörgåsfett,margarin,bordsmargarin,matfett,lättmargarin;Normal 75 %;t.ex. Bregott, smör;Matfettsblandning fett 75% berikad
+Smör;;Lätt 40 %;typ Bregott mindre;Matfettsblandning fett 40% berikad typ Bregott mindre;1
+Smör;;Mellan 60 %;;Matfettsblandning fett 60% berikad;1
+Smör;;Smör 80 %;;Smör fett 80%;1
 Ägg;ägg;Rått/kokt;;Ägg rått
 Ägg;;Stekt;;Ägg stekt
 Nötfärs;nötfärs,köttfärs,färs;Normal 12 %;;=12|Nöt färs rå fett 10%|Nöt färs rå fett 15%
 Nötfärs;;Mager 5 %;;=5|Nöt innanlår rå|Nöt färs rå fett 10%
-Blandfärs;blandfärs,köttfärs,färs;Nöt 70 / gris 30;;Blandfärs rå nöt 70% gris 30%
+Blandfärs;blandfärs;Nöt 70 / gris 30;;Blandfärs rå nöt 70% gris 30%
 Blandfärs;;Nöt 50 / gris 50;;Blandfärs rå nöt 50% gris 50%
-Fläskfärs;fläskfärs,grisfärs,färs;Normal 15 %;;Gris färs rå fett 15%
+Fläskfärs;fläskfärs,grisfärs;Normal 15 %;;Gris färs rå fett 15%
 Fläskfärs;;Mager 10 %;;=10|Gris färs rå fett 8%|Gris färs rå fett 15%
 Kyckling;kyckling,kycklingfilé,kycklinglår,kycklingbröst;Filé;;~^Kyckling bröstfilé rå u\. skinn
 Kyckling;;Lårfilé (utan skinn);;~^Kyckling lår.* rå u\. skinn
@@ -52,12 +52,12 @@ Bacon;;Rått;;Gris bacon rå
 Korv;korv,prinskorv,grillkorv,wienerkorv,chorizo;Falukorv;;~^Korv falu
 Korv;;Grillkorv/wiener;;~^Korv (grill|wiener)
 Korv;;Prinskorv;;~^Korv prins
-Pålägg kött;skinka,kalkon,pålägg,rökt skinka,kalkonbröst;Skinka;;Gris skinka skivad rökt fett 1-3%
-Pålägg kött;;Kalkon;;~^Kalkon.*(pålägg|rökt|bröst)
+Skinka;skinka,rökt skinka,pålägg;Skinka;;Gris skinka skivad rökt fett 1-3%
+Skinka;;Kalkon;;~^Kalkon.*(pålägg|rökt|bröst);1
 Lax;lax;Rå;;Lax odlad Norge fjordlax rå
 Lax;;Rökt/gravad;;~^Lax (kallrökt|gravad)
-Vit fisk;torsk,sej,kolja,vit fisk,fiskfilé;Torsk;;~^Torsk rå
-Vit fisk;;Sej;;~^Sej rå
+Torsk;torsk,sej,kolja,vit fisk,fiskfilé;Torsk;;~^Torsk rå
+Torsk;;Sej;;~^Sej rå;1
 Tonfisk;tonfisk;I vatten;;~^Tonfisk.*vatten
 Tonfisk;;I olja;;~^Tonfisk.*olja
 Räkor;räkor,räka,scampi;Skalade;;~^Räk.*(kokt|skalad)
@@ -123,13 +123,13 @@ Strömming;;Makrill i tomat;;~^Makrill.*tomat
 Fiskpinnar;fiskbullar,panerad fisk;Ugnsstekta;;Fiskpinnar ugnsstekta
 Kycklingkorv;kycklingkorv;Normal;;~^Korv.*kyckling
 Kebab;kebab,gyros,kebabkött;Kebabkött;;~^(Kebab|Gyros)
-Vegoprotein;vegofärs,sojafärs,tofu,quorn,mykoprotein,vego;Sojafärs;;~^Sojaprotein färs(?!.*tacokryddad)
-Vegoprotein;;Tofu;;~^Tofu
-Vegoprotein;;Mykoprotein;;~^Mykoprotein
+Vegofärs;vegofärs,sojafärs,tofu,quorn,mykoprotein,vego;Sojafärs;;~^Sojaprotein färs(?!.*tacokryddad)
+Vegofärs;;Tofu;;~^Tofu
+Vegofärs;;Mykoprotein;;~^Mykoprotein
 Grönsaksbiffar;grönsaksbiff,vegobiff,falafel;Grönsaksbiff;;Grönsaksbiff stekt veg.
 Grönsaksbiffar;;Falafel;;Falafel kikärtskroketter stekta
 Bröd;;Hamburgerbröd;;Hamburgerbröd
-Korvbröd;korvbröd,fralla,frallor,småfranska;Korvbröd;;~^(Korvbröd|Bröd.*korvbröd)
+Korvbröd;korvbröd,frallor,småfranska;Korvbröd;;~^(Korvbröd|Bröd.*korvbröd)
 Korvbröd;;Fralla;;~^(Småfranska|Fralla|Bröd vitt.*fralla)
 Nudlar;nudlar,äggnudlar,glasnudlar,risnudlar;Okokta;;Nudlar äggnudlar okokta
 Nudlar;;Kokta;;Nudlar äggnudlar kokta m. salt
@@ -186,6 +186,6 @@ Chips;chips,potatischips,ostbågar;Potatischips;;~^Chips potatis|^Potatischips
 Chips;;Ostbågar;;~^(Ostbågar|Ostkrok)
 Glass;glass,vaniljglass,gräddglass;Gräddglass;;~^Glass.*grädd
 Glass;;Mjukglass;;~^Glass mjuk|^Mjukglass
-Kaffe och te;kaffe,te;Bryggkaffe;;~^Kaffe bryggt|^Kaffe.*bryggkaffe
-Kaffe och te;;Latte;;~^(Kaffe latte|Caffe latte|Kaffedrink latte)
+Kaffe;kaffe,te;Bryggkaffe;;~^Kaffe bryggt|^Kaffe.*bryggkaffe
+Kaffe;;Latte;;~^(Kaffe latte|Caffe latte|Kaffedrink latte);1
 Saft;saft;Saft utspädd;;~^Saft.*(drickf|utspädd)

@@ -47,7 +47,7 @@ foreach ($r in $rader) {
     continue
   }
   if ($r.lmv_namn -like '~*') { Write-Host "  ~ $($r.vara) / $($r.etikett) -> $($hit.namn) ($($hit.kcal))" }
-  $v.varianter += [ordered]@{ etikett = $r.etikett; exempel = $r.exempel; id = $hit.id; lmv = $hit.namn; beraknad = [bool]$hit.beraknad; kcal = $hit.kcal; prot = $hit.prot; kolh = $hit.kolh; fett = $hit.fett }
+  $v.varianter += [ordered]@{ etikett = $r.etikett; exempel = $r.exempel; id = $hit.id; lmv = $hit.namn; dold = [bool]$r.dold; beraknad = [bool]$hit.beraknad; kcal = $hit.kcal; prot = $hit.prot; kolh = $hit.kolh; fett = $hit.fett }
 }
 # Mått (styckvikt, dl, msk) – egna uppskattningar, ätlig del. Tom variant = gäller alla varianter.
 foreach ($m in (Import-Csv "$root\data\indata\matt.csv" -Delimiter ';' -Encoding UTF8)) {
@@ -89,7 +89,7 @@ $sb = New-Object Text.StringBuilder
 [void]$sb.AppendLine("const FOODS_SOURCE = { name: 'Livsmedelsverkets livsmedelsdatabas', fetched: '$($db.meta.hamtad)' };")
 [void]$sb.AppendLine('const FOODS_CORE = [')
 foreach ($v in $varor.Values) {
-  $vs = ($v.varianter | ForEach-Object { "{l:$(Js $_.etikett)$(if ($_.exempel) { ",ex:$(Js $_.exempel)" }),id:$(Js ([string]$_.id)),n:[$(N $_.kcal),$(N $_.prot),$(N $_.kolh),$(N $_.fett)]$(if ($_.beraknad) { ',calc:1' })$(if ($_.matt) { ",u:[$(Js $_.matt.e),$(N $_.matt.g)]$(if ($_.matt.d) { ",d:$(Dn $_.matt.d)" })" })}" }) -join ','
+  $vs = ($v.varianter | ForEach-Object { "{l:$(Js $_.etikett)$(if ($_.exempel) { ",ex:$(Js $_.exempel)" }),id:$(Js ([string]$_.id)),n:[$(N $_.kcal),$(N $_.prot),$(N $_.kolh),$(N $_.fett)]$(if ($_.beraknad) { ',calc:1' })$(if ($_.dold) { ',hide:1' })$(if ($_.matt) { ",u:[$(Js $_.matt.e),$(N $_.matt.g)]$(if ($_.matt.d) { ",d:$(Dn $_.matt.d)" })" })}" }) -join ','
   [void]$sb.AppendLine("{name:$(Js $v.vara),q:[$((($v.sok | Select-Object -Unique) | ForEach-Object { Js $_ }) -join ',')],v:[$vs]},")
 }
 [void]$sb.AppendLine('];')

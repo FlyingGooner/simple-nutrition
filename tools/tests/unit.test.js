@@ -1,5 +1,5 @@
 // Unit tests for store.js (ES module). Run: tools\test.ps1 simple-nutrition
-import { defaults, validate, cleanText, postN, sumN, goalFor, setGoal, weekStats, exportText, importText, addDays, weekStart, isoWeek, mergeFdt, habitDay, setLevel, dropLevels, quickGroup } from '../../store.js';
+import { defaults, validate, cleanText, postN, sumN, goalFor, setGoal, weekStats, exportText, importText, addDays, weekStart, isoWeek, mergeFdt, habitDay, setLevel, dropLevels, quickGroup, searchFoods, findRef } from '../../store.js';
 const FDT = JSON.stringify({ app: 'follow-diet-tracker', format: 1, exported: '2026-11-09', data: { settings: { planText: 'Plan' }, days: { '2026-11-02': { breakfast: 'f', lunch: { o: 'c', r: 'craving', n: 'jobbet' }, 'extra-1': 'c' } }, weighIns: { '2026-11-02': 84.6, '2026-11-03': 999 }, workouts: { '2026-11-02': ['push,pull', { t: 'run', k: 5, s: 1500 }] } } });
 
 const post = (o) => ({ id: 'p1', m: 'm1', ref: 'l:151', name: 'Mjölk', g: 200, n: [39, 3.6, 4.8, 0.5], ...o });
@@ -162,4 +162,30 @@ T.test('fusknivåer: sätt, byt, ta bort med samma, och städa vid byte av orsak
 });
 T.test('plan: högst 300 tecken även vid import', () => {
   T.eq(validate({ ...defaults(), settings: { ...defaults().settings, planText: 'x'.repeat(2000) } }).settings.planText.length, 300);
+});
+
+// Livsmedelsdatan (klassiskt skript) laddas för söktesterna nedan.
+await new Promise((ok, fel) => { const s = document.createElement('script'); s.src = new URL('../../data/foods.js', import.meta.url).href; s.onload = ok; s.onerror = fel; document.head.appendChild(s); });
+const ST = () => ({ ...defaults(), foods: [], aliases: {} });
+T.test('nya namn: smör, skinka, torsk, vegofärs och kaffe ger en post med nytt namn, dolda varianter syns inte', () => {
+  const core = (q) => searchFoods(ST(), q).hits.filter((f) => !f.product);
+  for (const [q, name] of [['smör', 'Smör'], ['skinka', 'Skinka'], ['torsk', 'Torsk'], ['vegofärs', 'Vegofärs'], ['kaffe', 'Kaffe']]) {
+    const h = core(q); T.eq(h[0] && h[0].name, name, q);
+  }
+  const smor = core('smör')[0];
+  T.eq(smor.v.length, 1); T.eq(smor.v[0].u, ['smörgås', 5]);
+  T.eq(core('skinka')[0].v.map((v) => v.label), ['Skinka']);
+  T.eq(core('torsk')[0].v.map((v) => v.label), ['Torsk']);
+  T.eq(core('kaffe')[0].v.map((v) => v.label), ['Bryggkaffe']);
+  T.ok(!core('sej')[0].v.some((v) => v.label === 'Sej'), 'Sej dold');
+});
+T.test('dolda varianter hittas för gamla loggar (Sej, Kalkon, Latte, Lätt 40 %)', () => {
+  for (const [ref, name] of [['l:1202', 'Torsk'], ['l:1191', 'Skinka'], ['l:2816', 'Kaffe'], ['l:4663', 'Smör']]) {
+    const f = findRef(ST(), ref); T.eq(f && f.name, name, ref); T.ok(f.v.some((v) => v.ref === ref), ref + ' variant');
+  }
+});
+T.test('inget sökord på mer än en post i FOODS_CORE och FOODS_PRODUCTS', () => {
+  const seen = new Map(), dup = [];
+  for (const f of [...FOODS_CORE, ...FOODS_PRODUCTS]) for (const w of new Set(f.q || [])) { if (seen.has(w) && seen.get(w) !== f.name) dup.push(`${w}: ${seen.get(w)} / ${f.name}`); else seen.set(w, f.name); }
+  T.eq(dup, []);
 });

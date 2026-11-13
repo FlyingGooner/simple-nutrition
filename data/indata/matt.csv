@@ -9,16 +9,16 @@ Keso;;dl;100;
 Färskost;;msk;15;
 Ost;Mozzarella;st;125;
 Ost;;skiva;10;
-Smörgåsfett;;msk;14;
+Smör;;smörgås;5;
 Ägg;;st;55;
 Kyckling;Filé;st;150;
 Kyckling;Lårfilé (utan skinn);st;100;
 Bacon;;skiva;20;
 Korv;Grillkorv/wiener;st;50;
 Korv;Falukorv;skiva;30;
-Pålägg kött;;skiva;8;
+Skinka;;skiva;8;
 Lax;Rå;bit;125;
-Vit fisk;;bit;125;
+Torsk;;bit;125;
 Tonfisk;;burk avr.;120;
 Bröd;Tortilla;st;40;
 Bröd;;skiva;35;
@@ -67,7 +67,7 @@ Purjo och vitlök;Vitlök;klyfta;5;
 Zucchini och aubergine;;st;300;
 Rotfrukter;Sötpotatis;st;300;
 Majs och ärtor;;dl;65;
-Vegoprotein;Tofu;paket;400;
+Vegofärs;Tofu;paket;400;
 Frukt;Päron;st;170;
 Frukt;Kiwi;st;75;
 Frukt;Mango;st;300;
@@ -82,7 +82,7 @@ Såser;;msk;15;
 Sylt;;msk;20;
 Glass;Mjukglass;st;100;
 Glass;Gräddglass;kula;50;
-Kaffe och te;Bryggkaffe;kopp;150;1,0
-Kaffe och te;Latte;kopp;250;1,0
+Kaffe;Bryggkaffe;kopp;150;1,0
+Kaffe;Latte;kopp;250;1,0
 Saft;;glas;250;1,0
 Ströbröd;;dl;40;

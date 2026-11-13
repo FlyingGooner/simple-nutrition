@@ -43,9 +43,9 @@ hamburgare;hamburgare;;1;st;Hamburgare med bröd;518;10;LV 2512 × 200 g
 korv-med-bröd;korv med bröd;;2;st;Korv med bröd;622;10;LV 2509 × 240 g
 sushi-8;sushi;;8;bit;Sushi;370;15;LV 1363–2758 × 240 g
 ost-skiva;ost;;2;skiva;Ost;70;20;hårdost 28 % ≈ 350 kcal/100 g × 20 g
-smör-10g;smör;Smör;10;g;Smörgåsfett;77;5;LV 29 smör 80 %
-bregott-msk;smörgåsfett;Normal;1;msk;Smörgåsfett;94;5;LV 2190 × 14 g
+smör-10g;smör;Normal;10;g;Smör;67;5;LV 2190 Normal 75 % (Smör 80 % dold sedan v0.14)
+bregott-smorgas;smörgåsfett;Normal;1;smörgås;Smör;34;5;LV 2190 × 5 g
 banan;banan;;1;st;Banan;100;20;LV banan ≈ 95 × 110 g
-smör-förval;smör;;10;g;Smörgåsfett;67;5;förval = vanligast (Normal 75 %, LV 2190)
+smör-förval;smör;;10;g;Smör;67;5;förval = vanligast (Normal 75 %, LV 2190)
 mjölk-förval;mjölk;;2;dl;Mjölk;97;5;förval = vanligast (Mellan 1,5 %)
 potatis-förval;potatis;;200;g;Potatis;170;5;förval = kokt (LV 231 höstpotatis kokt 85)
