@@ -342,9 +342,9 @@ export function mergeFdt(state, f) {
 // Utemat (F3, 2026-11-10): tre snabbval när man äter ute och inte vet exakt. n = [kcal, protein, kolhydrater, fett] totalt (≈).
 // v0.9 (2026-11-11): grupper Hemmagjort (home), Utemat (out) och Snacks (snack – bara i fusk). g = grupp, label = nivå.
 export const QUICK_ADD = [
-  { id: 'home-light', g: 'home', label: 'Lätt', name: 'Hemmagjort – Lätt', n: [450, 35, 35, 18], ex: 'Mager fisk/kyckling med grönt, omelett, tonfisksallad, mager färs' },
-  { id: 'home-std', g: 'home', label: 'Standard', name: 'Hemmagjort – Standard', n: [650, 35, 70, 22], ex: 'Köttfärssås med pasta, lax med potatis/sås, kycklinggryta med ris, husman' },
-  { id: 'home-heavy', g: 'home', label: 'Tung', name: 'Hemmagjort – Tung', n: [850, 40, 95, 32], ex: 'Stor portion pasta/färs, hemmagjord burgare m. klyftpotatis, lasagne' },
+  { id: 'home-light', g: 'home', label: 'Lätt', name: 'Hemmagjort – Lätt', n: [450, 35, 35, 18], ex: 'Mager fisk/kyckling med grönt, omelett, tonfisksallad, mager färs, soppa, wok med grönsaker' },
+  { id: 'home-std', g: 'home', label: 'Standard', name: 'Hemmagjort – Standard', n: [650, 35, 70, 22], ex: 'Köttfärssås med pasta, lax med potatis/sås, kycklinggryta med ris, köttbullar med potatis, fiskgratäng, kalops, curry med ris, thaiwok, pokebowl' },
+  { id: 'home-heavy', g: 'home', label: 'Tung', name: 'Hemmagjort – Tung', n: [850, 40, 95, 32], ex: 'Stor portion pasta/färs, hemmagjord burgare m. klyftpotatis, lasagne, carbonara, makaronilåda, fläskpannkaka, schnitzel med pommes' },
   { id: 'out-light', g: 'out', label: 'Lätt', name: 'Utemat – Lätt', n: [700, 30, 75, 30], ex: 'Halv pizza + sallad, burgare utan strips, sushi 10–12 bitar, matig sallad' },
   { id: 'out-std', g: 'out', label: 'Standard', name: 'Utemat – Standard', n: [1000, 40, 105, 45], ex: 'Hel hamburgermeny, dagens lunch, thaimat med ris, kebab i bröd' },
   { id: 'out-heavy', g: 'out', label: 'Tung', name: 'Utemat – Tung', n: [1400, 55, 140, 65], ex: 'Hel pizzeriapizza, kebabtallrik, dubbelburgare med strips, två rätter' },

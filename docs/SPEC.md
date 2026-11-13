@@ -154,9 +154,9 @@ Snabba uppskattningar när man inte vet exakt – samma idé som Utemat (F3), ut
 
 | Grupp | Nivå | ≈ kcal | n [kcal, P, K, F] | Exempel |
 |---|---|---|---|---|
-| Hemmagjort | Lätt | 450 | [450, 35, 35, 18] | Mager fisk/kyckling med grönt, omelett, tonfisksallad, mager färs |
-| Hemmagjort | Standard | 650 | [650, 35, 70, 22] | Köttfärssås med pasta, lax med potatis/sås, kycklinggryta med ris, husman |
-| Hemmagjort | Tung | 850 | [850, 40, 95, 32] | Stor portion pasta/färs, hemmagjord burgare m. klyftpotatis, lasagne |
+| Hemmagjort | Lätt | 450 | [450, 35, 35, 18] | Mager fisk/kyckling med grönt, omelett, tonfisksallad, mager färs, soppa, wok med grönsaker |
+| Hemmagjort | Standard | 650 | [650, 35, 70, 22] | Köttfärssås med pasta, lax med potatis/sås, kycklinggryta med ris, köttbullar med potatis, fiskgratäng, kalops, curry med ris, thaiwok, pokebowl |
+| Hemmagjort | Tung | 850 | [850, 40, 95, 32] | Stor portion pasta/färs, hemmagjord burgare m. klyftpotatis, lasagne, carbonara, makaronilåda, fläskpannkaka, schnitzel med pommes |
 | Utemat | Lätt / Standard / Tung | 700 / 1 000 / 1 400 | oförändrat | oförändrat (F3) |
 | Snacks | Lite | 250 | [250, 3, 27, 14] | En Magnum, en kanelbulle, Marabou 45 g (en rad), lösgodis 60 g (en liten skopa), en näve nötter, två kakor |
 | Snacks | Mellan | 500 | [500, 6, 50, 30] | Halv chipspåse (175 g), Marabou 100 g (en hel liten kaka), lösgodis 125 g, en wienerbröd + läsk, halv glasskartong |
