@@ -1,5 +1,5 @@
 // Vanor och träning i Idag (porterat från follow-diet-tracker/views/today.js). Rendering via el() only.
-import { OUTCOMES } from '../fdt-store.js';
+import { OUTCOMES } from '../habit-store.js';
 import { weekStart, QUICK_ADD, quickGroup, quickById, postN } from '../store.js';
 import { S, el, kcal, reasonName, isCardio, goals, sessionText } from '../ui.js';
 

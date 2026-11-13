@@ -3,7 +3,7 @@ import { sumN, postN, goalFor, addDays, habitDay, habitStreak } from '../store.j
 import { today, S, setOpen, el, svg, stepper, kcal, fmtNum, pct, dateTitle, amountText, mealName, reasonName, arrange } from '../ui.js';
 import { viewAdd } from './add.js';
 import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
-import { OUTCOMES } from '../fdt-store.js';
+import { OUTCOMES } from '../habit-store.js';
 
 export const dayPosts = () => S.state.log[S.current] || [];
 

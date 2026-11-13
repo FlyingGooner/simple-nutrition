@@ -1,7 +1,7 @@
 // Simple nutrition – data model, validation, food search, export/import. ES module; localStorage only (key sn.data).
 // Food data comes from data/foods.js (classic script: FOODS_CORE, FOODS_MORE, FOODS_SOURCE), never from the network.
 const KEY = 'sn.data';
-import { validate as fdtValidate, defaults as fdtDefaults, importText as fdtImportText, OUTCOMES, dayResult, streak as fdtStreak, weekStats as fdtWeekStats, rangeRatio, longestStreak } from './fdt-store.js';
+import { validate as fdtValidate, defaults as fdtDefaults, importText as fdtImportText, OUTCOMES, dayResult, streak as fdtStreak, weekStats as fdtWeekStats, rangeRatio, longestStreak } from './habit-store.js';
 export { OUTCOMES };
 const FDT_APP = 'follow-diet-tracker';
 // Settings for habits and training (same fields as follow-diet-tracker, minus slots = meals and weighDay).
@@ -141,7 +141,7 @@ export function validate(raw) {
       if (num(raw.weights[k], 20, 400)) s.weights[k] = Math.round(raw.weights[k] * 10) / 10;
     }
   }
-  // Vanor, träning och deras inställningar: samma validering som i follow-diet-tracker (fdt-store.js).
+  // Vanor, träning och deras inställningar: samma validering som i follow-diet-tracker (habit-store.js).
   const f = fdtValidate({ settings: { ...(isObj(raw.settings) ? raw.settings : {}), slots: s.meals }, days: raw.habits, weighIns: {}, workouts: raw.workouts });
   s.habits = f.days; s.workouts = f.workouts; s.settings = habitSettings(f.settings);
   return s;

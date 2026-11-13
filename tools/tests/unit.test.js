@@ -80,8 +80,8 @@ T.test('import: fel app, fel format, trasig text, BOM', () => {
   T.ok(!importText('﻿' + exportText(defaults(), '2026-11-09')).error, 'BOM');
 });
 
-// Import från follow-diet-tracker: exporten görs med appens egen exportText (fdt-store.js = kopia av dess store.js).
-import { exportText as fdtExport, validate as fdtValidate } from '../../fdt-store.js';
+// Import från follow-diet-tracker: exporten görs med appens egen exportText (habit-store.js = kopia av dess store.js).
+import { exportText as fdtExport, validate as fdtValidate } from '../../habit-store.js';
 T.test('import från Följ planen: riktig export → måltider matchas på namn, orsak, anteckning, vikt, pass, plan', () => {
   const r = importText(FDT);
   T.ok(r.fdt && !r.error, r.error || 'fdt');

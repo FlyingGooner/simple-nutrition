@@ -1,7 +1,7 @@
 // View: Inställningar – grupperna Vanor, Träning, Kalorier och Allmänt, var och en hopfälld för sig (beslut 2026-11-09).
 import { goalFor, findRef, addDays } from '../store.js';
 import { today, S, setOpen, el, kcal, pct, shortDate, LAYOUT, LAYOUT_VIEWS, layoutOf } from '../ui.js';
-import { PLAN_MAX } from '../fdt-store.js';
+import { PLAN_MAX } from '../habit-store.js';
 import { dishEditor, dishList } from './dishes.js';
 import { viewAdd } from './add.js';
 

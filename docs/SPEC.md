@@ -130,7 +130,7 @@ Simple nutrition ersätter follow-diet-tracker. **Vanorna är fokus**, kaloriern
 - **Trend:** tabellen visar v, vikt (7-d), ±, ✅ %, 🍰, 🏋️ pass och kcal/d. "Vad hänger ihop": bra mot sämre veckor, ≥ passmål mot färre, under mot över kalorimålet.
 - **Historik:** kalendern färgas efter följsamhet (som i follow-diet-tracker), markering för vägning och träning; följsamhet 7/30 dagar, streak, längsta streak, pass totalt, kcal-snitt 7 dagar.
 - **Inställningar:** fyra hopfällbara grupper – **Vanor** (Min plan, Lyckad dag, Måltider, Orsaker), **Träning** (passtyper och mål per vecka), **Kalorier** (kalorimål, protein/kolhydrater, Mina rätter, egna produkter, egna sökord), **Allmänt** (Data, Installera, Hjälp).
-- **Beräkningar:** följsamhet, streak, veckostatistik och längsta streak görs av follow-diet-trackers egna funktioner (`fdt-store.js`) på en vy av datan (`habitView`), så siffrorna blir desamma som i den appen. Extra fusk räknas i följsamheten. Vägningsdag finns inte – vikten är 7-dagars medel.
+- **Beräkningar:** följsamhet, streak, veckostatistik och längsta streak görs av follow-diet-trackers egna funktioner (`habit-store.js`) på en vy av datan (`habitView`), så siffrorna blir desamma som i den appen. Extra fusk räknas i följsamheten. Vägningsdag finns inte – vikten är 7-dagars medel.
 
 **Datamodell (tillägg i `sn.data`):**
 ```js
@@ -140,7 +140,7 @@ settings: { reasons: [{ id, name }], successThreshold: 0.8, planText: "", workou
 ```
 Nyckeln i `habits` är måltidens id (`meals`) eller `extra-<tid>`. Valideras med follow-diet-trackers `validate()` (samma gränser: 20 per dag, 10 pass per dag, 60 orsaker/passtyper, datum 2000–2100, objekt utan prototyp).
 
-**Flytt från Följ planen:** spara en backup-fil i follow-diet-tracker och läs in den under Data (fil eller text). Känns igen på `app: "follow-diet-tracker"`, läses och valideras av en oförändrad kopia av dess `store.js` (`fdt-store.js`, utan `load()`/`save()` – rör aldrig `fp:v1`) och läggs sedan **till** (ersätter inget):
+**Flytt från Följ planen:** spara en backup-fil i follow-diet-tracker och läs in den under Data (fil eller text). Känns igen på `app: "follow-diet-tracker"`, läses och valideras av en oförändrad kopia av dess `store.js` (`habit-store.js`, utan `load()`/`save()` – rör aldrig `fp:v1`) och läggs sedan **till** (ersätter inget):
 - Måltider matchas på namn (Frukost = Frukost); okända läggs till (max 10).
 - På samma dag vinner det som redan finns i Simple nutrition; Följ planen fyller resten (vanor, vikt, pass).
 - Plan, lyckad dag-gräns, orsaker, passtyper och mål tas över från Följ planen.
@@ -321,7 +321,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
   - export bara från validerat state, filnamn bara prefix + datum, filen alltid krypterad med användarens lösenord (sedan v0.11.0)
   - `backup.js` är en identisk kopia av `template/backup.js`
 - `FOODS_SOURCE` har ingen webbadress (bara namn och datum). `data/foods.js` och `backup.js` ingår i service workerns `ASSETS`.
-- **Import från Följ planen (v0.5):** samma kontroller som egen import (storlek, BOM, `app`/`format`, allt eller inget, bekräftelse, Ångra). Datan valideras först av follow-diet-trackers egen `validate()` (kopia i `fdt-store.js`, utan lagringsfunktioner) och sedan av `validate()` här. Inga nya lagringsnycklar; `fp:v1` läses eller skrivs aldrig.
+- **Import från Följ planen (v0.5):** samma kontroller som egen import (storlek, BOM, `app`/`format`, allt eller inget, bekräftelse, Ångra). Datan valideras först av follow-diet-trackers egen `validate()` (kopia i `habit-store.js`, utan lagringsfunktioner) och sedan av `validate()` här. Inga nya lagringsnycklar; `fp:v1` läses eller skrivs aldrig.
 - Ny hämtning från Livsmedelsverket görs manuellt. Ett permanent hämtverktyg kräver förhandsprövning och en post i `$toolNet`.
 
 ## PWA-krav
