@@ -173,7 +173,7 @@ T.test('nya namn: smör, skinka, torsk, vegofärs och kaffe ger en post med nytt
     const h = core(q); T.eq(h[0] && h[0].name, name, q);
   }
   const smor = core('smör')[0];
-  T.eq(smor.v.length, 1); T.eq(smor.v[0].u, ['smörgås', 5]);
+  T.eq(smor.v.length, 1); T.eq(smor.v[0].u, ['smörgås', 10]);
   T.eq(core('skinka')[0].v.map((v) => v.label), ['Skinka']);
   T.eq(core('torsk')[0].v.map((v) => v.label), ['Torsk']);
   T.eq(core('kaffe')[0].v.map((v) => v.label), ['Bryggkaffe']);
@@ -199,5 +199,5 @@ T.test('rubrik efter träff: zucchini ger varianten Zucchini förvald, generiska
 });
 T.test('Smör har enheterna smörgås (förvald) och msk', () => {
   const s = searchFoods(ST(), 'smör').hits.find((f) => f.name === 'Smör');
-  T.eq(s.v[0].u, ['smörgås', 5]); T.eq(s.v[0].u2, ['msk', 14]);
+  T.eq(s.v[0].u, ['smörgås', 10]); T.eq(s.v[0].u2, ['msk', 14]);
 });
