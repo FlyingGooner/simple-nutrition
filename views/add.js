@@ -97,6 +97,7 @@ function estCard() {
     el('input', { type: 'text', inputmode: 'decimal', id, placeholder: ph, autocomplete: 'off' }));
   return el('section', { class: 'card pick' },
     el('h2', { text: `${EST_GROUP[S.add.est.g]} – egen uppskattning` }),
+    el('p', { class: 'muted small est-tip', text: 'Tips: fotografera tallriken och be AI:n i telefonen (t.ex. Gemini eller Apple Intelligence) uppskatta kcal, protein, kolhydrater och fett. Det blir aldrig exakt från en bild, men ofta nära nog – och närmare än en schablon, eftersom det gäller just din tallrik.' }),
     el('input', { type: 'text', id: 'est-name', class: 'search', maxlength: 60, placeholder: `Namn (valfritt), t.ex. Lax med ris`, 'aria-label': 'Namn', autocomplete: 'off' }),
     el('div', { class: 'est-grid' }, num('est-kcal', 'kcal', 't.ex. 650'), num('est-p', 'Protein (g)', '0'), num('est-k', 'Kolh. (g)', '0'), num('est-f', 'Fett (g)', '0')),
     el('div', { class: 'row-actions' },

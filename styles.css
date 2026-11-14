@@ -529,3 +529,6 @@ dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
 .est-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 8px 0; }
 .est-field { display: grid; gap: 2px; font-size: .85rem; color: var(--muted, inherit); }
 .est-field input { width: 100%; box-sizing: border-box; }
+#est-name { box-sizing: border-box; }
+.est-field { min-width: 0; }
+.est-tip { margin: 0 0 8px; }
