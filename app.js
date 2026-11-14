@@ -96,6 +96,8 @@ function go(v, push = true) {
   if (push && ownNav) { pendingView = v; return; }
   // Layers closed by a tab change keep their steps; back skips them (popstate: step deeper than open layers → back again).
   if (push) histDepth = Math.min(histDepth, layerDepth(S));
+  // Leaving Inställningar folds its sections again (meal-/food- keys belong to Idag).
+  if (view === 'settings' && v !== 'settings') for (const k of [...setOpen]) if (!k.startsWith('meal-') && !k.startsWith('food-')) setOpen.delete(k);
   view = v;
   if (location.hash !== '#' + v) {
     if (push) history.pushState({ sn: 1, depth: histDepth }, '', '#' + v); else history.replaceState({ sn: 1, depth: histDepth }, '', '#' + v);
