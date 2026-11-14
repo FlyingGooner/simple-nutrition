@@ -33,12 +33,14 @@ Kalorappar drunknar i dubbletter och märkesposter. Här finns bara Livsmedelsve
 | 🏋️ **Träning** | Logga gympass och kondition mot ett veckomål. |
 | 🥕 **Mat och kalorier** | Livsmedelsverkets råvaror med kcal, protein, kolhydrater och fett – i gram eller mått. |
 | 🍲 **Rätter** | Färdiga vanliga rätter och produkttyper (pizza, kebab, sushi, köttbullar …) kontrollerade mot förpackningsvärden, plus egna recept och matlådor. |
+| ⚡ **Snabbval** | När du inte vet exakt: Frukost, Hemmagjort och Utemat i tre nivåer, eller en egen uppskattning (t.ex. från telefonens AI). |
 | 🏷️ **Egna produkter** | Lägg till egna varor och sökord. |
 | ⚖️ **Vikt** | Vikttrend med 7-dagars medel. |
 | 📊 **Vecka, Trend, Historik** | Hur veckan och perioden går mot målet. |
 | 💾 **Backup** | Lösenordskrypterad backup-fil med lösenordsgenerator och påminnelse; flytt från Följ planen. |
 | ❓ **Hjälp** | Manual direkt i appen. |
 | 📴 **Offline** | Fungerar utan nät efter första besöket. |
+| ↩️ **Bakåt** | Telefonens bakåtknapp stänger det som är öppet och går tillbaka genom flikarna du besökt. |
 | 🌗 **Tema** | Ljust och mörkt, följer telefonens inställning. |
 
 ## Integritet och säkerhet 🔒
@@ -99,7 +101,7 @@ Ren HTML, CSS och JavaScript – inga ramverk, inga beroenden, inget byggsteg f�
 | Fil | Innehåll |
 |---|---|
 | `index.html` | Appens markup |
-| `styles.css`, `app.js` | Stil och logik |
+| `styles.css`, `app.js`, `ui.js`, `nav.js`, `views/` | Stil, router och klick, delat tillstånd, Bakåt-logik, en fil per vy (ES-moduler) |
 | `store.js` | Lagring i `localStorage` och validering av sparad data |
 | `version.js` | Versionsnummer (enda källan) |
 | `sw.js`, `manifest.webmanifest`, `icons/` | Installation som app (PWA) och offline |
