@@ -132,9 +132,8 @@ addEventListener('popstate', (e) => {
     go(v, false);
   } else syncHistory();   // a stale layer step: go back past it
 });
-document.getElementById('discard-dialog').addEventListener('close', (e) => {
-  if (e.target.returnValue === 'ok') { discardDish = true; history.back(); }
-});
+// "Släng" on the button itself (not the close event): two quick closes must never go back twice.
+document.getElementById('dd-ok').addEventListener('click', () => { discardDish = true; history.back(); });
 // v0.6.4: vid dagbyte glöms utfällda måltider och 🍽 Mat – ifyllda måltider visas alltid hopfällda när man kommer till en dag.
 const resetDay = () => {
   S.open = null; S.add = null;
