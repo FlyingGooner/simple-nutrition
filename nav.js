@@ -1,23 +1,25 @@
 // nav.js – pure navigation logic for Bakåt (v0.14.0). No DOM, no storage: tested in Node (tools/tests/*.node.mjs).
-// Layers stack: dish editor (Inställningar) → Lägg till → chosen item (pick, dpick or own estimate).
+// Layers stack: dish editor (Inställningar) → Lägg till → chosen item (pick, dpick or own estimate). Idag: markeringsläge (sel).
 
 const picked = (a) => !!(a && (a.pick || a.dpick || a.est));
 
-// Topmost open layer: 'pick' | 'add' | 'dish' | null.
+// Topmost open layer: 'pick' | 'add' | 'dish' | 'sel' | null.
 export function topLayer(S) {
   if (picked(S.add)) return 'pick';
   if (S.add) return 'add';
   if (S.dish) return 'dish';
+  if (S.sel) return 'sel';   // Idag: several posts marked (long press)
   return null;
 }
 // Number of open layers, each one history step.
-export const layerDepth = (S) => (S.dish ? 1 : 0) + (S.add ? 1 : 0) + (picked(S.add) ? 1 : 0);
+export const layerDepth = (S) => (S.dish ? 1 : 0) + (S.add ? 1 : 0) + (picked(S.add) ? 1 : 0) + (S.sel ? 1 : 0);
 // Closes the topmost layer. unpick keeps tab, q, all and scroll. Returns true if something closed.
 export function closeTop(S) {
   const l = topLayer(S);
   if (l === 'pick') { S.add.pick = S.add.dpick = S.add.est = null; S.add.alias = false; }
   else if (l === 'add') S.add = null;
   else if (l === 'dish') S.dish = null;
+  else if (l === 'sel') { S.sel = null; S.selCopy = false; }
   return l !== null;
 }
 // Unsaved dish: the draft differs from the copy taken when the editor opened.

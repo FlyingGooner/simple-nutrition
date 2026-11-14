@@ -20,6 +20,7 @@ let view = 'today';
 const app = document.getElementById('app');
 const tabbar = document.querySelector('.tabbar');
 const buzz = () => navigator.vibrate?.(10);
+const LONG_PRESS_MS = 450;   // Idag: hold a post this long to start markeringsläge
 const errText = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
 
 const cleanPlan = (v) => v.replace(/[\u0000-\u0009\u000B-\u001F\u007F-\u009F‎‏‪-‮⁦-⁩]/g, '').trim().slice(0, PLAN_MAX);
@@ -131,6 +132,7 @@ addEventListener('popstate', (e) => {
   const v = location.hash.slice(1);
   if (Object.hasOwn(VIEWS, v) && v !== view) {
     if (S.add?.target === 'dish') S.add = null;
+    S.sel = null; S.selCopy = false;
     if (v !== 'settings') S.dish = null;
     go(v, false);
   } else syncHistory();   // a stale layer step: go back past it
@@ -139,7 +141,7 @@ addEventListener('popstate', (e) => {
 document.getElementById('dd-ok').addEventListener('click', () => { discardDish = true; history.back(); });
 // v0.6.4: vid dagbyte glöms utfällda måltider och 🍽 Mat – ifyllda måltider visas alltid hopfällda när man kommer till en dag.
 const resetDay = () => {
-  S.open = null; S.add = null;
+  S.open = null; S.add = null; S.sel = null; S.selCopy = false;
   for (const k of [...setOpen]) if (k.startsWith('meal-') || k.startsWith('food-')) setOpen.delete(k);
 };
 tabbar.addEventListener('click', (ev) => {
@@ -148,6 +150,7 @@ tabbar.addEventListener('click', (ev) => {
   ev.preventDefault();
   if (t.dataset.view === 'today') { S.current = today(); resetDay(); }
   if (S.add?.target === 'dish') S.add = null;
+  S.sel = null; S.selCopy = false;
   if (t.dataset.view !== 'settings') S.dish = null;
   go(t.dataset.view);
 });
@@ -229,6 +232,32 @@ app.addEventListener('click', (ev) => {
     case 'next': if (S.current < today()) S.current = addDays(S.current, 1); resetDay(); break;
     case 'today': S.current = today(); resetDay(); break;
     case 'popen': S.open = S.open === id ? null : id; break;
+    case 'psel': {   // markeringsläge: tap toggles; the last one unmarked ends the mode
+      const i = S.sel.indexOf(id);
+      if (i < 0) S.sel.push(id); else S.sel.splice(i, 1);
+      if (!S.sel.length) { S.sel = null; S.selCopy = false; }
+      break;
+    }
+    case 'selclose': S.sel = null; S.selCopy = false; break;
+    case 'selcopy': S.selCopy = !S.selCopy; break;
+    case 'seldel': {
+      const ids = S.sel, n = ids.length, one = dayPosts().find((p) => p.id === ids[0]);
+      S.sel = null; S.selCopy = false;
+      withUndo(n === 1 ? `${one?.name ?? 'Posten'} togs bort` : `${n} poster togs bort`, () => { S.state.log[S.current] = dayPosts().filter((p) => !ids.includes(p.id)); cleanupDay(); });
+      return;
+    }
+    case 'selcopyok': {   // copies keep meal, amount and values; new ids. Max 100 posts per day.
+      const to = document.getElementById('sel-date')?.value;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(to || '') || to > today()) { snackbar('Välj en dag, senast idag', null, null, 3000); return; }
+      const src = dayPosts().filter((p) => S.sel.includes(p.id)), dst = S.state.log[to] || [];
+      if (dst.length + src.length > 100) { snackbar('Max 100 poster per dag', null, null, 3000); return; }
+      S.sel = null; S.selCopy = false;
+      withUndo(`${src.length === 1 ? src[0].name : src.length + ' poster'} kopierad${src.length === 1 ? '' : 'e'} till ${to === today() ? 'idag' : to === addDays(today(), -1) ? 'igår' : dateTitle(to).toLowerCase()}`, () => {
+        S.state.log[to] = [...dst, ...src.map((p) => ({ ...p, id: uid() + Math.random().toString(36).slice(2, 5), n: [...p.n], ...(p.u ? { u: [...p.u] } : {}) }))];
+      });
+      buzz();
+      return;
+    }
     case 'psave': {
       const p = dayPosts().find((x) => x.id === id);
       if (!p) return;
@@ -658,6 +687,23 @@ app.addEventListener('change', (ev) => {
 });
 
 
+/* ---------- Long press on a post in Idag: markeringsläge (sel layer). The click after it is swallowed. ---------- */
+let press = null, pressFired = false;
+const endPress = () => { if (press) clearTimeout(press.timer); press = null; };
+app.addEventListener('pointerdown', (ev) => {
+  const row = ev.target.closest('[data-act="popen"]');
+  endPress(); pressFired = false;   // the row is redrawn during a long press, so its click may never come
+  if (!row || view !== 'today' || topLayer(S) || ev.button > 0) return;
+  press = { x: ev.clientX, y: ev.clientY, timer: setTimeout(() => {
+    press = null; pressFired = true;
+    S.open = null; S.sel = [row.dataset.id]; S.selCopy = false; buzz(); render();
+  }, LONG_PRESS_MS) };
+});
+app.addEventListener('pointermove', (ev) => { if (press && Math.hypot(ev.clientX - press.x, ev.clientY - press.y) > 10) endPress(); });
+for (const t of ['pointerup', 'pointercancel', 'scroll']) addEventListener(t, endPress, { passive: true, capture: true });
+app.addEventListener('click', (ev) => { if (pressFired) { pressFired = false; ev.stopImmediatePropagation(); ev.preventDefault(); } }, true);
+app.addEventListener('contextmenu', (ev) => { if (ev.target.closest('.post-head')) ev.preventDefault(); });
+
 /* ---------- Swipe, install, refresh, service worker ---------- */
 const SWIPE = { today: ['prev', 'next'], week: ['wprev', 'wnext'], history: ['mprev', 'mnext'] };
 let touchX = null, touchY = null;
@@ -667,7 +713,7 @@ document.addEventListener('touchstart', (e) => {
   touchY = e.touches[0].clientY;
 }, { passive: true });
 document.addEventListener('touchend', (e) => {
-  if (touchX == null || !SWIPE[view] || S.add) return;
+  if (touchX == null || !SWIPE[view] || S.add || S.sel) return;
   const dx = e.changedTouches[0].clientX - touchX, dy = e.changedTouches[0].clientY - touchY;
   touchX = null;
   if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;

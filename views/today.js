@@ -23,6 +23,14 @@ function summaryCard() {
 }
 
 function postRow(p) {
+  if (S.sel) {   // markeringsläge: a tap marks, no editor
+    const on = S.sel.includes(p.id);
+    return el('li', { class: 'post' + (on ? ' marked' : '') },
+      el('button', { class: 'post-head', 'data-act': 'psel', 'data-id': p.id, 'aria-pressed': String(on) },
+        el('span', { class: 'sel-box', 'aria-hidden': 'true', text: on ? '✓' : '' }),
+        el('span', { class: 'post-name' }, p.name, el('small', { text: amountText(p) })),
+        el('span', { class: 'post-kcal', text: kcal(postN(p)[0]) })));
+  }
   const open = S.open === p.id;
   const row = el('li', { class: 'post' + (open ? ' open' : '') },
     el('button', { class: 'post-head', 'data-act': 'popen', 'data-id': p.id, 'aria-expanded': open ? 'true' : 'false' },
@@ -48,7 +56,7 @@ function mealCard(m, posts) {
   // Maten är en hopfälld underdel av måltiden: "🍽 Mat · 420 kcal" (öppen-läget sparas i setOpen via data-sec).
   // v0.6.3: öppet-läget för 🍽 Mat är per dag (förut delat mellan alla dagar och tvingade även det hopfällda måltidskortet att öppnas).
   const other = m.id === '_other', sec = `food-${S.current}-${m.id}`, editing = posts.some((p) => p.id === S.open);
-  const open = setOpen.has(sec) || editing;
+  const open = setOpen.has(sec) || editing || (S.sel && posts.some((p) => S.sel.includes(p.id)));
   const body = [
     other ? null : outcomeRow(m.id),
     other ? null : habitDetails(m.id),
@@ -68,7 +76,7 @@ function mealCard(m, posts) {
       el('div', { class: 'meal-head' }, el('span', { class: 'meal-name', text: m.name })), body);
   }
   const o = OUTCOMES[e.outcome], msec = `meal-${S.current}-${m.id}`;
-  return el('details', { class: 'card meal meal-done', 'data-sec': msec, open: setOpen.has(msec) || editing, 'aria-label': m.name },
+  return el('details', { class: 'card meal meal-done', 'data-sec': msec, open: setOpen.has(msec) || editing || (S.sel && posts.some((p) => S.sel.includes(p.id))), 'aria-label': m.name },
     el('summary', { class: 'meal-head' },
       el('span', { class: 'meal-name' }, m.name,
         posts.length ? el('small', { class: 'meal-what', text: posts.map((p) => p.name).join(', ') }) : null),
@@ -95,7 +103,9 @@ export function viewToday() {
   const other = posts.filter((p) => !known.has(p.m) && !(p.m.startsWith('extra-') && dayHabits()[p.m]));   // extra fuskets kcal visas i nivåraden
   const orphanHabits = Object.keys(dayHabits()).filter((k) => !known.has(k) && !k.startsWith('extra-'));
   const r = habitDay(S.state, S.current), st = habitStreak(S.state, today());
+  if (S.sel) S.sel = S.sel.filter((id) => posts.some((p) => p.id === id));
   return [
+    S.sel ? selBar() : null,
     stepper('Byt dag', ['prev', 'Föregående dag'], 'today', ['next', 'Nästa dag'], isToday,
       isToday ? [el('span', { class: 'today-badge', text: 'IDAG' }), dateTitle(S.current)] : dateTitle(S.current), null, isToday ? '' : 'not-today'),
     el('div', { class: 'streak' }, el('span', { title: 'Lyckade dagar i rad', text: `🔥 ${st} ${st === 1 ? 'dag' : 'dagar'} i rad` }),
@@ -118,5 +128,19 @@ export function viewToday() {
     posts.length || S.state.weights[S.current] != null || S.state.habits[S.current] || S.state.workouts[S.current]
       ? el('p', { class: 'clear-day center' }, el('button', { class: 'link danger', 'data-act': 'clearday', text: '🗑 Rensa dagen' })) : null,
   ];
+}
+// Markeringsläge (håll in en post): Kopiera till en dag eller Radera, på en gång.
+function selBar() {
+  const n = S.sel.length;
+  return el('div', { class: 'sel-bar', role: 'toolbar', 'aria-label': 'Markerade poster' },
+    el('div', { class: 'sel-top' },
+      el('button', { class: 'sel-x', 'data-act': 'selclose', 'aria-label': 'Avsluta markering', text: '✕' }),
+      el('span', { class: 'sel-n', 'aria-live': 'polite', text: `${n} ${n === 1 ? 'vald' : 'valda'}` }),
+      el('button', { class: 'sel-btn', 'data-act': 'selcopy', disabled: !n, 'aria-expanded': String(S.selCopy), text: 'Kopiera' }),
+      el('button', { class: 'sel-btn danger', 'data-act': 'seldel', disabled: !n, text: 'Radera' })),
+    S.selCopy ? el('div', { class: 'sel-copy' },
+      el('label', { class: 'field' }, el('span', { text: 'Kopiera till dag' }),
+        el('input', { type: 'date', id: 'sel-date', value: today(), max: today(), 'aria-label': 'Dag' })),
+      el('button', { class: 'weigh-save', 'data-act': 'selcopyok', disabled: !n, text: 'Kopiera' })) : null);
 }
 export { mealName };

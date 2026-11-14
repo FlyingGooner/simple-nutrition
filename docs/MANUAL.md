@@ -27,6 +27,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - **Schabloner:** vanliga varor och rätter har ett ungefärligt värde. Ange antal eller vikt. Vill du ha exakta värden lägger du in varan under Egna produkter.
 - **burk avr.** betyder avrunnen vikt: en burk kidneybönor är 400 g med spad men ca 230 g bönor – det är bönorna som räknas.
 - Under **Senaste** loggar du något du ätit förut med ett tryck. **Kopiera maten från igår** fyller en tom dag med gårdagens mat.
+- **Markera flera:** håll fingret på en matpost tills den blir markerad och tryck på fler. **Kopiera** lägger in dem på en annan dag (samma måltid och mängd), **Radera** tar bort dem. Ångra finns direkt efteråt. ✕ eller Bakåt avslutar.
 - Tryck på en post för att ändra mängd, flytta den till en annan måltid eller ta bort den.
 - Det finns inget kalorimål från start – appen visar bara dagens summa. Vill du ha ett mål sätter du det under **Inställningar → Kalorier → Kalorimål** (tomt = inget mål), och likaså valfria mål för protein och kolhydrater.
 

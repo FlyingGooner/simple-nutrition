@@ -80,3 +80,10 @@ test('backup: export → import behåller q:est-*, gammal backup utan sådana l�
   const r2 = importText(exportText(old, '2026-11-14'));
   assert.deepEqual(r2.data.log, validate(old).log);
 });
+test('bakåt: markeringsläget i Idag är ett eget steg', () => {
+  const S = { sel: ['p1'], selCopy: true, add: null, dish: null };
+  assert.equal(topLayer(S), 'sel');
+  assert.equal(layerDepth(S), 1);
+  assert.equal(closeTop(S), true); assert.equal(S.sel, null); assert.equal(S.selCopy, false);
+  assert.equal(closeTop(S), false);
+});

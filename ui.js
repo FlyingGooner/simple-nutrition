@@ -13,6 +13,8 @@ export const S = {
   dish: null,                // Inställningar: dish draft being edited (views/dishes.js) or null
   week: weekStart(today()),  // Vecka: selected week (Monday)
   month: today().slice(0, 7),// Historik: YYYY-MM
+  sel: null,                 // Idag: ids of marked posts (markeringsläge, a layer) or null
+  selCopy: false,            // Idag: the Kopiera till-row under the bar is open
   installPrompt: null,
 };
 export const setOpen = new Set();   // Inställningar: open sections (data-sec), kept across re-renders
