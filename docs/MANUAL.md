@@ -70,6 +70,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - För att läsa tillbaka: tryck **Läs in backup-fil**, kontrollera sammanfattningen och tryck **Ersätt**. All nuvarande data ersätts – Ångra finns direkt efteråt.
 - Går det inte att välja filen: öppna **Klistra in text** och klistra in filens innehåll.
 - Filen innehåller all din data och krypteras alltid med ett lösenord som du väljer. Bocka i **Visa lösenord** om du vill se vad du skriver. **Skapa slumpmässigt lösenord** fyller i ett starkt lösenord som du kan kopiera till en lösenordshanterare. Siffror och specialtecken visas i färg så att det är lätt att skriva av. Glömmer du lösenordet går filen inte att öppna.
+- Backup-lösenordet sparas på enheten första gången du skriver det (när du sparar eller läser in en backup). Sedan sparas backup med ett tryck, utan fråga. Lösenordet ligger bara på den här enheten, aldrig i backup-filen, och filen är lika krypterad som förut. Under Inställningar → Data kan du **Visa** och **Byta** lösenordet, eller bocka ur **Kom ihåg backup-lösenordet** – då glöms det och appen frågar varje gång. Behåll lösenordet i din lösenordshanterare – utan det går backupen inte att öppna på en ny telefon.
 - Filen beskriver sitt eget format och har ett exempel, så den går att ändra för hand och läsa in igen.
 
 ## Installera och offline

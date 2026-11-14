@@ -41,12 +41,50 @@ const BACKUP_MSG = {
   error: 'Kunde inte spara filen',
   nocrypto: 'Den här webbläsaren kan inte kryptera – ingen fil sparades',
 };
+/* ---------- Remembered backup password (U5) ----------
+   On by default: the password typed in the backup dialog (save or read) is kept under sn.pwd, so the next backup is one tap.
+   Only on this device – never in sn.data, so never inside a backup file; the data in localStorage is plain anyway and the
+   file stays as encrypted as before. Unticked (sn.pwdoff = 1): forgotten, the app asks every time. Radera all data removes both. */
+const PWD_KEY = 'sn.pwd', OFF_KEY = 'sn.pwdoff', SLUG = 'simple-nutrition';
+export function savedPassword() { try { const p = localStorage.getItem(PWD_KEY); return p && !Backup.checkPassword(p) ? p : ''; } catch { return ''; } }
+export function rememberOn() { try { return localStorage.getItem(OFF_KEY) !== '1'; } catch { return false; } }
+export function setRemember(on) {
+  try { if (on) localStorage.removeItem(OFF_KEY); else { localStorage.setItem(OFF_KEY, '1'); localStorage.removeItem(PWD_KEY); } } catch { /* blocked */ }
+  render();
+}
+function keep(pwd) {
+  if (!rememberOn() || Backup.checkPassword(pwd)) return;
+  try { localStorage.setItem(PWD_KEY, pwd); } catch { /* no room: asks next time */ }
+}
+export async function rememberPassword() {
+  const a = await Backup.askPassword('export'); if (!a) return;
+  try { localStorage.setItem(PWD_KEY, a.pwd); } catch { snackbar('Kunde inte spara lösenordet', null, null, 3000); return; }
+  render(); snackbar('Lösenordet sparas på den här enheten. Ha det kvar i din lösenordshanterare också.', null, null, 6000);
+}
+let busy = false;
 export async function saveBackup() {
-  const r = await Backup.saveWithPassword({ slug: 'simple-nutrition', today: today(), text: exportText(S.state, today()) });
+  const pwd = savedPassword();
+  let r, first = false;
+  if (!pwd && !rememberOn()) r = await Backup.saveWithPassword({ slug: SLUG, today: today(), text: exportText(S.state, today()) });
+  else {
+    if (busy) return;
+    busy = true;
+    try {
+      if (pwd) {   // one tap: encrypt with the remembered password, no dialog
+        snackbar('Krypterar backup…', null, null, 2000);
+        r = await Backup.save({ slug: SLUG, today: today(), text: await Backup.encrypt(exportText(S.state, today()), pwd, SLUG) });
+      } else {     // first time: the usual dialog, then the password is kept
+        const a = await Backup.askPassword('export', async (p) => ({ env: await Backup.encrypt(exportText(S.state, today()), p, SLUG) }));
+        if (!a) r = 'cancelled';
+        else { keep(a.pwd); first = true; r = await Backup.save({ slug: SLUG, today: today(), text: a.value.env }); }
+      }
+    } catch { r = 'error'; } finally { busy = false; }
+  }
   if (r === 'saved' || r === 'fallback') {   // v0.7.0: kom ihåg senaste backup för påminnelsen
     S.state.backup.last = today(); S.state.backup.asked = null; persist();
     if (currentView() === 'settings') render();
-  }
+    if (first) { snackbar('Backup sparad. Lösenordet är sparat på enheten – nästa gång räcker ett tryck.', null, null, 5000); return; }
+  } else if (first && currentView() === 'settings') render();
   if (BACKUP_MSG[r]) snackbar(BACKUP_MSG[r], null, null, 4000);
 }
 /* ---------- Backup-påminnelse (v0.7.0) ---------- */
@@ -87,7 +125,18 @@ export async function readBackup(input) {
 }
 // Encrypted backup (U5, 2026-11-11): an envelope asks for the password, then the same checks as plain text.
 export async function openImport(text) {
-  const r = await Backup.openText(text, 'simple-nutrition', MAX_IMPORT_CHARS);
+  const pwd = savedPassword();   // the remembered password first; another password → the usual question
+  if (pwd && Backup.isEncrypted(text)) {
+    let t; try { t = await Backup.decrypt(text, pwd, SLUG, MAX_IMPORT_CHARS); } catch { t = null; }
+    if (t && typeof t.text === 'string') { startImport(t.text); return; }
+  }
+  if (rememberOn() && Backup.isEncrypted(text)) {   // ask, and keep the password that opened the file (a new phone)
+    const a = await Backup.askPassword('import', (p) => Backup.decrypt(text, p, SLUG, MAX_IMPORT_CHARS));
+    if (!a) return;
+    if (a.value?.error) { importError(a.value.error); return; }
+    keep(a.pwd); startImport(a.value.text); return;
+  }
+  const r = await Backup.openText(text, SLUG, MAX_IMPORT_CHARS);
   if (r.cancelled) return;
   if (r.error) { importError(r.error); return; }
   startImport(r.text);
@@ -108,7 +157,7 @@ export function initData(ctx) {
     snackbar('Data importerad', 'Ångra', () => { S.state = before; persist(); render(); });
   });
   document.getElementById('cd-ok').addEventListener('click', () => {
-    S.state = defaults(); persist(); S.current = today(); resetDay(); S.dish = null; render();
+    S.state = defaults(); try { localStorage.removeItem(PWD_KEY); localStorage.removeItem(OFF_KEY); } catch { /* blocked */ } persist(); S.current = today(); resetDay(); S.dish = null; render();
     snackbar('All data är raderad', null, null, 3000);
   });
 }

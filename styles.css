@@ -532,3 +532,5 @@ dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
 #est-name { box-sizing: border-box; }
 .est-field { min-width: 0; }
 .est-tip { margin: 0 0 8px; }
+.pwd-box { margin-top: 8px; }
+.pwd-show { margin: 4px 0; padding: 8px 12px; border-radius: var(--r-md); background: var(--surface-container-high); font-family: ui-monospace, monospace; font-size: 1rem; letter-spacing: .04em; overflow-wrap: anywhere; -webkit-user-select: text; user-select: text; }

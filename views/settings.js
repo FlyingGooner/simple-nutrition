@@ -2,6 +2,7 @@
 import { goalFor, findRef, addDays } from '../store.js';
 import { today, S, setOpen, el, kcal, pct, shortDate, LAYOUT, LAYOUT_VIEWS, layoutOf } from '../ui.js';
 import { PLAN_MAX } from '../habit-store.js';
+import { savedPassword, rememberOn } from './data.js';
 import { dishEditor, dishList } from './dishes.js';
 import { viewAdd } from './add.js';
 
@@ -145,6 +146,7 @@ export function viewSettings() {
           el('button', { class: 'btn-file btn-filled', 'data-act': 'backupsave', text: 'Spara backup-fil' }),
           el('label', { class: 'btn-file' }, 'Läs in backup-fil',
             el('input', { type: 'file', id: 'import-file', accept: '.txt,.json', 'data-act': 'importfile' }))),
+        pwdBox(),
         el('p', { class: 'import-error small', id: 'import-error', role: 'alert' }),
         el('details', { class: 'data-text' }, el('summary', { text: 'Klistra in text' }),
           el('label', { class: 'data-box' }, el('span', { class: 'small', text: 'Importera (ersätter all data – från Följ planen läggs den till)' }),
@@ -159,4 +161,19 @@ export function viewSettings() {
       helpCard()),
     el('p', { class: 'muted small center', text: `Simple nutrition v${self.APP_VERSION} · inga externa anrop · näringsvärden från Livsmedelsverket` }),
   ];
+}
+
+// Remembered backup password: on by default – the password typed at the first backup is kept. Visa, Byt; unticking forgets it.
+function pwdBox() {
+  const p = savedPassword(), on = rememberOn();
+  return el('div', { class: 'pwd-box' },
+    el('label', { class: 'check' }, el('input', { type: 'checkbox', checked: on, 'data-act': 'pwdremember' }), el('span', { text: 'Kom ihåg backup-lösenordet på den här enheten' })),
+    !on ? el('p', { class: 'muted small', text: 'Appen frågar efter lösenordet varje gång.' })
+      : !p ? el('p', { class: 'muted small', text: 'Lösenordet du skriver vid nästa backup sparas – sedan räcker ett tryck. Filen är lika skyddad som förut.' })
+      : [el('p', { class: 'small', text: '🔑 Sparat – backup sparas med ett tryck.' }),
+        S.showPwd ? el('p', { class: 'pwd-show', text: p }) : null,
+        el('div', { class: 'row-actions' },
+          el('button', { class: 'link', 'data-act': 'pwdshow', text: S.showPwd ? 'Dölj' : 'Visa' }),
+          el('button', { class: 'link', 'data-act': 'pwdset', text: 'Byt' })),
+        el('p', { class: 'muted small', text: 'Ha lösenordet kvar i din lösenordshanterare: utan det går backupen inte att öppna på en ny telefon.' })]);
 }

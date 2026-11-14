@@ -12,7 +12,7 @@ import { viewHistory } from './views/history.js';
 import { viewSettings } from './views/settings.js';
 import { PLAN_MAX } from './habit-store.js';
 import { newDraft, draftFrom, dishQ, dishUnit, isBatch } from './views/dishes.js';
-import { initData, saveBackup, maybeAskBackup, readBackup, openImport } from './views/data.js';
+import { initData, saveBackup, maybeAskBackup, readBackup, openImport, rememberPassword, setRemember } from './views/data.js';
 
 document.getElementById('version').textContent = 'v' + self.APP_VERSION;
 
@@ -92,6 +92,7 @@ function syncHistory() {
 }
 function go(v, push = true) {
   if (!Object.hasOwn(VIEWS, v)) v = 'today';
+  S.showPwd = false;   // the backup password never stays shown after a tab change
   if (push && ownNav) { pendingView = v; return; }
   // Layers closed by a tab change keep their steps; back skips them (popstate: step deeper than open layers → back again).
   if (push) histDepth = Math.min(histDepth, layerDepth(S));
@@ -567,6 +568,8 @@ app.addEventListener('click', (ev) => {
     case 'wipe': document.getElementById('confirm-dialog').showModal(); return;
     case 'import': openImport(document.getElementById('import-text').value); return;
     case 'backupsave': saveBackup(); return;
+    case 'pwdset': rememberPassword(); return;
+    case 'pwdshow': S.showPwd = !S.showPwd; break;
     default: return;
   }
   render();
@@ -614,6 +617,7 @@ app.addEventListener('toggle', (ev) => {
 app.addEventListener('change', (ev) => {
   const t = ev.target;
   switch (t.dataset.act) {
+    case 'pwdremember': S.showPwd = false; setRemember(t.checked); return;
     case 'importfile': readBackup(t); return;
     case 'rename': {
       const it = listOf(t.dataset.kind)?.find((x) => x.id === t.dataset.id);

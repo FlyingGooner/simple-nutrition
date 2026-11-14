@@ -25,3 +25,6 @@ Källan för beskrivningen är `EXPORT_SCHEMA` och `EXPORT_EXAMPLE` i `store.js`
 | `settings` | orsaker, gräns för lyckad dag, plan, passtyper och mål |
 | `layout` | kortordning per vy `{ order, hidden }` |
 | `backup` | `{ remind: week/month/off, last?, asked? }` |
+
+## Bara på enheten
+- `sn.pwd`: sparat backup-lösenord, sparas första gången det skrivs (på som standard). `sn.pwdoff` = `1` när användaren bockat ur Kom ihåg backup-lösenordet – då glöms det. Finns bara på enheten, aldrig i `sn.data` eller i backup-filen. Radera all data tar bort båda.
