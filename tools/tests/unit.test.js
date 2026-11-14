@@ -165,7 +165,8 @@ T.test('plan: högst 300 tecken även vid import', () => {
 });
 
 // Livsmedelsdatan (klassiskt skript) laddas för söktesterna nedan.
-await new Promise((ok, fel) => { const s = document.createElement('script'); s.src = new URL('../../data/foods.js', import.meta.url).href; s.onload = ok; s.onerror = fel; document.head.appendChild(s); });
+// @node-preload ../../data/foods.js
+if (typeof document !== 'undefined') await new Promise((ok, fel) => { const s = document.createElement('script'); s.src = new URL('../../data/foods.js', import.meta.url).href; s.onload = ok; s.onerror = fel; document.head.appendChild(s); });
 const ST = () => ({ ...defaults(), foods: [], aliases: {} });
 T.test('nya namn: smör, skinka, torsk, vegofärs och kaffe ger en post med nytt namn, dolda varianter syns inte', () => {
   const core = (q) => searchFoods(ST(), q).hits.filter((f) => !f.product);

@@ -43,7 +43,7 @@ export function resultsList() {
   if (a.tab === 'dishes') return dishResults(a.q);
   if (a.tab === 'out') {   // Snabbval (v0.9, v0.14): Frukost | Hemmagjort | Utemat, sist Egen uppskattning
     const g = a.qg || 'home', seg = (id, label) => el('button', { class: 'seg' + (g === id ? ' on' : ''), 'data-act': 'quickg', 'data-val': id, 'aria-pressed': String(g === id), text: label });
-    return [el('div', { class: 'segs qsegs', role: 'group', 'aria-label': 'Frukost, hemmagjort eller utemat' }, seg('bf', 'Frukost'), seg('home', 'Hemmagjort'), seg('out', 'Utemat')),
+    return [el('div', { class: 'segs segs3 qsegs', role: 'group', 'aria-label': 'Frukost, hemmagjort eller utemat' }, seg('bf', 'Frukost'), seg('home', 'Hemmagjort'), seg('out', 'Utemat')),
       el('ul', { class: 'posts' }, QUICK_ADD.filter((x) => x.g === g).map((x) => el('li', {}, el('button', { class: 'food-row', 'data-act': 'quick', 'data-id': x.id },
         el('span', { class: 'post-name' }, x.label, el('small', { text: x.ex + (x.id === 'out-light' ? ' · kan vara enligt plan' : '') })),
         el('span', { class: 'post-kcal', text: `≈ ${kcal(x.n[0])} kcal` })))),

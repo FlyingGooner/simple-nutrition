@@ -91,7 +91,7 @@ function syncHistory() {
   }
 }
 function go(v, push = true) {
-  if (!VIEWS[v]) v = 'today';
+  if (!Object.hasOwn(VIEWS, v)) v = 'today';
   if (push && ownNav) { pendingView = v; return; }
   // Layers closed by a tab change keep their steps; back skips them (popstate: step deeper than open layers → back again).
   if (push) histDepth = Math.min(histDepth, layerDepth(S));
@@ -126,7 +126,7 @@ addEventListener('popstate', (e) => {
   }
   histDepth = target;
   const v = location.hash.slice(1);
-  if (VIEWS[v] && v !== view) {
+  if (Object.hasOwn(VIEWS, v) && v !== view) {
     if (S.add?.target === 'dish') S.add = null;
     if (v !== 'settings') S.dish = null;
     go(v, false);
