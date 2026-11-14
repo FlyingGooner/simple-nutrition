@@ -560,3 +560,4 @@ dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
 .post.marked { background: var(--primary-container); border-radius: var(--r-sm); }
 .post.marked .sel-box { background: var(--primary); border-color: var(--primary); color: var(--on-primary, #fff); }
 .post-head .post-name { flex: 1; }
+.meals { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }

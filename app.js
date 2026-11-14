@@ -696,13 +696,16 @@ app.addEventListener('pointerdown', (ev) => {
   if (!row || view !== 'today' || topLayer(S) || ev.button > 0) return;
   press = { x: ev.clientX, y: ev.clientY, timer: setTimeout(() => {
     press = null; pressFired = true;
-    S.open = null; S.sel = [row.dataset.id]; S.selCopy = false; buzz(); render();
+    getSelection()?.removeAllRanges(); S.open = null; S.sel = [row.dataset.id]; S.selCopy = false; buzz(); render();
   }, LONG_PRESS_MS) };
 });
 app.addEventListener('pointermove', (ev) => { if (press && Math.hypot(ev.clientX - press.x, ev.clientY - press.y) > 10) endPress(); });
 for (const t of ['pointerup', 'pointercancel', 'scroll']) addEventListener(t, endPress, { passive: true, capture: true });
 app.addEventListener('click', (ev) => { if (pressFired) { pressFired = false; ev.stopImmediatePropagation(); ev.preventDefault(); } }, true);
 app.addEventListener('contextmenu', (ev) => { if (ev.target.closest('.post-head')) ev.preventDefault(); });
+
+// Android starts its own text selection on a long press (on the text next to the row too): clear it while marking.
+document.addEventListener('selectionchange', () => { if ((press || S.sel) && !document.activeElement?.matches?.('input, textarea')) getSelection()?.removeAllRanges(); });
 
 /* ---------- Swipe, install, refresh, service worker ---------- */
 const SWIPE = { today: ['prev', 'next'], week: ['wprev', 'wnext'], history: ['mprev', 'mnext'] };
