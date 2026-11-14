@@ -193,6 +193,21 @@ async function choosePassword() {
 function noteUnlocked() { const s = document.getElementById('imp-sum'); if (s && document.getElementById('import-dialog')?.open) s.textContent += ' Backupen låstes upp med det sparade lösenordet.'; }
 function noteWrongSaved() { const n = document.getElementById('pw-text'); if (n) n.textContent = 'Det sparade lösenordet passade inte till den här filen. Skriv lösenordet du valde när du sparade den.'; }
 
+// Visa lösenord: ett fält räcker (som i KeePass) – Upprepa döljs och följer det första. Görs här, backup.js är delad.
+function oneFieldWhenShown() {
+  const $id = (id) => document.getElementById(id);
+  const dlg = $id('pw-dialog'), show = $id('pw-show'), p1 = $id('pw-1'), p2 = $id('pw-2'), row = $id('pw-2-row'), gen = $id('pw-gen');
+  if (!dlg || !show || !p1 || !p2 || !row) return;
+  let one = false;   // true while Upprepa is hidden by us (only when saving – reading never shows it)
+  const apply = () => {
+    if (show.checked && !row.hidden) { one = true; row.hidden = true; p2.value = p1.value; }
+    else if (!show.checked && one) { one = false; row.hidden = false; }
+  };
+  new MutationObserver(() => { if (dlg.open) one = false; }).observe(dlg, { attributes: true, attributeFilter: ['open'] });
+  show.addEventListener('change', apply);
+  gen?.addEventListener('click', () => setTimeout(apply, 0));   // the generator ticks Visa itself
+  p1.addEventListener('input', () => { if (one) p2.value = p1.value; });
+}
 export function initData(ctx) {
   ({ persist, render, status, snackbar, resetDay, view: currentView } = ctx);
   document.getElementById('bk-ok').addEventListener('click', () => { saveBackup(); });
@@ -213,5 +228,6 @@ export function initData(ctx) {
     snackbar('All data är raderad', null, null, 3000);
     setTimeout(welcomeCheck, 0);
   });
+  oneFieldWhenShown();
   welcomeCheck();
 }

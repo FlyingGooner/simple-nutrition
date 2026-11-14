@@ -170,10 +170,10 @@ function pwdBox() {
     el('label', { class: 'check' }, el('input', { type: 'checkbox', checked: on, 'data-act': 'pwdremember' }), el('span', { text: 'Kom ihåg backup-lösenordet på den här enheten' })),
     !on ? el('p', { class: 'muted small', text: 'Appen frågar efter lösenordet varje gång.' })
       : !p ? el('p', { class: 'muted small', text: 'Lösenordet du skriver vid nästa backup sparas – sedan räcker ett tryck. Filen är lika skyddad som förut.' })
-      : [el('p', { class: 'small', text: '🔑 Sparat – backup sparas med ett tryck.' }),
-        S.showPwd ? el('p', { class: 'pwd-show', text: p }) : null,
-        el('div', { class: 'row-actions' },
-          el('button', { class: 'link', 'data-act': 'pwdshow', text: S.showPwd ? 'Dölj' : 'Visa' }),
+      : el('div', { class: 'pwd-card' },
+        el('div', { class: 'pwd-head' }, el('span', { text: '🔑 Lösenordet är sparat' }),
+          el('button', { class: 'link', 'data-act': 'pwdshow', 'aria-pressed': S.showPwd ? 'true' : 'false', text: S.showPwd ? 'Dölj' : 'Visa' }),
           el('button', { class: 'link', 'data-act': 'pwdset', text: 'Byt' })),
-        el('p', { class: 'muted small', text: 'Ha lösenordet kvar i din lösenordshanterare: utan det går backupen inte att öppna på en ny telefon.' })]);
+        S.showPwd ? el('p', { class: 'pwd-show', text: p }) : null,
+        el('p', { class: 'muted small pwd-note', text: 'Backup sparas med ett tryck. Ha lösenordet kvar i din lösenordshanterare – utan det går backupen inte att öppna på en ny telefon.' })));
 }
