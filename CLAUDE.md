@@ -3,6 +3,8 @@
 Mobil-först PWA. Spec: `docs/SPEC.md` (läs bara berört avsnitt). Arbetsflöde, säkerhet och artifact: `../CLAUDE.md`. Standard: `../STANDARD.md`. Stil: `../STIL.md`.
 
 ## Projektets regler
+- Publicering: GitHub Pages byggs från `master`. Ändringar gjorda härifrån (Claude Code) committas och pushas direkt till `master`, med höjd version, så att de syns i appen.
+- Svar till användaren efter en ändring: skriv alltid den nya versionen sist (t.ex. "Version: 0.2.18").
 - Helt lokalt: inga nätverksanrop, ingen extern data, inga nycklar (`connect-src 'none'`). Data bara i `localStorage`, nycklar `sn.*`; cache-prefix `sn-`.
 - Inga beroenden, inget byggsteg; ES-moduler (`app.js`, `ui.js`, `views/` – export/import/backup i `views/data.js`, som får app.js-hjälpare via `initData()`, aldrig cirkulära importer; `build-single.ps1` paketerar dem); `habit-store.js` = oförändrad kopia av follow-diet-trackers store.js (import + vanberäkningar); `data/foods.js` är ett vanligt skript. `CONFIG` överst i `app.js`. Rendering med `textContent`/`el()`, aldrig HTML. Aldrig blank skärm vid fel.
 - UI på svenska. Kod och variabelnamn på engelska. Nyckelfärg `#2f7d5b` (som follow-diet-tracker).
