@@ -1,7 +1,7 @@
 // Simple nutrition – export/import, backup-fil och backup-påminnelse (U5). ES-modul. app.js anropar initData() med sina
 // hjälpfunktioner så att modulen aldrig importerar app.js (bygget stöder inte cirkulära importer).
 import { defaults, save, addDays, exportText, importText, MAX_IMPORT_CHARS, mergeFdt } from '../store.js';
-import { today, S, shortDate } from '../ui.js';
+import { today, S, shortDate, el } from '../ui.js';
 
 let persist, render, status, snackbar, resetDay, currentView;
 const errText = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
@@ -53,8 +53,9 @@ export function setRemember(on) {
   render();
 }
 function keep(pwd) {
-  if (!rememberOn() || Backup.checkPassword(pwd)) return;
+  if (!rememberOn() || Backup.checkPassword(pwd) || savedPassword()) return;   // a password from another file never replaces the saved one
   try { localStorage.setItem(PWD_KEY, pwd); } catch { /* no room: asks next time */ }
+  closeWelcome();
 }
 export async function rememberPassword() {
   const a = await Backup.askPassword('export'); if (!a) return;
@@ -128,10 +129,12 @@ export async function openImport(text) {
   const pwd = savedPassword();   // the remembered password first; another password → the usual question
   if (pwd && Backup.isEncrypted(text)) {
     let t; try { t = await Backup.decrypt(text, pwd, SLUG, MAX_IMPORT_CHARS); } catch { t = null; }
-    if (t && typeof t.text === 'string') { startImport(t.text); return; }
+    if (t && typeof t.text === 'string') { startImport(t.text); noteUnlocked(); return; }
   }
   if (rememberOn() && Backup.isEncrypted(text)) {   // ask, and keep the password that opened the file (a new phone)
-    const a = await Backup.askPassword('import', (p) => Backup.decrypt(text, p, SLUG, MAX_IMPORT_CHARS));
+    const wait = Backup.askPassword('import', (p) => Backup.decrypt(text, p, SLUG, MAX_IMPORT_CHARS));
+    if (pwd) noteWrongSaved();
+    const a = await wait;
     if (!a) return;
     if (a.value?.error) { importError(a.value.error); return; }
     keep(a.pwd); startImport(a.value.text); return;
@@ -141,6 +144,50 @@ export async function openImport(text) {
   if (r.error) { importError(r.error); return; }
   startImport(r.text);
 }
+
+/* ---------- Välkommen: välj lösenord först (2026-11-14) ----------
+   Tom app utan sparat lösenord: en ruta som inte går att stänga förrän ett lösenord är valt eller en backup är inläst,
+   som att registrera sig. Lösenordet är bara nyckeln till backup-filerna – det sparas på enheten (sn.pwd), aldrig i
+   datan eller i filen. Bockar man ur Kom ihåg visas rutan inte (man har valt att få frågan varje gång). */
+let welcomeDlg = null;
+const needsWelcome = () => !(Object.keys(S.state.log).length || Object.keys(S.state.habits).length || Object.keys(S.state.weights).length) && !savedPassword() && rememberOn();
+function closeWelcome() { if (welcomeDlg?.open && !needsWelcome()) welcomeDlg.close(); }
+export function welcomeCheck() {
+  if (!needsWelcome() || welcomeDlg?.open || document.querySelector('dialog[open]') || typeof HTMLDialogElement !== 'function') return;
+  if (!welcomeDlg) {
+    const err = el('p', { class: 'import-error small', role: 'alert' });
+    const file = el('input', { type: 'file', accept: '.txt,.json' });
+    file.addEventListener('change', async () => {
+      const f = file.files && file.files[0]; if (!f) return;
+      let r; try { r = await Backup.read(f, MAX_IMPORT_CHARS); } catch { r = { error: 'Kunde inte läsa filen.' }; }
+      file.value = '';
+      err.textContent = r.error || '';
+      if (!r.error) openImport(r.text);
+    });
+    const pick = el('button', { type: 'button', class: 'btn-file btn-filled', text: 'Välj lösenord' });
+    pick.addEventListener('click', choosePassword);
+    welcomeDlg = el('dialog', { class: 'welcome', 'aria-labelledby': 'wl-title' },
+      el('h2', { id: 'wl-title', text: 'Välkommen!' }),
+      el('p', { text: 'Välj ett lösenord för att komma igång och skriv ner det på en säker plats, till exempel i din lösenordshanterare. Dina backup-filer skyddas med lösenordet, och det behövs för att läsa in en backup.' }),
+      el('p', { class: 'muted small', text: 'Vi samlar ingen data. Allt stannar på din enhet – lösenordet är bara en nyckel som skyddar dina backuper.' }),
+      el('div', { class: 'welcome-actions' }, pick, el('label', { class: 'btn-file' }, 'Jag har en backup-fil att importera', file)),
+      err);
+    welcomeDlg.addEventListener('cancel', (e) => e.preventDefault());   // inte Esc/Bakåt: ett lösenord först
+    document.body.append(welcomeDlg);
+  }
+  welcomeDlg.showModal();
+}
+async function choosePassword() {
+  const wait = Backup.askPassword('export');   // sets the dialog texts synchronously; ours replace them
+  const set = (id, t) => { const n = document.getElementById(id); if (n) n.textContent = t; };
+  set('pw-title', 'Välj lösenord'); set('pw-text', 'Lösenordet krypterar dina backup-filer och sparas på den här enheten.'); set('pw-ok', 'Spara lösenord');
+  const a = await wait; if (!a) return;
+  keep(a.pwd); render();
+  snackbar('Lösenordet är sparat. Backup sparas med ett tryck.', null, null, 4000);
+}
+// Point 2: the user is told when the remembered password opened the file, and when it did not fit.
+function noteUnlocked() { const s = document.getElementById('imp-sum'); if (s && document.getElementById('import-dialog')?.open) s.textContent += ' Backupen låstes upp med det sparade lösenordet.'; }
+function noteWrongSaved() { const n = document.getElementById('pw-text'); if (n) n.textContent = 'Det sparade lösenordet passade inte till den här filen. Skriv lösenordet du valde när du sparade den.'; }
 
 export function initData(ctx) {
   ({ persist, render, status, snackbar, resetDay, view: currentView } = ctx);
@@ -154,10 +201,13 @@ export function initData(ctx) {
     const before = S.state;
     S.state = next; S.current = today(); resetDay(); S.dish = null;
     render();
+    closeWelcome();
     snackbar('Data importerad', 'Ångra', () => { S.state = before; persist(); render(); });
   });
   document.getElementById('cd-ok').addEventListener('click', () => {
     S.state = defaults(); try { localStorage.removeItem(PWD_KEY); localStorage.removeItem(OFF_KEY); } catch { /* blocked */ } persist(); S.current = today(); resetDay(); S.dish = null; render();
     snackbar('All data är raderad', null, null, 3000);
+    setTimeout(welcomeCheck, 0);
   });
+  welcomeCheck();
 }
