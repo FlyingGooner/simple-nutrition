@@ -41,12 +41,14 @@ function foodRow(f) {
 export function resultsList() {
   const a = S.add;
   if (a.tab === 'dishes') return dishResults(a.q);
-  if (a.tab === 'out') {   // Snabbval (v0.9): Hemmagjort | Utemat
-    const g = S.quickG || 'home', seg = (id, label) => el('button', { class: 'seg' + (g === id ? ' on' : ''), 'data-act': 'quickg', 'data-val': id, 'aria-pressed': String(g === id), text: label });
-    return [el('div', { class: 'segs qsegs', role: 'group', 'aria-label': 'Hemmagjort eller utemat' }, seg('home', 'Hemmagjort'), seg('out', 'Utemat')),
+  if (a.tab === 'out') {   // Snabbval (v0.9, v0.14): Frukost | Hemmagjort | Utemat, sist Egen uppskattning
+    const g = a.qg || 'home', seg = (id, label) => el('button', { class: 'seg' + (g === id ? ' on' : ''), 'data-act': 'quickg', 'data-val': id, 'aria-pressed': String(g === id), text: label });
+    return [el('div', { class: 'segs qsegs', role: 'group', 'aria-label': 'Frukost, hemmagjort eller utemat' }, seg('bf', 'Frukost'), seg('home', 'Hemmagjort'), seg('out', 'Utemat')),
       el('ul', { class: 'posts' }, QUICK_ADD.filter((x) => x.g === g).map((x) => el('li', {}, el('button', { class: 'food-row', 'data-act': 'quick', 'data-id': x.id },
         el('span', { class: 'post-name' }, x.label, el('small', { text: x.ex + (x.id === 'out-light' ? ' · kan vara enligt plan' : '') })),
-        el('span', { class: 'post-kcal', text: `≈ ${kcal(x.n[0])} kcal` })))))];
+        el('span', { class: 'post-kcal', text: `≈ ${kcal(x.n[0])} kcal` })))),
+        el('li', {}, el('button', { class: 'food-row', 'data-act': 'estopen', 'data-val': g },
+          el('span', { class: 'post-name' }, 'Egen uppskattning', el('small', { text: 'Fyll i kcal, och gärna protein, kolhydrater och fett' })))))];
   }
   if (a.tab === 'recent') {
     const list = recent(S.state);
@@ -88,6 +90,21 @@ function pickCard() {
     el('p', { class: 'import-error small', id: 'add-error', role: 'alert' }));
 }
 
+// v0.14: Egen uppskattning – namn (valfritt), kcal (krävs), makron (valfria). Ett lager: bakåt stänger det.
+export const EST_GROUP = { bf: 'Frukost', home: 'Hemmagjort', out: 'Utemat' };
+function estCard() {
+  const num = (id, label, ph) => el('label', { class: 'est-field' }, label,
+    el('input', { type: 'text', inputmode: 'decimal', id, placeholder: ph, autocomplete: 'off' }));
+  return el('section', { class: 'card pick' },
+    el('h2', { text: `${EST_GROUP[S.add.est.g]} – egen uppskattning` }),
+    el('input', { type: 'text', id: 'est-name', class: 'search', maxlength: 60, placeholder: `Namn (valfritt), t.ex. Lax med ris`, 'aria-label': 'Namn', autocomplete: 'off' }),
+    el('div', { class: 'est-grid' }, num('est-kcal', 'kcal', 't.ex. 650'), num('est-p', 'Protein (g)', '0'), num('est-k', 'Kolh. (g)', '0'), num('est-f', 'Fett (g)', '0')),
+    el('div', { class: 'row-actions' },
+      el('button', { class: 'link', 'data-act': 'unpick', text: 'Tillbaka' }),
+      el('button', { class: 'weigh-save', 'data-act': 'estsave', text: `Lägg till i ${mealName(S.add.meal)}` })),
+    el('p', { class: 'import-error small', id: 'add-error', role: 'alert' }));
+}
+
 export function viewAdd() {
   const a = S.add, forDish = a.target === 'dish';
   const tabBtn = (id, label) => el('button', { class: 'seg' + (a.tab === id ? ' on' : ''), 'data-act': 'addtab', 'data-val': id, 'aria-pressed': a.tab === id ? 'true' : 'false', text: label });
@@ -96,7 +113,7 @@ export function viewAdd() {
     el('div', { class: 'add-top' },
       el('button', { class: 'icon', 'data-act': 'addclose', 'aria-label': 'Stäng', text: '✕' }),
       el('h1', { class: 'add-title', text: forDish ? 'Lägg till ingrediens' : `Lägg till i ${mealName(a.meal)}` })),
-    a.pick ? pickCard() : a.dpick ? dishPickCard() : [
+    a.pick ? pickCard() : a.dpick ? dishPickCard() : a.est ? estCard() : [
       forDish ? null : el('div', { class: 'segs segs4', role: 'group', 'aria-label': 'Välj lista' }, tabBtn('recent', 'Senaste'), tabBtn('foods', 'Varor'), tabBtn('dishes', 'Rätter'), tabBtn('out', 'Snabbval')),
       searchable ? el('input', { type: 'search', id: 'add-q', class: 'search', value: a.q, placeholder: a.tab === 'dishes' ? 'Sök bland dina rätter' : 'Sök livsmedel', 'aria-label': 'Sök', autocomplete: 'off', 'data-act': 'search' }) : null,
       el('div', { id: 'add-results', class: 'card results' }, resultsList()),

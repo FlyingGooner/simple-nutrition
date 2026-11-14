@@ -49,13 +49,17 @@ function cleanUnit(u) {   // [unit name ≤ 10 chars, number]
   const name = cleanText(u[0], 10);
   return name && num(u[1], 0.01, 10000) ? [name, Math.round(u[1] * 100) / 100] : undefined;
 }
+// v0.14: egen uppskattning i Snabbval – q:est-<läge> (Frukost, Hemmagjort, Utemat).
+export const EST_RE = /^q:est-(bf|home|out)$/, EST_MAX = { kcal: 5000, g: 500 };
 function cleanPost(p) {
   if (!isObj(p) || !ID_RE.test(p.id) || !REF_RE.test(p.ref) || !ID_RE.test(p.m)) return null;
   const dish = p.ref.startsWith('r:') || p.ref.startsWith('q:');   // q: = Utemat (F3), n totalt som rätt-post
   const name = cleanText(p.name), n = cleanN(p.n, dish);
   if (!name || !n) return null;
   const out = { id: p.id, m: p.m, ref: p.ref, name, n };
-  if (p.ref.startsWith('q:') && !QUICK_ADD.some((x) => 'q:' + x.id === p.ref)) return null;
+  if (EST_RE.test(p.ref)) {   // v0.14: egen uppskattning, egna värden i n
+    if (String(p.name).length > 60 || !(n[0] >= 1 && n[0] <= EST_MAX.kcal) || n.slice(1).some((x) => x > EST_MAX.g)) return null;
+  } else if (p.ref.startsWith('q:') && !QUICK_ADD.some((x) => 'q:' + x.id === p.ref)) return null;
   if (dish) { if (num(p.q, 0.0001, 50)) out.q = Math.round(p.q * 10000) / 10000; else return null; }
   else if (num(p.g, 0, 10000)) out.g = Math.round(p.g * 10) / 10;
   else return null;
@@ -262,7 +266,7 @@ export function recent(state, max = 20) {
   const out = [], seen = new Set();
   for (const k of Object.keys(state.log).sort().reverse()) {
     for (const p of [...state.log[k]].reverse()) {
-      const key = p.ref + '|' + (p.g ?? p.q);
+      const key = p.ref + '|' + (p.g ?? p.q) + (EST_RE.test(p.ref) ? '|' + p.name + '|' + p.n.join(',') : '');
       if (seen.has(key)) continue;
       seen.add(key); out.push(p);
       if (out.length >= max) return out;
@@ -342,6 +346,9 @@ export function mergeFdt(state, f) {
 // Utemat (F3, 2026-11-10): tre snabbval när man äter ute och inte vet exakt. n = [kcal, protein, kolhydrater, fett] totalt (≈).
 // v0.9 (2026-11-11): grupper Hemmagjort (home), Utemat (out) och Snacks (snack – bara i fusk). g = grupp, label = nivå.
 export const QUICK_ADD = [
+  { id: 'bf-light', g: 'bf', label: 'Lätt', name: 'Frukost – Lätt', n: [250, 12, 32, 8], ex: '1 smörgås, fil eller yoghurt med müsli, gröt med mjölk, 2 knäcke med ost' },
+  { id: 'bf-std', g: 'bf', label: 'Standard', name: 'Frukost – Standard', n: [400, 18, 45, 16], ex: '2 smörgåsar med pålägg och kaffe med mjölk, gröt med mjölk och bär, fil med granola och frukt' },
+  { id: 'bf-heavy', g: 'bf', label: 'Tung', name: 'Frukost – Tung', n: [650, 28, 70, 28], ex: 'Äggröra med bacon och bröd, hotellfrukost, 2 smörgåsar med ägg och juice, pannkakor med sylt' },
   { id: 'home-light', g: 'home', label: 'Lätt', name: 'Hemmagjort – Lätt', n: [450, 35, 35, 18], ex: 'Mager fisk/kyckling med grönt, omelett, tonfisksallad, mager färs, soppa, wok med grönsaker' },
   { id: 'home-std', g: 'home', label: 'Standard', name: 'Hemmagjort – Standard', n: [650, 35, 70, 22], ex: 'Köttfärssås med pasta, lax med potatis/sås, kycklinggryta med ris, köttbullar med potatis, fiskgratäng, kalops, curry med ris, thaiwok, pokebowl' },
   { id: 'home-heavy', g: 'home', label: 'Tung', name: 'Hemmagjort – Tung', n: [850, 40, 95, 32], ex: 'Stor portion pasta/färs, hemmagjord burgare m. klyftpotatis, lasagne, carbonara, makaronilåda, fläskpannkaka, schnitzel med pommes' },
@@ -408,6 +415,7 @@ export const EXPORT_SCHEMA = {
   'post (vara)': '{ id, m: måltids-id, ref: "l:<livsmedel>" | "b:<beräknad>" | "u:<egen produkt-id>" | "p:<schablon-id>", name, g: gram 0–10000, n: per 100 g (kcal ≤ 950, övriga ≤ 105 var och tillsammans), u?: [mått, antal] }',
   'post (rätt)': '{ id, m, ref: "r:<rätt-id>", name, q: andel av satsen 0,0001–50, n: totalt för andelen (kcal ≤ 20000, gram ≤ 2000), u?: ["port." | "av satsen" | "g", mängd] }',
   'post (snabbval)': '{ id, m: måltids-id eller "extra-<n>" (extra fusk), ref: "q:<id i snabbval>", name, q: antal, n: totalt, u?: ["st", antal] }',
+  'post (egen uppskattning)': '{ id, m, ref: "q:est-bf" | "q:est-home" | "q:est-out", name ≤ 60 tecken, q: 1, n: [kcal 1–5000, protein, kolh, fett 0–500 g], u?: ["st", 1] }',
   dishes: 'lista { id, name, portions: 1–50, items: [{ ref, name, g, n per 100 g }] (max 50), cooked?: färdig vikt i gram 1–20000 }, max 500',
   foods: 'lista { id, name, n per 100 g, u?: [mått, gram per mått] }, egna produkter, max 1000',
   aliases: 'objekt sökord (gemener, ≤ 40 tecken) → ref, max 1000',

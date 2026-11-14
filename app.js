@@ -1,9 +1,11 @@
 // Simple nutrition – no external calls, localStorage only. See CLAUDE.md. Views in views/*.js, shared state in ui.js.
 import { load, save, validate, addDays, weekStart, setGoal, goalFor, findRef, cleanText, uid, dishTotal } from './store.js';
 import { today, S, setOpen, el, kcal, dateTitle, parseNum, wType, isCardio, parseDur, fmtNum, amountText, layoutOf, LAYOUT_VIEWS } from './ui.js';
-import { lastPost, QUICK_ADD, setLevel, dropLevels, quickGroup } from './store.js';
+import { lastPost, QUICK_ADD, setLevel, dropLevels, quickGroup, EST_MAX } from './store.js';
+import { mealName } from './ui.js';
+import { topLayer, layerDepth, closeTop, dishDirty, defaultQuickG } from './nav.js';
 import { viewToday, dayPosts } from './views/today.js';
-import { resultsList, pickGrams, pickSum, unitsOf, isBulk } from './views/add.js';
+import { resultsList, pickGrams, pickSum, unitsOf, isBulk, EST_GROUP } from './views/add.js';
 import { viewWeek } from './views/week.js';
 import { viewTrend } from './views/trend.js';
 import { viewHistory } from './views/history.js';
@@ -70,14 +72,69 @@ function render() {
     t.classList.toggle('on', on);
     if (on) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');
   }
+  syncHistory();
 }
-function go(v) {
+/* ---------- Bakåt (v0.14.0): flikar och lager i historiken, popstate stänger det översta ---------- */
+// histDepth = open layers that have a history step. A layer that opens gets pushState; one closed by a button
+// (or by logging) goes back with history.go(), so no step points at a closed layer. While our own history.go()
+// runs (ownNav) nothing is pushed: tab changes wait in pendingView and new layers are pushed when popstate comes.
+let histDepth = 0, navTimer = 0, discardDish = false, pendingView = null, ownNav = false;
+function syncHistory() {
+  if (ownNav) return;
+  const d = layerDepth(S);
+  if (d > histDepth) { for (let i = histDepth + 1; i <= d; i++) history.pushState({ sn: 1, layer: topLayer(S), depth: i }, '', location.hash); histDepth = d; }
+  else if (d < histDepth) {
+    const k = histDepth - d; histDepth = d; ownNav = true;
+    S.navPending = true; clearTimeout(navTimer);   // double-tap guard: real taps ignored until popstate, at most 400 ms
+    navTimer = setTimeout(() => { S.navPending = false; }, 400);
+    history.go(-k);
+  }
+}
+function go(v, push = true) {
   if (!VIEWS[v]) v = 'today';
+  if (push && ownNav) { pendingView = v; return; }
+  // Layers closed by a tab change keep their steps; back skips them (popstate: step deeper than open layers → back again).
+  if (push) histDepth = Math.min(histDepth, layerDepth(S));
   view = v;
-  if (location.hash !== '#' + v) history.replaceState(null, '', '#' + v);
+  if (location.hash !== '#' + v) {
+    if (push) history.pushState({ sn: 1, depth: histDepth }, '', '#' + v); else history.replaceState({ sn: 1, depth: histDepth }, '', '#' + v);
+  }
   render();
   scrollTo(0, 0);
 }
+addEventListener('popstate', (e) => {
+  S.navPending = false; clearTimeout(navTimer);
+  const target = e.state?.depth ?? 0;
+  if (ownNav) {   // our own history.go() arrived: catch up on what happened meanwhile
+    ownNav = false; histDepth = target;
+    if (pendingView) { const v = pendingView; pendingView = null; go(v); } else syncHistory();
+    return;
+  }
+  if (layerDepth(S) > target) {
+    if (topLayer(S) === 'dish' && !discardDish && dishDirty(S.dish, S.dishOrig)) {
+      history.pushState({ sn: 1, layer: 'dish', depth: histDepth }, '', location.hash);
+      document.getElementById('discard-dialog').showModal();
+      return;
+    }
+    discardDish = false;
+    const wasPick = topLayer(S) === 'pick', y = S.add?.scroll || 0;
+    while (layerDepth(S) > target && closeTop(S));
+    histDepth = layerDepth(S);
+    render();
+    scrollTo(0, wasPick && S.add ? y : 0);
+    return;
+  }
+  histDepth = target;
+  const v = location.hash.slice(1);
+  if (VIEWS[v] && v !== view) {
+    if (S.add?.target === 'dish') S.add = null;
+    if (v !== 'settings') S.dish = null;
+    go(v, false);
+  } else syncHistory();   // a stale layer step: go back past it
+});
+document.getElementById('discard-dialog').addEventListener('close', (e) => {
+  if (e.target.returnValue === 'ok') { discardDish = true; history.back(); }
+});
 // v0.6.4: vid dagbyte glöms utfällda måltider och 🍽 Mat – ifyllda måltider visas alltid hopfällda när man kommer till en dag.
 const resetDay = () => {
   S.open = null; S.add = null;
@@ -111,7 +168,7 @@ function addPost(p) {
 function logged(name) { if (String(S.add?.meal).startsWith('extra-')) S.xopen = null; S.add = null; buzz(); persist(); render(); snackbar(`${name} lades till`, null, null, 2500); }
 function openAdd(target, meal) {
   const tab = target === 'dish' ? 'foods' : S.lastTab || (Object.keys(S.state.log).length ? 'recent' : 'foods');
-  S.add = { target, meal, tab, q: '', all: false, pick: null, dpick: null, alias: false };
+  S.add = { target, meal, tab, q: '', all: false, pick: null, dpick: null, est: null, alias: false, scroll: 0, qg: defaultQuickG(mealName(meal), S.quickG) };
   render(); scrollTo(0, 0);
   document.getElementById('add-q')?.focus();
 }
@@ -162,8 +219,9 @@ function saveDish() {
 
 app.addEventListener('click', (ev) => {
   const t = ev.target.closest('[data-act]');
-  if (!t) return;
+  if (!t || (S.navPending && ev.isTrusted)) return;   // double-tap guard for real taps only
   const { act, id, val } = t.dataset;
+  if (['pick', 'dpick', 'estopen'].includes(act) && S.add) S.add.scroll = scrollY;   // v0.14: back restores the list position
   switch (act) {
     case 'prev': S.current = addDays(S.current, -1); resetDay(); break;
     case 'next': if (S.current < today()) S.current = addDays(S.current, 1); resetDay(); break;
@@ -291,7 +349,7 @@ app.addEventListener('click', (ev) => {
     // Lägg till
     case 'addopen': S.open = null; openAdd('meal', id); return;
     case 'addclose': S.add = null; break;
-    case 'addtab': S.add.tab = S.lastTab = val; S.add.q = ''; S.add.pick = S.add.dpick = null; render(); document.getElementById('add-q')?.focus(); return;
+    case 'addtab': S.add.tab = S.lastTab = val; S.add.q = ''; S.add.pick = S.add.dpick = S.add.est = null; render(); document.getElementById('add-q')?.focus(); return;
     case 'showall': S.add.all = true; redrawResults(); return;
     case 'pick': { const f = findRef(S.state, t.dataset.ref); if (!f) return; const vi = Number(t.dataset.vi); openPick(f, t.dataset.vi && vi >= 0 && vi < f.v.length ? vi : null); render(); return; }   // F1: inget tangentbord
     case 'variant': { const p = S.add.pick; p.vi = Number(val); const us = unitsOf(p.food.v[p.vi]);
@@ -302,7 +360,7 @@ app.addEventListener('click', (ev) => {
       const g = pickGrams(p); p.unit = val;
       p.amount = Number.isFinite(g) ? amt(isBulk(val) ? Math.round(g / x[1]) : Math.round(g / x[1] * 10) / 10) : isBulk(val) ? '100' : '1';
       break; }
-    case 'unpick': S.add.pick = S.add.dpick = null; S.add.alias = false; break;
+    case 'unpick': { const y = S.add.scroll || 0; closeTop(S); render(); scrollTo(0, y); return; }   // no focus: keyboard would hide the list
     case 'addsave': {
       const p = S.add.pick, v = p.food.v[p.vi], g = pickGrams(p);
       if (!(g > 0 && g <= 10000)) { errText('add-error', 'Ange en mängd, t.ex. 150 g eller 2 dl.'); return; }
@@ -317,7 +375,18 @@ app.addEventListener('click', (ev) => {
       if (addPost(post)) logged(name);
       return;
     }
-    case 'quickg': S.quickG = val; redrawResults(); return;
+    case 'quickg': S.quickG = S.add.qg = val; redrawResults(); return;
+    case 'estopen': if (!EST_GROUP[val]) return; S.add.est = { g: val }; render(); scrollTo(0, 0); return;
+    case 'estsave': {   // v0.14: egen uppskattning → q:est-<läge>, egna värden i n
+      const v = (i) => document.getElementById(i)?.value.trim() ?? '';
+      const k = parseNum(v('est-kcal')), m = ['est-p', 'est-k', 'est-f'].map((i) => (v(i) ? parseNum(v(i)) : 0));
+      if (!(k >= 1 && k <= EST_MAX.kcal)) { errText('add-error', 'Ange kcal, t.ex. 650.'); return; }
+      if (m.some((x) => !(x >= 0 && x <= EST_MAX.g))) { errText('add-error', 'Protein, kolhydrater och fett: 0–500 g, eller tomt.'); return; }
+      const g = S.add.est.g, name = cleanText(v('est-name')) || `${EST_GROUP[g]} – egen`;
+      const post = { id: uid(), m: S.add.meal, ref: 'q:est-' + g, name, q: 1, n: [Math.round(k), ...m.map((x) => Math.round(x * 10) / 10)], u: ['st', 1] };
+      if (addPost(post)) logged(name);
+      return;
+    }
     case 'quick': {   // F3: Utemat loggas direkt, n totalt som en rätt-post
       const x = QUICK_ADD.find((o) => o.id === id);
       if (!x || !S.add) return;
@@ -361,19 +430,20 @@ app.addEventListener('click', (ev) => {
       return;
     }
     // Rätter: editor
-    case 'dnew': S.dish = newDraft(); render(); scrollTo(0, 0); document.getElementById('d-name')?.focus(); return;
+    case 'dnew': S.dish = newDraft(); S.dishOrig = JSON.stringify(S.dish); render(); scrollTo(0, 0); document.getElementById('d-name')?.focus(); return;
     // Spara en måltid som rätt: varorna (i gram) blir ingredienser i en ny rätt "per portion" som öppnas i editorn.
     case 'mealdish': {
       const posts = dayPosts().filter((p) => p.m === id), foods = posts.filter((p) => p.g != null).slice(0, 50);
       if (!foods.length) return;
       const meal = S.state.meals.find((x) => x.id === id);
       S.dish = { ...newDraft(), batch: false, name: meal ? meal.name : '', items: foods.map((p) => ({ ref: p.ref, name: p.name, g: p.g, n: [...p.n] })) };
+      S.dishOrig = JSON.stringify(S.dish);
       S.open = null; go('settings');
       document.getElementById('d-name')?.select();
       if (foods.length < posts.length) snackbar('Rätter i måltiden kan inte ingå i en ny rätt och togs inte med', null, null, 4000);
       return;
     }
-    case 'dedit': { const d = S.state.dishes.find((x) => x.id === id); if (!d) return; S.dish = draftFrom(d); render(); scrollTo(0, 0); return; }
+    case 'dedit': { const d = S.state.dishes.find((x) => x.id === id); if (!d) return; S.dish = draftFrom(d); S.dishOrig = JSON.stringify(S.dish); render(); scrollTo(0, 0); return; }
     case 'dcancel': S.dish = null; break;
     case 'dper': S.dish.batch = false; break;
     case 'dbatch': S.dish.batch = true; break;
@@ -630,7 +700,7 @@ setInterval(() => {
   rollDay(); render();
 }, 60000);
 
-go(location.hash.slice(1));
+go(location.hash.slice(1), false);
 initData({ persist, render, status, snackbar, resetDay, view: () => view });
 setTimeout(maybeAskBackup, 800);
 

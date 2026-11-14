@@ -174,6 +174,12 @@ Snacks visas inte i Lägg till – bara i fusk (punkt 2–3). Siffrorna är anta
 
 **Test:** Snabbval-fliken loggar Hemmagjort-nivå; Snacks-nivå på måltidsfusk loggas, byts och tas bort med orsaken; extra fusk med nivå loggar post och tar bort den med fusket; export/import behåller posterna.
 
+## Bakåt, frukost och egen uppskattning (v0.14.0, beslut 2026-11-14)
+- **Bakåt** (Androids knapp, svep i Safari) stänger det översta: dialog → vald vara/rätt/egen uppskattning (tillbaka till samma flik, sökord, Visa fler och scroll) → Lägg till → rätt-editor (osparat: dialogen "Släng ändringarna?") → föregående flik → appen stängs vid startvyn. Flikbyte och `goto` = `pushState`, lager = `pushState` med samma hash, knappar som stänger lager går tillbaka med `history.go()`. Dagbyte, flikar i Lägg till och snackbar ger inga steg. Ren logik i `nav.js` (`topLayer`, `closeTop`, `layerDepth`, `dishDirty`, `defaultQuickG`).
+- **Frukost i Snabbval:** läget Frukost | Hemmagjort | Utemat. `bf-light` 250/12/32/8, `bf-std` 400/18/45/16, `bf-heavy` 650/28/70/28. Förvalt Frukost i måltiden som heter Frukost, annars senast använda läget.
+- **Egen uppskattning:** sista raden i varje läge. Namn ≤ 60 (tomt = "<Läge> – egen"), kcal 1–5 000, makron 0–500 g (tomt = 0). Post `q:est-bf|est-home|est-out`, egna värden i `n`, visas med "≈ uppskattning" och under Senaste (inte sammanslagen med andra uppskattningar).
+- **Tester:** Node (`tools/tests/*.node.mjs`, `node:test`, laddar källfilerna) för `nav.js`, frukostraderna, `cleanPost` för `q:est-*` och export/import.
+
 ## Datamodell
 All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt projektets CLAUDE.md). Valideras i `store.js` innan den används; ogiltiga delar hoppas över.
 

@@ -59,6 +59,7 @@ export function dateTitle(k) {
 }
 // Amount text for a post: "2 dl · 206 g", "120 g", "¼ portion".
 export function amountText(p) {
+  if (String(p.ref).startsWith('q:est-')) return '≈ uppskattning';   // v0.14: egen uppskattning
   if (p.q != null) return p.u ? `${fmtNum(p.u[1], 2)} ${p.u[0]}` : `${fmtNum(p.q, 2)} av receptet`;
   const g = fmtNum(p.g, 0) + ' g';
   return p.u ? `${fmtNum(p.u[1], 2)} ${p.u[0]} · ≈ ${g}` : g;
