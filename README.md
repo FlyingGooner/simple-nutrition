@@ -44,6 +44,20 @@ Calorie apps drown in duplicates and brand entries. Here there are only the Swed
 | ↩️ **Back** | The phone's back button closes what is open and goes back through the tabs you have visited. |
 | 🌗 **Theme** | Light and dark, follows the phone's setting. |
 
+## Why your data is safer here 🛡️
+
+This app holds your weight, your habits and everything you eat. Here is why that is safer than in a typical app:
+
+| Risk | Typical app with an account | This app |
+|---|---|---|
+| **Hacked company database** – the most common way sensitive data leaks | Your data sits in a database with millions of others – a prime target | There is no database. Your data is only in your phone, so an attacker would have to get into *your* phone |
+| **Your data is sold or shared** | Common in free apps, and many paid ones share with partners for ads and analytics | No account, no analytics, no ads, no trackers – and the browser technically blocks every request out |
+| **Employees or partners read it** | Possible – the company holds the data | Nobody but you has it |
+| **The company shuts down or is sold** | Your data goes with it | The app and your data stay on your phone |
+| **Backup in the cloud** | Readable by the company | Encrypted with AES-256 and your password before it leaves the phone |
+
+**Is it the safest possible way?** For personal data like this, keeping it only on your own device, with no server and an encrypted backup, is as safe as a practical app gets – there is simply nothing central to steal. It is not magic, though: your phone itself must be locked and kept updated, the backup password must be strong, and you trust that the code served from GitHub Pages is the published, reviewed code (it is all open on GitHub for anyone to check).
+
 ## Privacy and security 🔒
 
 - **No account, no cookies.** Everything is stored only in your browser (`localStorage`).

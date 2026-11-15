@@ -1,6 +1,6 @@
 // View: Vecka – vanor först (följsamhet, fusk, orsaker, träning), sedan kalorier som stöd (beslut 2026-11-09).
 import { weekStats, weekStart, addDays, isoWeek, habitWeek } from '../store.js';
-import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goals, weekSessions, sessionText, fmtNum, arrange } from '../ui.js';
+import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goals, weekSessions, sessionText, fmtNum, arrange, wOut, wUnit } from '../ui.js';
 
 const DAYS = ['M', 'T', 'O', 'T', 'F', 'L', 'S'];
 
@@ -46,10 +46,10 @@ function weightCard(ws) {
   const last = cur.length ? S.state.weights[cur[cur.length - 1]] : null;
   const base = prev.length ? prev[0] : null, bw = base ? S.state.weights[base] : null;
   const d = last != null && bw != null ? Math.round((last - bw) * 10) / 10 : null;
-  const dTxt = d == null ? '' : d === 0 ? '±0 kg' : `${d > 0 ? '+' : '−'}${fmtNum(Math.abs(d))} kg`;
+  const dTxt = d == null ? '' : d === 0 ? `±0 ${wUnit()}` : `${d > 0 ? '+' : '−'}${fmtNum(wOut(Math.abs(d)))} ${wUnit()}`;
   // Kompakt (v0.5.14): en rad – vikt till vänster, förändring till höger, jämförelsen i liten text.
   // v0.5.15: minikurva i mitten över förra + denna vecka (alla vägningar), jämförelse- och senaste punkten markerade.
-  const kg1 = (v) => v.toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const kg1 = (v) => wOut(v).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const spark = (() => {
     const ks = [...prev, ...cur];
     if (ks.length < 2) return el('span', { class: 'w-spark' });
@@ -66,12 +66,12 @@ function weightCard(ws) {
   return el('section', { class: 'card w-card' },
     el('div', { class: 'w-row' },
       el('span', { class: 'w-label', text: 'Vikt' }),
-      el('span', { class: 'w-now', text: last != null ? `${kg1(last)} kg` : '–' }),
+      el('span', { class: 'w-now', text: last != null ? `${kg1(last)} ${wUnit()}` : '–' }),
       spark,
       d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), text: dTxt }) : null),
     el('p', { class: 'w-sub', text: last == null ? 'Ingen vägning den här veckan än'
       : bw == null ? 'Ingen vägning veckan innan att jämföra med'
-      : `mot ${shortDate(base)} (${kg1(bw)} kg) · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'} denna vecka` }));
+      : `mot ${shortDate(base)} (${kg1(bw)} ${wUnit()}) · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'} denna vecka` }));
 }
 
 function habitCard(ws) {

@@ -1,6 +1,6 @@
 // View: Inställningar – grupperna Vanor, Träning, Kalorier och Allmänt, var och en hopfälld för sig (beslut 2026-11-09).
 import { goalFor, findRef, addDays } from '../store.js';
-import { today, S, setOpen, el, kcal, pct, shortDate, LAYOUT, LAYOUT_VIEWS, layoutOf } from '../ui.js';
+import { today, S, setOpen, el, kcal, pct, shortDate, LAYOUT, LAYOUT_VIEWS, layoutOf, imperial } from '../ui.js';
 import { PLAN_MAX } from '../habit-store.js';
 import { savedPassword, rememberOn } from './data.js';
 import { dishEditor, dishList } from './dishes.js';
@@ -130,11 +130,15 @@ export function viewSettings() {
         layoutSection(),
         Object.keys(LAYOUT_VIEWS).some((v) => S.state.layout?.[v])
           ? el('div', { class: 'save-row' }, el('button', { class: 'link', 'data-act': 'lresetall', text: 'Återställ alla vyer' })) : null)),
-    group('app', 'Allmänt', 'Språk, data, hjälp',
-      sec('lang', 'Språk', self.I18N.LANGS[self.I18N.lang()],
+    group('app', 'Allmänt', 'Språk, mått, data, hjälp',
+      sec('lang', 'Språk och mått', self.I18N.LANGS[self.I18N.lang()] + (imperial() ? ' · imperial' : ' · metriskt'),
         el('label', { class: 'goal-row' }, el('span', { text: 'Språk' }),
           el('select', { 'data-act': 'lang', 'aria-label': 'Språk' },
-            Object.entries(self.I18N.LANGS).map(([v, l]) => el('option', { value: v, selected: self.I18N.lang() === v, text: l, 'data-no-tr': '' }))))),
+            Object.entries(self.I18N.LANGS).map(([v, l]) => el('option', { value: v, selected: self.I18N.lang() === v, text: l, 'data-no-tr': '' })))),
+        el('label', { class: 'goal-row' }, el('span', { text: 'Måttsystem' }),
+          el('select', { 'data-act': 'units', 'aria-label': 'Måttsystem' },
+            [['metric', 'Metriskt (g, dl, kg, km)'], ['imperial', 'Imperial (oz, cup, lb, mi)']].map(([v, l]) => el('option', { value: v, selected: imperial() === (v === 'imperial'), text: l })))),
+        el('p', { class: 'muted small', text: 'Måtten byts bara i visningen – allt sparas som förut, så du kan byta när du vill.' })),
       sec('data', 'Data', 'Backup, import, radera',
         el('p', { class: 'small', text: 'All data sparas bara i den här webbläsaren (localStorage). Rensar du webbplatsdata eller avinstallerar appen försvinner den – spara en backup-fil då och då.' }),
         el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och krypteras alltid med ett lösenord du väljer. Du kan också låta appen skapa ett slumpmässigt lösenord. Glömmer du det går filen inte att öppna. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),

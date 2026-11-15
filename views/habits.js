@@ -1,7 +1,7 @@
 // Vanor och träning i Idag (porterat från follow-diet-tracker/views/today.js). Rendering via el() only.
 import { OUTCOMES } from '../habit-store.js';
 import { weekStart, QUICK_ADD, quickGroup, quickById, postN } from '../store.js';
-import { S, el, kcal, reasonName, isCardio, goals, sessionText } from '../ui.js';
+import { S, el, kcal, reasonName, isCardio, goals, sessionText, dUnit } from '../ui.js';
 
 export const dayHabits = () => S.state.habits[S.current] || {};
 
@@ -81,7 +81,7 @@ export function workoutCards() {
       el('button', { class: 'chip' + (S.wdraft.types.includes(t.id) ? ' on' : ''), 'data-act': 'wtype', 'data-val': t.id,
         'aria-pressed': String(S.wdraft.types.includes(t.id)), text: t.name })) : el('p', { class: 'muted small', text: 'Inga passtyper – lägg till under Inställningar → Träning.' })),
     cardio ? el('div', { class: 'weigh-row w-cardio' },
-      el('input', { id: 'w-km', type: 'text', inputmode: 'decimal', autocomplete: 'off', placeholder: 'km', 'aria-label': 'Sträcka i km' }),
+      el('input', { id: 'w-km', type: 'text', inputmode: 'decimal', autocomplete: 'off', placeholder: dUnit(), 'aria-label': `Sträcka i ${dUnit()}` }),
       el('input', { id: 'w-time', type: 'text', inputmode: 'decimal', autocomplete: 'off', placeholder: 'tid 28:30', 'aria-label': 'Tid, minuter:sekunder' })) : null,
     el('p', { class: 'import-error small', id: 'w-error', role: 'alert' }),
     el('div', { class: 'row-actions' },

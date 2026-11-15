@@ -1,7 +1,7 @@
 // View: Lägg till – shown in place of Idag (or of the dish editor when adding an ingredient: S.add.target === 'dish').
 // Tabs Senaste, Varor, Rätter. Search results are redrawn into #add-results on input, so the search field keeps focus.
 import { searchFoods, recent, findRef, postN, QUICK_ADD } from '../store.js';
-import { S, el, kcal, fmtNum, amountText, mealName, parseNum } from '../ui.js';
+import { S, el, kcal, fmtNum, amountText, mealName, parseNum, imperial, OZ, FLOZ, CUP } from '../ui.js';
 import { dishResults, dishPickCard } from './dishes.js';
 
 // Steg B: units for a variant as [name, grams per unit], natural unit first.
@@ -9,13 +9,23 @@ import { dishResults, dishPickCard } from './dishes.js';
 export function unitsOf(v) {
   const out = v.u ? [[v.u[0], v.u[1]]] : [];
   if (v.u2) out.push([v.u2[0], v.u2[1]]);   // second natural unit, e.g. Smör: smörgås + msk
+  // Imperial (2026-11-15): cup och fl oz i stället för dl och ml, oz i stället för g. Gram sparas som förut.
   if (v.d) {
-    if (!out.some((x) => x[0] === 'dl')) out.push(['dl', Math.round(v.d * 1000) / 10]);
-    out.push(['ml', v.d]);
-  } else out.push(['g', 1]);
+    if (imperial()) {   // dl som naturlig enhet ersätts av cup (först)
+      const i = out.findIndex((x) => x[0] === 'dl');
+      const cup = ['cup', Math.round(v.d * CUP * 10) / 10];
+      if (i >= 0) out.splice(i, 1, cup); else out.push(cup);
+      out.push(['fl oz', v.d * FLOZ]);
+    }
+    else {
+      if (!out.some((x) => x[0] === 'dl')) out.push(['dl', Math.round(v.d * 1000) / 10]);
+      out.push(['ml', v.d]);
+    }
+  } else out.push(imperial() ? ['oz', OZ] : ['g', 1]);
   return out;
 }
-export const isBulk = (unit) => unit === 'g' || unit === 'ml';   // default amount 100, whole numbers
+export const isBulk = (unit) => unit === 'g' || unit === 'ml' || unit === 'oz' || unit === 'fl oz';   // sista enheten (vikt/volym)
+export const bulkDefault = (unit) => (unit === 'g' || unit === 'ml' ? '100' : unit === 'oz' || unit === 'fl oz' ? '4' : '1');
 // Grams for the current pick, or NaN.
 export function pickGrams(pick) {
   const a = parseNum(pick.amount);
@@ -28,7 +38,8 @@ export function pickSum(pick) {
   const v = pick.food.v[pick.vi], g = pickGrams(pick);
   if (!Number.isFinite(g)) return 'Ange mängd';
   const a = fmtNum(parseNum(pick.amount), 2);
-  return `${a} ${pick.unit}${pick.unit === 'g' ? '' : ` (${fmtNum(g, 0)} g)`} · ${kcal(v.n[0] * g / 100)} kcal`;
+  const w = imperial() ? `${fmtNum(g / OZ, 1)} oz` : `${fmtNum(g, 0)} g`;
+  return `${a} ${pick.unit}${pick.unit === 'g' || pick.unit === 'oz' ? '' : ` (${w})`} · ${kcal(v.n[0] * g / 100)} kcal`;
 }
 
 function foodRow(f) {

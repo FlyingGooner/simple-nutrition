@@ -7,6 +7,14 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Under **Inställningar → Vanor** skriver du din plan (visas överst i Idag), sätter gränsen för en lyckad dag och ändrar måltider och orsaker.
 - Flyttar du från Följ planen: se **Flytta från Följ planen** nedan.
 
+## Varför din data är säker här
+- Här finns vikt, vanor, vad du äter och hur ofta du fuskar. Sådant ska inte hamna hos ett företag, en annonsör eller en hackare.
+- **Ingen server att hacka.** De flesta stora läckor sker när ett företags databas med miljontals användares uppgifter hackas. Här finns ingen sådan databas: din data finns bara i din telefon. Den som vill åt den måste komma åt just din telefon.
+- **Inget att sälja.** Många gratisappar – och även betalappar – tjänar pengar på din data eller delar den med partner för annonser och analys. Den här appen har inget konto, ingen analys, ingen reklam och inga spårare. Webbläsaren spärrar dessutom tekniskt alla anrop ut, så datan kan inte skickas iväg ens av misstag.
+- **Låst backup.** Backup-filen krypteras med AES-256 och ditt lösenord. Lägger du den i molnet ser molntjänsten bara obegriplig data.
+- **Öppen kod.** All kod ligger öppet på GitHub och kan granskas av vem som helst.
+- **Ärligt: inget är 100 % säkert.** Det som återstår är din egen telefon – lås den med kod och håll den uppdaterad – ett svagt backup-lösenord, och att appens kod på GitHub Pages inte ändras av någon obehörig. Men för den här sortens uppgifter finns inget säkrare praktiskt sätt än att de aldrig lämnar telefonen.
+
 ## Vanor
 - Tryck på utfallet för måltiden. Tryck igen på samma för att ta bort det.
 - Vid 🍰 Fusk: välj en orsak (t.ex. Utemat eller Sug) och skriv gärna en kort anteckning. Vid Snacks eller Utemat kan du välja hur mycket (t.ex. Lite ≈ 250, en Magnum) – då loggas kcal i måltiden. Tryck igen för att ta bort.
@@ -60,8 +68,9 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 ## Kortordning
 - Under **Inställningar → Utseende → Kortordning** väljer du ordningen på korten i Idag, Vecka, Trend och Historik. ↑ ↓ flyttar, ● visas, ○ döljer. **Återställ** ger standardordningen tillbaka, för en vy eller för alla vyer längst ner.
 
-## Språk
+## Språk och mått
 - Första gången väljer du språk (Svenska eller English) överst i välkomstrutan. Byt senare under **Inställningar → Allmänt → Språk**. Din data är densamma på båda språken.
+- **Måttsystem:** metriskt (g, dl, kg, km) eller imperial (oz, cup, fl oz, lb, mi). Förvalt efter språket – svenska ger metriskt, engelska imperial – men du väljer själv i välkomstrutan och under **Inställningar → Allmänt → Språk och mått**. Bara visningen ändras; allt sparas som förut. Matskedar, teskedar och styck är desamma i båda.
 - Livsmedelsnamn från Livsmedelsverkets hela lista (Visa fler) är alltid på svenska; vanliga varor, snabbval och hela appen är översatta.
 
 ## Flytta från Följ planen

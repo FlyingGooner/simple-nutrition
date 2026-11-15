@@ -1,6 +1,6 @@
 // View: Historik – månadskalender färgad efter följsamhet (vanor, som i follow-diet-tracker), streaks, träning och kcal som stöd.
 import { addDays, dateKey, parseKey, sumN, habitDay, habitStreak, habitRange, habitLongest } from '../store.js';
-import { today, S, el, svg, stepper, stat, kcal, pct, shortDate, arrange } from '../ui.js';
+import { today, S, el, svg, stepper, stat, kcal, pct, shortDate, arrange, wOut, wUnit, dOut, dUnit } from '../ui.js';
 // (dateKey/parseKey används även av monthWeight)
 
 // Vikt (v0.5.16): senaste vägningen i månaden mot senaste vägningen månaden innan, med minikurva över båda månaderna.
@@ -19,12 +19,12 @@ function monthWeight(extra = null) {
   const all = Object.keys(S.state.weights).sort();
   const cur = all.filter((k) => k.startsWith(S.month)), prev = all.filter((k) => k.startsWith(pm));
   if (!cur.length && !prev.length) return extra ? el('section', { class: 'card w-card' }, extra) : null;
-  const W = (k) => S.state.weights[k], kg1 = (v) => v.toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const W = (k) => S.state.weights[k], kg1 = (v) => wOut(v).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const lastK = cur[cur.length - 1], prevK = prev[prev.length - 1];
   // Jämför mot sista vägningen månaden innan; finns ingen, mot månadens första vägning (v0.5.17).
   const baseK = prevK || (cur.length >= 2 ? cur[0] : null);
   const d = lastK && baseK ? Math.round((W(lastK) - W(baseK)) * 10) / 10 : null;
-  const dTxt = d == null ? '' : d === 0 ? '±0 kg' : `${d > 0 ? '+' : '−'}${kg1(Math.abs(d))} kg`;
+  const dTxt = d == null ? '' : d === 0 ? `±0 ${wUnit()}` : `${d > 0 ? '+' : '−'}${kg1(Math.abs(d))} ${wUnit()}`;
   const ks = [...prev, ...cur];
   let spark = el('span', { class: 'w-spark' });
   if (ks.length >= 2) {
@@ -44,12 +44,12 @@ function monthWeight(extra = null) {
   return el('section', { class: 'card w-card' },
     el('div', { class: 'w-row' },
       el('span', { class: 'w-label', text: 'Vikt' }),
-      el('span', { class: 'w-now', text: lastK ? `${kg1(W(lastK))} kg` : '–' }),
+      el('span', { class: 'w-now', text: lastK ? `${kg1(W(lastK))} ${wUnit()}` : '–' }),
       spark,
       d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), text: dTxt }) : null),
     el('p', { class: 'w-sub', text: !lastK ? 'Ingen vägning den här månaden'
       : !baseK ? 'Första vägningen – inget att jämföra med än'
-      : `${prevK ? 'mot' : 'sedan'} ${shortDate(baseK)} (${kg1(W(baseK))} kg) · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'}` }),
+      : `${prevK ? 'mot' : 'sedan'} ${shortDate(baseK)} (${kg1(W(baseK))} ${wUnit()}) · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'}` }),
     extra);
 }
 
@@ -87,7 +87,7 @@ export function viewHistory() {
         el('span', { class: 'lg good' }), ` ≥ ${pct(S.state.settings.successThreshold)}`, el('span', { class: 'lg mid' }), ' 50 %+', el('span', { class: 'lg low' }), ' < 50 %',
         el('span', { class: 'lg lg-weigh' }), ' Vägning', el('span', { class: 'lg lg-train' }), ' Träning')),
     more: () => el('section', { class: 'card' }, el('div', { class: 'stats' },
-      stat(String(sessions), 'träningspass totalt', km ? ` · ${Math.round(km * 10) / 10} km` : ''),
+      stat(String(sessions), 'träningspass totalt', km ? ` · ${Math.round(dOut(km) * 10) / 10} ${dUnit()}` : ''),
       stat(a7 == null ? '–' : kcal(a7), 'kcal/dag, 7 dagar'))),
     }),
   ];

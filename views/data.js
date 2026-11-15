@@ -1,7 +1,7 @@
 // Simple nutrition – export/import, backup-fil och backup-påminnelse (U5). ES-modul. app.js anropar initData() med sina
 // hjälpfunktioner så att modulen aldrig importerar app.js (bygget stöder inte cirkulära importer).
 import { defaults, save, addDays, exportText, importText, MAX_IMPORT_CHARS, mergeFdt } from '../store.js';
-import { today, S, shortDate, el } from '../ui.js';
+import { today, S, shortDate, el, imperial, setUnits } from '../ui.js';
 const { lang, setLang, chosen: langChosen, LANGS } = self.I18N;
 
 let persist, render, status, snackbar, resetDay, currentView;
@@ -176,12 +176,20 @@ function fillWelcome() {
       });
       return b;
     }));
+  // Måttsystem (2026-11-15): förvalt efter språket, går att byta här och under Inställningar.
+  const imp = imperial();
+  const units = el('div', { class: 'segs', role: 'group', 'aria-label': 'Måttsystem' },
+    [['metric', 'Metriskt (g, dl, kg)', !imp], ['imperial', 'Imperial (oz, cup, lb)', imp]].map(([k, name, on]) => {
+      const b = el('button', { type: 'button', class: 'seg' + (on ? ' on' : ''), 'aria-pressed': String(on), text: name });
+      b.addEventListener('click', () => { setUnits(k); fillWelcome(); render(); });
+      return b;
+    }));
   const pick = el('button', { type: 'button', class: 'btn-file btn-filled', text: 'Välj lösenord' });
   pick.addEventListener('click', () => { setLang(lang(), false); choosePassword(); });
   const pw = needsPassword();
   welcomeDlg.replaceChildren(
     el('h2', { id: 'wl-title', text: 'Välkommen!' }),
-    segs,
+    segs, units,
     pw && el('p', { text: 'Välj ett lösenord som skyddar dina backup-filer. Spara det i din lösenordshanterare – utan det går en backup inte att läsa in.' }),
     pw && el('p', { class: 'muted small', text: 'Allt stannar på din enhet. Använd ett nytt lösenord – det sparas här.' }),
     pw && el('div', { class: 'welcome-actions' }, pick,

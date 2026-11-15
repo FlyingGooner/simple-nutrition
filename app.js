@@ -2,10 +2,10 @@
 import { load, save, validate, addDays, weekStart, setGoal, goalFor, findRef, cleanText, uid, dishTotal } from './store.js';
 import { today, S, setOpen, el, kcal, dateTitle, parseNum, wType, isCardio, parseDur, fmtNum, amountText, layoutOf, LAYOUT_VIEWS } from './ui.js';
 import { lastPost, QUICK_ADD, setLevel, dropLevels, quickGroup, EST_MAX } from './store.js';
-import { mealName } from './ui.js';
+import { mealName, wIn, dIn, dUnit, setUnits } from './ui.js';
 import { topLayer, layerDepth, closeTop, dishDirty, defaultQuickG } from './nav.js';
 import { viewToday, dayPosts } from './views/today.js';
-import { resultsList, pickGrams, pickSum, unitsOf, isBulk, EST_GROUP } from './views/add.js';
+import { resultsList, pickGrams, pickSum, unitsOf, isBulk, bulkDefault, EST_GROUP } from './views/add.js';
 import { viewWeek } from './views/week.js';
 import { viewTrend } from './views/trend.js';
 import { viewHistory } from './views/history.js';
@@ -181,13 +181,13 @@ function openAdd(target, meal) {
 const amt = (x) => x.toLocaleString('sv-SE', { maximumFractionDigits: 2, useGrouping: false });
 function openPick(food, hit = null) {   // hit: variant index the search word matched (Steg B, rubrik efter träff)
   const v0 = hit ?? 0, u0 = unitsOf(food.v[v0])[0][0];
-  S.add.pick = { food, vi: v0, unit: u0, amount: isBulk(u0) ? '100' : '1', last: null };
+  S.add.pick = { food, vi: v0, unit: u0, amount: bulkDefault(u0), last: null };
   // F1: förifyll med senast loggade mängd för samma vara (någon av dess varianter).
   const refs = food.v.map((v) => v.ref), lp = lastPost(S.state, (r) => (hit == null ? refs.includes(r) : r === refs[hit]));
   if (lp && lp.g > 0) {
     const vi = refs.indexOf(lp.ref), us = unitsOf(food.v[vi]), byUnit = lp.u && us.find((x) => x[0] === lp.u[0]);
     const bulk = us[us.length - 1];   // g, or ml for liquids
-    Object.assign(S.add.pick, { vi, unit: byUnit ? byUnit[0] : bulk[0], amount: amt(byUnit ? lp.u[1] : Math.round(lp.g / bulk[1])), last: amountText(lp) });
+    Object.assign(S.add.pick, { vi, unit: byUnit ? byUnit[0] : bulk[0], amount: amt(byUnit ? lp.u[1] : bulk[1] === 1 ? Math.round(lp.g) : Math.round(lp.g / bulk[1] * 10) / 10), last: amountText(lp) });
   }
 }
 // F1: rätt förifylls med senaste sättet den loggades på (portioner, andel eller gram).
@@ -345,8 +345,8 @@ app.addEventListener('click', (ev) => {
       const w = { types: [...S.wdraft.types] };
       if (isCardio(w.types)) {
         const kmRaw = document.getElementById('w-km')?.value.trim() ?? '', tRaw = document.getElementById('w-time')?.value.trim() ?? '';
-        const km = parseNum(kmRaw), sec = tRaw ? parseDur(tRaw) : null;
-        const err = (kmRaw && !(km > 0 && km <= 500)) ? 'Ange sträckan i km, t.ex. 5,2.' : (tRaw && sec == null) ? 'Ange tiden som min:sek, t.ex. 28:30.' : '';
+        const km = dIn(parseNum(kmRaw)), sec = tRaw ? parseDur(tRaw) : null;
+        const err = (kmRaw && !(km > 0 && km <= 500)) ? `Ange sträckan i ${dUnit()}, t.ex. 5,2.` : (tRaw && sec == null) ? 'Ange tiden som min:sek, t.ex. 28:30.' : '';
         if (err) { errText('w-error', err); return; }
         if (kmRaw) w.km = Math.round(km * 100) / 100;
         if (sec != null) w.sec = sec;
@@ -372,7 +372,7 @@ app.addEventListener('click', (ev) => {
       return;
     }
     case 'weightsave': {
-      const v = parseNum(document.getElementById('weight')?.value);
+      const v = wIn(parseNum(document.getElementById('weight')?.value));
       if (v >= 20 && v <= 400) S.state.weights[S.current] = Math.round(v * 10) / 10;
       else delete S.state.weights[S.current];
       persist(); break;
@@ -664,6 +664,7 @@ app.addEventListener('change', (ev) => {
       persist(); return;
     }
     case 'lang': self.I18N.setLang(t.value); return;
+    case 'units': setUnits(t.value); S.add = null; render(); return;
     case 'bkremind': if (['week', 'month', 'off'].includes(t.value)) { S.state.backup.remind = t.value; S.state.backup.asked = null; persist(); } return;
     case 'threshold': S.state.settings.successThreshold = Number(t.value) / 100; persist(); return;
     case 'wgoal': {

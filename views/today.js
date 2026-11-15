@@ -1,6 +1,6 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
 import { sumN, postN, goalFor, addDays, habitDay, habitStreak } from '../store.js';
-import { today, S, setOpen, el, svg, stepper, kcal, fmtNum, pct, dateTitle, amountText, mealName, reasonName, arrange } from '../ui.js';
+import { today, S, setOpen, el, svg, stepper, kcal, fmtNum, pct, dateTitle, wOut, wUnit, amountText, mealName, reasonName, arrange } from '../ui.js';
 import { viewAdd } from './add.js';
 import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
 import { OUTCOMES } from '../habit-store.js';
@@ -88,9 +88,9 @@ function mealCard(m, posts) {
 function weightCard() {
   const w = S.state.weights[S.current];
   return el('details', { class: 'card weigh-extra', 'data-sec': 'weight' },
-    el('summary', { text: w != null ? `Vikt ${fmtNum(w)} kg` : 'Vikt idag (valfritt)' }),
+    el('summary', { text: w != null ? `Vikt ${fmtNum(wOut(w))} ${wUnit()}` : 'Vikt idag (valfritt)' }),
     el('div', { class: 'weigh-row' },
-      el('input', { type: 'text', inputmode: 'decimal', id: 'weight', value: w != null ? fmtNum(w) : '', placeholder: 'kg', 'aria-label': 'Vikt i kg' }),
+      el('input', { type: 'text', inputmode: 'decimal', id: 'weight', value: w != null ? fmtNum(wOut(w)) : '', placeholder: wUnit(), 'aria-label': `Vikt i ${wUnit()}` }),
       el('button', { class: 'weigh-save', 'data-act': 'weightsave', text: 'Spara' })),
     el('p', { class: 'muted small', text: 'Väg dig gärna på morgonen. Trenden räknas på 7-dagars medel.' }));
 }

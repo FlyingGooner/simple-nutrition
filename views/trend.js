@@ -1,6 +1,6 @@
 // View: Trend – weight (7-day average), the last 4 weeks as a table, weight chart 12 weeks, kcal vs weight.
 import { addDays, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
-import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions, arrange } from '../ui.js';
+import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions, arrange, wOut, wUnit } from '../ui.js';
 
 // 7-day average of the weights in [k-6, k], or null.
 export function avg7(k) {
@@ -10,7 +10,7 @@ export function avg7(k) {
 }
 const r1 = (x) => Math.round(x * 10) / 10;
 const signed = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + fmtNum(Math.abs(r1(n)));
-const delta = (n) => el('span', { class: 'delta' + (n < 0 ? ' down' : ''), text: `${signed(n)} kg ${n < 0 ? '▼' : n > 0 ? '▲' : ''}`.trim() });
+const delta = (n) => el('span', { class: 'delta' + (n < 0 ? ' down' : ''), text: `${signed(wOut(n))} ${wUnit()} ${n < 0 ? '▼' : n > 0 ? '▲' : ''}`.trim() });
 
 function summary(t) {
   const keys = Object.keys(S.state.weights).sort();
@@ -23,9 +23,9 @@ function summary(t) {
   return el('section', { class: 'card w-card' },
     el('div', { class: 'w-row' },
       el('span', { class: 'w-label', text: 'Vikt' }),
-      el('span', { class: 'w-now', text: `${fmtNum(r1(now))} kg` }),
+      el('span', { class: 'w-now', text: `${fmtNum(r1(wOut(now)))} ${wUnit()}` }),
       back != null ? el('span', { class: 'w-chg' }, delta(now - back), el('small', { text: ' 4 v' })) : null),
-    el('p', { class: 'w-sub', text: ['7-dagars medel', keys.length > 1 ? `totalt ${signed(now - first)} kg sedan ${shortDate(keys[0])}` : null].filter(Boolean).join(' · ') }),
+    el('p', { class: 'w-sub', text: ['7-dagars medel', keys.length > 1 ? `totalt ${signed(wOut(now - first))} ${wUnit()} sedan ${shortDate(keys[0])}` : null].filter(Boolean).join(' · ') }),
     chart());
 }
 
@@ -101,7 +101,7 @@ function compare() {
   }
   const body = rows.length < 4 ? [el('p', { class: 'muted small', text: `Fler veckor behövs (${rows.length}/4) – veckor med loggning och vikt före och efter.` })] : (() => {
     const mean = (l) => l.reduce((s, r) => s + r.d, 0) / l.length;
-    const row = (label, l) => el('li', {}, el('span', { text: `${label} (${l.length})` }), el('strong', { text: l.length ? `${signed(mean(l))} kg/v` : '–' }));
+    const row = (label, l) => el('li', {}, el('span', { text: `${label} (${l.length})` }), el('strong', { text: l.length ? `${signed(wOut(mean(l)))} ${wUnit()}/v` : '–' }));
     const pair = (k, yes, no) => (rows.some((r) => r[k] != null) ? [row(yes, rows.filter((r) => r[k] === true)), row(no, rows.filter((r) => r[k] === false))] : []);
     return [el('ul', { class: 'compare' },
       pair('good', `Bra veckor (≥ ${pct(thr)})`, 'Sämre veckor'),

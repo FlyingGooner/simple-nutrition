@@ -7,6 +7,14 @@ The same text is in the app under **Settings → General → Help and manual** w
 - Under **Settings → Habits** you write your plan (shown at the top of Today), set the limit for a successful day and change meals and reasons.
 - Moving from Follow the plan: see **Move from Follow the plan** below.
 
+## Why your data is safe here
+- This app holds your weight, habits, what you eat and how often you cheat. That should not end up with a company, an advertiser or a hacker.
+- **No server to hack.** Most big leaks happen when a company's database with millions of users' data is hacked. There is no such database here: your data is only in your phone. Anyone who wants it has to get into your particular phone.
+- **Nothing to sell.** Many free apps – and paid ones too – make money from your data or share it with partners for ads and analytics. This app has no account, no analytics, no ads and no trackers. The browser also technically blocks every request out, so the data cannot be sent anywhere, not even by mistake.
+- **Locked backup.** The backup file is encrypted with AES-256 and your password. If you put it in the cloud, the cloud service only sees unreadable data.
+- **Open code.** All the code is public on GitHub and can be reviewed by anyone.
+- **Honestly: nothing is 100 % safe.** What remains is your own phone – lock it with a code and keep it updated – a weak backup password, and that the app's code on GitHub Pages is not changed by someone unauthorised. But for this kind of data there is no safer practical way than never letting it leave the phone.
+
 ## Habits
 - Tap the outcome for the meal. Tap the same one again to remove it.
 - With 🍰 Cheat: choose a reason (e.g. Eating out or Craving) and add a short note if you like. With Snacks or Eating out you can choose how much (e.g. A little ≈ 250, a Magnum) – the kcal are then logged in the meal. Tap again to remove.
@@ -60,8 +68,9 @@ The same text is in the app under **Settings → General → Help and manual** w
 ## Card order
 - Under **Settings → Appearance → Card order** you choose the order of the cards in Today, Week, Trend and History. ↑ ↓ moves, ● shown, ○ hidden. **Reset** restores the default order, for one view or for all views at the bottom.
 
-## Language
+## Language and units
 - The first time, you choose the language (Svenska or English) at the top of the welcome box. Change it later under **Settings → General → Language**. Your data is the same in both languages.
+- **Units:** metric (g, dl, kg, km) or imperial (oz, cup, fl oz, lb, mi). Preselected by the language – Swedish gives metric, English imperial – but you choose yourself in the welcome box and under **Settings → General → Language and units**. Only the display changes; everything is stored as before. Tablespoons, teaspoons and pieces are the same in both.
 - Food names from the Swedish Food Agency's full list (Show more) are in Swedish; the common foods, quick picks and the whole app are translated.
 
 ## Move from Follow the plan

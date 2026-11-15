@@ -1,6 +1,6 @@
 // Handlers: Idag – dagbyte, poster, vanor, träning, vikt. Each returns true when the view should be redrawn.
 import { addDays, uid, cleanText } from '../store.js';
-import { today, S, dateTitle, parseNum, wType, isCardio, parseDur } from '../ui.js';
+import { today, S, dateTitle, parseNum, wType, isCardio, parseDur, wIn, dIn, dUnit } from '../ui.js';
 import { dayPosts } from './today.js';
 
 const cleanupDay = () => { if (!dayPosts().length) delete S.state.log[S.current]; };
@@ -45,7 +45,7 @@ export const click = {
     c.snackbar(`${src.length} poster kopierade från igår`, 'Ångra', () => { delete S.state.log[S.current]; c.persist(); c.render(); });
   },
   weightsave: (t, c) => {
-    const v = parseNum(document.getElementById('weight')?.value);
+    const v = wIn(parseNum(document.getElementById('weight')?.value));
     if (v >= 20 && v <= 400) S.state.weights[S.current] = Math.round(v * 10) / 10;
     else delete S.state.weights[S.current];
     c.persist(); return true;
@@ -93,8 +93,8 @@ export const click = {
     const w = { types: [...S.wdraft.types] };
     if (isCardio(w.types)) {
       const kmRaw = document.getElementById('w-km')?.value.trim() ?? '', tRaw = document.getElementById('w-time')?.value.trim() ?? '';
-      const km = parseNum(kmRaw), sec = tRaw ? parseDur(tRaw) : null;
-      const err = (kmRaw && !(km > 0 && km <= 500)) ? 'Ange sträckan i km, t.ex. 5,2.' : (tRaw && sec == null) ? 'Ange tiden som min:sek, t.ex. 28:30.' : '';
+      const km = dIn(parseNum(kmRaw)), sec = tRaw ? parseDur(tRaw) : null;
+      const err = (kmRaw && !(km > 0 && km <= 500)) ? `Ange sträckan i ${dUnit()}, t.ex. 5,2.` : (tRaw && sec == null) ? 'Ange tiden som min:sek, t.ex. 28:30.' : '';
       if (err) { c.errText('w-error', err); return; }
       if (kmRaw) w.km = Math.round(km * 100) / 100;
       if (sec != null) w.sec = sec;

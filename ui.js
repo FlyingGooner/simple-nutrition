@@ -22,6 +22,22 @@ export const fmtNum = (n, d = 1) => n.toLocaleString('sv-SE', { maximumFractionD
 export const kcal = (n) => Math.round(n).toLocaleString('sv-SE');
 export const shortDate = (k) => parseKey(k).toLocaleDateString('sv-SE', { day: 'numeric', month: 'numeric' });
 export const mealName = (id) => S.state.meals.find((m) => m.id === id)?.name ?? (String(id).startsWith('extra-') ? 'Extra' : 'Övrigt');
+// Måttsystem (2026-11-15): sn.units = 'metric' | 'imperial'. Inte valt → efter språket (engelska = imperial, svenska = metriskt).
+// All data sparas alltid metriskt (g, kg, km); bara visning och inmatning räknas om.
+const UNITS_KEY = 'sn.units';
+export const unitsChosen = () => { try { return ['metric', 'imperial'].includes(localStorage.getItem(UNITS_KEY)); } catch { return false; } };
+export const imperial = () => {
+  try { const v = localStorage.getItem(UNITS_KEY); if (v === 'metric' || v === 'imperial') return v === 'imperial'; } catch { /* blocked */ }
+  return globalThis.I18N?.lang() === 'en';
+};
+export const setUnits = (v) => { try { localStorage.setItem(UNITS_KEY, v === 'imperial' ? 'imperial' : 'metric'); } catch { /* blocked */ } };
+export const LB = 2.20462, MI = 1.609344, OZ = 28.3495, FLOZ = 29.5735, CUP = 236.588;
+export const wUnit = () => (imperial() ? 'lb' : 'kg');
+export const wOut = (kg) => (imperial() ? kg * LB : kg);   // kg → visat värde
+export const wIn = (v) => (imperial() ? v / LB : v);       // inmatat värde → kg
+export const dUnit = () => (imperial() ? 'mi' : 'km');
+export const dOut = (km) => (imperial() ? km / MI : km);
+export const dIn = (v) => (imperial() ? v * MI : v);
 export const parseNum = (t) => { const v = parseFloat(String(t ?? '').replace(',', '.').trim()); return Number.isFinite(v) ? v : NaN; };
 
 /* ---------- DOM helpers (textContent + setAttribute only – Trusted Types, same as the other apps) ---------- */
@@ -63,7 +79,7 @@ export function dateTitle(k) {
 export function amountText(p) {
   if (String(p.ref).startsWith('q:est-')) return '≈ uppskattning';   // v0.14: egen uppskattning
   if (p.q != null) return p.u ? `${fmtNum(p.u[1], 2)} ${p.u[0]}` : `${fmtNum(p.q, 2)} av receptet`;
-  const g = fmtNum(p.g, 0) + ' g';
+  const g = imperial() ? fmtNum(p.g / OZ, 1) + ' oz' : fmtNum(p.g, 0) + ' g';
   return p.u ? `${fmtNum(p.u[1], 2)} ${p.u[0]} · ≈ ${g}` : g;
 }
 
@@ -101,7 +117,7 @@ export function goals(ws) {
 }
 export function sessionText(w) {
   const parts = [w.types.map(wName).join(' + ')];
-  if (w.km != null) parts.push(fmtNum(w.km) + ' km');
+  if (w.km != null) parts.push(fmtNum(dOut(w.km)) + ' ' + dUnit());
   if (w.sec != null) parts.push(fmtDur(w.sec));
   return parts.join(' · ');
 }
