@@ -12,7 +12,7 @@ import { viewHistory } from './views/history.js';
 import { viewSettings } from './views/settings.js';
 import { PLAN_MAX } from './habit-store.js';
 import { newDraft, draftFrom, dishQ, dishUnit, isBatch } from './views/dishes.js';
-import { initData, saveBackup, maybeAskBackup, readBackup, openImport, rememberPassword, setRemember } from './views/data.js';
+import { initData, saveBackup, maybeAskBackup, readBackup, openImport, rememberPassword, copyPassword } from './views/data.js';
 
 document.getElementById('version').textContent = 'v' + self.APP_VERSION;
 
@@ -600,6 +600,7 @@ app.addEventListener('click', (ev) => {
     case 'import': openImport(document.getElementById('import-text').value); return;
     case 'backupsave': saveBackup(); return;
     case 'pwdset': rememberPassword(); return;
+    case 'pwdcopy': copyPassword(); return;
     case 'pwdshow': S.showPwd = !S.showPwd; break;
     default: return;
   }
@@ -648,7 +649,6 @@ app.addEventListener('toggle', (ev) => {
 app.addEventListener('change', (ev) => {
   const t = ev.target;
   switch (t.dataset.act) {
-    case 'pwdremember': S.showPwd = false; setRemember(t.checked); return;
     case 'importfile': readBackup(t); return;
     case 'rename': {
       const it = listOf(t.dataset.kind)?.find((x) => x.id === t.dataset.id);
