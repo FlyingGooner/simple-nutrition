@@ -12,7 +12,7 @@ import { viewHistory } from './views/history.js';
 import { viewSettings } from './views/settings.js';
 import { PLAN_MAX } from './habit-store.js';
 import { newDraft, draftFrom, dishQ, dishUnit, isBatch } from './views/dishes.js';
-import { initData, saveBackup, maybeAskBackup, readBackup, openImport, rememberPassword, copyPassword, ownPassword } from './views/data.js';
+import { initData, saveBackup, maybeAskBackup, readBackup, openImport, rememberPassword, copyPassword, ownPassword, exportCsv } from './views/data.js';
 
 document.getElementById('version').textContent = 'v' + self.APP_VERSION;
 
@@ -599,6 +599,7 @@ app.addEventListener('click', (ev) => {
     case 'wipe': document.getElementById('confirm-dialog').showModal(); return;
     case 'import': openImport(document.getElementById('import-text').value); return;
     case 'backupsave': saveBackup(); return;
+    case 'csv': exportCsv(); return;
     case 'pwdset': rememberPassword(); return;
     case 'pwdcopy': copyPassword(); return;
     case 'pwdown': ownPassword(); return;

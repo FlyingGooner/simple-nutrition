@@ -286,3 +286,18 @@ export function initData(ctx) {
   oneFieldWhenShown();
   welcomeCheck();
 }
+
+/* ---------- CSV (2026-11-15): en rad per loggad post (mat och dryck), näring per post. Inte krypterad. ---------- */
+export function exportCsv() {
+  const st = S.state, tr = Csv.tr, meals = new Map((st.meals || []).map((m) => [m.id, m.name]));
+  const rows = [];
+  for (const day of Object.keys(st.log || {}).sort()) for (const e of st.log[day] || []) {
+    const total = /^[rq]:/.test(e.ref || '');   // rätter och snabbval: n gäller hela posten; varor: n per 100 g
+    const k = total ? 1 : (e.g || 0) / 100, n = e.n || [0, 0, 0, 0];
+    const amt = Array.isArray(e.u) ? [e.u[1], e.u[0]] : total ? [e.q, tr('portion')] : [e.g, 'g'];
+    const meal = meals.get(e.m) || (String(e.m || '').startsWith('extra') ? tr('Extra') : e.m || '');
+    rows.push([day, meal, e.name, amt[0], amt[1], n[0] * k, n[1] * k, n[2] * k, n[3] * k]);
+  }
+  const text = Csv.build(['Datum', 'Måltid', 'Namn', 'Mängd', 'Enhet', 'kcal', 'Protein (g)', 'Kolhydrater (g)', 'Fett (g)'], rows);
+  snackbar(Csv.download(`simple-nutrition-${today()}.csv`, text) ? 'CSV-filen laddas ner' : 'Kunde inte skapa filen', null, null, 3000);
+}

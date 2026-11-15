@@ -155,6 +155,8 @@ export function viewSettings() {
           el('label', { class: 'btn-file' }, 'Läs in backup-fil',
             el('input', { type: 'file', id: 'import-file', accept: '.txt,.json', 'data-act': 'importfile' }))),
         pwdBox(),
+        el('div', { class: 'csv-row' }, el('button', { class: 'link', 'data-act': 'csv', text: 'Exportera CSV' }),
+          el('p', { class: 'muted small', text: 'CSV-filen är ett enkelt kalkylark för t.ex. Excel eller en egen app. Den är inte krypterad – spara den inte där andra kommer åt den.' })),
         el('p', { class: 'import-error small', id: 'import-error', role: 'alert' }),
         el('details', { class: 'data-text' }, el('summary', { text: 'Klistra in text' }),
           el('label', { class: 'data-box' }, el('span', { class: 'small', text: 'Importera (ersätter all data – från Följ planen läggs den till)' }),

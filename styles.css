@@ -574,3 +574,6 @@ dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
 .dl-app { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; padding: 6px 0; border-bottom: 1px solid rgba(127,127,127,.2); }
 .dl-app b { flex: 1 1 100%; font-weight: 500; }
 .dl-src h3 { margin: 0 0 4px; font-size: 1rem; }
+/* CSV-export (2026-11-15) */
+.csv-row { margin: 8px 0; }
+.csv-row p { margin: 2px 0 0; }
