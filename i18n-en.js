@@ -2,6 +2,9 @@
 // Mönster (regex) för texter med tal eller namn i; $1… översätts i sin tur. Saknas en text visas den svenska.
 I18N.setKey('sn.lang');
 I18N.add({
+  'Vill du köra appen lokalt på datorn?': 'Want to run the app locally on your computer?',
+  'Ladda ner appen från GitHub (zip)': 'Download the app from GitHub (zip)',
+  'Packa upp och starta en lokal webbserver i mappen, t.ex. python -m http.server, och öppna adressen den visar.': 'Unzip it and start a local web server in the folder, e.g. python -m http.server, then open the address it shows.',
   'Bara byt': 'Just change',
   'Byt och spara backup': 'Change and save backup',
   'Byta kod?': 'Change code?',

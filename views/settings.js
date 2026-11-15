@@ -166,6 +166,10 @@ export function viewSettings() {
               el('option', { value: v, selected: S.state.backup.remind === v, text: l })))),
         el('button', { class: 'link danger', 'data-act': 'wipe', text: 'Radera all data' })),
       S.installPrompt ? el('section', { class: 'card' }, el('button', { class: 'primary', 'data-act': 'install', text: 'Installera appen' })) : null,
+      // Ladda ner från GitHub: el() släpper inte igenom href, så den fasta adressen sätts med Object.assign (aldrig data).
+      el('section', { class: 'card dl-src' }, el('p', { class: 'small', text: 'Vill du köra appen lokalt på datorn?' }),
+        Object.assign(el('a', { class: 'link', rel: 'noopener', text: 'Ladda ner appen från GitHub (zip)' }), { href: 'https://github.com/FlyingGooner/simple-nutrition/archive/refs/heads/master.zip' }),
+        el('p', { class: 'muted small', text: 'Packa upp och starta en lokal webbserver i mappen, t.ex. python -m http.server, och öppna adressen den visar.' })),
       helpCard()),
     el('p', { class: 'muted small center', text: `Simple nutrition v${self.APP_VERSION} · inga externa anrop · näringsvärden från Livsmedelsverket` }),
   ];
