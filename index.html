@@ -90,6 +90,10 @@
       <details><summary>Kortordning</summary>
         <p>Under Inställningar → Utseende → Kortordning väljer du ordningen på korten i Idag, Vecka, Trend och Historik. ↑ ↓ flyttar, ● visas, ○ döljer. Återställ ger standardordningen tillbaka, för en vy eller för alla vyer längst ner.</p>
       </details>
+      <details><summary>Språk</summary>
+        <p>Första gången väljer du språk (Svenska eller English) överst i välkomstrutan. Byt senare under Inställningar → Allmänt → Språk. Din data är densamma på båda språken.</p>
+        <p>Livsmedelsnamn från Livsmedelsverkets hela lista (Visa fler) är alltid på svenska; vanliga varor, snabbval och hela appen är översatta.</p>
+      </details>
       <details><summary>Flytta från Följ planen</summary>
         <p>Öppna Följ planen → Inställningar → Data → Spara backup-fil.</p>
         <p>Öppna Simple nutrition → Inställningar → Allmänt → Data → Läs in backup-fil och välj filen (eller klistra in filens innehåll under Klistra in text).</p>
@@ -111,6 +115,95 @@
       <details><summary>Integritet och källa</summary>
         <p>Appen gör inga anrop – ingen server, ingen analys, inget konto. All data finns bara i den här webbläsaren.</p>
         <p>Näringsvärdena kommer från Livsmedelsverkets livsmedelsdatabas och finns inbyggda i appen.</p>
+      </details>
+    </section>
+  </template>
+  <template id="help-tpl-en">
+    <section class="card help">
+      <h2>Help</h2>
+      <details><summary>Get started</summary>
+        <p>Habits come first: tap ✅ On plan, 🍰 Cheat or ⏭️ Skipped for each meal in Today. Calories are a support when you want to count your basic meals.</p>
+        <p>Under Settings → Habits you write your plan (shown at the top of Today), set the limit for a successful day and change meals and reasons.</p>
+        <p>Moving from Follow the plan: see Move from Follow the plan below.</p>
+      </details>
+      <details><summary>Habits</summary>
+        <p>Tap the outcome for the meal. Tap the same one again to remove it.</p>
+        <p>With 🍰 Cheat: choose a reason (e.g. Eating out or Craving) and add a short note if you like. With Snacks or Eating out you can choose how much (e.g. A little ≈ 250, a Magnum) – the kcal are then logged in the meal. Tap again to remove.</p>
+        <p>Filled-in meals are folded into one line (choice, dish and kcal) – tap the line to change it. 🍰 Cheat without a reason stays open until a reason is chosen.</p>
+        <p>+ Extra cheat logs snacks between meals. Choose how much right away: A little ≈ 250 · Medium ≈ 500 · A lot ≈ 950 – it is saved and the card folds. To enter exactly what it was, tap + Choose food or dish and pick from the same menu as for food (e.g. crisps or a cinnamon bun). Tap the line to change it.</p>
+        <p>Adherence = followed meals divided by followed + cheats. Skipped does not count. A day is successful when it reaches your limit (80 % to start with). 🔥 shows successful days in a row.</p>
+      </details>
+      <details><summary>Training</summary>
+        <p>Tap + Workout and choose a type. Push, Pull and Legs can be combined – Push + Pull counts as one session. Running and Intervals are logged with distance (km) and time (e.g. 28:30).</p>
+        <p>A saved workout is shown as a line. Tap it to delete the workout.</p>
+        <p>Under Settings → Training you change the workout types and set goals per week. The goals show on the button in Today and in Week.</p>
+      </details>
+      <details><summary>Food and calories</summary>
+        <p>Under each meal there is a folded line 🍽 Food. Open it and tap + Add food. When food is logged the line shows ✅ Food and the meal's kcal for the day.</p>
+        <p>Under Foods you search, e.g. milk. Choose a variant (Light, Medium …) and an amount. The natural unit is preselected (pc, slice, piece or dl); solid foods can also be entered in grams and drinks in dl or ml. If you change unit the number is converted, and the line shows e.g. &quot;2 pc (90 g) · 150 kcal&quot;. Measures are approximate. Show more searches the whole Swedish Food Agency list (names in Swedish).</p>
+        <p>If you have eaten the food or dish before, the amount is already filled in with what you chose last time (shown under Last time) – usually it is enough to tap Add.</p>
+        <p>Quick picks: when you do not know exactly. Home-made: Light ≈ 450, Standard ≈ 650, Heavy ≈ 850 kcal. Eating out: Light ≈ 700, Standard ≈ 1,000, Heavy ≈ 1,400 kcal. Breakfast: Light ≈ 250, Standard ≈ 400, Heavy ≈ 650 kcal. One tap logs it. If you pick Light when eating out the meal can still be ✅ on plan – you decide. Own estimate: fill in kcal, and preferably protein, carbs and fat, when you already know roughly what the dish contains. It is saved under Recent. Tip: photograph the plate and ask the AI on your phone (e.g. Gemini or Apple Intelligence) to estimate the values. It is never exact from a photo, but often close enough – and closer than a standard estimate, since it is about your plate.</p>
+        <p>Standard estimates: common foods and dishes have an approximate value. Enter a number or a weight. If you want exact values, add the food under Own products.</p>
+        <p>can drained means drained weight: a can of kidney beans is 400 g with liquid but about 230 g beans – it is the beans that count.</p>
+        <p>Under Recent you log something you have eaten before with one tap. Copy yesterday's food fills an empty day with yesterday's food.</p>
+        <p>Select several: hold your finger on a food entry until it is selected and tap more. Copy adds them to another day (same meal and amount), Delete removes them. Undo is available right afterwards. ✕ or Back ends.</p>
+        <p>Tap an entry to change the amount, move it to another meal or delete it.</p>
+        <p>There is no calorie goal to start with – the app just shows the day's total. If you want a goal, set it under Settings → Calories → Calorie goal (empty = no goal), and likewise optional goals for protein and carbs.</p>
+      </details>
+      <details><summary>Dishes</summary>
+        <p>Build your own dishes under Settings → Calories → My dishes → + New dish. Add the ingredients in grams (raw weight).</p>
+        <p>Choose Per portion if the recipe is for one portion, or Whole batch and the number of portions, e.g. bolognese with 500 g beef mince split into 5.</p>
+        <p>Ideally weigh the whole cooked dish and fill in the cooked weight – then you can log in grams, which is most exact.</p>
+        <p>Log under Add food → Dishes: portions (½, 1, 2 …), share of the batch (e.g. 1/5) or grams of the cooked dish.</p>
+        <p>Save a meal as a dish: open 🍽 Food and tap +🍲 Save as dish, e.g. breakfast with 100 g yoghurt and 100 g granola. Give the dish a name and save.</p>
+        <p>If you change a dish later, days already logged are not affected.</p>
+      </details>
+      <details><summary>Own products and search words</summary>
+        <p>If a food is missing: add it under Own products with kcal, protein, carbs and fat per 100 g from the package, and preferably a measure (e.g. 1 pc = 40 g).</p>
+        <p>If the search does not find what you mean: choose the food and tap Save your own search word. The word then shows that food first.</p>
+      </details>
+      <details><summary>Change day</summary>
+        <p>Use ◀ ▶ or swipe left/right. Tap the date, ↩ Back to today or the Today tab to go back to today.</p>
+        <p>Back closes what is open (Add, a dish, a dialog) and then goes back through the tabs you have visited. The app closes only where you started. Back does not change day.</p>
+        <p>🗑 Clear the day removes the day's habits, food, workouts and weight. Undo is available for a few seconds afterwards.</p>
+      </details>
+      <details><summary>Weight</summary>
+        <p>Enter your weight under Weight today, ideally in the morning. The trend uses a 7-day average, so single days matter little.</p>
+      </details>
+      <details><summary>Week, Trend and History</summary>
+        <p>Week: the weight (latest weigh-in vs the first weigh-in the week before, with a mini curve), adherence, cheats and most common reason, day by day (habits, workouts, kcal, weight – tap to open the day), training against the goals and calorie average. Bars per day are shown only when a calorie goal is set.</p>
+        <p>Trend: the weight (7-day average), the change over the last 4 weeks and the weight curve in one card, a table week by week (weight, adherence, cheats, workouts, kcal – tap to open the week) and what goes together: good vs worse weeks, training and calories (after 4 weeks).</p>
+        <p>History: the weight this month vs the latest weigh-in the month before (with a mini curve), adherence over 7 and 30 days and streaks in one card, then the month calendar coloured by adherence with marks for weigh-ins and training, and last workouts in total and kcal average.</p>
+        <p>Week compares single weigh-ins, Trend 7-day averages.</p>
+      </details>
+      <details><summary>Card order</summary>
+        <p>Under Settings → Appearance → Card order you choose the order of the cards in Today, Week, Trend and History. ↑ ↓ moves, ● shown, ○ hidden. Reset restores the default order, for one view or for all views at the bottom.</p>
+      </details>
+      <details><summary>Language</summary>
+        <p>The first time, you choose the language (Svenska or English) at the top of the welcome box. Change it later under Settings → General → Language. Your data is the same in both languages.</p>
+        <p>Food names from the Swedish Food Agency's full list (Show more) are in Swedish; the common foods, quick picks and the whole app are translated.</p>
+      </details>
+      <details><summary>Move from Follow the plan</summary>
+        <p>Open Follow the plan → Settings → Data → Save backup file.</p>
+        <p>Open Simple nutrition → Settings → General → Data → Restore backup file and choose the file (or paste the file's contents under Paste text).</p>
+        <p>Check the summary and tap Add. Habits, reasons, notes, weigh-ins, workouts, plan and goals come along. Meals with the same name are merged. Nothing you already have in Simple nutrition is removed – Undo is available right afterwards.</p>
+      </details>
+      <details><summary>Backup and moving</summary>
+        <p>Under Data: tap Save backup file. The file is called e.g. simple-nutrition-2026-11-09.txt and ends up among your downloads.</p>
+        <p>The app reminds you to back up every month (or week). Change it under Data → Backup reminder.</p>
+        <p>To restore: tap Restore backup file, check the summary and tap Replace. All current data is replaced – Undo is available right afterwards.</p>
+        <p>If you cannot choose the file: open Paste text and paste the file's contents.</p>
+        <p>The file contains all your data and is always encrypted with a password you choose. Tick Show password to see what you type. Create random password fills in a strong password that you can copy to a password manager. Digits and special characters are shown in colour so it is easy to copy by hand. If you forget the password the file cannot be opened.</p>
+        <p>The backup password is stored on the device the first time you enter it (when you save or restore a backup). After that a backup takes one tap, without a question. The password is only on this device, never in the backup file, and the file is just as encrypted as before. With Show password ticked you only need to type the password once. Under Settings → Data you can Show and Change the password, or untick Remember the backup password – it is then forgotten and the app asks every time. Use a new password you do not use anywhere else: it is stored unprotected on this device. Tap Create random password and save it in your password manager. Keep the password in your password manager – without it the backup cannot be opened on a new phone.</p>
+        <p>The app is locked until you have chosen a language and a password for your backup files – the first time, after Delete all data and as long as no password is saved. If you have a backup file you can restore it instead; the password that opens it is saved. The app collects no data – the password is just a key that protects your backups. If you restore a backup that the saved password unlocks, the summary says so; if it does not fit, the app asks for the password for that file.</p>
+        <p>The file describes its own format and has an example, so it can be edited by hand and restored again.</p>
+      </details>
+      <details><summary>Install and offline</summary>
+        <p>Android (Chrome): the ⋮ menu → Install app. iPhone (Safari): Share → Add to Home Screen. Installed, the app works completely offline.</p>
+      </details>
+      <details><summary>Privacy and source</summary>
+        <p>The app makes no requests – no server, no analytics, no account. All data is only in this browser.</p>
+        <p>The nutrition values come from the Swedish Food Agency's food database and are built into the app.</p>
       </details>
     </section>
   </template>
@@ -177,6 +270,8 @@
     </form>
   </dialog>
   <div id="snackbar" role="status" aria-live="polite" hidden><span id="snack-text"></span><button type="button" id="snack-action"></button></div>
+  <script src="i18n.js"></script>
+  <script src="i18n-en.js"></script>
   <script src="version.js"></script>
   <script src="backup.js"></script>
   <script src="data/foods.js"></script>

@@ -60,6 +60,10 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 ## Kortordning
 - Under **Inställningar → Utseende → Kortordning** väljer du ordningen på korten i Idag, Vecka, Trend och Historik. ↑ ↓ flyttar, ● visas, ○ döljer. **Återställ** ger standardordningen tillbaka, för en vy eller för alla vyer längst ner.
 
+## Språk
+- Första gången väljer du språk (Svenska eller English) överst i välkomstrutan. Byt senare under **Inställningar → Allmänt → Språk**. Din data är densamma på båda språken.
+- Livsmedelsnamn från Livsmedelsverkets hela lista (Visa fler) är alltid på svenska; vanliga varor, snabbval och hela appen är översatta.
+
 ## Flytta från Följ planen
 - Öppna Följ planen → Inställningar → Data → **Spara backup-fil**.
 - Öppna Simple nutrition → Inställningar → Allmänt → Data → **Läs in backup-fil** och välj filen (eller klistra in filens innehåll under Klistra in text).

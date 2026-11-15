@@ -2,7 +2,7 @@
 // hjälpfunktioner så att modulen aldrig importerar app.js (bygget stöder inte cirkulära importer).
 import { defaults, save, addDays, exportText, importText, MAX_IMPORT_CHARS, mergeFdt } from '../store.js';
 import { today, S, shortDate, el } from '../ui.js';
-import { t, lang, setLang, langChosen, LANGS } from '../i18n.js';
+const { lang, setLang, chosen: langChosen, LANGS } = self.I18N;
 
 let persist, render, status, snackbar, resetDay, currentView;
 const errText = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
@@ -161,31 +161,31 @@ function fillWelcome() {
   const file = el('input', { type: 'file', accept: '.txt,.json' });
   file.addEventListener('change', async () => {
     const f = file.files && file.files[0]; if (!f) return;
-    let r; try { r = await Backup.read(f, MAX_IMPORT_CHARS); } catch { r = { error: t('wl.readErr') }; }
+    let r; try { r = await Backup.read(f, MAX_IMPORT_CHARS); } catch { r = { error: 'Kunde inte läsa filen.' }; }
     file.value = '';
     err.textContent = r.error || '';
-    if (!r.error) { setLang(lang()); openImport(r.text); }
+    if (!r.error) { setLang(lang(), false); openImport(r.text); }
   });
   const cur = lang();
-  const segs = el('div', { class: 'segs', role: 'group', 'aria-label': t('wl.lang') },
+  const segs = el('div', { class: 'segs', role: 'group', 'aria-label': 'Språk' },
     Object.entries(LANGS).map(([k, name]) => {
-      const b = el('button', { type: 'button', class: 'seg' + (k === cur ? ' on' : ''), lang: k, 'aria-pressed': String(k === cur), text: name });
+      const b = el('button', { type: 'button', class: 'seg' + (k === cur ? ' on' : ''), lang: k, 'aria-pressed': String(k === cur), text: name, 'data-no-tr': '' });
       b.addEventListener('click', () => {
-        setLang(k);
-        if (!needsWelcome()) { welcomeDlg.close(); render(); } else { fillWelcome(); render(); }
+        setLang(k);   // laddar om sidan om språket byts; samma språk → bara sparat
+        if (!needsWelcome()) welcomeDlg.close(); else fillWelcome();
       });
       return b;
     }));
-  const pick = el('button', { type: 'button', class: 'btn-file btn-filled', text: t('wl.pick') });
-  pick.addEventListener('click', () => { setLang(lang()); choosePassword(); });
+  const pick = el('button', { type: 'button', class: 'btn-file btn-filled', text: 'Välj lösenord' });
+  pick.addEventListener('click', () => { setLang(lang(), false); choosePassword(); });
   const pw = needsPassword();
   welcomeDlg.replaceChildren(
-    el('h2', { id: 'wl-title', text: t('wl.title') }),
+    el('h2', { id: 'wl-title', text: 'Välkommen!' }),
     segs,
-    pw && el('p', { text: t('wl.text') }),
-    pw && el('p', { class: 'muted small', text: t('wl.small') }),
+    pw && el('p', { text: 'Välj ett lösenord som skyddar dina backup-filer. Spara det i din lösenordshanterare – utan det går en backup inte att läsa in.' }),
+    pw && el('p', { class: 'muted small', text: 'Allt stannar på din enhet. Använd ett nytt lösenord – det sparas här.' }),
     pw && el('div', { class: 'welcome-actions' }, pick,
-      !welcomeHasData() && el('label', { class: 'btn-file' }, t('wl.import'), file)),
+      !welcomeHasData() && el('label', { class: 'btn-file' }, 'Jag har en backup-fil', file)),
     err);
 }
 export function welcomeCheck() {

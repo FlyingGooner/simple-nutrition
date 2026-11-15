@@ -1,4 +1,5 @@
 {
+  "sn.lang": "sv",
   "sn.data": {
     "version": 1,
     "goals": [{ "from": "2000-01-01", "kcal": 2000 }],

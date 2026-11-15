@@ -12,8 +12,6 @@ import { viewHistory } from './views/history.js';
 import { viewSettings } from './views/settings.js';
 import { PLAN_MAX } from './habit-store.js';
 import { newDraft, draftFrom, dishQ, dishUnit, isBatch } from './views/dishes.js';
-import { lang } from './i18n.js';
-document.documentElement.lang = lang();
 import { initData, saveBackup, maybeAskBackup, readBackup, openImport, rememberPassword, setRemember } from './views/data.js';
 
 document.getElementById('version').textContent = 'v' + self.APP_VERSION;
@@ -665,6 +663,7 @@ app.addEventListener('change', (ev) => {
       if (v) e.note = v; else delete e.note;
       persist(); return;
     }
+    case 'lang': self.I18N.setLang(t.value); return;
     case 'bkremind': if (['week', 'month', 'off'].includes(t.value)) { S.state.backup.remind = t.value; S.state.backup.asked = null; persist(); } return;
     case 'threshold': S.state.settings.successThreshold = Number(t.value) / 100; persist(); return;
     case 'wgoal': {

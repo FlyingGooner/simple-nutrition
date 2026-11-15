@@ -40,7 +40,7 @@ function editableList(kind, items) {
 
 // In-app manual: static <template id="help-tpl"> in index.html, cloned (never parsed as HTML text).
 function helpCard() {
-  const frag = document.importNode(document.getElementById('help-tpl').content, true);
+  const frag = document.importNode((document.getElementById(self.I18N.lang() === 'en' ? 'help-tpl-en' : 'help-tpl') || document.getElementById('help-tpl')).content, true);
   const sec = frag.querySelector('.help');
   const wrap = el('details', { class: 'card set-sec help help-wrap', 'data-sec': 'help', open: setOpen.has('help') },
     el('summary', { class: 'help-title' }, el('span', { class: 'set-title', text: 'Hjälp och manual' }), el('span', { class: 'set-hint', text: 'Så funkar appen' })));
@@ -130,7 +130,11 @@ export function viewSettings() {
         layoutSection(),
         Object.keys(LAYOUT_VIEWS).some((v) => S.state.layout?.[v])
           ? el('div', { class: 'save-row' }, el('button', { class: 'link', 'data-act': 'lresetall', text: 'Återställ alla vyer' })) : null)),
-    group('app', 'Allmänt', 'Data, hjälp',
+    group('app', 'Allmänt', 'Språk, data, hjälp',
+      sec('lang', 'Språk', self.I18N.LANGS[self.I18N.lang()],
+        el('label', { class: 'goal-row' }, el('span', { text: 'Språk' }),
+          el('select', { 'data-act': 'lang', 'aria-label': 'Språk' },
+            Object.entries(self.I18N.LANGS).map(([v, l]) => el('option', { value: v, selected: self.I18N.lang() === v, text: l, 'data-no-tr': '' }))))),
       sec('data', 'Data', 'Backup, import, radera',
         el('p', { class: 'small', text: 'All data sparas bara i den här webbläsaren (localStorage). Rensar du webbplatsdata eller avinstallerar appen försvinner den – spara en backup-fil då och då.' }),
         el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och krypteras alltid med ett lösenord du väljer. Du kan också låta appen skapa ett slumpmässigt lösenord. Glömmer du det går filen inte att öppna. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),

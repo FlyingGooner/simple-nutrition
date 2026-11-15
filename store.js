@@ -206,18 +206,20 @@ export function weekStats(state, ws) {
 
 /* ---------- Food search (data/foods.js) ---------- */
 let INDEX = null;
+// Engelska (2026-11-15): med engelska valt går det också att söka på de engelska namnen och etiketterna.
+const enWords = (names) => (globalThis.I18N && globalThis.I18N.lang() === 'en' ? names.filter(Boolean).map((n) => globalThis.I18N.tr(n).toLowerCase()) : []);
 const refOf = (id) => (id.startsWith('b') ? 'b:' : 'l:') + id;
 function index() {
   if (INDEX) return INDEX;
   const core = (typeof FOODS_CORE !== 'undefined' ? FOODS_CORE : []).map((f) => ({
-    name: f.name, words: [f.name.toLowerCase(), ...(f.q || [])],
+    name: f.name, words: [f.name.toLowerCase(), ...(f.q || []), ...enWords([f.name, ...f.v.map((v) => v.l)])],
     v: f.v.filter((v) => !v.hide).map((v) => ({ label: v.l, ref: refOf(v.id), n: v.n, u: v.u, u2: v.u2, d: v.d })),
     // Dolda varianter (hide:1): inte i sökning eller chips, men findRef hittar dem för gamla loggar och backuper.
     hv: f.v.filter((v) => v.hide).map((v) => ({ label: v.l, ref: refOf(v.id), n: v.n, u: v.u, u2: v.u2, d: v.d })),
   }));
   // Schabloner (Del 2): ref p:<id>, undertext sub; visas före LV, ett exakt sökord döljer LV-raderna.
   const products = (typeof FOODS_PRODUCTS !== 'undefined' ? FOODS_PRODUCTS : []).map((f) => ({
-    name: f.name, sub: f.sub, words: [f.name.toLowerCase(), ...(f.q || [])],
+    name: f.name, sub: f.sub, words: [f.name.toLowerCase(), ...(f.q || []), ...enWords([f.name])],
     v: f.v.map((v) => ({ label: v.l, ref: 'p:' + v.id, n: v.n, u: v.u, u2: v.u2, d: v.d })), product: true,
   }));
   const more = (typeof FOODS_MORE !== 'undefined' ? FOODS_MORE : []).map((r) => ({ name: r[1], words: [r[1].toLowerCase()], v: [{ label: '', ref: 'l:' + r[0], n: r.slice(2, 6) }], more: true }));
