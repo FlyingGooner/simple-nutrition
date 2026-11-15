@@ -1,116 +1,119 @@
 <div align="center">
 
-<img src="icons/icon-192.png" width="88" alt="Simple nutrition-ikon">
+<img src="icons/icon-192.png" width="88" alt="Simple nutrition icon">
 
 # Simple nutrition
 
-**Kalorier och makron från rena råvaror – utan konto, utan märkesdjungel.**
+**Calories and macros from plain ingredients – no account, no jungle of brands.**
 
-### [▶ Öppna appen](https://flyinggooner.github.io/simple-nutrition/)
+### [▶ Open the app](https://flyinggooner.github.io/simple-nutrition/)
 
-[📱 Presentation av appen](https://flyinggooner.github.io/simple-nutrition/docs/presentation.html) · [🛡️ Små appar, hög nivå](https://flyinggooner.github.io/simple-nutrition/docs/standard.html)
+[📱 Presentation of the app](https://flyinggooner.github.io/simple-nutrition/docs/presentation.html) · [🛡️ Small apps, high standard](https://flyinggooner.github.io/simple-nutrition/docs/standard.html)
 
 </div>
 
-<!-- Skärmbilder: lägg i docs/ och visa här -->
+<!-- Screenshots: put them in docs/ and show them here -->
 
 <p align="center">
-<img src="docs/screenshots/today.png" width="200" alt="Idag-vyn">
-<img src="docs/screenshots/week.png" width="200" alt="Vecka-vyn">
-<img src="docs/screenshots/trend.png" width="200" alt="Trend-vyn">
+<img src="docs/screenshots/today.png" width="200" alt="The Today view">
+<img src="docs/screenshots/week.png" width="200" alt="The Week view">
+<img src="docs/screenshots/trend.png" width="200" alt="The Trend view">
 </p>
-<p align="center"><sub>Påhittad exempeldata</sub></p>
+<p align="center"><sub>Made-up example data</sub></p>
 
-## Varför?
+## Why?
 
-Kalorappar drunknar i dubbletter och märkesposter. Här finns bara Livsmedelsverkets råvaror, några få tydliga val och dina egna recept.
+Calorie apps drown in duplicates and brand entries. Here there are only the Swedish Food Agency's ingredients, a few clear choices and your own recipes.
 
-## Funktioner
+## Features
 
 | | |
 |---|---|
-| 🔁 **Vanor** | Bocka av dina vanor varje dag och se hur ofta du lyckas. |
-| 🏋️ **Träning** | Logga gympass och kondition mot ett veckomål. |
-| 🥕 **Mat och kalorier** | Livsmedelsverkets råvaror med kcal, protein, kolhydrater och fett – i gram eller mått. |
-| 🍲 **Rätter** | Färdiga vanliga rätter och produkttyper (pizza, kebab, sushi, köttbullar …) kontrollerade mot förpackningsvärden, plus egna recept och matlådor. |
-| ⚡ **Snabbval** | När du inte vet exakt: Frukost, Hemmagjort och Utemat i tre nivåer, eller en egen uppskattning (t.ex. från telefonens AI). |
-| 🏷️ **Egna produkter** | Lägg till egna varor och sökord. |
-| ⚖️ **Vikt** | Vikttrend med 7-dagars medel. |
-| 📊 **Vecka, Trend, Historik** | Hur veckan och perioden går mot målet. |
-| 💾 **Backup** | Lösenordskrypterad backup-fil med lösenordsgenerator och påminnelse; flytt från Följ planen. |
-| ❓ **Hjälp** | Manual direkt i appen. |
-| 📴 **Offline** | Fungerar utan nät efter första besöket. |
-| ↩️ **Bakåt** | Telefonens bakåtknapp stänger det som är öppet och går tillbaka genom flikarna du besökt. |
-| 🌗 **Tema** | Ljust och mörkt, följer telefonens inställning. |
+| 🔁 **Habits** | Tick off your habits every day and see how often you succeed. |
+| 🏋️ **Training** | Log gym and cardio sessions against a weekly goal. |
+| 🥕 **Food and calories** | The Swedish Food Agency's ingredients with kcal, protein, carbs and fat – in grams or measures. |
+| 🍲 **Dishes** | Common ready dishes and product types (pizza, kebab, sushi, meatballs …) checked against package values, plus your own recipes and lunch boxes. |
+| ⚡ **Quick picks** | When you do not know exactly: Breakfast, Home-made and Eating out in three levels, or your own estimate (e.g. from your phone's AI). |
+| 🏷️ **Own products** | Add your own foods and search words. |
+| ⚖️ **Weight** | Weight trend with a 7-day average. |
+| 📊 **Week, Trend, History** | How the week and the period are going against the goal. |
+| 🌍 **Language** | English or Swedish, chosen at the first start and changeable in Settings. Food names and search work in both. |
+| 💾 **Backup** | Password-encrypted backup file with a password generator and reminder; move from Follow the plan. |
+| ❓ **Help** | Manual right in the app, in both languages. |
+| 📴 **Offline** | Works without network after the first visit. |
+| ↩️ **Back** | The phone's back button closes what is open and goes back through the tabs you have visited. |
+| 🌗 **Theme** | Light and dark, follows the phone's setting. |
 
-## Integritet och säkerhet 🔒
+## Privacy and security 🔒
 
-- **Inget konto, inga cookies.** Allt sparas bara i din webbläsare (`localStorage`).
-- **Inget utifrån.** Ingen analys, inga annonser, inga typsnitt eller skript utifrån – spärras även tekniskt med en Content Security Policy.
-- **Krypterad backup.** Backup-filen krypteras alltid med ett lösenord du väljer: AES-GCM 256 bitar, och nyckeln tas fram med PBKDF2-SHA256 och 600 000 iterationer – den nivå OWASP rekommenderar och samma som förvalet i lösenordshanteraren Bitwarden. Nytt salt och ny IV varje gång, och en fil som ändrats går inte att läsa in. Bara webbläsarens inbyggda krypto används, inga bibliotek utifrån.
+- **No account, no cookies.** Everything is stored only in your browser (`localStorage`).
+- **Nothing from outside.** No analytics, no ads, no fonts or scripts from outside – also blocked technically with a Content Security Policy.
+- **Encrypted backup.** The backup file is always encrypted with a password you choose: AES-GCM 256 bits, and the key is derived with PBKDF2-SHA256 and 600,000 iterations – the level OWASP recommends and the same as the default in the password manager Bitwarden. A new salt and IV every time, and a file that has been changed cannot be restored. Only the browser's built-in crypto is used, no libraries from outside.
 
-### Jämfört med vanliga kaloriappar
+### Compared with typical calorie apps
 
-| | Den här appen | Vanliga kaloriappar |
+| | This app | Typical calorie apps |
 |---|---|---|
-| Konto | Inget | Krävs, ofta med e-post |
-| Var datan finns | Bara i din telefon | På företagets servrar |
-| Analys, annonser, spårare | Inga – spärrat tekniskt | Vanligt |
-| Backup | Krypterad fil som bara ditt lösenord öppnar | I företagets moln |
-| Om tjänsten läggs ner | Appen och datan finns kvar | Datan kan försvinna |
+| Account | None | Required, often with email |
+| Where the data is | Only in your phone | On the company's servers |
+| Analytics, ads, trackers | None – blocked technically | Common |
+| Backup | Encrypted file only your password opens | In the company's cloud |
+| If the service shuts down | The app and the data remain | The data may disappear |
 
-> **Ärligt om gränserna:** datan i telefonen skyddas av telefonens eget lås, inte av en egen kryptering – lås telefonen. Ett glömt lösenord går inte att återställa, och ett svagt lösenord kan gissas, så välj ett långt. Rensar du webbplatsdata försvinner allt, så spara en backup-fil då och då (Inställningar → Data).
-### Säkerhetstestad ✅
+> **Honest about the limits:** the data in the phone is protected by the phone's own lock, not by separate encryption – lock your phone. A forgotten password cannot be recovered, and a weak password can be guessed, so choose a long one. If you clear site data everything disappears, so save a backup file now and then (Settings → Data).
 
-Automatiska tester körs före varje ny version och varje uppladdning. Underkänt test = ingen release.
+### Security tested ✅
 
-**Säkerhetskontroll**
-- [x] **Bara appens egen kod körs** – webbläsaren blockerar allt annat.
-- [x] **Inget lämnar telefonen** – appen pratar aldrig med någon server.
-- [x] **Din data stannar hos dig** – sparas bara i telefonen; appen rör bara sina egna uppgifter.
-- [x] **Fungerar utan nät** – med bara appens egna filer.
-- [x] **Låst backup** – bara ditt lösenord öppnar filen. Lösenordet sparas aldrig.
+Automatic tests run before every new version and every upload. Failed test = no release.
 
-**Funktionstester**
-- [x] **Trasiga filer stoppas** – en backup från fel app, eller som någon ändrat i, läses inte in.
-- [x] **Inget innehåll kan bli kod** – allt visas som vanlig text.
-- [x] **Backup tur och retur** – det du sparar är exakt det du får tillbaka.
-- [x] **Matdatan** – över 100 rätter räknas om mot facit vid varje release.
+**Security check**
+- [x] **Only the app's own code runs** – the browser blocks everything else.
+- [x] **Nothing leaves the phone** – the app never talks to any server.
+- [x] **Your data stays with you** – stored only in the phone; the app only touches its own data.
+- [x] **Works offline** – with only the app's own files.
+- [x] **Locked backup** – only your password opens the file. The password is never stored in the file.
 
+**Function tests**
+- [x] **Broken files are stopped** – a backup from the wrong app, or one someone has changed, is not restored.
+- [x] **No content can become code** – everything is shown as plain text.
+- [x] **Backup round trip** – what you save is exactly what you get back.
+- [x] **The food data** – over 100 dishes are recalculated against the answer key at every release.
 
-## Installera på mobilen
+## Install on your phone
 
 **Android (Chrome)**
-1. Öppna [appen](https://flyinggooner.github.io/simple-nutrition/) i Chrome.
-2. Tryck på menyn **⋮** → **Installera app** (eller *Lägg till på startskärmen*).
+1. Open [the app](https://flyinggooner.github.io/simple-nutrition/) in Chrome.
+2. Tap the menu **⋮** → **Install app** (or *Add to Home screen*).
 
 **iPhone (Safari)**
-1. Öppna [appen](https://flyinggooner.github.io/simple-nutrition/) i Safari.
-2. Tryck på **Dela** → **Lägg till på hemskärmen**.
+1. Open [the app](https://flyinggooner.github.io/simple-nutrition/) in Safari.
+2. Tap **Share** → **Add to Home Screen**.
 
-Versionsnumret syns uppe till höger i appen. Nya versioner hämtas automatiskt.
+The version number is shown at the top right of the app. New versions are fetched automatically.
 
-## För utvecklare
+## For developers
 
-Ren HTML, CSS och JavaScript – inga ramverk, inga beroenden, inget byggsteg för appen.
+Plain HTML, CSS and JavaScript – no frameworks, no dependencies, no build step for the app.
 
-**Köra lokalt:** servera mappen statiskt, t.ex. `python3 -m http.server 8080`, och öppna http://localhost:8080 (service workern kräver `localhost` eller HTTPS).
+**Run locally:** serve the folder statically, e.g. `python3 -m http.server 8080`, and open http://localhost:8080 (the service worker needs `localhost` or HTTPS).
 
-**Testfil:** `tools\build-single.ps1` bakar ihop appen till en enda fil, `dist/simple-nutrition.html`, som går att öppna direkt i webbläsaren eller skicka till någon.
+**Test file:** `tools\build-single.ps1` bakes the app into a single file, `dist/simple-nutrition.html`, which can be opened directly in the browser or sent to someone.
 
-| Fil | Innehåll |
+| File | Contents |
 |---|---|
-| `index.html` | Appens markup |
-| `styles.css`, `app.js`, `ui.js`, `nav.js`, `views/` | Stil, router och klick, delat tillstånd, Bakåt-logik, en fil per vy (ES-moduler) |
-| `store.js` | Lagring i `localStorage` och validering av sparad data |
-| `version.js` | Versionsnummer (enda källan) |
-| `sw.js`, `manifest.webmanifest`, `icons/` | Installation som app (PWA) och offline |
-| `docs/SPEC.md` | Specifikation av funktioner och beteende |
-| `docs/DATA.md` | Dataformatet i backup-filen (samma som readme/schema/example i filen) |
-| `docs/presentation.html` | Fristående mobilpresentation av appen |
-| `docs/standard.html` | Små appar, hög nivå – det alla appar har gemensamt (synkas från mallen) |
-| `tools/build-single.ps1` | Bygger testfilen |
-| `tools/tests/` | Enhets- och flödestester (körs i headless Edge, körs automatiskt före varje release och push) |
-| `CLAUDE.md` | Regler för utveckling |
+| `index.html` | The app's markup |
+| `styles.css`, `app.js`, `ui.js`, `nav.js`, `views/` | Style, router and clicks, shared state, Back logic, one file per view (ES modules) |
+| `store.js` | Storage in `localStorage` and validation of saved data |
+| `i18n.js`, `i18n-en.js` | Language support: the source text is Swedish; `i18n.js` (shared by all apps) translates what is drawn with the dictionary in `i18n-en.js` |
+| `version.js` | Version number (single source) |
+| `sw.js`, `manifest.webmanifest`, `icons/` | Installation as an app (PWA) and offline |
+| `docs/SPEC.md` | Specification of features and behaviour |
+| `docs/DATA.md` | The data format of the backup file (same as readme/schema/example in the file) |
+| `docs/MANUAL.md`, `docs/MANUAL.en.md` | The manual in Swedish and English (Help in the app is built from them) |
+| `docs/presentation.html` | Stand-alone mobile presentation of the app (English by default, Swedish with the button on the first slide) |
+| `docs/standard.html` | Small apps, high standard – what all the apps have in common (synced from the template) |
+| `tools/build-single.ps1` | Builds the test file |
+| `tools/tests/` | Unit and flow tests (run in headless Edge, automatically before every release and push) |
+| `CLAUDE.md` | Rules for development |
 
-Publiceras till GitHub Pages från `main`.
+Published to GitHub Pages from `master`.

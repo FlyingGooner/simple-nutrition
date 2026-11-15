@@ -9,7 +9,8 @@
   const LANGS = { en: 'English', sv: 'Svenska' };
   const read = () => { try { const v = localStorage.getItem(KEY); return v && v[0] === '"' ? JSON.parse(v) : v; } catch { return null; } };   // "sv" (JSON) går också, t.ex. från testernas seed
   const chosen = () => read() in LANGS;
-  const guess = () => (/^sv\b/i.test(navigator.language || '') ? 'sv' : 'en');
+  let def = null;   // fast standardspråk (presentationerna: engelska); annars gissas det från telefonen
+  const guess = () => def || (/^sv\b/i.test(navigator.language || '') ? 'sv' : 'en');
   const lang = () => (chosen() ? read() : guess());
   const map = new Map();
   const pats = [], late = [];
@@ -156,7 +157,7 @@
     'Spara': 'Save',
     'Senare': 'Later',
     'Inte nu': 'Not now',
-    'Ta bort': 'Remove',
+    'Ta bort': 'Remove', 'Ta bort?': 'Remove?', 'Ta bort dem': 'Remove them', 'Kopiera': 'Copy', 'Appversion': 'App version', 'Vyer': 'Views',
     'Ändra': 'Edit',
     'Klar': 'Done',
     'OK': 'OK',
@@ -217,6 +218,9 @@
     'Allt stannar på din enhet. Använd ett nytt lösenord – det sparas här.': 'Everything stays on your device. Use a new password – it is stored here.',
   }, [
     [/^\+ (.+)$/, '+ $1'],
+    [/^(.+?) · (.+)$/, (g, tr) => { const a = tr(g[1]), b = tr(g[2]); return a === g[1] && b === g[2] ? null : a + ' · ' + b; }],
+    [/^([^\d]+?) (\d+)$/, (g, tr) => { const a = tr(g[1]); return a === g[1] ? null : a + ' ' + g[2]; }],
+    [/^([↕↑↓←→] )?(.+?)( [↑↓])?$/, (g, tr) => { if (!g[1] && !g[3]) return null; const a = tr(g[2]); return a === g[2] ? null : (g[1] || '') + a + (g[3] || ''); }],
     [/^(\p{Extended_Pictographic}\uFE0F?\s+)(.+)$/u, (g, tr) => { const x = tr(g[2]); return x === g[2] ? null : g[1] + x; }],
     [/^(Ta bort|Dölj|Visa|Flytta upp|Flytta ner|Ändra|Byt namn på|Återställ) (.+)$/, (g, tr) => ({ 'Ta bort': 'Remove', 'Dölj': 'Hide', 'Visa': 'Show', 'Flytta upp': 'Move up', 'Flytta ner': 'Move down', 'Ändra': 'Edit', 'Byt namn på': 'Rename', 'Återställ': 'Reset' })[g[1]] + ' ' + tr(g[2])],
     [/^([^,]+(?:, [^,]+)+)$/, (g, tr) => { const p = g[1].split(', ').map((x) => tr(x)); return p.some((x) => /[åäöÅÄÖ]/.test(x)) ? null : p.join(', '); }],
@@ -224,7 +228,7 @@
     [/^Senaste backup: (.+)\. Spara en ny så att du inte tappar din data\.$/, 'Last backup: $1. Save a new one so you do not lose your data.'],
     [/^Senaste backup: (.+)$/, 'Last backup: $1'],
   ], true);
-  self.I18N = { LANGS, lang, chosen, guess, setLang, tr, add, start, ask, missing, setKey: (k) => { KEY = k; document.documentElement.lang = lang(); }, known: (x) => map.has(x) || enVals.has(x), locale: () => (lang() === 'en' ? 'en-GB' : 'sv-SE') };
+  self.I18N = { LANGS, lang, chosen, guess, setLang, tr, add, start, ask, missing, setKey: (k, d) => { KEY = k; if (d in LANGS) def = d; document.documentElement.lang = lang(); }, known: (x) => map.has(x) || enVals.has(x), locale: () => (lang() === 'en' ? 'en-GB' : 'sv-SE') };
   document.documentElement.lang = lang();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
 })();
