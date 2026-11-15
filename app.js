@@ -12,6 +12,8 @@ import { viewHistory } from './views/history.js';
 import { viewSettings } from './views/settings.js';
 import { PLAN_MAX } from './habit-store.js';
 import { newDraft, draftFrom, dishQ, dishUnit, isBatch } from './views/dishes.js';
+import { lang } from './i18n.js';
+document.documentElement.lang = lang();
 import { initData, saveBackup, maybeAskBackup, readBackup, openImport, rememberPassword, setRemember } from './views/data.js';
 
 document.getElementById('version').textContent = 'v' + self.APP_VERSION;

@@ -2,6 +2,7 @@
 // hjälpfunktioner så att modulen aldrig importerar app.js (bygget stöder inte cirkulära importer).
 import { defaults, save, addDays, exportText, importText, MAX_IMPORT_CHARS, mergeFdt } from '../store.js';
 import { today, S, shortDate, el } from '../ui.js';
+import { t, lang, setLang, langChosen, LANGS } from '../i18n.js';
 
 let persist, render, status, snackbar, resetDay, currentView;
 const errText = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
@@ -145,41 +146,58 @@ export async function openImport(text) {
   startImport(r.text);
 }
 
-/* ---------- Välkommen: välj lösenord först (2026-11-14) ----------
+/* ---------- Välkommen: välj språk och lösenord först (2026-11-14, språk 2026-11-15) ----------
    Utan sparat lösenord är appen låst bakom en ruta tills ett lösenord är valt (eller en krypterad backup är inläst,
    vars lösenord sparas), som att registrera sig. Lösenordet är bara nyckeln till backup-filerna – det sparas på enheten (sn.pwd), aldrig i
    datan eller i filen. Bockar man ur Kom ihåg visas rutan inte (man har valt att få frågan varje gång). */
-let welcomeDlg = null, importBtn = null;
+let welcomeDlg = null;
 const welcomeHasData = () => Object.keys(S.state.log).length || Object.keys(S.state.habits).length || Object.keys(S.state.weights).length;
-const needsWelcome = () => !savedPassword() && rememberOn();   // låst tills ett lösenord är valt, även med data
+const needsPassword = () => !savedPassword() && rememberOn();   // låst tills ett lösenord är valt, även med data
+const needsWelcome = () => !langChosen() || needsPassword();   // språk först (2026-11-15), i samma ruta
 function closeWelcome() { if (welcomeDlg?.open && !needsWelcome()) welcomeDlg.close(); }
+// Rutan ritas om när språket byts: språkknappar överst, lösenordet under (döljs om det redan är valt).
+function fillWelcome() {
+  const err = el('p', { class: 'import-error small', role: 'alert' });
+  const file = el('input', { type: 'file', accept: '.txt,.json' });
+  file.addEventListener('change', async () => {
+    const f = file.files && file.files[0]; if (!f) return;
+    let r; try { r = await Backup.read(f, MAX_IMPORT_CHARS); } catch { r = { error: t('wl.readErr') }; }
+    file.value = '';
+    err.textContent = r.error || '';
+    if (!r.error) { setLang(lang()); openImport(r.text); }
+  });
+  const cur = lang();
+  const segs = el('div', { class: 'segs', role: 'group', 'aria-label': t('wl.lang') },
+    Object.entries(LANGS).map(([k, name]) => {
+      const b = el('button', { type: 'button', class: 'seg' + (k === cur ? ' on' : ''), lang: k, 'aria-pressed': String(k === cur), text: name });
+      b.addEventListener('click', () => {
+        setLang(k);
+        if (!needsWelcome()) { welcomeDlg.close(); render(); } else { fillWelcome(); render(); }
+      });
+      return b;
+    }));
+  const pick = el('button', { type: 'button', class: 'btn-file btn-filled', text: t('wl.pick') });
+  pick.addEventListener('click', () => { setLang(lang()); choosePassword(); });
+  const pw = needsPassword();
+  welcomeDlg.replaceChildren(
+    el('h2', { id: 'wl-title', text: t('wl.title') }),
+    segs,
+    pw && el('p', { text: t('wl.text') }),
+    pw && el('p', { class: 'muted small', text: t('wl.small') }),
+    pw && el('div', { class: 'welcome-actions' }, pick,
+      !welcomeHasData() && el('label', { class: 'btn-file' }, t('wl.import'), file)),
+    err);
+}
 export function welcomeCheck() {
   if (!needsWelcome() || welcomeDlg?.open || typeof HTMLDialogElement !== 'function') return;
   const other = document.querySelector('dialog[open]');   // t.ex. backup-påminnelsen: fråga när den stängs
   if (other) { other.addEventListener('close', () => setTimeout(welcomeCheck, 0), { once: true }); return; }
   if (!welcomeDlg) {
-    const err = el('p', { class: 'import-error small', role: 'alert' });
-    const file = el('input', { type: 'file', accept: '.txt,.json' });
-    file.addEventListener('change', async () => {
-      const f = file.files && file.files[0]; if (!f) return;
-      let r; try { r = await Backup.read(f, MAX_IMPORT_CHARS); } catch { r = { error: 'Kunde inte läsa filen.' }; }
-      file.value = '';
-      err.textContent = r.error || '';
-      if (!r.error) openImport(r.text);
-    });
-    const pick = el('button', { type: 'button', class: 'btn-file btn-filled', text: 'Välj lösenord' });
-    pick.addEventListener('click', choosePassword);
-    welcomeDlg = el('dialog', { class: 'welcome', 'aria-labelledby': 'wl-title' },
-      el('h2', { id: 'wl-title', text: 'Välkommen!' }),
-      el('p', { text: 'Välj ett lösenord för att komma igång och skriv ner det på en säker plats, till exempel i din lösenordshanterare. Dina backup-filer skyddas med lösenordet, och det behövs för att läsa in en backup.' }),
-      el('p', { class: 'small', text: 'Använd ett nytt lösenord som du inte har någon annanstans – det sparas på den här enheten. Tryck Skapa slumpmässigt lösenord och spara det i din lösenordshanterare.' }),
-      el('p', { class: 'muted small', text: 'Vi samlar ingen data. Allt stannar på din enhet – lösenordet är bara en nyckel som skyddar dina backuper.' }),
-      el('div', { class: 'welcome-actions' }, pick, importBtn = el('label', { class: 'btn-file' }, 'Jag har en backup-fil att importera', file)),
-      err);
-    welcomeDlg.addEventListener('cancel', (e) => e.preventDefault());   // inte Esc/Bakåt: ett lösenord först
+    welcomeDlg = el('dialog', { class: 'welcome', 'aria-labelledby': 'wl-title' });
+    welcomeDlg.addEventListener('cancel', (e) => e.preventDefault());   // inte Esc/Bakåt: språk och lösenord först
     document.body.append(welcomeDlg);
   }
-  importBtn.hidden = !!welcomeHasData();   // har man redan data behövs bara lösenordet
+  fillWelcome();
   welcomeDlg.showModal();
 }
 async function choosePassword() {
