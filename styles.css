@@ -561,3 +561,8 @@ dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
 .post.marked .sel-box { background: var(--primary); border-color: var(--primary); color: var(--on-primary, #fff); }
 .post-head .post-name { flex: 1; }
 .meals { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+
+/* Byta kod (2026-11-15): tre knappar staplade, viktigast överst. */
+#newcode-dialog .actions, #newcode-dialog .dlg-actions { display: flex; flex-direction: column-reverse; align-items: stretch; gap: 8px; }
+#newcode-dialog .actions .spacer { display: none; }
+#newcode-dialog .actions button, #newcode-dialog .dlg-actions button { width: 100%; margin: 0; }

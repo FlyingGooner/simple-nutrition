@@ -2,6 +2,8 @@
 // Mönster (regex) för texter med tal eller namn i; $1… översätts i sin tur. Saknas en text visas den svenska.
 I18N.setKey('sn.lang');
 I18N.add({
+  'Bara byt': 'Just change',
+  'Byt och spara backup': 'Change and save backup',
   'Byta kod?': 'Change code?',
   'Byt kod': 'Change code',
   'Backup-filer du redan har sparat går bara att öppna med den gamla koden. Har du inte kvar den gamla koden blir de värdelösa. Spara en ny backup direkt efter bytet.': 'Backup files you have already saved open only with the old code. If you no longer have the old code they become useless. Save a new backup right after the change.',
