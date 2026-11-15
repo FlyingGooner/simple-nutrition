@@ -2,6 +2,7 @@
 // Mönster (regex) för texter med tal eller namn i; $1… översätts i sin tur. Saknas en text visas den svenska.
 I18N.setKey('sn.lang');
 I18N.add({
+  'Dina backup-filer krypteras med ett lösenord som har skapats och sparats på enheten. Du kan se eller byta det under Inställningar → Allmänt → Data.': 'Your backup files are encrypted with a password that has been created and stored on the device. You can view or change it under Settings → General → Data.',
   // Flikar och ramar
   'Idag': 'Today', 'Vecka': 'Week', 'Trend': 'Trend', 'Historik': 'History', 'Inst.': 'Settings',
   'Simple nutrition': 'Simple nutrition',
@@ -132,7 +133,7 @@ I18N.add({
   'Välj ordning på korten i varje vy. ↑ ↓ flyttar, ● visas, ○ dolt.': 'Choose the order of the cards in each view. ↑ ↓ moves, ● shown, ○ hidden.',
   'Återställ alla vyer': 'Reset all views', 'Data, hjälp': 'Data, help',
   'All data sparas bara i den här webbläsaren (localStorage). Rensar du webbplatsdata eller avinstallerar appen försvinner den – spara en backup-fil då och då.': 'All data is stored only in this browser (localStorage). If you clear site data or uninstall the app it disappears – save a backup file now and then.',
-  'Backup-filen innehåller all din data och krypteras alltid med ett lösenord du väljer. Du kan också låta appen skapa ett slumpmässigt lösenord. Glömmer du det går filen inte att öppna. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.': 'The backup file contains all your data and is always encrypted with a password you choose. You can also let the app create a random password. If you forget it the file cannot be opened. Delete old files. Restore the file on another device to move your data.',
+  'Backup-filen innehåller all din data och krypteras alltid med ett lösenord som appen har skapat åt dig (se eller byt det nedan). Glömmer du det går filen inte att öppna. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.': 'The backup file contains all your data and is always encrypted with a password the app has created for you (view or change it below). If you forget it the file cannot be opened. Delete old files. Restore the file on another device to move your data.',
   'Flyttar du från Följ planen: spara en backup-fil där och läs in den här. Måltider, orsaker, vägningar och pass läggs till – inget du redan har tas bort.': 'Moving from Follow the plan: save a backup file there and restore it here. Meals, reasons, weigh-ins and workouts are added – nothing you already have is removed.',
   'Importera (ersätter all data – från Följ planen läggs den till)': 'Import (replaces all data – from Follow the plan it is added)',
   '+ Lägg till mat': '+ Add food', 'Spara som rätt': 'Save as dish', '+🍲 Spara som rätt': '+🍲 Save as dish',

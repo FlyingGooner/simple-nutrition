@@ -141,7 +141,7 @@ export function viewSettings() {
         el('p', { class: 'muted small', text: 'Måtten byts bara i visningen – allt sparas som förut, så du kan byta när du vill.' })),
       sec('data', 'Data', 'Backup, import, radera',
         el('p', { class: 'small', text: 'All data sparas bara i den här webbläsaren (localStorage). Rensar du webbplatsdata eller avinstallerar appen försvinner den – spara en backup-fil då och då.' }),
-        el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och krypteras alltid med ett lösenord du väljer. Du kan också låta appen skapa ett slumpmässigt lösenord. Glömmer du det går filen inte att öppna. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),
+        el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och krypteras alltid med ett lösenord som appen har skapat åt dig (se eller byt det nedan). Glömmer du det går filen inte att öppna. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),
         el('p', { class: 'small', text: 'Flyttar du från Följ planen: spara en backup-fil där och läs in den här. Måltider, orsaker, vägningar och pass läggs till – inget du redan har tas bort.' }),
         (() => {   // v0.7.0: status för senaste backup, direkt ovanför knapparna
           const last = S.state.backup.last, old = !last || addDays(last, 30) <= today();
