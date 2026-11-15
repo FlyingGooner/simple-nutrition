@@ -2,7 +2,9 @@
 // Mönster (regex) för texter med tal eller namn i; $1… översätts i sin tur. Saknas en text visas den svenska.
 I18N.setKey('sn.lang');
 I18N.add({
-  'Dina backup-filer krypteras med ett lösenord som har skapats och sparats på enheten. Du kan se eller byta det under Inställningar → Allmänt → Data.': 'Your backup files are encrypted with a password that has been created and stored on the device. You can view or change it under Settings → General → Data.',
+  'Är du ny räcker det att välja språk.': 'If you are new, just choose a language.',
+  'Din personliga kod (lösenordet till dina backup-filer) har skapats åt dig och finns under Inställningar → Allmänt → Data. Spara den på en säker plats, t.ex. i en lösenordshanterare – utan den går en backup inte att öppna på en ny enhet.': 'Your personal code (the password for your backup files) has been created for you and is under Settings → General → Data. Keep it somewhere safe, e.g. in a password manager – without it a backup cannot be opened on a new device.',
+  'Har du använt appen förut, på den här eller en annan enhet? Läs in din backup-fil för att få tillbaka din data.': 'Have you used the app before, on this or another device? Restore your backup file to get your data back.',
   // Flikar och ramar
   'Idag': 'Today', 'Vecka': 'Week', 'Trend': 'Trend', 'Historik': 'History', 'Inst.': 'Settings',
   'Simple nutrition': 'Simple nutrition',
