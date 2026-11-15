@@ -69,8 +69,8 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Under **Inställningar → Utseende → Kortordning** väljer du ordningen på korten i Idag, Vecka, Trend och Historik. ↑ ↓ flyttar, ● visas, ○ döljer. **Återställ** ger standardordningen tillbaka, för en vy eller för alla vyer längst ner.
 
 ## Språk och mått
-- Första gången väljer du språk (Svenska eller English) överst i välkomstrutan. Byt senare under **Inställningar → Allmänt → Språk**. Din data är densamma på båda språken.
-- **Måttsystem:** metriskt (g, dl, kg, km) eller imperial (oz, cup, fl oz, lb, mi). Förvalt efter språket – svenska ger metriskt, engelska imperial – men du väljer själv i välkomstrutan och under **Inställningar → Allmänt → Språk och mått**. Bara visningen ändras; allt sparas som förut. Matskedar, teskedar och styck är desamma i båda.
+- Appen är på svenska från början. Byt språk under **Inställningar → Allmänt → Språk**. Din data är densamma på båda språken.
+- **Måttsystem:** metriskt (g, dl, kg, km) eller imperial (oz, cup, fl oz, lb, mi). Metriskt är förvalt; byt under **Inställningar → Allmänt → Språk och mått**. Bara visningen ändras; allt sparas som förut. Matskedar, teskedar och styck är desamma i båda.
 - Livsmedelsnamn från Livsmedelsverkets hela lista (Visa fler) är alltid på svenska; vanliga varor, snabbval och hela appen är översatta.
 
 ## Flytta från Följ planen
@@ -85,7 +85,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Går det inte att välja filen: öppna **Klistra in text** och klistra in filens innehåll.
 - Filen innehåller all din data och krypteras alltid med ett lösenord som appen skapar och sparar åt dig första gången den startas (Visa och Byt under Inställningar). Bocka i **Visa lösenord** om du vill se vad du skriver. **Skapa slumpmässigt lösenord** fyller i ett starkt lösenord som du kan kopiera till en lösenordshanterare. Siffror och specialtecken visas i färg så att det är lätt att skriva av. Glömmer du lösenordet går filen inte att öppna.
 - Backup-lösenordet sparas på enheten första gången du skriver det (när du sparar eller läser in en backup). Sedan sparas backup med ett tryck, utan fråga. Lösenordet ligger bara på den här enheten, aldrig i backup-filen, och filen är lika krypterad som förut. Bockar du i **Visa lösenord** räcker det att skriva lösenordet en gång. Under Inställningar → Data kan du **Visa** och **Byta** lösenordet, eller bocka ur **Kom ihåg backup-lösenordet** – då glöms det och appen frågar varje gång. Använd ett nytt lösenord som du inte har någon annanstans: det sparas oskyddat på den här enheten. Tryck **Skapa slumpmässigt lösenord** och spara det i din lösenordshanterare. Behåll lösenordet i din lösenordshanterare – utan det går backupen inte att öppna på en ny telefon.
-- Första gången väljer du språk (Svenska eller English) överst i välkomstrutan. Appen är låst tills du har valt språk och ett lösenord för dina backup-filer – första gången, efter Radera all data och så länge inget lösenord är sparat. Har du en backup-fil kan du läsa in den i stället; lösenordet som öppnar den sparas. Appen samlar ingen data – lösenordet är bara en nyckel som skyddar dina backuper. Läser du in en backup som det sparade lösenordet låser upp står det i sammanfattningen; passar det inte frågar appen efter lösenordet för den filen.
+- Backup-lösenordet skapas och sparas automatiskt första gången appen startas (och efter Radera all data). Se eller byt det under Inställningar; spara det t.ex. i en lösenordshanterare. Appen samlar ingen data – lösenordet är bara en nyckel som skyddar dina backuper. Läser du in en backup som det sparade lösenordet låser upp står det i sammanfattningen; passar det inte frågar appen efter lösenordet för den filen.
 - Filen beskriver sitt eget format och har ett exempel, så den går att ändra för hand och läsa in igen.
 
 ## Installera och offline

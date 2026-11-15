@@ -69,8 +69,8 @@ The same text is in the app under **Settings → General → Help and manual** w
 - Under **Settings → Appearance → Card order** you choose the order of the cards in Today, Week, Trend and History. ↑ ↓ moves, ● shown, ○ hidden. **Reset** restores the default order, for one view or for all views at the bottom.
 
 ## Language and units
-- The first time, you choose the language (Svenska or English) at the top of the welcome box. Change it later under **Settings → General → Language**. Your data is the same in both languages.
-- **Units:** metric (g, dl, kg, km) or imperial (oz, cup, fl oz, lb, mi). Preselected by the language – Swedish gives metric, English imperial – but you choose yourself in the welcome box and under **Settings → General → Language and units**. Only the display changes; everything is stored as before. Tablespoons, teaspoons and pieces are the same in both.
+- The app starts in Swedish. Change the language under **Settings → General → Language**. Your data is the same in both languages.
+- **Units:** metric (g, dl, kg, km) or imperial (oz, cup, fl oz, lb, mi). Metric is preselected; change it under **Settings → General → Language and units**. Only the display changes; everything is stored as before. Tablespoons, teaspoons and pieces are the same in both.
 - Food names from the Swedish Food Agency's full list (Show more) are in Swedish; the common foods, quick picks and the whole app are translated.
 
 ## Move from Follow the plan
@@ -85,7 +85,7 @@ The same text is in the app under **Settings → General → Help and manual** w
 - If you cannot choose the file: open **Paste text** and paste the file's contents.
 - The file contains all your data and is always encrypted with a password the app creates and stores for you the first time it starts (Show and Change in Settings). Tick **Show password** to see what you type. **Create random password** fills in a strong password that you can copy to a password manager. Digits and special characters are shown in colour so it is easy to copy by hand. If you forget the password the file cannot be opened.
 - The backup password is stored on the device the first time you enter it (when you save or restore a backup). After that a backup takes one tap, without a question. The password is only on this device, never in the backup file, and the file is just as encrypted as before. With **Show password** ticked you only need to type the password once. Under Settings → Data you can **Show** and **Change** the password, or untick **Remember the backup password** – it is then forgotten and the app asks every time. Use a new password you do not use anywhere else: it is stored unprotected on this device. Tap **Create random password** and save it in your password manager. Keep the password in your password manager – without it the backup cannot be opened on a new phone.
-- The app is locked until you have chosen a language and a password for your backup files – the first time, after Delete all data and as long as no password is saved. If you have a backup file you can restore it instead; the password that opens it is saved. The app collects no data – the password is just a key that protects your backups. If you restore a backup that the saved password unlocks, the summary says so; if it does not fit, the app asks for the password for that file.
+- The backup password is created and saved automatically the first time the app starts (and after Delete all data). View or change it under Settings; keep it in a password manager, for example. The app collects no data – the password is just a key that protects your backups. If you restore a backup that the saved password unlocks, the summary says so; if it does not fit, the app asks for the password for that file.
 - The file describes its own format and has an example, so it can be edited by hand and restored again.
 
 ## Install and offline
