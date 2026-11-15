@@ -2,6 +2,10 @@
 // Mönster (regex) för texter med tal eller namn i; $1… översätts i sin tur. Saknas en text visas den svenska.
 I18N.setKey('sn.lang');
 I18N.add({
+  'Välj egen kod': 'Choose your own code',
+  'Koden låser dina backup-filer och sparas på den här enheten.': 'The code locks your backup files and is stored on this device.',
+  'Spara kod': 'Save code',
+  'Din egen kod är sparad. Gamla backup-filer öppnas bara med den gamla koden.': 'Your own code is saved. Old backup files open only with the old code.',
   '🔑 Din kod': '🔑 Your code',
   'Ny kod': 'New code',
   'Alla backup-filer låses med den här koden. Spara den i din lösenordshanterare – du behöver den för att öppna en backup på en ny telefon.': 'All backup files are locked with this code. Save it in your password manager – you need it to open a backup on a new phone.',

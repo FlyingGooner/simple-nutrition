@@ -180,5 +180,6 @@ function pwdBox() {
       el('button', { class: 'link', 'data-act': 'pwdcopy', text: 'Kopiera' }),
       el('button', { class: 'link', 'data-act': 'pwdset', text: 'Ny kod' })),
     S.showPwd && p ? el('p', { class: 'pwd-show', text: p }) : null,
+    el('button', { class: 'link pwd-own', 'data-act': 'pwdown', text: 'Välj egen kod' }),
     el('p', { class: 'muted small pwd-note', text: 'Alla backup-filer låses med den här koden. Spara den i din lösenordshanterare – du behöver den för att öppna en backup på en ny telefon.' }));
 }
