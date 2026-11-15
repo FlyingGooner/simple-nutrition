@@ -2,6 +2,7 @@
 // Mönster (regex) för texter med tal eller namn i; $1… översätts i sin tur. Saknas en text visas den svenska.
 I18N.setKey('sn.lang');
 I18N.add({
+  'Öppna, ladda ner, GitHub': 'Open, download, GitHub',
   'Exportera CSV': 'Export CSV',
   'CSV-filen är ett enkelt kalkylark för t.ex. Excel eller en egen app. Den är inte krypterad – spara den inte där andra kommer åt den.': 'The CSV file is a simple spreadsheet for e.g. Excel or your own app. It is not encrypted – do not keep it where others can reach it.',
   'CSV-filen laddas ner': 'The CSV file is downloading',

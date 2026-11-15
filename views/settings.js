@@ -169,11 +169,11 @@ export function viewSettings() {
         el('button', { class: 'link danger', 'data-act': 'wipe', text: 'Radera all data' })),
       S.installPrompt ? el('section', { class: 'card' }, el('button', { class: 'primary', 'data-act': 'install', text: 'Installera appen' })) : null,
       // Alla appar (2026-11-15): öppna i webbläsaren eller ladda ner från GitHub. el() släpper inte igenom href, så de fasta adresserna sätts med Object.assign (aldrig data).
-      el('section', { class: 'card dl-src' }, el('h2', { class: 'sub-h', text: 'Alla mina appar' }),
+      sec('apps', 'Alla mina appar', 'Öppna, ladda ner, GitHub', el('div', { class: 'dl-src' },
         el('div', { class: 'dl-app' }, el('b', { text: 'Simple nutrition' + (" (den här)") }),
           null,
           Object.assign(el('a', { class: 'link', download: 'simple-nutrition.html', text: 'Ladda ner (HTML)' }), { href: 'simple-nutrition.html' }),
-          Object.assign(el('a', { class: 'link', rel: 'noopener', target: '_blank', text: 'GitHub' }), { href: 'https://github.com/FlyingGooner/simple-nutrition' })),
+          Object.assign(el('a', { class: 'link', rel: 'noopener', target: '_blank', text: 'GitHub' }), { href: 'https://github.com/FlyingGooner/simple-nutrition' }))),
         el('div', { class: 'dl-app' }, el('b', { text: 'Budget buddy' + ('') }),
           Object.assign(el('a', { class: 'link', target: '_blank', rel: 'noopener', text: 'Öppna' }), { href: 'https://flyinggooner.github.io/budget-buddy/' }),
           Object.assign(el('a', { class: 'link', download: 'budget-buddy.html', text: 'Ladda ner (HTML)' }), { href: 'https://flyinggooner.github.io/budget-buddy/budget-buddy.html' }),
