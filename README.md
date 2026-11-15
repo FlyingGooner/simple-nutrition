@@ -8,7 +8,7 @@
 
 ### [▶ Open the app](https://flyinggooner.github.io/simple-nutrition/)
 
-[📱 Presentation of the app](https://flyinggooner.github.io/simple-nutrition/docs/presentation.html) · [🛡️ Small apps, high standard](https://flyinggooner.github.io/simple-nutrition/docs/standard.html)
+[📱 Presentation of the app](https://flyinggooner.github.io/simple-nutrition/docs/presentation.html) · [🛡️ Small apps, big needs](https://flyinggooner.github.io/simple-nutrition/docs/standard.html)
 
 </div>
 
@@ -142,7 +142,7 @@ Plain HTML, CSS and JavaScript – no frameworks, no dependencies, no build step
 | `docs/DATA.md` | The data format of the backup file (same as readme/schema/example in the file) |
 | `docs/MANUAL.md`, `docs/MANUAL.en.md` | The manual in Swedish and English (Help in the app is built from them) |
 | `docs/presentation.html` | Stand-alone mobile presentation of the app (English by default, Swedish with the button on the first slide) |
-| `docs/standard.html` | Small apps, high standard – what all the apps have in common (synced from the template) |
+| `docs/standard.html` | Small apps, big needs – what all the apps have in common (synced from the template) |
 | `tools/build-single.ps1` | Builds the test file |
 | `tools/tests/` | Unit and flow tests (run in headless Edge, automatically before every release and push) |
 | `CLAUDE.md` | Rules for development |
