@@ -170,7 +170,7 @@ export function viewSettings() {
       S.installPrompt ? el('section', { class: 'card' }, el('button', { class: 'primary', 'data-act': 'install', text: 'Installera appen' })) : null,
       // Alla appar (2026-11-15): öppna i webbläsaren eller ladda ner från GitHub. el() släpper inte igenom href, så de fasta adresserna sätts med Object.assign (aldrig data).
       sec('apps', 'Alla mina appar', 'Öppna, ladda ner, GitHub', el('div', { class: 'dl-src' },
-        el('div', { class: 'dl-app' }, el('b', { text: 'Simple nutrition' + (" (den här)") }),
+        el('div', { class: 'dl-app' }, el('b', { text: 'Fitness buddy' + (" (den här)") }),
           null,
           Object.assign(el('a', { class: 'link', download: 'simple-nutrition.html', text: 'Ladda ner (HTML)' }), { href: 'simple-nutrition.html' }),
           Object.assign(el('a', { class: 'link', rel: 'noopener', target: '_blank', text: 'GitHub' }), { href: 'https://github.com/FlyingGooner/simple-nutrition' }))),
@@ -189,7 +189,7 @@ export function viewSettings() {
         el('p', { class: 'small', text: 'Spara som app: Android (Chrome) – tryck ⋮ och välj Installera app. iPhone (Safari) – tryck Dela och välj Lägg till på hemskärmen.' }),
         el('p', { class: 'muted small', text: 'Ladda ner (HTML) ger hela appen i en enda fil som du öppnar i webbläsaren, även utan nät. Den sparar sin data för sig – flytta data dit med en backup-fil.' })),
       helpCard()),
-    el('p', { class: 'muted small center', text: `Simple nutrition v${self.APP_VERSION} · inga externa anrop · näringsvärden från Livsmedelsverket` }),
+    el('p', { class: 'muted small center', text: `Fitness buddy v${self.APP_VERSION} · inga externa anrop · näringsvärden från Livsmedelsverket` }),
   ];
 }
 

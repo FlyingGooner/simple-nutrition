@@ -1,4 +1,4 @@
-# Simple nutrition – how to use the app
+# Fitness buddy – how to use the app
 
 The same text is in the app under **Settings → General → Help and manual** when English is chosen. Help is built from this file with `tools/build-help.ps1` – edit only here (Swedish: `MANUAL.md`).
 
@@ -75,8 +75,8 @@ The same text is in the app under **Settings → General → Help and manual** w
 
 ## Move from Follow the plan
 - Open Follow the plan → Settings → Data → **Save backup file**.
-- Open Simple nutrition → Settings → General → Data → **Restore backup file** and choose the file (or paste the file's contents under Paste text).
-- Check the summary and tap **Add**. Habits, reasons, notes, weigh-ins, workouts, plan and goals come along. Meals with the same name are merged. Nothing you already have in Simple nutrition is removed – Undo is available right afterwards.
+- Open Fitness buddy → Settings → General → Data → **Restore backup file** and choose the file (or paste the file's contents under Paste text).
+- Check the summary and tap **Add**. Habits, reasons, notes, weigh-ins, workouts, plan and goals come along. Meals with the same name are merged. Nothing you already have in Fitness buddy is removed – Undo is available right afterwards.
 
 ## Backup and moving
 - Under **Data**: tap **Save backup file**. The file is called e.g. simple-nutrition-2026-11-09.txt and ends up among your downloads.

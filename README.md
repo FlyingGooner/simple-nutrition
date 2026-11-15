@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="icons/icon-192.png" width="88" alt="Simple nutrition icon">
+<img src="icons/icon-192.png" width="88" alt="Fitness buddy icon">
 
-# Simple nutrition
+# Fitness buddy
 
 **Calories and macros from plain ingredients – no account, no jungle of brands.**
 

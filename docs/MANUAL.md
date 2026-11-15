@@ -1,4 +1,4 @@
-# Simple nutrition – så använder du appen
+# Fitness buddy – så använder du appen
 
 Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manual**. Hjälp byggs från den här filen med `tools/build-help.ps1` – ändra bara här.
 
@@ -75,8 +75,8 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 
 ## Flytta från Följ planen
 - Öppna Följ planen → Inställningar → Data → **Spara backup-fil**.
-- Öppna Simple nutrition → Inställningar → Allmänt → Data → **Läs in backup-fil** och välj filen (eller klistra in filens innehåll under Klistra in text).
-- Kontrollera sammanfattningen och tryck **Lägg till**. Vanor, orsaker, anteckningar, vägningar, träningspass, plan och mål följer med. Måltider med samma namn slås ihop. Inget du redan har i Simple nutrition tas bort – Ångra finns direkt efteråt.
+- Öppna Fitness buddy → Inställningar → Allmänt → Data → **Läs in backup-fil** och välj filen (eller klistra in filens innehåll under Klistra in text).
+- Kontrollera sammanfattningen och tryck **Lägg till**. Vanor, orsaker, anteckningar, vägningar, träningspass, plan och mål följer med. Måltider med samma namn slås ihop. Inget du redan har i Fitness buddy tas bort – Ångra finns direkt efteråt.
 
 ## Backup och flytt
 - Under **Data**: tryck **Spara backup-fil**. Filen heter t.ex. simple-nutrition-2026-11-09.txt och hamnar bland hämtade filer.

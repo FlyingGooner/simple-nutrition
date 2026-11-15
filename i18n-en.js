@@ -69,7 +69,7 @@ I18N.add({
   'Har du använt appen förut, på den här eller en annan enhet? Läs in din backup-fil för att få tillbaka din data.': 'Have you used the app before, on this or another device? Restore your backup file to get your data back.',
   // Flikar och ramar
   'Idag': 'Today', 'Vecka': 'Week', 'Trend': 'Trend', 'Historik': 'History', 'Inst.': 'Settings',
-  'Simple nutrition': 'Simple nutrition',
+  'Fitness buddy': 'Fitness buddy',
   'All loggad mat, vikter och inställningar tas bort från den här enheten. Det går inte att ångra – spara en backup-fil först om du vill kunna få tillbaka den.': 'All logged food, weights and settings are removed from this device. This cannot be undone – save a backup file first if you want to be able to get it back.',
   'Släng ändringarna?': 'Discard the changes?',
   'Rätten har ändringar som inte är sparade.': 'The dish has unsaved changes.',
@@ -117,7 +117,7 @@ I18N.add({
   'Texten kommer inte från Följ planen.': 'The text does not come from Follow the plan.',
   'Okänt exportformat – uppdatera appen och försök igen.': 'Unknown export format – update the app and try again.',
   'Exporten saknar data.': 'The export has no data.',
-  'Texten kommer inte från Simple nutrition eller Följ planen.': 'The text does not come from Simple nutrition or Follow the plan.',
+  'Texten kommer inte från Fitness buddy eller Följ planen.': 'The text does not come from Fitness buddy or Follow the plan.',
   // Snabbval
   'Lätt': 'Light', 'Standard': 'Standard', 'Tung': 'Heavy', 'Lite': 'A little', 'Mellan': 'Medium', 'Mycket': 'A lot',
   'Hemmagjort': 'Home-made',
@@ -330,7 +330,7 @@ I18N.add({
   [/^Mål: (.+)$/, 'Goal: $1'],
   [/^Mål per vecka, (.+)$/, 'Goal per week, $1'],
   [/^(.+) kcal\/dag$/, (g) => `${g[1]} kcal/day`],
-  [/^Simple nutrition v([\d.]+) · inga externa anrop · näringsvärden från Livsmedelsverket$/, (g) => `Simple nutrition v${g[1]} · no external requests · nutrition values from the Swedish Food Agency`],
+  [/^Fitness buddy v([\d.]+) · inga externa anrop · näringsvärden från Livsmedelsverket$/, (g) => `Fitness buddy v${g[1]} · no external requests · nutrition values from the Swedish Food Agency`],
 
   [/^(\d+) månader$/, '$1 months'],
   [/^([\d,.]+) år$/, (g) => `${g[1]} years`],

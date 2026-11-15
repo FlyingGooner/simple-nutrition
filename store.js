@@ -285,7 +285,7 @@ export function importText(text) {
   let env;
   try { env = JSON.parse(text.replace(/^﻿/, '')); } catch { return { error: 'Texten är inte en giltig export (trasig JSON). Kopiera hela texten igen.' }; }
   if (isObj(env) && env.app === FDT_APP) return importFdt(text);
-  if (!isObj(env) || env.app !== EXPORT_APP) return { error: 'Texten kommer inte från Simple nutrition eller Följ planen.' };
+  if (!isObj(env) || env.app !== EXPORT_APP) return { error: 'Texten kommer inte från Fitness buddy eller Följ planen.' };
   if (env.format !== EXPORT_FORMAT) return { error: 'Okänt exportformat – uppdatera appen och försök igen.' };
   if (!isObj(env.data)) return { error: 'Exporten saknar data.' };
   const data = validate(env.data);
@@ -408,7 +408,7 @@ export function lastPost(state, match) {
 
 // F2 (2026-11-10): varje exportfil beskriver sitt format, så att någon annan (eller en AI) kan ändra filen och läsa in den igen.
 // Samma regler som validate() ovan – ändras validate(), ändra här och i docs/DATA.md.
-export const EXPORT_README = 'Backup från Simple nutrition. Ändra bara inom "data". Fältbeskrivningar i "schema", ett minimalt giltigt exempel i "example" (går att lägga i "data" och läsa in för sig). Ogiltiga poster hoppas över vid import, inget kraschar. Datum: ÅÅÅÅ-MM-DD. Näringsvärden n = [kcal, protein g, kolhydrater g, fett g]. id: A–Z a–z 0–9 _ -, högst 40 tecken.';
+export const EXPORT_README = 'Backup från Fitness buddy. Ändra bara inom "data". Fältbeskrivningar i "schema", ett minimalt giltigt exempel i "example" (går att lägga i "data" och läsa in för sig). Ogiltiga poster hoppas över vid import, inget kraschar. Datum: ÅÅÅÅ-MM-DD. Näringsvärden n = [kcal, protein g, kolhydrater g, fett g]. id: A–Z a–z 0–9 _ -, högst 40 tecken.';
 export const EXPORT_SCHEMA = {
   version: 'tal, 1',
   goals: 'lista { from: datum, kcal?: 500–10000, prot?: 10–500, kolh?: 10–1000 }, sorteras på from, mål utan kcal = inget kalorimål från det datumet, max 100',

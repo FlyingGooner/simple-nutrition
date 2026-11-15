@@ -1,4 +1,4 @@
-# Simple nutrition
+# Fitness buddy (tidigare Simple nutrition)
 
 Mobil-först PWA. Spec: `docs/SPEC.md` (läs bara berört avsnitt). Arbetsflöde, säkerhet och artifact: `../CLAUDE.md`. Standard: `../STANDARD.md`. Stil: `../STIL.md`.
 
