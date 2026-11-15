@@ -182,7 +182,7 @@ export function viewSettings() {
           Object.assign(el('a', { class: 'link', target: '_blank', rel: 'noopener', text: 'Öppna' }), { href: 'https://flyinggooner.github.io/Football-not-soccer/' }),
           Object.assign(el('a', { class: 'link', download: 'Football-not-soccer.html', text: 'Ladda ner (HTML)' }), { href: 'https://flyinggooner.github.io/Football-not-soccer/Football-not-soccer.html' }),
           Object.assign(el('a', { class: 'link', rel: 'noopener', target: '_blank', text: 'GitHub' }), { href: 'https://github.com/FlyingGooner/Football-not-soccer' })),
-        el('div', { class: 'dl-app' }, el('b', { text: 'Stress control' + ('') }),
+        el('div', { class: 'dl-app' }, el('b', { text: 'Task buddy' + ('') }),
           Object.assign(el('a', { class: 'link', target: '_blank', rel: 'noopener', text: 'Öppna' }), { href: 'https://flyinggooner.github.io/Stress-control/' }),
           Object.assign(el('a', { class: 'link', download: 'Stress-control.html', text: 'Ladda ner (HTML)' }), { href: 'https://flyinggooner.github.io/Stress-control/Stress-control.html' }),
           Object.assign(el('a', { class: 'link', rel: 'noopener', target: '_blank', text: 'GitHub' }), { href: 'https://github.com/FlyingGooner/Stress-control' })),
