@@ -64,7 +64,7 @@ Räkor;räkor,räka,scampi;Skalade;;~^Räk.*(kokt|skalad)
 Bröd;bröd,limpa,formfranska,fullkornsbröd,lingongrova,kavring,tortilla,fralla,hönökaka,skärgårdskaka,tekaka,mjukt bröd,polarkaka,mjuk kaka;Ljust;formfranska, baguette;Bröd vitt fibrer ca 5% typ formfranska
 Bröd;;Grovt/fullkorn;vete-råg;Bröd fullkorn vete råg fibrer ca 6%
 Bröd;;Mörkt, sött;kavring, lingongrova;Bröd fullkorn rågsikt fibrer ca 7% typ kavring
-Bröd;;Tortilla;;Bröd vitt vetetortilla
+Bröd;;Tortilla;wrap, vetetortilla;Bröd vitt vetetortilla
 Bröd;;Mjuk kaka;tekaka, hönökaka, polarkaka;Bröd vitt mjölk fibrer ca 3% typ Hönökaka
 Knäckebröd;knäcke,knäckebröd,wasa,hårt bröd;Fullkorn råg;;~^Hårt bröd fullkorn råg fibrer ca 14%
 Havregryn;havregryn,havre;Okokt;;Havregryn fullkorn
@@ -129,7 +129,7 @@ Vegofärs;;Tofu;;~^Tofu
 Vegofärs;;Mykoprotein;;~^Mykoprotein
 Grönsaksbiffar;grönsaksbiff,vegobiff,falafel;Grönsaksbiff;;Grönsaksbiff stekt veg.
 Grönsaksbiffar;;Falafel;;Falafel kikärtskroketter stekta
-Bröd;;Hamburgerbröd;;Hamburgerbröd
+Bröd;;Hamburgerbröd;briochebröd, burgerbulle;Hamburgerbröd
 Korvbröd;korvbröd,frallor,småfranska;Korvbröd;;~^(Korvbröd|Bröd.*korvbröd)
 Korvbröd;;Fralla;;~^(Småfranska|Fralla|Bröd vitt.*fralla)
 Nudlar;nudlar,äggnudlar,glasnudlar,risnudlar;Okokta;;Nudlar äggnudlar okokta
