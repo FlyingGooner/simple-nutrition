@@ -287,13 +287,19 @@ export function initData(ctx) {
   welcomeCheck();
 }
 
-/* ---------- CSV (2026-11-15): en rad per loggad post (mat och dryck), näring per post, plus en rad per loggad vikt (kg). Inte krypterad. ---------- */
+/* ---------- CSV (2026-11-15): en rad per loggad post (mat och dryck), näring per post, plus en rad per loggad vikt (kg) och per träningspass. Inte krypterad. ---------- */
 export function exportCsv() {
   const st = S.state, tr = Csv.tr, meals = new Map((st.meals || []).map((m) => [m.id, m.name]));
   const rows = [];
-  const days = [...new Set([...Object.keys(st.log || {}), ...Object.keys(st.weights || {})])].sort();
+  const wt = new Map(((st.settings || {}).workoutTypes || []).map((t) => [t.id, t.name]));
+  const days = [...new Set([...Object.keys(st.log || {}), ...Object.keys(st.weights || {}), ...Object.keys(st.workouts || {})])].sort();
   for (const day of days) {
     if (st.weights && st.weights[day] != null) rows.push([day, tr('Vikt'), tr('Vikt'), st.weights[day], 'kg']);   // 2026-11-16: loggad vikt följer med
+    for (const w of (st.workouts || {})[day] || []) {   // 2026-11-16: träningspass följer med; km i Mängd, tid i minuter i namnet om km finns
+      const name = (w.types || []).map((id) => tr(wt.get(id) || id)).join(' + ') || tr('Träning');
+      const min = w.sec ? Math.round(w.sec / 60) : null;
+      rows.push(w.km ? [day, tr('Träning'), name + (min ? ` (${min} min)` : ''), w.km, 'km'] : [day, tr('Träning'), name, min, min ? 'min' : '']);
+    }
     for (const e of (st.log || {})[day] || []) {
     const total = /^[rq]:/.test(e.ref || '');   // rätter och snabbval: n gäller hela posten; varor: n per 100 g
     const k = total ? 1 : (e.g || 0) / 100, n = e.n || [0, 0, 0, 0];
