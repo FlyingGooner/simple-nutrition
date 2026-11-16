@@ -245,7 +245,7 @@ I18N.add({
   'Fläskkött': 'Pork', 'Fläskfilé': 'Pork fillet', 'Kotlett/karré (med fettkant)': 'Chop/neck (with fat)', 'Sidfläsk': 'Pork belly', 'Bacon': 'Bacon', 'Rått': 'Raw',
   'Korv': 'Sausage', 'Falukorv': 'Falu sausage', 'Grillkorv/wiener': 'Hot dog/wiener', 'Prinskorv': 'Cocktail sausage', 'Skinka': 'Ham', 'Kalkon': 'Turkey',
   'Lax': 'Salmon', 'Rå': 'Raw', 'Rökt/gravad': 'Smoked/cured', 'Torsk': 'Cod', 'Sej': 'Saithe', 'Tonfisk': 'Tuna', 'I vatten': 'In water', 'I olja': 'In oil',
-  'Räkor': 'Prawns', 'Skalade': 'Peeled', 'Bröd': 'Bread', 'Ljust': 'White', 'Grovt/fullkorn': 'Wholegrain', 'Mörkt, sött': 'Dark, sweet', 'Tortilla': 'Tortilla', 'Mjukt, Hönökaka': 'Soft, Hönökaka', 'Hönökaka, skärgårdskaka, tekaka': 'Hönökaka, soft flatbread, tea cake',
+  'Räkor': 'Prawns', 'Skalade': 'Peeled', 'Bröd': 'Bread', 'Ljust': 'White', 'Grovt/fullkorn': 'Wholegrain', 'Mörkt, sött': 'Dark, sweet', 'Tortilla': 'Tortilla', 'Mjuk kaka': 'Soft flatbread', 'tekaka, hönökaka, polarkaka': 'tea cake, Hönökaka, polarkaka',
   'Hamburgerbröd': 'Burger bun', 'Knäckebröd': 'Crispbread', 'Fullkorn råg': 'Wholegrain rye', 'Havregryn': 'Oats', 'Okokt': 'Uncooked',
   'Gröt (kokt på vatten)': 'Porridge (made with water)', 'Flingor': 'Cereal', 'Müsli osötad': 'Muesli unsweetened', 'Granola': 'Granola', 'Cornflakes': 'Cornflakes',
   'Ris': 'Rice', 'Kokt': 'Cooked', 'Pasta': 'Pasta', 'Fullkorn okokt': 'Wholegrain uncooked', 'Potatis': 'Potatoes', 'Ugnspommes': 'Oven fries', 'Vetemjöl': 'Wheat flour',
