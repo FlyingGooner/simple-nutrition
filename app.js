@@ -731,10 +731,19 @@ document.addEventListener('touchstart', (e) => {
   touchY = e.touches[0].clientY;
 }, { passive: true });
 document.addEventListener('touchend', (e) => {
-  if (touchX == null || !SWIPE[view] || S.add || S.sel) return;
+  if (touchX == null || S.sel) return;
   const dx = e.changedTouches[0].clientX - touchX, dy = e.changedTouches[0].clientY - touchY;
   touchX = null;
   if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+  // v0.14.45: in Lägg till, a swipe moves between Senaste | Varor | Rätter | Snabbval.
+  if (S.add) {
+    if (S.add.pick || S.add.dpick || S.add.est || S.add.target === 'dish') return;
+    const tabs = ['recent', 'foods', 'dishes', 'out'], i = tabs.indexOf(S.add.tab) + (dx < 0 ? 1 : -1);
+    if (i < 0 || i >= tabs.length) return;
+    S.add.tab = S.lastTab = tabs[i]; S.add.q = ''; render();   // no focus on the search field: no keyboard popping up
+    return;
+  }
+  if (!SWIPE[view]) return;
   app.querySelector(`[data-act="${SWIPE[view][dx < 0 ? 1 : 0]}"]`)?.click();
 });
 window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); S.installPrompt = e; if (view === 'settings') render(); });
