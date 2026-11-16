@@ -503,7 +503,7 @@ app.addEventListener('click', (ev) => {
       if (unit) f.u = [unit, Math.round(ug * 100) / 100];
       const i = S.state.foods.findIndex((x) => x.id === S.foodEdit);
       if (i >= 0) { f.id = S.foodEdit; S.state.foods[i] = f; } else S.state.foods.push(f);
-      S.foodEdit = null; persist(); render(); snackbar(`${name} sparad`, null, null, 2500);
+      S.foodEdit = null; S.foodForm = false; persist(); render(); snackbar(`${name} sparad`, null, null, 2500);
       return;
     }
     case 'fedit': {
@@ -511,7 +511,8 @@ app.addEventListener('click', (ev) => {
       document.getElementById('f-name')?.focus();
       return;
     }
-    case 'fcancel': S.foodEdit = null; render(); return;
+    case 'fcancel': S.foodEdit = null; S.foodForm = false; render(); return;
+    case 'fnew': S.foodForm = true; render(); document.getElementById('f-name')?.focus(); return;
     case 'fdel': {
       const f = S.state.foods.find((x) => x.id === id);
       if (!f) return;

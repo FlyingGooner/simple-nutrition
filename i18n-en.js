@@ -180,7 +180,7 @@ I18N.add({
   'Så funkar appen': 'How the app works',
   'Värden per 100 g från förpackningen. Mått (t.ex. 1 st = 40 g) är valfritt.': 'Values per 100 g from the package. A measure (e.g. 1 pc = 40 g) is optional.',
   'Mått (st)': 'Measure (pc)', 'Mått, valfritt': 'Measure, optional', 'g per mått': 'g per measure', 'Gram per mått': 'Grams per measure',
-  '+ Spara produkt': '+ Save product', 'Avbryt': 'Cancel', 'okänd vara': 'unknown food',
+  '+ Spara produkt': '+ Save product', '+ Lägg till produkt': '+ Add product', 'Spara produkt': 'Save product', 'Avbryt': 'Cancel', 'okänd vara': 'unknown food',
   'Spara ett sökord från en vara i Lägg till ("Spara eget sökord"). Ordet visar då varan först.': 'Save a search word from a food in Add ("Save your own search word"). The word then shows that food first.',
   'Ingen plan': 'No plan', 'T.ex. matlåda till lunch, inget godis på vardagar': 'E.g. packed lunch, no sweets on weekdays',
   'Spara plan': 'Save plan', 'Visas överst i Idag som påminnelse.': 'Shown at the top of Today as a reminder.',
