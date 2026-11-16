@@ -61,10 +61,11 @@ Torsk;;Sej;;~^Sej rå;1
 Tonfisk;tonfisk;I vatten;;~^Tonfisk.*vatten
 Tonfisk;;I olja;;~^Tonfisk.*olja
 Räkor;räkor,räka,scampi;Skalade;;~^Räk.*(kokt|skalad)
-Bröd;bröd,limpa,formfranska,fullkornsbröd,lingongrova,kavring,tortilla,fralla;Ljust;formfranska, baguette;Bröd vitt fibrer ca 5% typ formfranska
+Bröd;bröd,limpa,formfranska,fullkornsbröd,lingongrova,kavring,tortilla,fralla,hönökaka,skärgårdskaka,tekaka,mjukt bröd;Ljust;formfranska, baguette;Bröd vitt fibrer ca 5% typ formfranska
 Bröd;;Grovt/fullkorn;vete-råg;Bröd fullkorn vete råg fibrer ca 6%
 Bröd;;Mörkt, sött;kavring, lingongrova;Bröd fullkorn rågsikt fibrer ca 7% typ kavring
 Bröd;;Tortilla;;Bröd vitt vetetortilla
+Bröd;;Mjukt, Hönökaka;Hönökaka, skärgårdskaka, tekaka;Bröd vitt mjölk fibrer ca 3% typ Hönökaka
 Knäckebröd;knäcke,knäckebröd,wasa,hårt bröd;Fullkorn råg;;~^Hårt bröd fullkorn råg fibrer ca 14%
 Havregryn;havregryn,havre;Okokt;;Havregryn fullkorn
 Havregryn;;Gröt (kokt på vatten);;Havregrynsgröt fullkorn
