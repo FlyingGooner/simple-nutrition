@@ -49,6 +49,7 @@ The same text is in the app under **Settings → General → Help and manual** w
 
 ## Own products and search words
 - If a food is missing: add it under **Own products** with kcal, protein, carbs and fat per 100 g from the package, and preferably a measure (e.g. 1 pc = 40 g).
+- Edit a product with ✎. Days already logged are not affected.
 - If the search does not find what you mean: choose the food and tap **Save your own search word**. The word then shows that food first.
 
 ## Change day

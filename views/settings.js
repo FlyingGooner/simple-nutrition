@@ -50,19 +50,25 @@ function helpCard() {
 
 function foodsSection() {
   const f = S.state.foods;
+  const ed = f.find((x) => x.id === S.foodEdit) || null;   // product being edited: the form is filled with its values
+  const v = (x) => (x == null ? '' : String(x));
   return [
     f.length ? el('ul', { class: 'posts' }, f.map((x) => el('li', { class: 'own-row' },
       el('span', { class: 'post-name' }, x.name, el('small', { text: `${kcal(x.n[0])} kcal · P ${x.n[1]} · K ${x.n[2]} · F ${x.n[3]} per 100 g` + (x.u ? ` · 1 ${x.u[0]} ≈ ${x.u[1]} g` : '') })),
+      el('button', { class: 'icon sm', 'data-act': 'fedit', 'data-id': x.id, 'aria-label': `Ändra ${x.name}`, text: '✎' }),
       el('button', { class: 'icon sm danger', 'data-act': 'fdel', 'data-id': x.id, 'aria-label': `Ta bort ${x.name}`, text: '✕' })))) : null,
     el('p', { class: 'muted small', text: 'Värden per 100 g från förpackningen. Mått (t.ex. 1 st = 40 g) är valfritt.' }),
     el('div', { class: 'own-form' },
-      el('input', { type: 'text', id: 'f-name', maxlength: 60, placeholder: 'Namn', 'aria-label': 'Namn', autocomplete: 'off' }),
-      ...[['f-kcal', 'kcal'], ['f-p', 'Protein'], ['f-k', 'Kolh.'], ['f-f', 'Fett']].map(([id, l]) =>
-        el('input', { type: 'text', inputmode: 'decimal', id, placeholder: l, 'aria-label': l + ' per 100 g' })),
-      el('input', { type: 'text', id: 'f-unit', maxlength: 10, placeholder: 'Mått (st)', 'aria-label': 'Mått, valfritt' }),
-      el('input', { type: 'text', inputmode: 'decimal', id: 'f-ug', placeholder: 'g per mått', 'aria-label': 'Gram per mått' })),
+      el('input', { type: 'text', id: 'f-name', maxlength: 60, placeholder: 'Namn', 'aria-label': 'Namn', autocomplete: 'off', value: v(ed?.name) }),
+      ...[['f-kcal', 'kcal'], ['f-p', 'Protein'], ['f-k', 'Kolh.'], ['f-f', 'Fett']].map(([id, l], i) =>
+        el('input', { type: 'text', inputmode: 'decimal', id, placeholder: l, 'aria-label': l + ' per 100 g', value: v(ed?.n[i]) })),
+      el('input', { type: 'text', id: 'f-unit', maxlength: 10, placeholder: 'Mått (st)', 'aria-label': 'Mått, valfritt', value: v(ed?.u?.[0]) }),
+      el('input', { type: 'text', inputmode: 'decimal', id: 'f-ug', placeholder: 'g per mått', 'aria-label': 'Gram per mått', value: v(ed?.u?.[1]) })),
     el('p', { class: 'import-error small', id: 'f-error', role: 'alert' }),
-    f.length < 1000 ? el('button', { class: 'link', 'data-act': 'fadd', text: '+ Spara produkt' }) : null,
+    ed ? el('div', { class: 'row' },
+      el('button', { class: 'link', 'data-act': 'fadd', text: `Spara ändringar i ${ed.name}` }),
+      el('button', { class: 'link', 'data-act': 'fcancel', text: 'Avbryt' }))
+      : f.length < 1000 ? el('button', { class: 'link', 'data-act': 'fadd', text: '+ Spara produkt' }) : null,
   ];
 }
 

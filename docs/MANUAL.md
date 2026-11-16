@@ -49,6 +49,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 
 ## Egna produkter och sökord
 - Saknas en vara: lägg in den under **Egna produkter** med kcal, protein, kolhydrater och fett per 100 g från förpackningen, och gärna ett mått (t.ex. 1 st = 40 g).
+- Ändra en produkt med ✎. Dagar som redan är loggade påverkas inte.
 - Hittar sökningen inte det du menar: välj varan och tryck **Spara eget sökord**. Ordet visar sedan varan först.
 
 ## Byta dag

@@ -501,9 +501,17 @@ app.addEventListener('click', (ev) => {
       if (err) { errText('f-error', err); return; }
       const f = { id: uid(), name, n: n.map((x) => Math.round(x * 10) / 10) };
       if (unit) f.u = [unit, Math.round(ug * 100) / 100];
-      S.state.foods.push(f); persist(); render(); snackbar(`${name} sparad`, null, null, 2500);
+      const i = S.state.foods.findIndex((x) => x.id === S.foodEdit);
+      if (i >= 0) { f.id = S.foodEdit; S.state.foods[i] = f; } else S.state.foods.push(f);
+      S.foodEdit = null; persist(); render(); snackbar(`${name} sparad`, null, null, 2500);
       return;
     }
+    case 'fedit': {
+      S.foodEdit = id; render();
+      document.getElementById('f-name')?.focus();
+      return;
+    }
+    case 'fcancel': S.foodEdit = null; render(); return;
     case 'fdel': {
       const f = S.state.foods.find((x) => x.id === id);
       if (!f) return;
