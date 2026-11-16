@@ -99,7 +99,6 @@ function go(v, push = true) {
   if (push) histDepth = Math.min(histDepth, layerDepth(S));
   // Leaving Inställningar folds its sections again (meal-/food- keys belong to Idag).
   if (view === 'settings' && v !== 'settings') for (const k of [...setOpen]) if (!k.startsWith('meal-') && !k.startsWith('food-')) setOpen.delete(k);
-  if (push && v === 'history' && view !== 'history') S.month = today().slice(0, 7);   // Historik opens on the current month
   view = v;
   if (location.hash !== '#' + v) {
     if (push) history.pushState({ sn: 1, depth: histDepth }, '', '#' + v); else history.replaceState({ sn: 1, depth: histDepth }, '', '#' + v);
@@ -151,6 +150,7 @@ tabbar.addEventListener('click', (ev) => {
   ev.preventDefault();
   if (t.dataset.view === 'today') { S.current = today(); resetDay(); }
   if (t.dataset.view === 'week') S.week = weekStart(today());
+  if (t.dataset.view === 'history') S.month = today().slice(0, 7);
   if (S.add?.target === 'dish') S.add = null;
   S.sel = null; S.selCopy = false;
   if (t.dataset.view !== 'settings') S.dish = null;
