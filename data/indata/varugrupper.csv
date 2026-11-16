@@ -20,12 +20,12 @@ Keso;;Mager 1,5 %;;=1,5|Färskost cottage cheese naturell fett 4%
 Färskost;färskost,cream cheese;Normal 27 %;;Färskost cream cheese fett 27%
 Färskost;;Lätt 5 %;;Färskost cream cheese extra light fett 5%
 Färskost;;Mellan 15 %;;Färskost cream cheese lätt fett 15%
-Ost;ost,hårdost,hushållsost,präst,herrgård,grevé,mozzarella;Normal 28 %;;Ost hårdost fett 28%
-Ost;;Lätt 17 %;;Ost hårdost fett 17%
-Ost;;Fet 31 %;;Ost hårdost fett 31%
+Ost;ost,hårdost,hushållsost,präst,herrgård,grevé,mozzarella;Normal 28 %;hushållsost, gouda;Ost hårdost fett 28%
+Ost;;Lätt 17 %;lättost;Ost hårdost fett 17%
+Ost;;Fet 31 %;prästost, västerbottensost;Ost hårdost fett 31%
 Ost;;Mozzarella;;~^Ost mozzarella
-Smör;smör,smörgåsfett,margarin,bordsmargarin,matfett,lättmargarin;Normal 75 %;t.ex. Bregott, smör;Matfettsblandning fett 75% berikad
-Smör;;Lätt 40 %;typ Bregott mindre;Matfettsblandning fett 40% berikad typ Bregott mindre;1
+Smör;smör,smörgåsfett,margarin,bordsmargarin,matfett,lättmargarin;Normal 75 %;Bregott, bordsmargarin;Matfettsblandning fett 75% berikad
+Smör;;Lätt 40 %;Bregott mindre, lättmargarin;Matfettsblandning fett 40% berikad typ Bregott mindre;1
 Smör;;Mellan 60 %;;Matfettsblandning fett 60% berikad;1
 Smör;;Smör 80 %;;Smör fett 80%;1
 Ägg;ägg;Rått/kokt;;Ägg rått
@@ -72,7 +72,7 @@ Havregryn;;Gröt (kokt på vatten);;Havregrynsgröt fullkorn
 Flingor;flingor,müsli,granola,cornflakes;Müsli osötad;;~^Frukostflingor flingblandning fullkorn typ basmüsli
 Flingor;;Granola;;Frukostflingor granola m. frukt nötter
 Flingor;;Cornflakes;;~^Frukostflingor majs
-Ris;ris,jasminris,basmatiris,fullkornsris;Kokt;;Ris jasmin kokt m. salt
+Ris;ris,jasminris,basmatiris,fullkornsris;Kokt;jasmin/basmati;Ris jasmin kokt m. salt
 Ris;;Okokt;jasmin/basmati;Ris jasmin okokt
 Pasta;pasta,makaroner,spagetti,spaghetti,penne;Kokt;;Pasta kokt u. salt
 Pasta;;Okokt;;Pasta okokt
@@ -108,7 +108,7 @@ Nötter;;Jordnötter;;~^Jordnöt.*(rostad|osaltad)
 Jordnötssmör;jordnötssmör,peanut butter;Normal;;~^Jordnötssmör
 Socker och honung;socker,honung,sirap;Socker;;Socker
 Socker och honung;;Honung;;Honung
-Havredryck;havredryck,havremjölk,oatly,växtdryck;Normal 1,5 %;typ Oatly;Havredryck fett 1,5% berikad
+Havredryck;havredryck,havremjölk,oatly,växtdryck;Normal 1,5 %;Oatly;Havredryck fett 1,5% berikad
 Majonnäs;majonnäs,majo,aioli;Normal 80 %;;Majonnäs fett 80%
 Majonnäs;;Lätt 30 %;;Majonnäs lätt fett 30%
 Halloumi;halloumi;Normal;;~^(Ost )?halloumi
