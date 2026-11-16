@@ -149,6 +149,7 @@ tabbar.addEventListener('click', (ev) => {
   if (!t) return;
   ev.preventDefault();
   if (t.dataset.view === 'today') { S.current = today(); resetDay(); }
+  if (t.dataset.view === 'week') S.week = weekStart(today());
   if (S.add?.target === 'dish') S.add = null;
   S.sel = null; S.selCopy = false;
   if (t.dataset.view !== 'settings') S.dish = null;
