@@ -595,3 +595,11 @@ dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
 body { padding-left: 8px; padding-right: 8px; }
 .card { padding: 12px 12px; }
 .tabbar { inset: auto 8px calc(10px + env(safe-area-inset-bottom)) 8px; }
+/* Light mode neutral too (2026-11-17): white/grey surfaces, colour only on buttons and elements. */
+@media (prefers-color-scheme: light) {
+  :root {
+    --surface: #f8f8f9; --surface-container: #ececef; --surface-container-high: #e2e2e6;
+    --secondary-container: #dcdce2; --on-secondary-container: #1a1a1d;
+    --on-surface: #1a1a1d; --on-surface-variant: #55555d; --outline: #7a7a83; --outline-variant: #d2d2d8;
+  }
+}
