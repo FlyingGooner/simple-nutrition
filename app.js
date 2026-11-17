@@ -677,6 +677,7 @@ app.addEventListener('change', (ev) => {
       persist(); return;
     }
     case 'lang': self.I18N.setLang(t.value); return;
+    case 'theme': self.THEME.set(t.value); render(); return;
     case 'units': setUnits(t.value); S.add = null; render(); return;
     case 'bkremind': if (['week', 'month', 'off'].includes(t.value)) { S.state.backup.remind = t.value; S.state.backup.asked = null; persist(); } return;
     case 'threshold': S.state.settings.successThreshold = Number(t.value) / 100; persist(); return;
