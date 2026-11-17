@@ -22,7 +22,7 @@
     --primary-container: #005237; --on-primary-container: #a8f2cb;
     --surface: #0e0e10; --surface-container: #1a1a1d; --surface-container-high: #26262a;
     --secondary-container: #3a3a40; --on-secondary-container: #f2f2f4;
-    --on-surface: #ececee; --on-surface-variant: #a9a9b0; --outline: #7c7c84; --outline-variant: #34343a;
+    --on-surface: #ececee; --on-surface-variant: #babac1; --outline: #7c7c84; --outline-variant: #34343a;
     --ok: #8cd5b0; --dev: #ffb95c; --cheat: #ffb1c3; --skip: #8c8c94;
   }
 }
@@ -603,3 +603,7 @@ body { padding-left: 8px; padding-right: 8px; }
     --on-surface: #1a1a1d; --on-surface-variant: #4f4f57; --outline: #74747d; --outline-variant: #d6d6dc;
   }
 }
+/* Crisper text on buttons (2026-11-17): full-contrast labels instead of grey. */
+.oc small, .extra { color: var(--on-surface); font-weight: 600; }
+.oc.on small { color: inherit; }
+body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
