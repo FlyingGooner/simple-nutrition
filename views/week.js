@@ -99,8 +99,8 @@ function trainingCard(ws) {
 export function viewWeek(ws = S.week) {
   const st = weekStats(S.state, ws);
   return [
-    stepper('Byt vecka', ['wprev', 'Föregående vecka'], 'wnow', ['wnext', 'Nästa vecka'], ws >= weekStart(today()),
-      `Vecka ${isoWeek(ws)}`, el('small', { text: `${shortDate(ws)}–${shortDate(addDays(ws, 6))}` })),
+    el('div', { class: 'card day-head' }, stepper('Byt vecka', ['wprev', 'Föregående vecka'], 'wnow', ['wnext', 'Nästa vecka'], ws >= weekStart(today()),
+      `Vecka ${isoWeek(ws)}`, el('small', { text: `${shortDate(ws)}–${shortDate(addDays(ws, 6))}` }))),
     ...arrange('week', {
     weight: () => weightCard(ws),
     habits: () => habitCard(ws),

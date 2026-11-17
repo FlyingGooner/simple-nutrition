@@ -66,7 +66,7 @@ function withUndo(label, change) {
 const VIEWS = { today: viewToday, week: () => viewWeek(), trend: viewTrend, history: viewHistory, settings: viewSettings };
 function render() {
   app.dataset.view = view;
-  const nodes = [view === 'trend' ? el('h1', { class: 'view-title', text: 'Trend' }) : null, VIEWS[view]()];
+  const nodes = [view === 'trend' ? el('div', { class: 'card day-head view-head' }, el('h1', { class: 'view-title step-title', text: 'Trend' })) : null, VIEWS[view]()];
   app.replaceChildren(...nodes.flat(Infinity).filter(Boolean));
   for (const t of tabbar.querySelectorAll('[data-view]')) {
     const on = t.dataset.view === view;

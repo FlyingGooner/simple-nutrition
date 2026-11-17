@@ -684,3 +684,9 @@ main .day-head + * { margin-top: 10px; }
 [data-theme="chalk"] .meal-name { font-size: 1.15rem; }
 [data-theme="chalk"] .brand { font-size: 1.6rem; }
 [data-theme="chalk"] .step-title { font-size: 1.25rem; }
+/* Samma kort-topp i Vecka, Trend och Historik som i Idag */
+.day-head .step-title small { display: block; font-size: .8125rem; font-weight: 400; color: var(--muted); }
+.view-head { display: block; text-align: center; }
+.view-head .view-title { margin: 0; min-height: 44px; display: flex; align-items: center; justify-content: center; }
+[data-theme="chalk"] .day-head .step-title small { font-family: var(--font); -webkit-text-stroke: 0; }
+.view-head .view-title { font-size: 1.125rem; font-weight: 500; }

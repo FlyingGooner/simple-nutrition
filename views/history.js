@@ -77,7 +77,7 @@ export function viewHistory() {
   const a7 = avgKcal(7), sessions = Object.values(S.state.workouts).reduce((n, l) => n + l.length, 0);
   const km = Object.values(S.state.workouts).flat().reduce((n, w) => n + (w.km || 0), 0);
   return [
-    stepper('Byt månad', ['mprev', 'Föregående månad'], 'mnow', ['mnext', 'Nästa månad'], S.month >= today().slice(0, 7), title.charAt(0).toUpperCase() + title.slice(1)),
+    el('div', { class: 'card day-head' }, stepper('Byt månad', ['mprev', 'Föregående månad'], 'mnow', ['mnext', 'Nästa månad'], S.month >= today().slice(0, 7), title.charAt(0).toUpperCase() + title.slice(1))),
     ...arrange('history', {
     weight: () => monthWeight(habitRow()),
     calendar: () => el('section', { class: 'card' },
