@@ -655,3 +655,39 @@ main .day-head + * { margin-top: 10px; }
 [data-theme="skeuo"] .summary strong { color: #fff6e0; }
 [data-theme="skeuo"] .brand { color: #f6e7c8; text-shadow: 0 -1px 0 #000; }
 [data-theme="skeuo"] p.summary, [data-theme="skeuo"] p.summary * { color: #fff6e0; opacity: 1; }
+
+/* ===== Tema: Griffeltavla (grön tavla, krita, träram, 2026-11-17) – bara när html[data-theme="chalk"]. ===== */
+[data-theme="chalk"] {
+  --chalk: #f4f1e8; --chalk-dim: rgba(244,241,232,.7); --slate: #2f4a3a; --wood: #8a5a32;
+  --surface: var(--slate); --surface-container: transparent; --surface-container-high: rgba(255,255,255,.06);
+  --on-surface: var(--chalk); --on-surface-variant: var(--chalk-dim); --outline: rgba(244,241,232,.55); --outline-variant: rgba(244,241,232,.3);
+  --primary: #f6e27a; --on-primary: #26392d; --primary-container: rgba(246,226,122,.18); --on-primary-container: #f6e27a;
+  --secondary-container: rgba(255,255,255,.12); --on-secondary-container: var(--chalk);
+  --ok: #a8e6b8; --cheat: #f5a3b5; --skip: #c9c9c9; --dev: #f6c87a;
+  --font: "Chalkboard SE", "Chalkboard", "Comic Sans MS", "Segoe Print", cursive;
+  color-scheme: dark;
+}
+/* Tavlan: grön med kritsuddar och träram runt kanten */
+[data-theme="chalk"] body { color: var(--chalk);
+  background: radial-gradient(ellipse at 20% 15%, rgba(255,255,255,.07), transparent 45%), radial-gradient(ellipse at 80% 60%, rgba(255,255,255,.05), transparent 40%), radial-gradient(ellipse at 40% 90%, rgba(255,255,255,.04), transparent 35%), var(--slate);
+  background-attachment: fixed; box-shadow: inset 0 0 0 10px var(--wood), inset 0 0 0 12px #5e3a1e, inset 0 0 40px rgba(0,0,0,.5); min-height: 100vh; }
+[data-theme="chalk"] :is(.brand, h1, h2) { color: var(--chalk); text-shadow: 0 0 1px rgba(244,241,232,.6); }
+[data-theme="chalk"] .version { background: transparent; color: var(--chalk); border: 1.5px solid var(--chalk-dim); }
+/* Kort: kritritade rutor */
+[data-theme="chalk"] .card { background: rgba(255,255,255,.03); border: 2px solid rgba(244,241,232,.55); border-radius: 14px 18px 12px 20px / 18px 12px 20px 14px; color: var(--chalk); box-shadow: 0 0 2px rgba(244,241,232,.25); }
+[data-theme="chalk"] :is(.muted, .meal-kcal, .meal-what, .small) { color: var(--chalk-dim); }
+/* Knappar: kritade ramar; vald = inringad med gul krita */
+[data-theme="chalk"] :is(.icon, .hab-b, .chip, .meal-dish, .weigh-save, .btn-file, .back-today, .tag, .extra) { background: transparent; color: var(--chalk); border: 1.5px dashed rgba(244,241,232,.6); border-radius: 12px 16px 10px 14px; box-shadow: none; }
+[data-theme="chalk"] :is(.hab-b.on, .chip.on) { border: 2px solid #f6e27a; background: rgba(246,226,122,.1); color: #f6e27a; box-shadow: none; }
+[data-theme="chalk"] :is(.btn-filled, .btn-file.btn-filled, .today-badge) { background: #f6e27a; color: #26392d; border: 0; border-radius: 10px 14px 8px 12px; }
+[data-theme="chalk"] .tag-followed { color: var(--ok); } [data-theme="chalk"] .tag-cheat { color: var(--cheat); } [data-theme="chalk"] .tag-skipped { color: var(--skip); }
+/* Fält: kritlinje */
+[data-theme="chalk"] :is(.field input, .field select, .pick-row input, .num-in, .goal-row select, .hab-note, .weigh-row input) { background: transparent; color: var(--chalk); border: 0; border-bottom: 2px solid rgba(244,241,232,.5); border-radius: 0; }
+[data-theme="chalk"] select option { background: var(--slate); color: var(--chalk); }
+[data-theme="chalk"] :is(.meal-food, .sect) { border-top: 1.5px dashed rgba(244,241,232,.35); }
+[data-theme="chalk"] .day-head .streak > span { background: transparent; border: 1.5px dashed var(--chalk-dim); color: var(--chalk); }
+/* Menyrad: kritlist i trä */
+[data-theme="chalk"] .tabbar { background: linear-gradient(180deg, #9b6a3d, #6e4424); border: 1px solid #4a2c14; box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 4px 10px rgba(0,0,0,.5); }
+[data-theme="chalk"] .tabbar .tab { color: #fbefd9; text-shadow: 0 -1px 0 rgba(0,0,0,.5); }
+[data-theme="chalk"] .tabbar .tab.on { background: rgba(244,241,232,.85); color: #3a2614; text-shadow: none; }
+[data-theme="chalk"] :is(.topbar, main) { margin-inline: 8px; }
