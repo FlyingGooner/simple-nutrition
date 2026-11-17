@@ -264,10 +264,18 @@ export function findRef(state, ref) {
   return more.find((f) => f.v[0].ref === ref) || null;
 }
 // Recently logged (newest first), unique on ref + amount.
-export function recent(state, max = 20) {
-  const out = [], seen = new Set();
+// Meal group for Senaste: Lunch and Middag share one list, every other meal has its own.
+const MAIN_MEALS = ['lunch', 'middag', 'dinner'];
+function mealGroup(state, id) {
+  const m = state.meals.find((x) => x.id === id);
+  return m && MAIN_MEALS.includes(m.name.trim().toLowerCase()) ? 'main' : id;
+}
+// meal = meal id: only posts from meals in the same group (no meal = all).
+export function recent(state, max = 20, meal = null) {
+  const out = [], seen = new Set(), g = meal ? mealGroup(state, meal) : null;
   for (const k of Object.keys(state.log).sort().reverse()) {
     for (const p of [...state.log[k]].reverse()) {
+      if (g && mealGroup(state, p.m) !== g) continue;
       const key = p.ref + '|' + (p.g ?? p.q) + (EST_RE.test(p.ref) ? '|' + p.name + '|' + p.n.join(',') : '');
       if (seen.has(key)) continue;
       seen.add(key); out.push(p);

@@ -62,7 +62,7 @@ export function resultsList() {
           el('span', { class: 'post-name' }, 'Egen uppskattning', el('small', { text: 'Fyll i kcal, och gärna protein, kolhydrater och fett' })))))];
   }
   if (a.tab === 'recent') {
-    const list = recent(S.state);
+    const list = recent(S.state, 20, a.meal);
     if (!list.length) return [el('p', { class: 'muted small', text: 'Inget loggat ännu. Sök under Varor.' })];
     return [el('ul', { class: 'posts' }, list.map((p) => el('li', {}, el('button', { class: 'food-row', 'data-act': 'relog', 'data-id': p.id },
       el('span', { class: 'post-name' }, p.name, el('small', { text: amountText(p) })),

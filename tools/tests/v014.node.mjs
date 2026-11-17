@@ -87,3 +87,13 @@ test('bakåt: markeringsläget i Idag är ett eget steg', () => {
   assert.equal(closeTop(S), true); assert.equal(S.sel, null); assert.equal(S.selCopy, false);
   assert.equal(closeTop(S), false);
 });
+test('senaste per måltid: lunch och middag delar, frukost och mellanmål egna', () => {
+  const s = defaults();
+  s.log['2026-11-14'] = [est({ id: 'a1', m: 'm1', name: 'Gröt' }), est({ id: 'a2', m: 'm2', name: 'Chili' }), est({ id: 'a3', m: 'm3', name: 'Frukt' }), est({ id: 'a4', m: 'm4', name: 'Lax' })];
+  const names = (m) => recent(s, 20, m).map((p) => p.name).sort().join(',');
+  assert.equal(names('m1'), 'Gröt');
+  assert.equal(names('m2'), 'Chili,Lax');
+  assert.equal(names('m4'), 'Chili,Lax');
+  assert.equal(names('m3'), 'Frukt');
+  assert.equal(recent(s).length, 4);
+});
