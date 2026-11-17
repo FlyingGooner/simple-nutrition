@@ -678,3 +678,4 @@ main .day-head + * { margin-top: 10px; }
 [data-theme="chalk"] .card { border: 1px solid rgba(255,255,255,.18); box-shadow: 0 3px 10px rgba(0,0,0,.45); }
 [data-theme="chalk"] :is(.muted, .meal-kcal, .meal-what, .small, .hab-b small, .meal-food > summary) { color: var(--chalk-dim); }
 [data-theme="chalk"] .tag-followed { color: #b8f0c8; } [data-theme="chalk"] .tag-cheat { color: #ffc2cf; }
+[data-theme="chalk"] :is(.brand, .meal-name, .step-title, .meal-what) { font-family: var(--font); text-shadow: none; }
