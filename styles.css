@@ -609,9 +609,9 @@ body { padding-left: 8px; padding-right: 8px; }
 body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
 
 /* Idag: dagrubriken är ett eget kort, som resten av vyn (2026-11-17) */
-.day-head { margin-top: 8px; padding: 8px 8px 10px; background: linear-gradient(180deg, var(--primary-container), var(--card) 85%); }
+.day-head { margin-top: 8px; padding: 8px 8px 10px; }
 .day-head .stepper { margin-top: 0; }
-.day-head .icon { width: 44px; height: 44px; background: var(--card); }
+.day-head .icon { width: 44px; height: 44px; }
 .day-head .streak { margin: 0; }
-.day-head .streak > span { padding: 2px 12px; border-radius: 999px; background: var(--card); color: var(--fg); font-weight: 500; }
+.day-head .streak > span { padding: 2px 12px; border-radius: 999px; background: var(--surface-container-high); color: var(--fg); font-weight: 500; }
 main .day-head + * { margin-top: 10px; }
