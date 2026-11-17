@@ -651,3 +651,10 @@ main .day-head + * { margin-top: 10px; }
 [data-theme="chalk"] .tabbar .tab { color: #fbefd9; text-shadow: 0 -1px 0 rgba(0,0,0,.5); }
 [data-theme="chalk"] .tabbar .tab.on { background: rgba(244,241,232,.85); color: #3a2614; text-shadow: none; }
 [data-theme="chalk"] :is(.topbar, main) { margin-inline: 8px; }
+/* Dagrubriken: pilarna centrerade på höjden över hela kortet (datum + streak) */
+.day-head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 8px; }
+.day-head .stepper { display: contents; }
+.day-head .stepper > .icon:first-child { grid-column: 1; grid-row: 1 / 3; }
+.day-head .stepper > .step-title { grid-column: 2; grid-row: 1; }
+.day-head .stepper > .icon:last-child { grid-column: 3; grid-row: 1 / 3; }
+.day-head .streak { grid-column: 2; grid-row: 2; }
