@@ -181,7 +181,7 @@ export function viewSettings() {
       // Alla appar (2026-11-15): öppna i webbläsaren eller ladda ner från GitHub. el() släpper inte igenom href, så de fasta adresserna sätts med Object.assign (aldrig data).
       sec('apps', 'Alla mina appar', 'Öppna, ladda ner, GitHub', el('div', { class: 'dl-src' },
         el('div', { class: 'dl-app' }, el('b', { text: 'Fitness buddy' + (" (den här)") }),
-          null,
+          Object.assign(el('a', { class: 'link', target: '_blank', rel: 'noopener', text: 'Öppna' }), { href: 'https://flyinggooner.github.io/simple-nutrition/' }),
           Object.assign(el('a', { class: 'link', download: 'simple-nutrition.html', text: 'Ladda ner (HTML)' }), { href: 'simple-nutrition.html' }),
           Object.assign(el('a', { class: 'link', rel: 'noopener', target: '_blank', text: 'GitHub' }), { href: 'https://github.com/FlyingGooner/simple-nutrition' }))),
         el('div', { class: 'dl-app' }, el('b', { text: 'Budget buddy' + ('') }),
