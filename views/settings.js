@@ -143,7 +143,7 @@ export function viewSettings() {
             Object.entries(self.I18N.LANGS).map(([v, l]) => el('option', { value: v, selected: self.I18N.lang() === v, text: l, 'data-no-tr': '' })))),
         el('label', { class: 'goal-row' }, el('span', { text: 'Tema' }),
           el('select', { 'data-act': 'theme', 'aria-label': 'Tema' },
-            [['standard', 'Standard'], ['skeuo', 'Anteckningsblock'], ['chalk', 'Griffeltavla']].map(([v, l]) => el('option', { value: v, selected: self.THEME.get() === v, text: l })))),
+            [['standard', 'Standard'], ['chalk', 'Griffeltavla']].map(([v, l]) => el('option', { value: v, selected: self.THEME.get() === v, text: l })))),
         el('label', { class: 'goal-row' }, el('span', { text: 'Måttsystem' }),
           el('select', { 'data-act': 'units', 'aria-label': 'Måttsystem' },
             [['metric', 'Metriskt (g, dl, kg, km)'], ['imperial', 'Imperial (oz, cup, lb, mi)']].map(([v, l]) => el('option', { value: v, selected: imperial() === (v === 'imperial'), text: l })))),

@@ -1,7 +1,7 @@
-// Tema (2026-11-17): 'standard' (förval), 'skeuo' (anteckningsblock) eller 'chalk' (griffeltavla). Vanligt skript, laddas först så att rätt tema syns direkt.
+// Tema (2026-11-17): 'standard' (förval), eller 'chalk' (griffeltavla). Vanligt skript, laddas först så att rätt tema syns direkt.
 (function () {
   let t = 'standard';
-  const ok = (v) => (v === 'skeuo' || v === 'chalk' ? v : 'standard');
+  const ok = (v) => (v === 'chalk' || v === 'skeuo' ? 'chalk' : 'standard');   // 'skeuo' (anteckningsblock, borttaget) blir griffeltavla
   try { t = ok(localStorage.getItem('sn.theme')); } catch (e) { /* privat läge */ }
   document.documentElement.dataset.theme = t;
   self.THEME = {
