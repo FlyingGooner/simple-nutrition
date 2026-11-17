@@ -149,9 +149,6 @@ export function viewSettings() {
             [['metric', 'Metriskt (g, dl, kg, km)'], ['imperial', 'Imperial (oz, cup, lb, mi)']].map(([v, l]) => el('option', { value: v, selected: imperial() === (v === 'imperial'), text: l })))),
         el('p', { class: 'muted small', text: 'Måtten byts bara i visningen – allt sparas som förut, så du kan byta när du vill.' })),
       sec('data', 'Data', 'Backup, import, radera',
-        el('p', { class: 'small', text: 'All data sparas bara i den här webbläsaren (localStorage). Rensar du webbplatsdata eller avinstallerar appen försvinner den – spara en backup-fil då och då.' }),
-        el('p', { class: 'muted small', text: 'Backup-filen innehåller all din data och låses alltid med din kod nedan. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.' }),
-        el('p', { class: 'small', text: 'Flyttar du från Följ planen: spara en backup-fil där och läs in den här. Måltider, orsaker, vägningar och pass läggs till – inget du redan har tas bort.' }),
         (() => {   // v0.7.0: status för senaste backup, direkt ovanför knapparna
           const last = S.state.backup.last, old = !last || addDays(last, 30) <= today();
           const hasData = Object.keys(S.state.log).length || Object.keys(S.state.habits).length || Object.keys(S.state.weights).length;
@@ -164,18 +161,22 @@ export function viewSettings() {
           el('label', { class: 'btn-file' }, 'Läs in backup-fil',
             el('input', { type: 'file', id: 'import-file', accept: '.txt,.json', 'data-act': 'importfile' }))),
         pwdBox(),
-        el('div', { class: 'csv-row' }, el('button', { class: 'link', 'data-act': 'csv', text: 'Exportera CSV' }),
-          el('p', { class: 'muted small', text: 'CSV-filen är ett enkelt kalkylark för t.ex. Excel eller en egen app. Den är inte krypterad – spara den inte där andra kommer åt den.' })),
         el('p', { class: 'import-error small', id: 'import-error', role: 'alert' }),
-        el('details', { class: 'data-text' }, el('summary', { text: 'Klistra in text' }),
-          el('label', { class: 'data-box' }, el('span', { class: 'small', text: 'Importera (ersätter all data – från Följ planen läggs den till)' }),
-            el('textarea', { id: 'import-text', rows: 3, autocomplete: 'off', spellcheck: 'false', placeholder: 'Klistra in innehållet i en backup-fil' })),
-          el('button', { class: 'link', 'data-act': 'import', text: 'Importera' })),
-        el('label', { class: 'goal-row' }, el('span', { text: 'Påminn om backup' }),
-          el('select', { 'data-act': 'bkremind', 'aria-label': 'Påminn om backup' },
-            [['week', 'Varje vecka'], ['month', 'Varje månad'], ['off', 'Aldrig']].map(([v, l]) =>
-              el('option', { value: v, selected: S.state.backup.remind === v, text: l })))),
-        el('button', { class: 'link danger', 'data-act': 'wipe', text: 'Radera all data' })),
+        // Städat (2026-11-17): det man sällan behöver ligger under Fler val.
+        el('details', { class: 'data-more', 'data-sec': 'data-more', open: setOpen.has('data-more') }, el('summary', { text: 'Fler val' }),
+          el('details', { class: 'data-text' }, el('summary', { text: 'Klistra in text' }),
+            el('label', { class: 'data-box' }, el('span', { class: 'small', text: 'Importera (ersätter all data – från Följ planen läggs den till)' }),
+              el('textarea', { id: 'import-text', rows: 3, autocomplete: 'off', spellcheck: 'false', placeholder: 'Klistra in innehållet i en backup-fil' })),
+            el('button', { class: 'link', 'data-act': 'import', text: 'Importera' })),
+          el('label', { class: 'goal-row' }, el('span', { text: 'Påminn om backup' }),
+            el('select', { 'data-act': 'bkremind', 'aria-label': 'Påminn om backup' },
+              [['week', 'Varje vecka'], ['month', 'Varje månad'], ['off', 'Aldrig']].map(([v, l]) =>
+                el('option', { value: v, selected: S.state.backup.remind === v, text: l })))),
+          el('div', { class: 'csv-row' }, el('button', { class: 'link', 'data-act': 'csv', text: 'Exportera CSV' }),
+            el('p', { class: 'muted small', text: 'Ett okrypterat kalkylark, t.ex. för Excel.' })),
+          el('p', { class: 'muted small', text: 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den. Från Följ planen läggs data till – inget tas bort.' }),
+          el('button', { class: 'link pwd-own', 'data-act': 'pwdown', text: 'Välj egen kod' }),
+          el('button', { class: 'link danger', 'data-act': 'wipe', text: 'Radera all data' }))),
       S.installPrompt ? el('section', { class: 'card' }, el('button', { class: 'primary', 'data-act': 'install', text: 'Installera appen' })) : null,
       // Alla appar (2026-11-15): öppna i webbläsaren eller ladda ner från GitHub. el() släpper inte igenom href, så de fasta adresserna sätts med Object.assign (aldrig data).
       sec('apps', 'Alla mina appar', 'Öppna, ladda ner, GitHub', el('div', { class: 'dl-src' },
@@ -211,6 +212,5 @@ function pwdBox() {
       el('button', { class: 'link', 'data-act': 'pwdcopy', text: 'Kopiera' }),
       el('button', { class: 'link', 'data-act': 'pwdset', text: 'Ny kod' })),
     S.showPwd && p ? el('p', { class: 'pwd-show', text: p }) : null,
-    el('button', { class: 'link pwd-own', 'data-act': 'pwdown', text: 'Välj egen kod' }),
-    el('p', { class: 'muted small pwd-note', text: 'Alla backup-filer låses med den här koden. Spara den i din lösenordshanterare – du behöver den för att öppna en backup på en ny telefon.' }));
+    el('p', { class: 'muted small pwd-note', text: 'Backupen låses med koden. Spara den i din lösenordshanterare.' }));
 }

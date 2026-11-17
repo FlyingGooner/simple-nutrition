@@ -218,6 +218,7 @@ I18N.add({
   'Egen uppskattning': 'Own estimate', 'Snabbval:': 'Quick picks:', 'Kalorier, mål': 'Calories, goals',
   'Appversion': 'App version', 'Lyckade dagar i rad': 'Successful days in a row', 'Dagens kalorier': "Today's calories", 'Vikt i kg': 'Weight in kg', 'Vyer': 'Views',
   'Stress/tidsbrist': 'Stress/no time', 'Hur mycket? (valfritt)': 'How much? (optional)', 'Hur mycket?': 'How much?',
+  'Fler val': 'More options', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den. Från Följ planen läggs data till – inget tas bort.': 'All data is only in this browser. Load the backup file on another device to move it. From Follow the plan, data is added – nothing is removed.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Tema': 'Theme', 'Standard': 'Standard', 'Griffeltavla': 'Chalkboard', 'Språk, tema och mått': 'Language, theme and units',
   'Måttsystem': 'Units', 'Språk och mått': 'Language and units', 'Språk, mått, data, hjälp': 'Language, units, data, help',
   'Metriskt (g, dl, kg)': 'Metric (g, dl, kg)', 'Imperial (oz, cup, lb)': 'Imperial (oz, cup, lb)', 'Metriskt (g, dl, kg, km)': 'Metric (g, dl, kg, km)', 'Imperial (oz, cup, lb, mi)': 'Imperial (oz, cup, lb, mi)',
