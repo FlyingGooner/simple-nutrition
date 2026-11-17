@@ -218,7 +218,7 @@ I18N.add({
   'Egen uppskattning': 'Own estimate', 'Snabbval:': 'Quick picks:', 'Kalorier, mål': 'Calories, goals',
   'Appversion': 'App version', 'Lyckade dagar i rad': 'Successful days in a row', 'Dagens kalorier': "Today's calories", 'Vikt i kg': 'Weight in kg', 'Vyer': 'Views',
   'Stress/tidsbrist': 'Stress/no time', 'Hur mycket? (valfritt)': 'How much? (optional)', 'Hur mycket?': 'How much?',
-  'Tema': 'Theme', 'Standard': 'Standard', 'Klassisk (skeuomorfism)': 'Classic (skeuomorphism)', 'Språk, tema och mått': 'Language, theme and units',
+  'Tema': 'Theme', 'Standard': 'Standard', 'Anteckningsblock': 'Notepad', 'Språk, tema och mått': 'Language, theme and units',
   'Måttsystem': 'Units', 'Språk och mått': 'Language and units', 'Språk, mått, data, hjälp': 'Language, units, data, help',
   'Metriskt (g, dl, kg)': 'Metric (g, dl, kg)', 'Imperial (oz, cup, lb)': 'Imperial (oz, cup, lb)', 'Metriskt (g, dl, kg, km)': 'Metric (g, dl, kg, km)', 'Imperial (oz, cup, lb, mi)': 'Imperial (oz, cup, lb, mi)',
   'Måtten byts bara i visningen – allt sparas som förut, så du kan byta när du vill.': 'Only the display changes – everything is stored as before, so you can switch whenever you like.',
