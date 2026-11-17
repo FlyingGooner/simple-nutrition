@@ -679,3 +679,8 @@ main .day-head + * { margin-top: 10px; }
 [data-theme="chalk"] :is(.muted, .meal-kcal, .meal-what, .small, .hab-b small, .meal-food > summary) { color: var(--chalk-dim); }
 [data-theme="chalk"] .tag-followed { color: #b8f0c8; } [data-theme="chalk"] .tag-cheat { color: #ffc2cf; }
 [data-theme="chalk"] :is(.brand, .meal-name, .step-title, .meal-what) { font-family: var(--font); text-shadow: none; }
+/* Griffeltavla v4: kritstil i rubriker igen, men tjockare (fet + kontur) och lite större; brödtext i standardtypsnittet */
+[data-theme="chalk"] :is(.brand, .meal-name, .step-title) { font-family: var(--chalk-font); font-weight: 700; -webkit-text-stroke: .6px currentColor; letter-spacing: .02em; }
+[data-theme="chalk"] .meal-name { font-size: 1.15rem; }
+[data-theme="chalk"] .brand { font-size: 1.6rem; }
+[data-theme="chalk"] .step-title { font-size: 1.25rem; }
