@@ -5,13 +5,14 @@
   --primary: #1f6c4c; --on-primary: #ffffff;
   --primary-container: #a8f2cb; --on-primary-container: #002113;
   --surface: #f5fbf5; --surface-container: #e9efe9; --surface-container-high: #e3eae3;
+  --secondary-container: #cfe9db; --on-secondary-container: #0b1f15;
   --on-surface: #171d1a; --on-surface-variant: #404943; --outline: #707973; --outline-variant: #c0c9c1;
   /* Legacy names used across the app, mapped onto roles */
   --bg: var(--surface); --card: var(--surface-container); --fg: var(--on-surface); --muted: var(--on-surface-variant);
   --line: var(--outline-variant); --accent: var(--primary); --accent-soft: var(--primary-container);
   /* Semantic outcome colours */
   --ok: #1f6c4c; --dev: #8a5a00; --cheat: #9a4058; --skip: #707973;
-  --r-xs: 2px; --r-sm: 4px; --r-md: 6px; --r-lg: 8px; --r-xl: 12px; /* shape scale, see ../STIL.md */
+  --r-xs: 4px; --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px; /* shape scale, see ../STIL.md */
   color-scheme: light dark;
   --font: Roboto, "Roboto Flex", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -19,9 +20,10 @@
   :root {
     --primary: #8cd5b0; --on-primary: #003824;
     --primary-container: #005237; --on-primary-container: #a8f2cb;
-    --surface: #0f1512; --surface-container: #1b211e; --surface-container-high: #252b28;
-    --on-surface: #dee4de; --on-surface-variant: #c0c9c1; --outline: #8a938c; --outline-variant: #404943;
-    --ok: #8cd5b0; --dev: #ffb95c; --cheat: #ffb1c3; --skip: #8a938c;
+    --surface: #0e0e10; --surface-container: #1a1a1d; --surface-container-high: #26262a;
+    --secondary-container: #3a3a40; --on-secondary-container: #f2f2f4;
+    --on-surface: #ececee; --on-surface-variant: #a9a9b0; --outline: #7c7c84; --outline-variant: #34343a;
+    --ok: #8cd5b0; --dev: #ffb95c; --cheat: #ffb1c3; --skip: #8c8c94;
   }
 }
 * { box-sizing: border-box; }
@@ -577,3 +579,15 @@ dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
 /* CSV-export (2026-11-15) */
 .csv-row { margin: 8px 0; }
 .csv-row p { margin: 2px 0 0; }
+
+/* Material 3 Expressive + liquid glass (2026-11-17, same as Football, not soccer): neutral dark mode, colour only on controls. */
+.version { border-radius: var(--r-full); padding: 5px 12px; }
+.card { padding: 14px 16px; }
+.btn { border-radius: var(--r-full); }
+#snackbar { bottom: calc(92px + env(safe-area-inset-bottom)); }
+.tabbar { z-index: 40; inset: auto 12px calc(12px + env(safe-area-inset-bottom)) 12px; max-width: 496px; margin-inline: auto; padding: 6px 4px; border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--surface-container) 62%, transparent); -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid color-mix(in srgb, var(--on-surface) 12%, transparent); box-shadow: 0 8px 28px rgba(0,0,0,.28), inset 0 1px 0 color-mix(in srgb, #fff 14%, transparent); }
+.tab { flex: 1; max-width: 88px; margin: 0 2px; padding: 4px 0; min-height: 52px; gap: 2px; border-radius: var(--r-full); transition: background .2s; }
+.tab span, .tab.on span { width: auto; height: 30px; background: none; }
+.tab.on { background: var(--secondary-container); color: var(--on-secondary-container); }
