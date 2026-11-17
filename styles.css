@@ -607,3 +607,20 @@ body { padding-left: 8px; padding-right: 8px; }
 .oc small, .extra { color: var(--on-surface); font-weight: 600; }
 .oc.on small { color: inherit; }
 body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+
+/* Idag: tydligare design (2026-11-17) */
+.streak span { padding: 4px 12px; border-radius: 999px; background: color-mix(in srgb, var(--cheat) 12%, var(--card)); color: var(--fg); font-weight: 500; }
+.meals { gap: 10px; }
+.meal { border-left: 4px solid var(--outline-variant); }
+.meal-done { border-left-color: var(--ok); }
+.meal-done:has(.tag-cheat) { border-left-color: var(--cheat); }
+.meal-done:has(.tag-skipped) { border-left-color: var(--skip); }
+.meal-name { font-size: 1.0625rem; }
+.meal-done > summary .tag { border-radius: 999px; }
+.tag-followed { background: color-mix(in srgb, var(--ok) 14%, var(--card)); }
+.tag-cheat { background: color-mix(in srgb, var(--cheat) 14%, var(--card)); }
+.tag-skipped { background: color-mix(in srgb, var(--skip) 14%, var(--card)); }
+.hab-b { flex-direction: column; gap: 2px; min-height: 60px; padding: 6px 4px; font-size: 1.3rem; line-height: 1.1; }
+.hab-b small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.meal-food { border-top-color: var(--outline-variant); }
+.add-row .extra { background: transparent; border: 1.5px dashed var(--outline); color: var(--primary); }
