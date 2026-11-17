@@ -62,7 +62,7 @@ function mealCard(m, posts) {
     other ? null : habitDetails(m.id),
     el('details', { class: 'meal-food' + (posts.length ? ' has-food' : ''), 'data-sec': sec, open },
       el('summary', {},
-        el('span', { class: 'food-label', text: posts.length ? '✅ Mat' : '🍽 Mat' }),
+        el('span', { class: 'food-label', text: posts.length ? '✅ Mat' : '🥗 Mat' }),
         el('span', { class: 'meal-kcal', text: posts.length ? `${kcal(total)} kcal` : 'Inget loggat' })),
       posts.length ? el('ul', { class: 'posts' }, posts.map(postRow)) : null,
       other ? null : el('div', { class: 'meal-foot' },
