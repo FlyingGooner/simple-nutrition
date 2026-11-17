@@ -671,3 +671,10 @@ main .day-head + * { margin-top: 10px; }
 [data-theme="chalk"] :is(.meal-food, .sect) { border-top: 1px solid rgba(244,241,232,.15); }
 [data-theme="chalk"] :is(.muted, .meal-kcal, .meal-what, .small) { color: rgba(244,241,232,.78); }
 [data-theme="chalk"] .version { border: 0; background: var(--surface-container-high); }
+/* Griffeltavla v3: mer kontrast – mörkare tavla, tydligare lager, kritstil bara i appnamnet */
+[data-theme="chalk"] { --slate: #1c2e24; --surface-container: #2b4636; --surface-container-high: #3d604c; --chalk: #ffffff; --chalk-dim: #dfe9e2; }
+[data-theme="chalk"] :is(.meal-name, .step-title, .meal-what) { font-family: var(--font); }
+[data-theme="chalk"] .meal-name { font-weight: 600; }
+[data-theme="chalk"] .card { border: 1px solid rgba(255,255,255,.18); box-shadow: 0 3px 10px rgba(0,0,0,.45); }
+[data-theme="chalk"] :is(.muted, .meal-kcal, .meal-what, .small, .hab-b small, .meal-food > summary) { color: var(--chalk-dim); }
+[data-theme="chalk"] .tag-followed { color: #b8f0c8; } [data-theme="chalk"] .tag-cheat { color: #ffc2cf; }
