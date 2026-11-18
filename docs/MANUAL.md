@@ -89,8 +89,14 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Backup-filen låses alltid med **din kod**: 16 slumpade tecken som appen skapar åt dig första gången den startas och sparar på enheten. Vill du hellre använda en egen kod (t.ex. samma i alla dina appar) trycker du **Välj egen kod** – den måste ha minst 16 tecken med stor och liten bokstav, siffra och specialtecken, samma krav som den skapade. Backup sparas med ett tryck. Under Inställningar → Data finns Din kod: **Visa**, **Kopiera** och **Ny kod**. Spara koden i din lösenordshanterare – på en ny telefon (eller efter Radera all data) behöver du den för att öppna en backup. Läser du in en backup med en annan kod används den koden sedan för nya backuper. Ny kod gör att gamla backup-filer bara öppnas med den gamla koden (Ångra finns). Appen samlar ingen data – koden är bara en nyckel som skyddar dina backuper.
 - Filen beskriver sitt eget format och har ett exempel, så den går att ändra för hand och läsa in igen.
 
-## Installera och offline
-- **Android (Chrome):** menyn ⋮ → Installera app. **iPhone (Safari):** Dela → Lägg till på hemskärmen. Installerad fungerar appen helt utan nät.
+## Installera som app
+
+![Android: Chrome-menyn ⋮ → Installera app](manual/install-android.png)
+- **Android (Chrome):** öppna appens länk, tryck ⋮ uppe till höger och välj **Installera app**.
+
+![iPhone: Safari → Dela → Lägg till på hemskärmen](manual/install-ios.png)
+- **iPhone (Safari):** öppna länken i Safari, tryck **Dela** (rutan med pilen) och välj **Lägg till på hemskärmen** → **Lägg till**.
+- Installerad fungerar appen som en vanlig app, även utan nät.
 
 ## Integritet och källa
 - Appen gör inga anrop – ingen server, ingen analys, inget konto. All data finns bara i den här webbläsaren.
