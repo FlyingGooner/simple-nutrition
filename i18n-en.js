@@ -2,6 +2,7 @@
 // Mönster (regex) för texter med tal eller namn i; $1… översätts i sin tur. Saknas en text visas den svenska.
 I18N.setKey('sn.lang');
 I18N.add({
+  'Öppnas snabbare och fungerar utan nät': 'Opens faster and works offline', 'Installera': 'Install', 'Visa hur': 'Show how', '📲 Installera som app': '📲 Install as an app',
   '📲 Installera som app – öppnas snabbare och fungerar utan nät': '📲 Install as an app – opens faster and works offline', 'Installera som app': 'Install as an app', 'Tryck på Dela ⬆️ längst ner i Safari.': 'Tap Share ⬆️ at the bottom of Safari.', 'Välj Lägg till på hemskärmen.': 'Choose Add to Home Screen.', 'Tryck Lägg till. Öppna sedan appen från hemskärmen.': 'Tap Add. Then open the app from the home screen.',
   'Öppna, ladda ner, GitHub': 'Open, download, GitHub',
   'Exportera CSV': 'Export CSV',
