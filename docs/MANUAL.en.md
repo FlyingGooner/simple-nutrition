@@ -6,6 +6,7 @@ The same text is in the app under **Settings → General → Help and manual** w
 - Habits come first: tap ✅ On plan, 🍰 Cheat or ⏭️ Skipped for each meal in Today. Calories are a support when you want to count your basic meals.
 - Under **Settings → Habits** you write your plan (shown at the top of Today), set the limit for a successful day and change meals and reasons.
 - Moving from Follow the plan: see **Move from Follow the plan** below.
+- Change view by tapping the menu at the bottom, or drag the menu: the view follows your finger and the next one slides in (drag left for the view to the right).
 
 ## Why your data is safe here
 - This app holds your weight, habits, what you eat and how often you cheat. That should not end up with a company, an advertiser or a hacker.

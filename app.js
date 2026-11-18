@@ -791,19 +791,63 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   });
 }
 
-// Swipe sideways on the bottom menu → the next/previous view (2026-11-17, same in all apps).
-(function navSwipe(nav, item, on) {
+// Dra i menyn = dra själva vyn (2026-11-18, som app-växlaren i Android): vyn följer fingret och nästa vy glider in
+// bredvid. Fingret åt vänster → vyn till höger. Släpp efter en tredjedel (eller snabbt svep) = byt, annars tillbaka.
+(function navDrag(nav) {
   if (!nav) return;
-  let t0 = null;
-  nav.addEventListener('touchstart', (e) => { const t = e.touches[0]; t0 = e.touches.length === 1 ? { x: t.clientX, y: t.clientY } : null; }, { passive: true });
-  nav.addEventListener('touchend', (e) => {
-    if (!t0) return;
-    const t = e.changedTouches[0], dx = t.clientX - t0.x, dy = t.clientY - t0.y;
-    t0 = null;
-    if (Math.abs(dx) < 40 || Math.abs(dx) < 1.5 * Math.abs(dy)) return;
-    const items = [...nav.querySelectorAll(item)].filter((x) => !x.hidden && x.offsetParent);
-    // 2026-11-18: svep i menyn dit du vill gå – åt höger = fliken till höger (som att dra markeringen).
-    const next = items[items.findIndex((x) => x.matches(on)) + (dx > 0 ? 1 : -1)];
-    if (next) next.click();
+  const order = () => [...nav.querySelectorAll('[data-view]')].map((t) => t.dataset.view);
+  const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let g = null;   // { x, y, t, dx, on, from, to, side, ghost, W }
+  const place = (el, x, anim) => {
+    el.style.transition = anim && !reduce() ? 'transform .22s cubic-bezier(.2,.8,.2,1)' : 'none';
+    el.style.transform = `translateX(${x}px)`;
+  };
+  const clean = () => { app.style.transition = app.style.transform = ''; };
+  nav.addEventListener('touchstart', (e) => {
+    if (g?.busy) return;
+    const t = e.touches[0];
+    g = e.touches.length === 1 ? { x: t.clientX, y: t.clientY, t: e.timeStamp, dx: 0, on: false } : null;
   }, { passive: true });
-})(document.querySelector('.tabbar'), '.tab', '.on');
+  nav.addEventListener('touchmove', (e) => {
+    if (!g || g.busy) return;
+    const t = e.touches[0], dx = t.clientX - g.x, dy = t.clientY - g.y;
+    if (!g.on) {
+      if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy)) return;
+      const views = order(), i = views.indexOf(view), side = dx < 0 ? 1 : -1, to = views[i + side];
+      g.on = true; g.W = innerWidth; g.side = side; g.from = view; g.to = to || null;
+      if (to) {
+        // Bild av nuvarande vy ovanpå, den nya vyn ritas i main och läggs bredvid.
+        const r = app.getBoundingClientRect(), ghost = app.cloneNode(true);
+        ghost.removeAttribute('id'); ghost.setAttribute('aria-hidden', 'true'); ghost.inert = true;
+        ghost.className = 'swipe-ghost'; ghost.style.top = r.top + 'px'; ghost.style.left = r.left + 'px'; ghost.style.width = r.width + 'px';
+        document.body.append(ghost); g.ghost = ghost;
+        view = to; render(); scrollTo(0, 0);
+      }
+    }
+    e.preventDefault();
+    g.dx = dx;
+    if (!g.to) { place(app, dx / 4); return; }   // ingen vy åt det hållet: gummiband
+    place(g.ghost, dx); place(app, g.side * g.W + dx);
+  }, { passive: false });
+  const end = (e) => {
+    if (!g || g.busy) return;
+    const d = g; if (!d.on) { g = null; return; }
+    e.preventDefault?.();
+    d.busy = true;
+    const fast = Math.abs(d.dx) / Math.max(1, e.timeStamp - d.t) > 0.5 && Math.sign(d.dx) === -d.side;
+    const commit = d.to && (Math.abs(d.dx) > d.W / 3 || fast);
+    const done = () => {
+      d.ghost?.remove(); clean(); g = null;
+      if (!d.to) return;
+      view = d.from;
+      if (commit) go(d.to); else render();   // go: historik, Bakåt och inställningar som vid tryck
+    };
+    if (!d.to) { place(app, 0, true); } else if (commit) { place(d.ghost, -d.side * d.W, true); place(app, 0, true); }
+    else { place(d.ghost, 0, true); place(app, d.side * d.W, true); }
+    setTimeout(done, reduce() ? 0 : 230);
+  };
+  nav.addEventListener('touchend', end, { passive: false });
+  nav.addEventListener('touchcancel', end, { passive: false });
+  // Klicket efter en dragning ska inte också byta flik.
+  nav.addEventListener('click', (e) => { if (g?.on) { e.preventDefault(); e.stopPropagation(); } }, true);
+})(document.querySelector('.tabbar'));
