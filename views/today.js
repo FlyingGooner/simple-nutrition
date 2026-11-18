@@ -26,6 +26,8 @@ function summaryCard() {
     posts.length ? dayList(posts) : null);
 }
 // Sammanställning: en rad per livsmedel/rätt (samma ref och samma enhet slås ihop), störst kcal först.
+const dishOf = (r) => (String(r.p.ref).startsWith('r:') && r.q ? S.state.dishes.find((d) => 'r:' + d.id === r.p.ref) : null);
+const imperialG = (g) => amountText({ ref: 'x', g });   // gram (eller oz) som i resten av appen
 function dayList(posts) {
   const groups = new Map(), mealOf = (id) => (id === '_other' ? 'Övrigt' : mealName(id));
   for (const p of posts) {
@@ -39,10 +41,15 @@ function dayList(posts) {
   const rows = [...groups.values()].sort((a, b) => b.n[0] - a.n[0]);
   return el('ul', { class: 'day-list' }, rows.map((r) => {
     const amt = amountText({ ...r.p, g: r.g || r.p.g, q: r.p.q != null ? r.q : undefined, u: r.p.u ? [r.p.u[0], r.u] : undefined });
-    return el('li', {},
-      el('span', { class: 'dl-name' }, el('span', { text: r.times > 1 ? `${r.p.name} ×${r.times}` : r.p.name }),
+    const main = [el('span', { class: 'dl-name' }, el('span', { text: (r.times > 1 ? `${r.p.name} ×${r.times}` : r.p.name) + (dishOf(r) ? ' ▾' : '') }),
         el('small', { text: [amt, r.meals.join(', ').toLowerCase()].join(' · ') })),
-      el('span', { class: 'dl-n' }, el('strong', { text: kcal(r.n[0]) }), el('small', { text: `P ${fmtNum(r.n[1], 0)} · K ${fmtNum(r.n[2], 0)} · F ${fmtNum(r.n[3], 0)}` })));
+      el('span', { class: 'dl-n' }, el('strong', { text: kcal(r.n[0]) }), el('small', { text: `P ${fmtNum(r.n[1], 0)} · K ${fmtNum(r.n[2], 0)} · F ${fmtNum(r.n[3], 0)}` }))];
+    // 2026-11-18: en rätt fälls ut till sina ingredienser – mängd och kcal för det du ätit (andel av receptet).
+    const d = dishOf(r);
+    if (!d) return el('li', {}, ...main);
+    return el('li', { class: 'dl-dish' }, el('details', {}, el('summary', {}, ...main),
+      el('ul', { class: 'dl-ingr' }, d.items.map((it) => el('li', {},
+        el('span', { text: it.name }), el('small', { text: `${imperialG(it.g * r.q)} · ${kcal(it.n[0] * it.g / 100 * r.q)} kcal` }))))));
   }));
 }
 

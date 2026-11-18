@@ -731,3 +731,10 @@ main .day-head + * { margin-top: 10px; }
 .dl-name, .dl-n { display: flex; flex-direction: column; min-width: 0; }
 .dl-n { text-align: right; flex: none; }
 .dl-name small, .dl-n small { color: var(--muted); font-size: .75rem; }
+/* 2026-11-18: rätt i sammanställningen fälls ut till ingredienser */
+.day-list li.dl-dish { display: block; }
+.dl-dish > details > summary { display: flex; justify-content: space-between; gap: 10px; list-style: none; cursor: pointer; }
+.dl-dish > details > summary::-webkit-details-marker { display: none; }
+.dl-ingr { list-style: none; margin: 6px 0 2px 12px; padding: 0 0 0 10px; border-left: 2px solid var(--outline-variant, rgba(0,0,0,.1)); }
+.day-list .dl-ingr li { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; border: 0; font-size: .875rem; }
+.dl-ingr small { color: var(--muted); white-space: nowrap; }

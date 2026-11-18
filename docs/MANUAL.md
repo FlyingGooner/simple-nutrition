@@ -28,7 +28,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Under **Inställningar → Träning** ändrar du passtyperna och sätter mål per vecka. Målen syns på knappen i Idag och i Vecka.
 
 ## Mat och kalorier
-- Tryck på kalorikortet överst i Idag för att se **allt du ätit i dag**: en rad per vara eller rätt med mängd, måltider, kcal och protein/kolhydrater/fett. Samma sak från flera måltider slås ihop, t.ex. *Proteinpudding ×2 · frukost, mellanmål*.
+- Tryck på kalorikortet överst i Idag för att se **allt du ätit i dag**: en rad per vara eller rätt med mängd, måltider, kcal och protein/kolhydrater/fett. Samma sak från flera måltider slås ihop, t.ex. *Proteinpudding ×2 · frukost, mellanmål*. En rätt (▾) fälls ut till sina ingredienser med mängd och kcal för det du ätit.
 - Under varje måltid finns en hopfälld rad **🍽 Mat**. Fäll ut den och tryck **+ Lägg till mat**. När mat är loggad visar raden **✅ Mat** och dagens kcal för måltiden.
 - Svep åt vänster eller höger för att byta mellan **Senaste**, **Varor**, **Rätter** och **Snabbval**.
 - Under **Varor** söker du, t.ex. mjölk. Välj variant (Lätt, Mellan …) och mängd. Den naturliga enheten är förvald (st, skiva, bit eller dl); fasta varor kan också anges i gram och drycker i dl eller ml. Byter du enhet räknas talet om, och raden visar t.ex. "2 st (90 g) · 150 kcal". Mått är ungefärliga. Visa fler söker i hela Livsmedelsverkets lista.
