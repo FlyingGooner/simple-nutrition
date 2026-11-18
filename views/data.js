@@ -109,14 +109,14 @@ export async function saveBackup() {
         if (!a) r = 'cancelled';
         else { keep(a.pwd); first = true; r = await Backup.save({ slug: SLUG, today: today(), text: a.value.env }); }
       }
-    } catch { r = 'error'; } finally { busy = false; }
+    } catch (e) { r = 'error'; if (!Backup.lastError) Backup.note(e); } finally { busy = false; }
   }
   if (r === 'saved' || r === 'fallback') {   // v0.7.0: kom ihåg senaste backup för påminnelsen
     S.state.backup.last = today(); S.state.backup.asked = null; persist();
     if (currentView() === 'settings') render();
     if (first) { snackbar('Backup sparad. Lösenordet är sparat på enheten – nästa gång räcker ett tryck.', null, null, 5000); return; }
   } else if (first && currentView() === 'settings') render();
-  if (BACKUP_MSG[r]) snackbar(BACKUP_MSG[r], null, null, 4000);
+  if (BACKUP_MSG[r]) snackbar(BACKUP_MSG[r] + (r === 'error' && Backup.lastError ? ` (${Backup.lastError})` : ''), null, null, r === 'error' ? 8000 : 4000);
 }
 /* ---------- Backup-påminnelse (v0.7.0) ---------- */
 // Förfallen när det gått en vecka/månad sedan senaste backup (eller sedan första loggade dagen om ingen backup finns).
