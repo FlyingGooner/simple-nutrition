@@ -721,8 +721,3 @@ main .day-head + * { margin-top: 10px; }
 .meal-food[open] > summary { margin-bottom: 4px; }
 .meal { padding-bottom: 8px; }
 [data-theme="chalk"] .meal-food > summary { background: var(--surface-container-high); }
-
-/* 2026-11-18: dra i menyn = dra vyn (navDrag i app.js) */
-.tabbar { touch-action: none; }
-.swipe-ghost { position: fixed; z-index: 5; pointer-events: none; background: var(--bg, var(--surface)); }
-body:has(.swipe-ghost) { overflow-x: hidden; }

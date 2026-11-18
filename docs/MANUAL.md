@@ -6,7 +6,6 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Vanorna är huvudsaken: tryck ✅ Enligt plan, 🍰 Fusk eller ⏭️ Hoppade över på varje måltid i Idag. Kalorierna är ett stöd när du vill räkna på dina basmåltider.
 - Under **Inställningar → Vanor** skriver du din plan (visas överst i Idag), sätter gränsen för en lyckad dag och ändrar måltider och orsaker.
 - Flyttar du från Följ planen: se **Flytta från Följ planen** nedan.
-- Byt vy genom att trycka i menyn längst ner, eller dra i menyn: vyn följer fingret och nästa vy glider in (dra åt vänster för vyn till höger).
 
 ## Varför din data är säker här
 - Här finns vikt, vanor, vad du äter och hur ofta du fuskar. Sådant ska inte hamna hos ett företag, en annonsör eller en hackare.
