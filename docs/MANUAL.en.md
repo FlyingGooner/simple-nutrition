@@ -28,7 +28,7 @@ The same text is in the app under **Settings → General → Help and manual** w
 - Under **Settings → Training** you change the workout types and set goals per week. The goals show on the button in Today and in Week.
 
 ## Food and calories
-- Tap the calorie card at the top of Today to see **everything you ate today**: one row per food or dish with amount, meals, kcal and protein/carbs/fat. The same thing from several meals is merged, e.g. *Protein pudding ×2 · breakfast, snack*. A dish (▾) unfolds to its ingredients with the amount and kcal you ate.
+- Tap the calorie card at the top of Today to see **everything you ate today**: one row per food or dish with amount, meals, kcal and protein/carbs/fat. The same thing from several meals is merged, e.g. *Protein pudding ×2 · breakfast, snack*. A dish (▾) unfolds to its ingredients with the amount and kcal you ate. **📋 Copy to check with AI** at the bottom shares the day as text (or copies it) – paste it into e.g. Gemini, and it works out the same day and compares with the app's numbers.
 - Under each meal there is a folded line **🍽 Food**. Open it and tap **+ Add food**. When food is logged the line shows **✅ Food** and the meal's kcal for the day.
 - Swipe left or right to switch between **Recent**, **Foods**, **Dishes** and **Quick picks**.
 - Under **Foods** you search, e.g. milk. Choose a variant (Light, Medium …) and an amount. The natural unit is preselected (pc, slice, piece or dl); solid foods can also be entered in grams and drinks in dl or ml. If you change unit the number is converted, and the line shows e.g. "2 pc (90 g) · 150 kcal". Measures are approximate. Show more searches the whole Swedish Food Agency list (names in Swedish).

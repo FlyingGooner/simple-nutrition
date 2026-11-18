@@ -4,7 +4,7 @@ import { today, S, setOpen, el, kcal, dateTitle, parseNum, wType, isCardio, pars
 import { lastPost, QUICK_ADD, setLevel, dropLevels, quickGroup, EST_MAX } from './store.js';
 import { mealName, wIn, dIn, dUnit, setUnits } from './ui.js';
 import { topLayer, layerDepth, closeTop, dishDirty, defaultQuickG } from './nav.js';
-import { viewToday, dayPosts } from './views/today.js';
+import { viewToday, dayPosts, dayText } from './views/today.js';
 import { resultsList, pickGrams, pickSum, unitsOf, isBulk, bulkDefault, EST_GROUP } from './views/add.js';
 import { viewWeek } from './views/week.js';
 import { viewTrend } from './views/trend.js';
@@ -234,6 +234,11 @@ app.addEventListener('click', (ev) => {
     case 'next': if (S.current < today()) S.current = addDays(S.current, 1); resetDay(); break;
     case 'today': S.current = today(); resetDay(); break;
     case 'popen': S.open = S.open === id ? null : id; break;
+    case 'dayai': {   // 2026-11-18: dela (telefonens delameny, t.ex. till Gemini) eller kopiera dagen som text
+      const text = dayText(), copy = () => (navigator.clipboard ? navigator.clipboard.writeText(text).then(() => snackbar('Dagen är kopierad – klistra in den i Gemini', null, null, 3500), () => snackbar('Kunde inte kopiera', null, null, 3000)) : snackbar('Kunde inte kopiera', null, null, 3000));
+      if (navigator.share) navigator.share({ text }).catch((e) => { if (e?.name !== 'AbortError') copy(); }); else copy();
+      return;
+    }
     case 'psel': {   // markeringsläge: tap toggles; the last one unmarked ends the mode
       const i = S.sel.indexOf(id);
       if (i < 0) S.sel.push(id); else S.sel.splice(i, 1);

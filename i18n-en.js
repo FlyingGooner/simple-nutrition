@@ -2,6 +2,7 @@
 // Mönster (regex) för texter med tal eller namn i; $1… översätts i sin tur. Saknas en text visas den svenska.
 I18N.setKey('sn.lang');
 I18N.add({
+  '📋 Kopiera för kontroll med AI': '📋 Copy to check with AI', 'Dagen är kopierad – klistra in den i Gemini': 'The day is copied – paste it into Gemini', 'Kunde inte kopiera': 'Could not copy',
   'Allt du ätit i dag ▾': 'Everything you ate today ▾', 'Övrigt': 'Other',
   'Öppnas snabbare och fungerar utan nät': 'Opens faster and works offline', 'Installera': 'Install', 'Visa hur': 'Show how', '📲 Installera som app': '📲 Install as an app',
   '📲 Installera som app – öppnas snabbare och fungerar utan nät': '📲 Install as an app – opens faster and works offline', 'Installera som app': 'Install as an app', 'Tryck på Dela ⬆️ längst ner i Safari.': 'Tap Share ⬆️ at the bottom of Safari.', 'Välj Lägg till på hemskärmen.': 'Choose Add to Home Screen.', 'Tryck Lägg till. Öppna sedan appen från hemskärmen.': 'Tap Add. Then open the app from the home screen.',

@@ -23,9 +23,29 @@ function summaryCard() {
       svg('rect', { class: 'kbar-fill' + (over ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, n[0] / g.kcal) * 1000) / 10, height: 6, rx: 2 })) : null,
     el('p', { class: 'macros' }, macro('Protein', n[1], g.prot), ' · ', macro('Kolh.', n[2], g.kolh), ' · ', macro('Fett', n[3])),
     posts.length ? el('p', { class: 'sum-more', text: 'Allt du ätit i dag ▾' }) : null),
-    posts.length ? dayList(posts) : null);
+    posts.length ? [dayList(posts), el('button', { class: 'link dl-ai', 'data-act': 'dayai', text: '📋 Kopiera för kontroll med AI' })] : null);
 }
 // Sammanställning: en rad per livsmedel/rätt (samma ref och samma enhet slås ihop), störst kcal först.
+// 2026-11-18: dagen som text – för att låta en AI (t.ex. Gemini) räkna på samma dag och jämföra.
+export function dayText() {
+  const posts = dayPosts(), n = sumN(posts), rows = [];
+  const groups = new Map(), mealOf = (id) => (id === '_other' ? 'Övrigt' : mealName(id));
+  for (const p of posts) {
+    const key = p.ref + '|' + (p.u ? p.u[0] : '');
+    const g = groups.get(key) || { p, n: [0, 0, 0, 0], g: 0, q: 0, u: 0, times: 0, meals: [] };
+    postN(p).forEach((x, i) => { g.n[i] += x; }); g.g += p.g || 0; g.q += p.q || 0; g.u += p.u ? p.u[1] : 0; g.times++;
+    const mn = mealOf(p.m); if (!g.meals.includes(mn)) g.meals.push(mn); groups.set(key, g);
+  }
+  for (const r of [...groups.values()].sort((a, b) => b.n[0] - a.n[0])) {
+    const amt = amountText({ ...r.p, g: r.g || r.p.g, q: r.p.q != null ? r.q : undefined, u: r.p.u ? [r.p.u[0], r.u] : undefined });
+    rows.push(`- ${r.p.name}${r.times > 1 ? ` (×${r.times})` : ''}: ${amt} (${r.meals.join(', ').toLowerCase()}) – ${kcal(r.n[0])} kcal, P ${fmtNum(r.n[1], 0)} g, K ${fmtNum(r.n[2], 0)} g, F ${fmtNum(r.n[3], 0)} g`);
+    const d = dishOf(r);
+    if (d) for (const it of d.items) rows.push(`    · ${it.name}: ${imperialG(it.g * r.q)}`);
+  }
+  return [`Det här åt jag ${dateTitle(S.current).toLowerCase()}:`, '', ...rows, '',
+    `Min app räknade fram totalt ${kcal(n[0])} kcal – protein ${fmtNum(n[1], 0)} g, kolhydrater ${fmtNum(n[2], 0)} g, fett ${fmtNum(n[3], 0)} g.`,
+    '', 'Räkna själv ut kcal, protein, kolhydrater och fett för varje rad och för hela dagen, utifrån mängderna ovan (för rätterna: utifrån ingredienserna). Jämför sedan med appens siffror och säg var det skiljer mest och varför. Snabbval som "Frukost – Lätt" eller "Snacks – Lite" är grova uppskattningar.'].join('\n');
+}
 const dishOf = (r) => (String(r.p.ref).startsWith('r:') && r.q ? S.state.dishes.find((d) => 'r:' + d.id === r.p.ref) : null);
 const imperialG = (g) => amountText({ ref: 'x', g });   // gram (eller oz) som i resten av appen
 function dayList(posts) {
