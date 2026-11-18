@@ -721,3 +721,13 @@ main .day-head + * { margin-top: 10px; }
 .meal-food[open] > summary { margin-bottom: 4px; }
 .meal { padding-bottom: 8px; }
 [data-theme="chalk"] .meal-food > summary { background: var(--surface-container-high); }
+/* 2026-11-18: dagens sammanställning */
+.day-sum > summary { list-style: none; cursor: pointer; }
+.day-sum > summary::-webkit-details-marker { display: none; }
+.day-sum .sum-more { margin: 6px 0 0; font-size: .8125rem; color: var(--primary); }
+.day-sum[open] .sum-more { visibility: hidden; height: 0; margin: 0; }
+.day-list { list-style: none; margin: 10px 0 0; padding: 0; }
+.day-list li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid var(--outline-variant, rgba(0,0,0,.08)); }
+.dl-name, .dl-n { display: flex; flex-direction: column; min-width: 0; }
+.dl-n { text-align: right; flex: none; }
+.dl-name small, .dl-n small { color: var(--muted); font-size: .75rem; }

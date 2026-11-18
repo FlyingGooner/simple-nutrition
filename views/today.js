@@ -12,14 +12,38 @@ function summaryCard() {
   const macro = (label, v, goal) => el('span', { class: 'macro' }, `${label} `, el('strong', { text: fmtNum(v, 0) }), goal ? ` / ${goal} g` : ' g');
   const has = g.kcal != null, left = has ? g.kcal - n[0] : 0, over = left < 0;
   // Utan kalorimål (standard): bara dagens summa, ingen stapel eller "kvar".
-  return el('section', { class: 'card sum-card', 'aria-label': 'Dagens kalorier' },
-    el('div', { class: 'sum-top' },
+  // 2026-11-18: tryck på kortet → allt du ätit i dag, samma sak från flera måltider ihopslaget.
+  const sec = `daysum-${S.current}`;
+  return el('details', { class: 'card sum-card day-sum', 'data-sec': sec, open: setOpen.has(sec) && posts.length > 0, 'aria-label': 'Dagens kalorier' },
+    el('summary', {}, el('div', { class: 'sum-top' },
       el('span', { class: 'sum-big' }, el('strong', { text: kcal(n[0]) }), has ? ` / ${kcal(g.kcal)} kcal` : ' kcal idag'),
       has ? el('span', { class: 'sum-left' + (over ? ' over' : ''), text: over ? `${kcal(-left)} över` : `${kcal(left)} kvar` }) : null),
     has ? svg('svg', { class: 'kbar', viewBox: '0 0 100 6', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
       svg('rect', { class: 'kbar-bg', x: 0, y: 0, width: 100, height: 6, rx: 2 }),
       svg('rect', { class: 'kbar-fill' + (over ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, n[0] / g.kcal) * 1000) / 10, height: 6, rx: 2 })) : null,
-    el('p', { class: 'macros' }, macro('Protein', n[1], g.prot), ' · ', macro('Kolh.', n[2], g.kolh), ' · ', macro('Fett', n[3])));
+    el('p', { class: 'macros' }, macro('Protein', n[1], g.prot), ' · ', macro('Kolh.', n[2], g.kolh), ' · ', macro('Fett', n[3])),
+    posts.length ? el('p', { class: 'sum-more', text: 'Allt du ätit i dag ▾' }) : null),
+    posts.length ? dayList(posts) : null);
+}
+// Sammanställning: en rad per livsmedel/rätt (samma ref och samma enhet slås ihop), störst kcal först.
+function dayList(posts) {
+  const groups = new Map(), mealOf = (id) => (id === '_other' ? 'Övrigt' : mealName(id));
+  for (const p of posts) {
+    const key = p.ref + '|' + (p.u ? p.u[0] : '');
+    const g = groups.get(key) || { p, n: [0, 0, 0, 0], g: 0, q: 0, u: 0, times: 0, meals: [] };
+    postN(p).forEach((x, i) => { g.n[i] += x; });
+    g.g += p.g || 0; g.q += p.q || 0; g.u += p.u ? p.u[1] : 0; g.times++;
+    const mn = mealOf(p.m); if (!g.meals.includes(mn)) g.meals.push(mn);
+    groups.set(key, g);
+  }
+  const rows = [...groups.values()].sort((a, b) => b.n[0] - a.n[0]);
+  return el('ul', { class: 'day-list' }, rows.map((r) => {
+    const amt = amountText({ ...r.p, g: r.g || r.p.g, q: r.p.q != null ? r.q : undefined, u: r.p.u ? [r.p.u[0], r.u] : undefined });
+    return el('li', {},
+      el('span', { class: 'dl-name' }, el('span', { text: r.times > 1 ? `${r.p.name} ×${r.times}` : r.p.name }),
+        el('small', { text: [amt, r.meals.join(', ').toLowerCase()].join(' · ') })),
+      el('span', { class: 'dl-n' }, el('strong', { text: kcal(r.n[0]) }), el('small', { text: `P ${fmtNum(r.n[1], 0)} · K ${fmtNum(r.n[2], 0)} · F ${fmtNum(r.n[3], 0)}` })));
+  }));
 }
 
 function postRow(p) {

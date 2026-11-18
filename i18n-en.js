@@ -2,6 +2,7 @@
 // Mönster (regex) för texter med tal eller namn i; $1… översätts i sin tur. Saknas en text visas den svenska.
 I18N.setKey('sn.lang');
 I18N.add({
+  'Allt du ätit i dag ▾': 'Everything you ate today ▾', 'Övrigt': 'Other',
   'Öppnas snabbare och fungerar utan nät': 'Opens faster and works offline', 'Installera': 'Install', 'Visa hur': 'Show how', '📲 Installera som app': '📲 Install as an app',
   '📲 Installera som app – öppnas snabbare och fungerar utan nät': '📲 Install as an app – opens faster and works offline', 'Installera som app': 'Install as an app', 'Tryck på Dela ⬆️ längst ner i Safari.': 'Tap Share ⬆️ at the bottom of Safari.', 'Välj Lägg till på hemskärmen.': 'Choose Add to Home Screen.', 'Tryck Lägg till. Öppna sedan appen från hemskärmen.': 'Tap Add. Then open the app from the home screen.',
   'Öppna, ladda ner, GitHub': 'Open, download, GitHub',
@@ -302,6 +303,7 @@ I18N.add({
   [/^([^,]+), (.+)$/, (g, tr) => { const a = tr(g[1]), b = tr(g[2]); return /[åäöÅÄÖ]/.test(a + b) ? null : a + ', ' + b; }],
   [/^(.+) – (Lätt|Standard|Tung|Lite|Mellan|Mycket)$/, '$1 – $2'],
   [/^(.+) lades till$/, '$1 added'],
+  [/^P (\S+) · K (\S+) · F (\S+)$/, 'P $1 · C $2 · F $3'],
   [/^(\d+) poster kopierade från igår$/, "$1 entries copied from yesterday"],
   [/^(\d+) poster kopierade till (.+)$/, '$1 entries copied to $2'],
   [/^(.+) kopierad till (.+)$/, '$1 copied to $2'],
