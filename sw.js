@@ -2,7 +2,7 @@
 // Deletes only its own 'sn-' caches: the apps share an origin on GitHub Pages.
 importScripts('version.js');
 const CACHE_VERSION = 'sn-' + self.APP_VERSION;
-const ASSETS = ['./', 'index.html', 'styles.css', 'app.js', 'store.js', 'ui.js', 'views/today.js', 'views/add.js', 'views/week.js', 'views/settings.js', 'views/dishes.js', 'views/trend.js', 'views/history.js', 'views/habits.js', 'views/act-day.js', 'views/act-add.js', 'views/act-dishes.js', 'views/act-settings.js', 'views/data.js', 'theme.js', 'i18n.js', 'i18n-en.js', 'nav.js', 'habit-store.js', 'version.js', 'backup.js', 'csv.js', 'data/foods.js', 'manifest.webmanifest',
+const ASSETS = ['./', 'index.html', 'styles.css', 'app.js', 'store.js', 'ui.js', 'views/today.js', 'views/add.js', 'views/week.js', 'views/settings.js', 'views/dishes.js', 'views/trend.js', 'views/history.js', 'views/habits.js', 'views/act-day.js', 'views/act-add.js', 'views/act-dishes.js', 'views/act-settings.js', 'views/data.js', 'theme.js', 'i18n.js', 'install.js', 'i18n-en.js', 'nav.js', 'habit-store.js', 'version.js', 'backup.js', 'csv.js', 'data/foods.js', 'manifest.webmanifest',
   'icons/icon.svg', 'docs/manual/install-android.png', 'docs/manual/install-ios.png', 'docs/manual/install-android-en.png', 'docs/manual/install-ios-en.png', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', (e) => {
