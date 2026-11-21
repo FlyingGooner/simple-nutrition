@@ -10,18 +10,19 @@ function dayTable(ws, st) {
   const h = habitWeek(S.state, ws), thr = S.state.settings.successThreshold;
   const cls = (r) => (r == null ? '' : r >= thr ? 'good-t' : r >= 0.5 ? 'mid-t' : 'low-t');
   return el('table', { class: 'wk-table day-table' },
-    el('thead', {}, el('tr', {}, ['Dag', 'Vanor', 'Träning', 'kcal'].map((t) => el('th', { text: t })))),
+    el('thead', {}, el('tr', {}, ['Dag', 'Vanor', 'Träning', 'Vikt', 'kcal'].map((t) => el('th', { text: t })))),
     el('tbody', {}, st.days.map((d, i) => {
       const r = h.days[i]?.ratio ?? null, w = S.state.workouts[d.k] || [];
       return el('tr', { 'data-act': 'goto', 'data-val': d.k, class: d.k === today() ? 'is-today' : '' },
         el('td', { class: 'wk-open', text: DAYS2[i] }),
         el('td', { class: cls(r), text: r == null ? '–' : pct(r) }),
         el('td', { class: 'dt-train', text: w.length ? '🏋️ ' + w.map(sessionText).join(', ') : '–' }),
+        el('td', { text: S.state.weights[d.k] != null ? fmtNum(Math.round(wOut(S.state.weights[d.k]) * 10) / 10) : '–' }),   // vikten tillbaka (2026-11-21)
         // Vanor men ingen mat (2026-11-21): tydligt att dagen inte räknas.
         // Idag (2026-11-21): pågår, räknas när dagen är slut – markeras med … i stället för ○.
         ...[(() => { const c = dayCheck(S.state, d.k, today()), now = c.reason === 'today';
           return el('td', { class: !now && ((d.logged && !c.ok) || (!d.logged && r != null)) ? 'dt-inc' : '', text: d.logged ? kcal(d.kcal) + (c.ok ? '' : now ? ' …' : ' ○') : r != null && !now ? 'ingen mat ○' : '–' }); })()],
-      );   // Vikt-kolumnen bort (2026-11-21): vikten syns i diagrammet ovanför
+      );
     })));
 }
 const DAYS2 = ['Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör', 'Sön'];
