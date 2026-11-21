@@ -71,7 +71,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 
 ## Vecka, Trend och Historik
 - **Vecka:** vikten (senaste vägningen mot första vägningen veckan innan, med minikurva), följsamhet, fusk och vanligaste orsak, dag för dag (vanor, pass, kcal, vikt – tryck för att öppna dagen), träning mot målen och kalorisnitt. Staplar per dag visas bara när ett kalorimål är satt.
-- **Trend:** vikten (7-dagars medel), förändringen senaste 4 veckorna och viktkurvan i samma kort, en tabell vecka för vecka (vikt, följsamhet, fusk, pass, kcal – tryck för att öppna veckan) och vad som hänger ihop: bra mot sämre veckor, träning och kalorier (efter 4 veckor).
+- **Trend:** vikten (7-dagars medel) och förändringen senaste 4 veckorna, en större viktkurva, viktmålet med prognos och **Om trenden håller**: vikten om 1, 3 och 6 månader räknat på utfallet de senaste 4 veckorna (🎯 = målvikten nådd). Kortet Total förbrukning visar förbrukningen och kcal för viktmålet bredvid varandra. Sedan en tabell vecka för vecka (vikt, följsamhet, fusk, pass, kcal – tryck för att öppna veckan) och vad som hänger ihop: bra mot sämre veckor, träning och kalorier (efter 4 veckor).
 - **Historik:** vikten i månaden mot senaste vägningen månaden innan (med minikurva) och följsamhet 7 och 30 dagar och streaks i samma kort, sedan månadskalendern färgad efter följsamhet med markering för vägning och träning, och sist pass totalt och kcal-snitt.
 - Vecka jämför enskilda vägningar, Trend 7-dagars medel.
 

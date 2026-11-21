@@ -56,3 +56,13 @@ test('målvikt utan datum: prognos utan status, kaloriråd på 0,5 %', async () 
   const f = weightForecast(st, T);
   assert.equal(f.status, 'none'); assert.ok(f.date > addDays(T, 60) && f.date < addDays(T, 90), f.date);
 });
+test('trend: prognos 1, 3, 6 månader, stannar vid målvikten', async () => {
+  const { weightTrend, addDays } = await import('../../store.js');
+  const T = '2026-11-21', weights = {};
+  for (let i = 0; i <= 20; i++) weights[addDays(T, -20 + i)] = Math.round((100 + (20 - i) * 0.1) * 100) / 100;   // −0,7 kg/v
+  const t = weightTrend(validate({ weights }), T);
+  assert.ok(Math.abs(t.week + 0.7) < 0.01);
+  assert.ok(Math.abs(t.ahead[0][1] - (t.cur - 3)) < 0.1);
+  const g = weightTrend(validate({ weights, wgoal: { target: 95 } }), T);
+  assert.equal(g.ahead[2][1], 95);
+});

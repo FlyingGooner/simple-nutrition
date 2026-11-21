@@ -797,3 +797,14 @@ main .day-head + * { margin-top: 10px; }
 .edit-list .chip.sm { min-height: 32px; padding: 0 10px; margin: 0; }
 .en-hint .stat-n { font-size: 1.5rem; }
 .en-hint .stats { margin-bottom: 4px; }
+.ahead { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--outline-variant); }
+.ahead-h { margin: 0 0 6px; font-size: .8125rem; color: var(--muted); }
+.ahead-h strong { color: var(--fg); font-weight: 500; }
+.ahead-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ahead-cell { display: grid; justify-items: center; padding: 8px 4px; border-radius: var(--r-sm); background: var(--surface-container-high); }
+.ahead-n { font-size: 1.375rem; font-variant-numeric: tabular-nums; }
+.ahead-l { font-size: .75rem; color: var(--muted); }
+.en-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.en-goal { margin: 0 0 6px; display: grid; justify-items: end; font-size: .75rem; color: var(--muted); }
+.en-goal strong { font-size: 1.25rem; font-weight: 500; color: var(--fg); font-variant-numeric: tabular-nums; }
+.en-why { margin: 8px 0 0; }

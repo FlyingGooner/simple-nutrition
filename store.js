@@ -251,15 +251,28 @@ export function weightPlan(g, cur, todayK) {
 
 // Prognos (2026-11-21): faktisk trend (minsta kvadrat över vägningarna de senaste 28 dagarna, minst 4 vägningar över ≥ 10 dagar)
 // → när målvikten nås, och jämfört med planen: i fas (±7 dagar eller ±25 % av takten), före, efter eller fel håll.
-export function weightForecast(state, todayK) {
-  const g = state.wgoal, cur = currentWeight(state), p = weightPlan(g, cur, todayK);
-  if (!p || p.reached) return null;
+// Vikttrend (2026-11-21): lutning genom vägningarna de senaste 28 dagarna (minst 4 vägningar över ≥ 10 dagar) och
+// prognos om 1, 3 och 6 månader (30, 91, 182 dagar) om trenden håller – stannar vid målvikten om en sådan finns.
+export function weightTrend(state, todayK) {
   const from = addDays(todayK, -27), ws = Object.keys(state.weights).filter((k) => k >= from && k <= todayK).sort()
     .map((k) => [daysTo(from, k), state.weights[k]]);
   if (ws.length < 4 || ws[ws.length - 1][0] - ws[0][0] < 10) return { ready: false, weighs: ws.length };
   const mx = ws.reduce((a, w) => a + w[0], 0) / ws.length, my = ws.reduce((a, w) => a + w[1], 0) / ws.length;
   const slope = ws.reduce((a, w) => a + (w[0] - mx) * (w[1] - my), 0) / ws.reduce((a, w) => a + (w[0] - mx) ** 2, 0);   // kg/dag
-  const week = slope * 7;
+  const cur = currentWeight(state), target = state.wgoal?.target;
+  const at = (d) => {
+    let v = cur + slope * d;
+    if (target != null && (slope < 0 ? v < target && cur >= target : v > target && cur <= target)) v = target;
+    return Math.max(20, Math.min(400, v));
+  };
+  return { ready: true, slope, week: slope * 7, cur, ahead: [[1, at(30)], [3, at(91)], [6, at(182)]], target };
+}
+export function weightForecast(state, todayK) {
+  const g = state.wgoal, cur = currentWeight(state), p = weightPlan(g, cur, todayK);
+  if (!p || p.reached) return null;
+  const t = weightTrend(state, todayK);
+  if (!t.ready) return t;
+  const slope = t.slope, week = t.week;
   if (p.open) {
     const ratio = week / p.rate;   // båda negativa vid nedgång
     return { ready: true, week, status: ratio <= 0 ? 'wrong' : ratio >= 0.75 && ratio <= 1.25 ? 'on' : ratio > 1.25 ? 'ahead' : 'behind' };

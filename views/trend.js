@@ -1,5 +1,5 @@
 // View: Trend – weight (7-day average), the last 4 weeks as a table, weight chart 12 weeks, kcal vs weight.
-import { avg7Of, weightPlan, weightForecast, energyEstimate, periodEnergy, currentWeight, addDays, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
+import { avg7Of, weightPlan, weightForecast, weightTrend, energyEstimate, periodEnergy, currentWeight, addDays, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
 import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions, arrange, wOut, wUnit, stat } from '../ui.js';
 
 // 7-day average of the weights in [k-6, k], or null.
@@ -21,9 +21,10 @@ function summary(t) {
       el('span', { class: 'w-label', text: 'Vikt' }),
       el('span', { class: 'w-now', text: `${fmtNum(r1(wOut(now)))} ${wUnit()}` }),
       back != null ? el('span', { class: 'w-chg' }, delta(now - back), el('small', { text: ' 4 v' })) : null),
-    goalLine(now, back != null ? (now - back) / 4 : null),
-    el('p', { class: 'w-sub', text: ['7-dagars medel', keys.length > 1 ? `totalt ${signed(wOut(now - first))} ${wUnit()} sedan ${shortDate(keys[0])}` : null].filter(Boolean).join(' · ') }),
-    chart());
+    chart(),
+    goalLine(now, null),
+    aheadTiles(),
+    keys.length > 1 ? el('p', { class: 'w-sub muted', text: `Totalt ${signed(wOut(now - first))} ${wUnit()} sedan ${shortDate(keys[0])}` }) : null);
 }
 
 // Viktmål (2026-11-21): mål, takt som behövs och takten de senaste 4 veckorna.
@@ -81,15 +82,16 @@ export function energyCard() {
   const q = Math.round(e.quality * 100), rough = q < 25, lo = r50(Math.max(800, e.tdee - 1.5 * e.se)), hi = r50(e.tdee + 1.5 * e.se);
   const why = q >= 95 ? null : WHY[e.weakest === 'plausible' ? (e.low ? 'low' : 'high') : e.weakest];
   const plan = weightPlan(S.state.wgoal, currentWeight(S.state), today());
+  const forGoal = plan && !plan.reached && !rough ? r50(e.tdee + plan.kcalDay) : null;
   return el('section', { class: 'card' }, h2,
-    el('p', { class: 'en-val' + (rough ? ' rough' : '') }, el('strong', { text: rough ? `${kcal(lo)}–${kcal(hi)}` : `≈ ${kcal(r50(e.tdee))}` }), ' kcal/dag'),
+    el('div', { class: 'en-top' },
+      el('p', { class: 'en-val' + (rough ? ' rough' : '') }, el('strong', { text: rough ? `${kcal(lo)}–${kcal(hi)}` : `≈ ${kcal(r50(e.tdee))}` }), ' kcal/dag'),
+      forGoal ? el('p', { class: 'en-goal' }, el('strong', { text: `≈ ${kcal(forGoal)}` }), el('span', { text: 'för viktmålet' })) : null),
     el('div', { class: 'en-q' }, el('span', { text: 'Kvalitet' }),
       svg('svg', { class: 'en-bar', viewBox: '0 0 100 8', preserveAspectRatio: 'none', role: 'meter', 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': q, 'aria-label': 'Kvalitet' },
         svg('rect', { class: 'en-bg', x: 0, y: 0, width: 100, height: 8, rx: 4 }), svg('rect', { class: 'en-fill' + (q >= 75 ? ' ok' : ''), x: 0, y: 0, width: Math.max(q, 2), height: 8, rx: 4 })),
       el('strong', { text: `${q} %` })),
-    rough ? el('p', { class: 'muted small', text: 'Grov uppskattning ännu.' }) : null,
-    why ? el('p', { class: 'small', text: why }) : null,
-    plan && !plan.reached && !rough ? el('p', { class: 'small' }, el('span', { text: 'För takten i ditt viktmål: ät ungefär' }), ' ', el('strong', { text: `${kcal(r50(e.tdee + plan.kcalDay))} kcal/dag` })) : null,
+    why ? el('p', { class: 'small en-why', text: why }) : null,
     how);
 }
 // Kalorisumma för en period (vecka/månad): mot målet, enligt vikten och mot förbrukningen.
@@ -105,6 +107,17 @@ export function energyStats(from, to) {
   ].filter(Boolean);
   return items.length ? el('div', {}, el('ul', { class: 'en-rows' }, items),
     el('p', { class: 'muted small', text: `Summa för ${pe.logged} kompletta dagar${pe.partial ? ` (${pe.partial} ofullständiga räknas inte)` : ''}. Minus = underskott. Vikten räknas på 7-dagars medel (1 kg ≈ 7 700 kcal).` })) : null;
+}
+
+// Prognos om 1, 3 och 6 månader (2026-11-21) från utfallet de senaste 4 veckorna.
+function aheadTiles() {
+  const t = weightTrend(S.state, today());
+  if (!t.ready) return null;
+  return el('div', { class: 'ahead' },
+    el('p', { class: 'ahead-h' }, el('span', { text: 'Om trenden håller' }), ' ', el('strong', { text: `${signed(wOut(t.week))} ${wUnit()}/v` })),
+    el('div', { class: 'ahead-row' }, t.ahead.map(([m, v]) => el('div', { class: 'ahead-cell' },
+      el('span', { class: 'ahead-n', text: `${fmtNum(r1(wOut(v)))}` }),
+      el('span', { class: 'ahead-l', text: t.target != null && Math.abs(v - t.target) < 0.05 ? `🎯 ${m} mån` : `${m} mån` })))));
 }
 
 function weeks(n) {
@@ -153,7 +166,7 @@ function chart() {
   });
   const vals = [...line.map((p) => p[1]), ...dots.map((p) => p[1])];
   const lo = Math.floor(Math.min(...vals) - 0.5), hi = Math.ceil(Math.max(...vals) + 0.5);
-  const W = 320, H = 110, pad = 26, bottom = 16;
+  const W = 320, H = 150, pad = 26, bottom = 16;
   const x = (i) => pad + i * (W - pad - 6) / (n - 1), y = (v) => 8 + (hi - v) * (H - 8 - bottom) / (hi - lo);
   const r = (v) => Math.round(v * 10) / 10;
   const d = line.map((p, j) => `${j ? 'L' : 'M'}${r(x(p[0]))},${r(y(p[1]))}`).join(' ');
