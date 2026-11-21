@@ -46,7 +46,7 @@ const r50 = (x) => Math.round(x / 50) * 50;
 export const signedK = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + kcal(Math.abs(n));
 const WHY = {
   precision: 'Säkrare med fler dagar – väg dig minst 3 gånger i veckan. Full kvalitet efter 2–4 veckor.',
-  logging: 'Dagar utan loggning drar ner – logga all mat varje dag.',
+  logging: 'Ofullständiga dagar drar ner – ge varje måltid mat eller markera ⏭️ Hoppade över.',
   low: 'Förbrukningen ser för låg ut – en del mat verkar inte vara loggad.',
   high: 'Förbrukningen ser för hög ut – troligen vätska som försvinner. Det jämnar ut sig.',
   stable: 'Veckorna skiljer sig mycket – logga lika noga varje dag.',
@@ -54,7 +54,7 @@ const WHY = {
 export function energyCard() {
   const e = energyEstimate(S.state, today()), h2 = el('h2', { text: 'Total förbrukning' });
   const how = el('details', { class: 'en-how' }, el('summary', { text: 'Så räknas det' }),
-    el('p', { class: 'muted small', text: 'Förbrukningen räknas från vad du loggat och hur vikten ändrats de senaste 4 veckorna (1 kg ≈ 7 700 kcal). Vikten svänger av vätska, så den säkras med tiden. Kvaliteten avgörs av datan: hur mycket vikten brusar, hur många dagar du loggat, om resultatet är rimligt och om veckorna stämmer med varandra. Logga all mat och väg dig minst 3 gånger i veckan – då når kvaliteten 100 % efter 2–4 veckor. Glömmer du alltid samma saker blir siffran förbrukning enligt din loggning, och den fungerar lika bra för att nå målet.' }));
+    el('p', { class: 'muted small', text: 'Förbrukningen räknas från vad du loggat och hur vikten ändrats de senaste 4 veckorna (1 kg ≈ 7 700 kcal). Vikten svänger av vätska, så den säkras med tiden. Kvaliteten avgörs av datan: hur mycket vikten brusar, hur många dagar du loggat, om resultatet är rimligt och om veckorna stämmer med varandra. Bara kompletta dagar räknas: varje måltid har mat eller är markerad ⏭️ Hoppade över, och minst 800 kcal. Använd snabbvalen när du inte vet exakt. Logga så och väg dig minst 3 gånger i veckan – då når kvaliteten 100 % efter 2–4 veckor. Glömmer du alltid samma saker blir siffran förbrukning enligt din loggning, och den fungerar lika bra för att nå målet.' }));
   if (!e || !e.ready) return el('section', { class: 'card' }, h2,
     el('p', { class: 'muted', text: 'Logga mat och väg dig några dagar, så räknas din förbrukning ut.' }), how);
   const q = Math.round(e.quality * 100), rough = q < 25, lo = r50(Math.max(800, e.tdee - 1.5 * e.se)), hi = r50(e.tdee + 1.5 * e.se);
@@ -73,8 +73,8 @@ export function energyCard() {
 }
 // Kalorisumma för en period (vecka/månad): mot målet, enligt vikten och mot förbrukningen.
 export function energyStats(from, to) {
-  const pe = periodEnergy(S.state, from, to > today() ? today() : to);
-  if (!pe.logged) return null;
+  const pe = periodEnergy(S.state, from, to > today() ? today() : to, today());
+  if (!pe.logged) return pe.partial ? el('p', { class: 'muted small', text: 'Inga kompletta dagar – varje måltid behöver mat eller ⏭️, och minst 800 kcal.' }) : null;
   const e = energyEstimate(S.state, today()), useE = e && e.ready && e.quality >= 0.25;
   const items = [
     pe.vsGoal != null ? stat(signedK(pe.vsGoal), 'kcal mot kalorimålet') : null,
@@ -82,7 +82,7 @@ export function energyStats(from, to) {
     pe.wKcal != null ? stat(signedK(pe.wKcal), 'kcal enligt vikten') : null,
   ].filter(Boolean);
   return items.length ? el('div', {}, el('div', { class: 'stats' }, items),
-    el('p', { class: 'muted small', text: `Summa för ${pe.logged} loggade dagar. Minus = underskott. Vikten räknas på 7-dagars medel (1 kg ≈ 7 700 kcal).` })) : null;
+    el('p', { class: 'muted small', text: `Summa för ${pe.logged} kompletta dagar${pe.partial ? ` (${pe.partial} ofullständiga räknas inte)` : ''}. Minus = underskott. Vikten räknas på 7-dagars medel (1 kg ≈ 7 700 kcal).` })) : null;
 }
 
 function weeks(n) {

@@ -603,6 +603,12 @@ app.addEventListener('click', (ev) => {
       setGoal(S.state, today(), { kcal: v }); persist(); render(); snackbar(`Kalorimål ${kcal(v)} kcal sparat från idag`, null, null, 3000);
       return;
     }
+    case 'tdeegoal': {   // 2026-11-21: kalorimålet från förbrukning + viktmål
+      const v = Math.round(Number(t.dataset.val));
+      if (!(v >= 500 && v <= 10000)) return;
+      setGoal(S.state, today(), { kcal: v }); persist(); render(); snackbar(`Kalorimål ${kcal(v)} kcal sparat från idag`, null, null, 3000);
+      return;
+    }
     case 'wgquick': {   // 2026-11-21: snabbval av takt i Idag; samma val igen = av
       const r = Number(t.dataset.val), g = S.state.wgoal;
       if (g && !g.date && Math.abs(g.rate - r) < 0.005) { delete S.state.wgoal; persist(); render(); snackbar('Inget viktmål', null, null, 2500); return; }

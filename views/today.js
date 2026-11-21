@@ -1,5 +1,5 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
-import { sumN, postN, goalFor, addDays, habitDay, habitStreak, energyEstimate, weightPlan, currentWeight } from '../store.js';
+import { sumN, postN, goalFor, setGoal, addDays, habitDay, habitStreak, dayCheck, energyEstimate, weightPlan, currentWeight } from '../store.js';
 import { today, S, setOpen, el, svg, stepper, kcal, fmtNum, pct, dateTitle, wOut, wUnit, amountText, mealName, reasonName, arrange } from '../ui.js';
 import { viewAdd } from './add.js';
 import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
@@ -40,6 +40,14 @@ function goalChips(e) {
       text: r === max ? `1 % (${r2(r)} ${wUnit()})` : `${r2(r)} ${wUnit()}`,
     }))));
 }
+// Komplett dag (2026-11-21): säg vad som saknas för att dagen ska räknas i statistiken.
+function dayNote() {
+  const d = dayCheck(S.state, S.current, null);
+  if (!d.hasFood || d.ok) return null;
+  const text = d.reason === 'missing' ? `${d.missing.join(', ')} saknar mat – lägg till eller markera ⏭️, annars räknas dagen inte i statistiken.`
+    : `Under 800 kcal – dagen räknas inte i statistiken. Fattas något? Använd snabbvalen.`;
+  return el('p', { class: 'day-note small', text });
+}
 // 2026-11-21: förbrukningen i klartext under dagens kalorier (bara idag, kvalitet ≥ 25 %).
 function energyHint() {
   if (S.current !== today()) return null;
@@ -50,6 +58,8 @@ function energyHint() {
     el('p', {}, el('span', { text: 'Utifrån din loggning och vikt håller du vikten på' }), ' ', el('strong', { text: `≈ ${kcal(r50(e.tdee))} kcal/dag` }), '.'),
     goalChips(e),
     p && !p.reached ? el('p', {}, el('span', { text: 'Äter du' }), ' ', el('strong', { text: `≈ ${kcal(r50(e.tdee + p.kcalDay))} kcal/dag` }), ' ', el('span', { text: 'följer vikten ditt mål.' })) : null,
+    p && !p.reached && Math.abs((goalFor(S.state, today()).kcal ?? 0) - r50(e.tdee + p.kcalDay)) >= 50
+      ? el('button', { class: 'link', 'data-act': 'tdeegoal', 'data-val': r50(e.tdee + p.kcalDay), text: 'Använd som kalorimål' }) : null,
     el('p', { class: 'muted small', text: `Kvalitet ${Math.round(e.quality * 100)} % – se Trend.` }));
 }
 // Sammanställning: en rad per livsmedel/rätt (samma ref och samma enhet slås ihop), störst kcal först.
@@ -199,7 +209,7 @@ export function viewToday() {
       other.length ? mealCard({ id: '_other', name: 'Övrigt' }, other) : null),
     train: () => [el('div', { class: 'workouts' }, workoutCards()), addRow()],
     score: () => el('p', { class: 'summary' }, r.count ? ['Dagens följsamhet: ', el('strong', { text: `${fmtNum(r.score)}/${r.count}` }), ' · ' + pct(r.ratio)] : 'Inget loggat ännu.'),
-    kcal: () => [summaryCard(), energyHint(),
+    kcal: () => [summaryCard(), dayNote(), energyHint(),
       !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
         ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera maten från igår' }) : null],
     weight: () => weightCard(),

@@ -238,20 +238,31 @@ export function weightPlan(g, cur, todayK) {
 }
 
 /* ---------- Energi: summering och förbrukning (2026-11-21) ---------- */
-// Summering för [from, to]: loggade dagar och kcal, mot kalorimålet (bara dagar med mål) och vikten (7-d medel) omräknad till kcal.
-export function periodEnergy(state, from, to) {
-  let kcal = 0, logged = 0, gK = 0, gSum = 0, gDays = 0, days = 0;
+// Komplett dag (beslut 2026-11-21): varje måltid har mat eller är markerad ⏭️ Hoppade över, minst 800 kcal, och dagen är slut.
+// Bara kompletta dagar räknas i förbrukning och kalorisummor. ✅/🍰 utan mat = man åt men loggade inte.
+export const DAY_MIN_KCAL = 800;
+export function dayCheck(state, k, todayK) {
+  const posts = state.log[k] || [], h = state.habits[k] || {};
+  const kcal = Math.round(sumN(posts)[0]);
+  const skipped = (id) => { const x = h[id]; return (x && typeof x === 'object' ? x.outcome : x) === 'skipped'; };
+  const missing = state.meals.filter((m) => !skipped(m.id) && !posts.some((p) => p.m === m.id)).map((m) => m.name);
+  const reason = todayK && k >= todayK ? 'today' : !posts.length ? 'empty' : missing.length ? 'missing' : kcal < DAY_MIN_KCAL ? 'low' : null;
+  return { ok: !reason, reason, missing, kcal, hasFood: posts.length > 0 };
+}
+// Summering för [from, to] (bara kompletta dagar): loggade dagar och kcal, mot kalorimålet (bara dagar med mål) och vikten (7-d medel) omräknad till kcal.
+export function periodEnergy(state, from, to, todayK = null) {
+  let kcal = 0, logged = 0, gK = 0, gSum = 0, gDays = 0, days = 0, partial = 0;
   for (let k = from; k <= to; k = addDays(k, 1)) {
     days++;
-    const posts = state.log[k];
-    if (!posts || !posts.length) continue;
-    const c = sumN(posts)[0], g = goalFor(state, k).kcal;
+    const d = dayCheck(state, k, todayK);
+    if (!d.ok) { if (d.hasFood && d.reason !== 'today') partial++; continue; }
+    const c = d.kcal, g = goalFor(state, k).kcal;
     kcal += c; logged++;
     if (g != null) { gK += c; gSum += g; gDays++; }
   }
   const a = avg7Of(state.weights, addDays(from, -1)), b = avg7Of(state.weights, to);
   const dw = a != null && b != null ? b - a : null;
-  return { days, logged, kcal: Math.round(kcal), vsGoal: gDays ? Math.round(gK - gSum) : null, gDays, dw, wKcal: dw == null ? null : Math.round(dw * KCAL_PER_KG) };
+  return { days, logged, partial, kcal: Math.round(kcal), vsGoal: gDays ? Math.round(gK - gSum) : null, gDays, dw, wKcal: dw == null ? null : Math.round(dw * KCAL_PER_KG) };
 }
 const clamp01 = (x) => Math.max(0, Math.min(1, x));
 // Förbrukning (kcal/dag) över de senaste 28 dagarna t.o.m. igår: snitt loggat − viktens lutning × 7 700.

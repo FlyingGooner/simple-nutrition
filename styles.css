@@ -754,3 +754,5 @@ main .day-head + * { margin-top: 10px; }
 .en-hint p { margin: 0 0 4px; font-size: .9rem; }
 .en-hint p:last-child { margin: 0; }
 .en-chips { margin: 6px 0 10px; }
+.day-note { margin: 4px 4px 8px; color: var(--dev); }
+.dt-inc { color: var(--muted); }
