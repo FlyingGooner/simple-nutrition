@@ -58,9 +58,9 @@ export function dayClass(k) {
   const r = habitDay(S.state, k).ratio;
   return r == null ? 'none' : r >= S.state.settings.successThreshold ? 'good' : r >= 0.5 ? 'mid' : 'low';
 }
-// Snitt de senaste n dagarna före idag, bara kompletta dagar (2026-11-21).
-function avgKcal(n) {
-  const pe = periodEnergy(S.state, addDays(today(), -n), addDays(today(), -1), today());
+// Månadens kcal-snitt, bara kompletta dagar (städning 2026-11-21: månaden i stället för 7 dagar, som Vecka redan visar).
+function avgKcal(from, to) {
+  const pe = periodEnergy(S.state, from, to > today() ? today() : to, today());
   return pe.logged ? Math.round(pe.kcal / pe.logged) : null;
 }
 
@@ -75,8 +75,10 @@ export function viewHistory() {
     cells.push(el('button', { class: `cal-day ${fut ? 'future' : dayClass(k)}${k === today() ? ' is-today' : ''}${S.state.weights[k] != null ? ' weighed' : ''}${S.state.workouts[k] ? ' trained' : ''}`,
       'data-act': 'goto', 'data-val': k, disabled: fut, 'aria-label': parseKey(k).toLocaleDateString('sv-SE', { day: 'numeric', month: 'long' }), text: String(d) }));
   }
-  const a7 = avgKcal(7), sessions = Object.values(S.state.workouts).reduce((n, l) => n + l.length, 0);
-  const km = Object.values(S.state.workouts).flat().reduce((n, w) => n + (w.km || 0), 0);
+  // Månaden (städning 2026-11-21): pass och kcal-snitt för den visade månaden, inte totalt/7 dagar.
+  const mFrom = `${S.month}-01`, mTo = dateKey(new Date(y, m, 0, 12)), a7 = avgKcal(mFrom, mTo);
+  const mw = Object.keys(S.state.workouts).filter((k) => k.startsWith(S.month)).flatMap((k) => S.state.workouts[k]);
+  const sessions = mw.length, km = mw.reduce((n, w) => n + (w.km || 0), 0);
   return [
     el('div', { class: 'card day-head' }, stepper('Byt månad', ['mprev', 'Föregående månad'], 'mnow', ['mnext', 'Nästa månad'], S.month >= today().slice(0, 7), title.charAt(0).toUpperCase() + title.slice(1))),
     ...arrange('history', {
@@ -88,9 +90,9 @@ export function viewHistory() {
         el('span', { class: 'lg good' }), ` ≥ ${pct(S.state.settings.successThreshold)}`, el('span', { class: 'lg mid' }), ' 50 %+', el('span', { class: 'lg low' }), ' < 50 %',
         el('span', { class: 'lg lg-weigh' }), ' Vägning', el('span', { class: 'lg lg-train' }), ' Träning')),
     more: () => el('section', { class: 'card' }, el('div', { class: 'stats' },
-      stat(String(sessions), 'träningspass totalt', km ? ` · ${Math.round(dOut(km) * 10) / 10} ${dUnit()}` : ''),
-      stat(a7 == null ? '–' : kcal(a7), 'kcal/dag, 7 dagar')),
-      energyStats(`${S.month}-01`, dateKey(new Date(y, m, 0, 12)))),
+      stat(String(sessions), 'pass i månaden', km ? ` · ${Math.round(dOut(km) * 10) / 10} ${dUnit()}` : ''),
+      stat(a7 == null ? '–' : kcal(a7), 'kcal/dag i snitt')),
+      energyStats(mFrom, mTo)),
     }),
   ];
 }

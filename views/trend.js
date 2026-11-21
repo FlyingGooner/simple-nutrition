@@ -14,7 +14,6 @@ function summary(t) {
   const lastK = keys[keys.length - 1], now = avg7(lastK);
   let back = avg7(addDays(lastK, -28));
   if (back == null) { const first = keys.find((k) => k >= addDays(lastK, -28)); back = first && first < lastK ? avg7(first) : null; }
-  const first = S.state.weights[keys[0]];
   // Kompakt (v0.5.14): siffror på en rad + kurvan i samma kort.
   return el('section', { class: 'card w-card' },
     el('div', { class: 'w-row' },
@@ -23,8 +22,7 @@ function summary(t) {
       back != null ? el('span', { class: 'w-chg' }, delta(now - back), el('small', { text: ' 4 v' })) : null),
     chart(),
     goalLine(now, null),
-    aheadTiles(),
-    keys.length > 1 ? el('p', { class: 'w-sub muted', text: `Totalt ${signed(wOut(now - first))} ${wUnit()} sedan ${shortDate(keys[0])}` }) : null);
+    aheadTiles());   // städning 2026-11-21: "Totalt sedan" bort – kurvan visar hela tiden
 }
 
 // Viktmål (2026-11-21): mål, takt som behövs och takten de senaste 4 veckorna.
@@ -34,6 +32,7 @@ export function goalLine(cur, actual) {
   const kg = (v) => `${fmtNum(r1(wOut(v)))} ${wUnit()}`, rate = (v) => `${signed(wOut(v))} ${wUnit()}/v`;
   const part = (label, value, cls) => el('span', { class: 'wg-part' + (cls ? ' ' + cls : '') }, el('span', { text: label }), ' ', el('strong', { text: value }));
   if (p.open) return [el('p', { class: 'w-sub wg' }, part('Mål', rate(p.rate)), actual != null ? [' · ', part('senaste 4 v', rate(actual))] : null), forecastLine()];
+  if (p.auto) return forecastLine();   // målvikt utan datum: prognosraden säger redan målet
   if (p.reached) return el('p', { class: 'w-sub wg' }, part('Mål', kg(p.target)), ' · ', el('span', { class: 'goal-ok', text: 'Nått 🎉' }));
   return [el('p', { class: 'w-sub wg' },
     part('Mål', kg(p.target)),
@@ -194,7 +193,8 @@ function compare() {
     const pe = periodEnergy(S.state, ws, addDays(ws, 6), today());
     rows.push({ good: h.ratio != null ? h.ratio >= thr : null, trained: weekSessions(ws).all >= wg, under: pe.logged >= 4 && st.days[6].goal != null ? pe.kcal / pe.logged <= st.days[6].goal : null, d: a - b });
   }
-  const body = rows.length < 4 ? [el('p', { class: 'muted small', text: `Fler veckor behövs (${rows.length}/4) – veckor med loggning och vikt före och efter.` })] : (() => {
+  if (rows.length < 4) return null;   // städning 2026-11-21: kortet visas först när det finns något att jämföra
+  const body = (() => {
     const mean = (l) => l.reduce((s, r) => s + r.d, 0) / l.length;
     const row = (label, l) => el('li', {}, el('span', { text: `${label} (${l.length})` }), el('strong', { text: l.length ? `${signed(wOut(mean(l)))} ${wUnit()}/v` : '–' }));
     const pair = (k, yes, no) => (rows.some((r) => r[k] != null) ? [row(yes, rows.filter((r) => r[k] === true)), row(no, rows.filter((r) => r[k] === false))] : []);
