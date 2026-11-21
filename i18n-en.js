@@ -243,7 +243,7 @@ I18N.add({
   'Ingen vägning den här veckan än': 'No weigh-in this week yet', 'Ingen vägning veckan innan att jämföra med': 'No weigh-in the week before to compare with',
   'Byt vecka': 'Change week', 'Föregående vecka': 'Previous week', 'Nästa vecka': 'Next week',
   'kcal per dag i snitt': 'kcal per day on average', 'dagar inom mål': 'days within goal', 'dagar med mat loggad': 'days with food logged',
-  '🥗 Mat': '🥗 Food', '✅ Mat': '✅ Food', 'Mat': 'Food', 'Inget loggat': 'Nothing logged', 'Kolh.': 'Carbs', 'Vikt idag (valfritt)': 'Weight today (optional)', 'Vikt idag': 'Weight today', '⚖️ Vikt': '⚖️ Weight', '+ Vikt': '+ Weight', '+ Träning': '+ Workout', 'Minska 0,1': 'Decrease 0.1', 'Öka 0,1': 'Increase 0.1',
+  '🥗 Mat': '🥗 Food', '✅ Mat': '✅ Food', 'Mat': 'Food', 'Inget loggat': 'Nothing logged', 'Kolh.': 'Carbs', 'Vikt idag (valfritt)': 'Weight today (optional)', 'Vikt idag': 'Weight today', '⚖️ Vikt': '⚖️ Weight', '+ Vikt': '+ Weight', 'Allt du ätit ▾': 'All you ate ▾', '+ Träning': '+ Workout', 'Minska 0,1': 'Decrease 0.1', 'Öka 0,1': 'Increase 0.1',
   '🍰 fusk': '🍰 cheats', 'fusk': 'cheats', 'Dag': 'Day', '7-dagars medel': '7-day average', 'i rad': 'in a row', 'Minst': 'At least', 'Av': 'Off',
   'Kortordning': 'Card order', 'Språk, data, hjälp': 'Language, data, help', 'Egen': 'Custom', '7 dagar': '7 days', '30 dagar': '30 days',
   'Vanligaste orsak': 'Most common reason', 'Senaste': 'Recent', 'Senast': 'Last time', '↩ Till idag': '↩ Back to today', '🗑 Rensa dagen': '🗑 Clear the day',

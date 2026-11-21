@@ -838,3 +838,7 @@ main .day-head + * { margin-top: 10px; }
 .wd-row { display: flex; align-items: center; gap: 8px; }
 .wd-row input[type=range] { flex: 1; min-width: 0; accent-color: var(--primary); height: 32px; }
 .wd-step { flex: none; width: 48px; height: 48px; border: 0; border-radius: 50%; background: var(--surface); color: var(--fg); font-size: 1.5rem; cursor: pointer; }
+
+/* Kcal-kortet lägre (2026-11-21) */
+.day-sum .sum-top .sum-more { margin: 0; white-space: nowrap; }
+.day-sum .macros { margin: 2px 0 0; }
