@@ -406,7 +406,6 @@ app.addEventListener('click', (ev) => {
     }
     case 'weighopen':   // 2026-11-21: vikt-rutan i kcal-kortet
       S.weighOpen = !S.weighOpen;
-      if (S.weighOpen) setTimeout(() => document.getElementById('weight')?.focus(), 0);
       break;
     // Lägg till
     case 'addopen': S.open = null; openAdd('meal', id); return;

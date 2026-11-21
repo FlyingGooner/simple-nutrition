@@ -825,10 +825,10 @@ main .day-head + * { margin-top: 10px; }
 
 /* Kcal + vikt i samma kort (2026-11-21): vänster = dagen, höger = vikt */
 .sum-split { display: flex; align-items: stretch; gap: 10px; }
-.sum-split > .day-sum { flex: 1; min-width: 0; }
-.w-tile { flex: none; align-self: flex-start; display: grid; justify-items: center; gap: 2px; min-width: 84px; min-height: 64px; padding: 8px 10px; border: 0; border-radius: 14px; background: var(--surface-container-high, rgba(0,0,0,.05)); color: var(--fg); font: inherit; cursor: pointer; }
+.sum-split .sum-l { flex: 1; min-width: 0; }
+.w-tile { flex: none; align-self: flex-start; display: grid; justify-items: center; gap: 2px; min-width: 0; padding: 4px 10px; border: 0; border-radius: 12px; background: var(--surface-container-high, rgba(0,0,0,.05)); color: var(--fg); font: inherit; cursor: pointer; }
 .w-tile.on { outline: 2px solid var(--primary); }
-.w-tile-k { font-size: .75rem; color: var(--muted); }
-.w-tile strong { font-size: 1.05rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.w-tile-k { font-size: .6875rem; color: var(--muted); }
+.w-tile strong { font-size: .9375rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .w-form { border-top: 1px solid var(--line, rgba(0,0,0,.08)); margin-top: 8px; }
 .w-form p { margin: 6px 0 2px; }
