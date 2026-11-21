@@ -52,8 +52,11 @@ export function forecastLine() {
   const p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
   const outcome = [' · ', el('span', { text: 'utfall' }), ' ', el('strong', { text: kgw(f.week) })];
   const goalRate = p && !p.reached && !p.auto ? [' · ', el('span', { text: 'mål' }), ' ', el('strong', { text: kgw(p.rate) })] : null;
-  if (f.status === 'none') return el('p', { class: 'w-sub fc' }, el('span', { text: 'Prognos: målet nås' }), ' ', el('strong', { text: `≈ ${shortDate(f.date)}` }),
-    outcome);
+  // Målvikt utan datum (2026-11-21): tydligt när målet nås, med år.
+  if (f.status === 'none') return el('p', { class: 'w-sub fc fc-big' },
+    el('span', { text: '🎯' }), ' ', el('strong', { text: `${fmtNum(r1(wOut(S.state.wgoal.target)))} ${wUnit()}` }), ' ', el('span', { text: 'nås ungefär' }), ' ',
+    el('strong', { class: 'fc-ok', text: parseKey(f.date).toLocaleDateString(globalThis.I18N?.lang() === 'en' ? 'en-GB' : 'sv-SE', { day: 'numeric', month: 'long', year: 'numeric' }) }),
+    el('br'), el('span', { class: 'muted', text: 'om trenden håller' }), outcome);
   if (f.status === 'wrong' && S.state.wgoal && !S.state.wgoal.date && S.state.wgoal.rate == null && S.state.wgoal.pct == null) return el('p', { class: 'w-sub fc' }, el('strong', { class: 'fc-dev', text: '⚠️ Trenden går åt fel håll' }));
   const [cls, label] = { on: ['ok', '✅ I fas'], ahead: ['ok', '🚀 Före'], behind: ['dev', '⚠️ Efter'], wrong: ['dev', '⚠️ Trenden går åt fel håll'] }[f.status];
   return el('p', { class: 'w-sub fc' },
@@ -114,7 +117,7 @@ function aheadTiles() {
   const t = weightTrend(S.state, today());
   if (!t.ready) return null;
   return el('div', { class: 'ahead' },
-    el('p', { class: 'ahead-h' }, el('span', { text: 'Om trenden håller' }), ' ', el('strong', { text: `${signed(wOut(t.week))} ${wUnit()}/v` })),
+    el('p', { class: 'ahead-h' }, el('span', { text: 'Vikten om trenden håller' })),
     el('div', { class: 'ahead-row' }, t.ahead.map(([m, v]) => el('div', { class: 'ahead-cell' },
       el('span', { class: 'ahead-n', text: `${fmtNum(r1(wOut(v)))}` }),
       el('span', { class: 'ahead-l', text: t.target != null && Math.abs(v - t.target) < 0.05 ? `🎯 ${m} mån` : `${m} mån` })))));

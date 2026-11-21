@@ -808,3 +808,4 @@ main .day-head + * { margin-top: 10px; }
 .en-goal { margin: 0 0 6px; display: grid; justify-items: end; font-size: .75rem; color: var(--muted); }
 .en-goal strong { font-size: 1.25rem; font-weight: 500; color: var(--fg); font-variant-numeric: tabular-nums; }
 .en-why { margin: 8px 0 0; }
+.fc-big { font-size: .9375rem; color: var(--fg); margin-top: 8px; }
