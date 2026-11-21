@@ -260,12 +260,13 @@ export function viewToday() {
         el('div', { class: 'meal-head' }, el('span', { class: 'meal-name', text: dayHabits()[k].name || 'Borttagen måltid' })), outcomeRow(k), habitDetails(k))),
       extraCards(),
       other.length ? mealCard({ id: '_other', name: 'Övrigt' }, other) : null),
-    train: () => [el('div', { class: 'workouts' }, workoutCards()), addRow()],
+    train: () => el('div', { class: 'workouts' }, workoutCards()),
     kcal: () => [summaryCard(), dayNote(), weighNote(), energyHint(),
       !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
         ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera maten från igår' }) : null],
     weight: () => null,   // 2026-11-21: ligger i kcal-kortet
     }),
+    addRow(),   // 2026-11-21: knapparna längst ner
     posts.length || S.state.weights[S.current] != null || S.state.habits[S.current] || S.state.workouts[S.current]
       ? el('p', { class: 'clear-day center' }, el('button', { class: 'link danger', 'data-act': 'clearday', text: '🗑 Rensa dagen' })) : null,
   ];
