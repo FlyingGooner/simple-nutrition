@@ -1,8 +1,8 @@
 // Simple nutrition – no external calls, localStorage only. See CLAUDE.md. Views in views/*.js, shared state in ui.js.
-import { load, save, validate, addDays, weekStart, setGoal, goalFor, findRef, cleanText, uid, dishTotal } from './store.js';
+import { load, save, validate, validDate, currentWeight, weightPlan, addDays, weekStart, setGoal, goalFor, findRef, cleanText, uid, dishTotal } from './store.js';
 import { today, S, setOpen, el, kcal, dateTitle, parseNum, wType, isCardio, parseDur, fmtNum, amountText, layoutOf, LAYOUT_VIEWS } from './ui.js';
 import { lastPost, QUICK_ADD, setLevel, dropLevels, quickGroup, EST_MAX } from './store.js';
-import { mealName, wIn, dIn, dUnit, setUnits } from './ui.js';
+import { mealName, wIn, wOut, wUnit, shortDate, dIn, dUnit, setUnits } from './ui.js';
 import { topLayer, layerDepth, closeTop, dishDirty, defaultQuickG } from './nav.js';
 import { viewToday, dayPosts, dayText } from './views/today.js';
 import { resultsList, pickGrams, pickSum, unitsOf, isBulk, bulkDefault, EST_GROUP } from './views/add.js';
@@ -591,6 +591,23 @@ app.addEventListener('click', (ev) => {
       const v = Math.round(parseNum(raw));
       if (!(v >= 500 && v <= 10000)) { snackbar('Ange ett mål mellan 500 och 10 000 kcal, eller tomt för inget mål', null, null, 3000); return; }
       setGoal(S.state, today(), { kcal: v }); persist(); render(); snackbar(`Kalorimål ${kcal(v)} kcal sparat från idag`, null, null, 3000);
+      return;
+    }
+    case 'wgoalsave': {   // Viktmål (2026-11-21): högst 1 % av vikten per vecka
+      const v = (i) => document.getElementById(i)?.value.trim() ?? '';
+      const tRaw = v('wg-target'), dRaw = v('wg-date'), rRaw = v('wg-rate');
+      if (!tRaw) { delete S.state.wgoal; persist(); render(); snackbar('Inget viktmål', null, null, 2500); return; }
+      const target = wIn(parseNum(tRaw)), rate = rRaw ? wIn(parseNum(rRaw)) : null;
+      if (!(target >= 20 && target <= 400)) { snackbar('Ange en målvikt', null, null, 3000); return; }
+      if (dRaw && !(validDate(dRaw) && dRaw > today())) { snackbar('Datumet måste vara efter idag', null, null, 3000); return; }
+      if (!dRaw && !(rate >= 0.05 && rate <= 4)) { snackbar('Fyll i datum eller takt per vecka', null, null, 3000); return; }
+      const g = dRaw ? { target: Math.round(target * 10) / 10, date: dRaw } : { target: Math.round(target * 10) / 10, rate: Math.round(rate * 100) / 100 };
+      const p = weightPlan(g, currentWeight(S.state), today());
+      if (p?.tooFast) {
+        snackbar(dRaw ? `För snabbt – högst 1 % per vecka. Tidigast ${shortDate(p.earliest)}` : `För snabbt – högst ${fmtNum(Math.round(wOut(p.max) * 10) / 10)} ${wUnit()} per vecka (1 %)`, null, null, 4000);
+        return;
+      }
+      S.state.wgoal = g; persist(); render(); snackbar('Viktmålet sparat', null, null, 2500);
       return;
     }
     case 'macrosave': {

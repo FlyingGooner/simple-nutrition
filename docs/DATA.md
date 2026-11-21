@@ -20,6 +20,7 @@ Källan för beskrivningen är `EXPORT_SCHEMA` och `EXPORT_EXAMPLE` i `store.js`
 | `foods` | egna produkter `{ id, name, n, u? }` |
 | `aliases` | sökord → ref |
 | `weights` | datum → kg (20–400) |
+| `wgoal` | valfritt: `{ target, date }` eller `{ target, rate }` – målvikt kg (20–400) och slutdatum eller takt kg/vecka (0,05–4). Appen tillåter högst 1 % av kroppsvikten per vecka. |
 | `habits` | datum → { måltids-id \| `extra-n`: { outcome: followed/cheat/skipped, reason?, note? } } |
 | `workouts` | datum → [{ types, km?, sec? }] |
 | `settings` | orsaker, gräns för lyckad dag, plan, passtyper och mål |

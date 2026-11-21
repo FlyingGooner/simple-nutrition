@@ -61,6 +61,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 
 ## Vikt
 - Fyll i vikten under **Vikt idag**, gärna på morgonen. Trenden räknas på 7-dagars medel, så enskilda dagar spelar liten roll.
+- **Viktmål:** under **Inställningar → Kalorier → Viktmål** anger du målvikt och antingen ett datum eller en takt per vecka. Takten får vara högst 1 % av din vikt per vecka (vid 80 kg alltså 0,8 kg). Är datumet för tidigt säger appen vilket datum som är det tidigaste. Målet, takten och takten de senaste 4 veckorna visas i Trend och i Vecka. Takten räknas också om till ungefär kcal per dag (1 kg ≈ 7 700 kcal).
 
 ## Vecka, Trend och Historik
 - **Vecka:** vikten (senaste vägningen mot första vägningen veckan innan, med minikurva), följsamhet, fusk och vanligaste orsak, dag för dag (vanor, pass, kcal, vikt – tryck för att öppna dagen), träning mot målen och kalorisnitt. Staplar per dag visas bara när ett kalorimål är satt.

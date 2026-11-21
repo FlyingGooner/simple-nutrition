@@ -1,13 +1,9 @@
 // View: Trend – weight (7-day average), the last 4 weeks as a table, weight chart 12 weeks, kcal vs weight.
-import { addDays, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
+import { avg7Of, weightPlan, addDays, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
 import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions, arrange, wOut, wUnit } from '../ui.js';
 
 // 7-day average of the weights in [k-6, k], or null.
-export function avg7(k) {
-  const v = [];
-  for (let i = 0; i < 7; i++) { const w = S.state.weights[addDays(k, -i)]; if (w != null) v.push(w); }
-  return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
-}
+export const avg7 = (k) => avg7Of(S.state.weights, k);
 const r1 = (x) => Math.round(x * 10) / 10;
 const signed = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + fmtNum(Math.abs(r1(n)));
 const delta = (n) => el('span', { class: 'delta' + (n < 0 ? ' down' : ''), text: `${signed(wOut(n))} ${wUnit()} ${n < 0 ? '▼' : n > 0 ? '▲' : ''}`.trim() });
@@ -25,8 +21,23 @@ function summary(t) {
       el('span', { class: 'w-label', text: 'Vikt' }),
       el('span', { class: 'w-now', text: `${fmtNum(r1(wOut(now)))} ${wUnit()}` }),
       back != null ? el('span', { class: 'w-chg' }, delta(now - back), el('small', { text: ' 4 v' })) : null),
+    goalLine(now, back != null ? (now - back) / 4 : null),
     el('p', { class: 'w-sub', text: ['7-dagars medel', keys.length > 1 ? `totalt ${signed(wOut(now - first))} ${wUnit()} sedan ${shortDate(keys[0])}` : null].filter(Boolean).join(' · ') }),
     chart());
+}
+
+// Viktmål (2026-11-21): mål, takt som behövs och takten de senaste 4 veckorna.
+export function goalLine(cur, actual) {
+  const p = weightPlan(S.state.wgoal, cur, today());
+  if (!p) return null;
+  const kg = (v) => `${fmtNum(r1(wOut(v)))} ${wUnit()}`, rate = (v) => `${signed(wOut(v))} ${wUnit()}/v`;
+  const part = (label, value, cls) => el('span', { class: 'wg-part' + (cls ? ' ' + cls : '') }, el('span', { text: label }), ' ', el('strong', { text: value }));
+  if (p.reached) return el('p', { class: 'w-sub wg' }, part('Mål', kg(p.target)), ' · ', el('span', { class: 'goal-ok', text: 'Nått 🎉' }));
+  return el('p', { class: 'w-sub wg' },
+    part('Mål', kg(p.target)), ' · ',
+    p.tooFast ? part('Hinns inte med högst 1 %/v, tidigast', shortDate(p.earliest)) : part(S.state.wgoal.date ? 'senast' : 'klart ≈', shortDate(p.eta)), ' · ',
+    part('takt', rate(p.rate)),
+    actual != null ? [' · ', part('senaste 4 v', rate(actual))] : null);
 }
 
 function weeks(n) {

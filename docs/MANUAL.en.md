@@ -61,6 +61,7 @@ The same text is in the app under **Settings → General → Help and manual** w
 
 ## Weight
 - Enter your weight under **Weight today**, ideally in the morning. The trend uses a 7-day average, so single days matter little.
+- **Weight goal:** under **Settings → Calories → Weight goal** you enter a goal weight and either a date or a pace per week. The pace may be at most 1 % of your weight per week (0.8 kg at 80 kg). If the date is too early the app tells you the earliest possible date. The goal, the pace and your pace over the last 4 weeks are shown in Trend and Week. The pace is also converted to roughly kcal per day (1 kg ≈ 7,700 kcal).
 
 ## Week, Trend and History
 - **Week:** the weight (latest weigh-in vs the first weigh-in the week before, with a mini curve), adherence, cheats and most common reason, day by day (habits, workouts, kcal, weight – tap to open the day), training against the goals and calorie average. Bars per day are shown only when a calorie goal is set.

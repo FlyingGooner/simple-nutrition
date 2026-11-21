@@ -1,6 +1,6 @@
 // View: Inställningar – grupperna Vanor, Träning, Kalorier och Allmänt, var och en hopfälld för sig (beslut 2026-11-09).
-import { goalFor, findRef, addDays } from '../store.js';
-import { today, S, setOpen, el, kcal, pct, shortDate, LAYOUT, LAYOUT_VIEWS, layoutOf, imperial } from '../ui.js';
+import { goalFor, findRef, addDays, currentWeight, weightPlan } from '../store.js';
+import { today, S, setOpen, el, kcal, pct, shortDate, LAYOUT, LAYOUT_VIEWS, layoutOf, imperial, wOut, wUnit, fmtNum } from '../ui.js';
 import { PLAN_MAX } from '../habit-store.js';
 import { savedPassword } from './data.js';
 import { dishEditor, dishList } from './dishes.js';
@@ -39,6 +39,26 @@ function editableList(kind, items) {
 }
 
 // In-app manual: static <template id="help-tpl"> in index.html, cloned (never parsed as HTML text).
+// Viktmål (2026-11-21): målvikt och antingen datum eller takt per vecka, högst 1 % av vikten per vecka.
+function wgoalSection() {
+  const g = S.state.wgoal, cur = currentWeight(S.state), p = weightPlan(g, cur, today());
+  const w1 = (v) => fmtNum(Math.round(wOut(v) * 10) / 10), u = wUnit();
+  const field = (id, label, value, ph, type = 'text') => el('label', { class: 'goal-row' }, el('span', { text: label }),
+    el('input', { type, inputmode: type === 'text' ? 'decimal' : undefined, class: type === 'text' ? 'num-in' : 'num-in date-in', value, placeholder: ph, id, 'aria-label': label }));
+  const info = !g ? null : cur == null ? 'Väg dig under Idag så räknas takten ut.'
+    : p.reached ? 'Målet är nått.'
+    : `Takt ${w1(Math.abs(p.rate))} ${u}/v ≈ ${kcal(Math.abs(p.kcalDay))} kcal/dag ${p.kcalDay < 0 ? 'underskott' : 'överskott'}.`;
+  return [
+    field('wg-target', `Målvikt (${u})`, g ? w1(g.target) : '', 'Inget mål'),
+    field('wg-date', 'Klart senast', g?.date ?? '', '', 'date'),
+    field('wg-rate', `eller takt, ${u} per vecka`, g?.rate ? w1(g.rate) : '', cur ? `högst ${w1(cur * 0.01)}` : 'högst 1 %'),
+    el('div', { class: 'save-row' }, el('button', { class: 'weigh-save', 'data-act': 'wgoalsave', text: 'Spara viktmål' })),
+    info ? el('p', { class: 'small', text: info }) : null,
+    p?.tooFast ? el('p', { class: 'small', text: `Hinns inte med högst 1 % per vecka – tidigast ${shortDate(p.earliest)}.` }) : null,
+    el('p', { class: 'muted small', text: 'Fyll i datum eller takt. Takten får vara högst 1 % av din vikt per vecka – snabbare än så är svårt att hålla och tappar mest vätska och muskler. Vikten räknas som 7-dagars medel. Lämna målvikten tom för inget mål.' }),
+  ];
+}
+
 function helpCard() {
   const frag = document.importNode((document.getElementById(self.I18N.lang() === 'en' ? 'help-tpl-en' : 'help-tpl') || document.getElementById('help-tpl')).content, true);
   const sec = frag.querySelector('.help');
@@ -118,6 +138,7 @@ export function viewSettings() {
             el('select', { 'data-act': 'wgoal', 'data-val': k, 'aria-label': `Mål per vecka, ${label.toLowerCase()}` },
               Array.from({ length: 15 }, (_, i) => el('option', { value: i, selected: i === s[k], text: i ? `${i} pass` : 'Inget mål' }))))))),
     group('kcal', 'Kalorier', g.kcal ? `${kcal(g.kcal)} kcal/dag` : 'Inget mål',
+      sec('wgoal', 'Viktmål', S.state.wgoal ? `${fmtNum(Math.round(wOut(S.state.wgoal.target) * 10) / 10)} ${wUnit()}` : 'Inget mål', wgoalSection()),
       sec('goal', 'Kalorimål', g.kcal ? `${kcal(g.kcal)} kcal/dag` : 'Inget mål',
         el('label', { class: 'goal-row' }, el('span', { text: 'kcal per dag' }),
           el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: g.kcal ? String(g.kcal) : '', placeholder: 'Inget mål', id: 'g-kcal', 'aria-label': 'Kalorimål per dag' }),

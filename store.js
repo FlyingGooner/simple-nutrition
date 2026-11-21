@@ -140,6 +140,8 @@ export function validate(raw) {
       if (isObj(raw.layout[v])) s.layout[v] = { order: ids(raw.layout[v].order), hidden: ids(raw.layout[v].hidden) };
     }
   }
+  const wg = cleanWgoal(raw.wgoal);
+  if (wg) s.wgoal = wg;
   if (isObj(raw.weights)) {
     for (const k of Object.keys(raw.weights).filter(validDate).sort().slice(-LIM.weights)) {
       if (num(raw.weights[k], 20, 400)) s.weights[k] = Math.round(raw.weights[k] * 10) / 10;
@@ -191,6 +193,44 @@ export function setGoal(state, k, patch) {
   for (const f of Object.keys(next)) if (next[f] === undefined) delete next[f];
   state.goals = state.goals.filter((g) => g.from !== k).concat(next).sort((a, b) => (a.from < b.from ? -1 : 1));
 }
+/* ---------- Viktmål (2026-11-21) ---------- */
+// wgoal = { target: kg, date: datum } eller { target: kg, rate: kg/vecka }. Takten får vara högst 1 % av kroppsvikten per vecka.
+export const WGOAL_MAX = 0.01, KCAL_PER_KG = 7700;
+function cleanWgoal(x) {
+  if (!isObj(x) || !num(x.target, 20, 400)) return null;
+  const o = { target: Math.round(x.target * 10) / 10 };
+  if (validDate(x.date)) o.date = x.date;
+  else if (num(x.rate, 0.05, 4)) o.rate = Math.round(x.rate * 100) / 100;
+  else return null;
+  return o;
+}
+// 7-dagars medel av vägningarna i [k-6, k], eller null.
+export function avg7Of(weights, k) {
+  const v = [];
+  for (let i = 0; i < 7; i++) { const w = weights[addDays(k, -i)]; if (w != null) v.push(w); }
+  return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+}
+// Nuvarande vikt = 7-dagars medel kring senaste vägningen (null utan vägning).
+export function currentWeight(state) {
+  const keys = Object.keys(state.weights).sort();
+  return keys.length ? avg7Of(state.weights, keys[keys.length - 1]) : null;
+}
+const daysTo = (a, b) => Math.round((parseKey(b) - parseKey(a)) / 864e5);
+// Plan från vikten cur idag: takt som behövs (kg/v, med tecken), högsta takt (1 %), tidigaste datum och ungefärligt kcal/dag.
+export function weightPlan(g, cur, todayK) {
+  if (!g || cur == null) return null;
+  const diff = g.target - cur, dir = Math.sign(diff), max = cur * WGOAL_MAX;
+  if (Math.abs(diff) < 0.1) return { reached: true, target: g.target, cur };
+  const need = g.date ? (daysTo(todayK, g.date) > 0 ? Math.abs(diff) / (daysTo(todayK, g.date) / 7) : Infinity) : g.rate;
+  const rate = Math.min(need, max), tooFast = need > max + 1e-9;
+  return {
+    reached: false, target: g.target, cur, diff, max, tooFast, rate: dir * rate, need: dir * need,
+    earliest: addDays(todayK, Math.ceil(Math.abs(diff) / max * 7)),
+    eta: g.date && !tooFast ? g.date : addDays(todayK, Math.ceil(Math.abs(diff) / rate * 7)),
+    kcalDay: Math.round(dir * rate * KCAL_PER_KG / 7),
+  };
+}
+
 export function weekStats(state, ws) {
   const days = [];
   let sum = 0, logged = 0, within = 0;
@@ -430,6 +470,7 @@ export const EXPORT_SCHEMA = {
   foods: 'lista { id, name, n per 100 g, u?: [mått, gram per mått] }, egna produkter, max 1000',
   aliases: 'objekt sökord (gemener, ≤ 40 tecken) → ref, max 1000',
   weights: 'objekt datum → kg 20–400 (en decimal)',
+  wgoal: 'valfritt { target: målvikt kg 20–400, date: datum } eller { target, rate: kg per vecka 0,05–4 }; appen tillåter högst 1 % av kroppsvikten per vecka',
   habits: 'objekt datum → { måltids-id | "extra-<n>": { outcome: "followed" | "cheat" | "skipped", reason?: orsaks-id, note?: ≤ 140 tecken } }',
   workouts: 'objekt datum → lista { types: [passtyp-id], km?, sec? }',
   settings: '{ reasons: [{ id, name }], successThreshold: 0,5–1, planText ≤ 300, workoutTypes: [{ id, name, kind: "gym" | "cardio" }], workoutGoal, gymGoal, cardioGoal }',

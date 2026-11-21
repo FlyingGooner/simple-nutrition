@@ -246,6 +246,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 
 ### Vikt
 - `weights`: datum → kg (en per dag, senaste vinner). 7-dagars medel och trend **räknas fram vid visning**, sparas inte.
+- `wgoal` (2026-11-21, valfritt): `{ target, date }` eller `{ target, rate }`. Takten högst 1 % av nuvarande vikt (7-dagars medel) per vecka; för snabbt mål sparas inte, appen visar tidigaste datum. Plan (`weightPlan` i store.js) räknas vid visning: takt, tidigaste datum, ungefär kcal/dag (7 700 kcal/kg). Visas i Inställningar → Kalorier → Viktmål, Trend (viktkortet, med takten senaste 4 v) och Vecka (innevarande vecka). Steg 2–3 (planerat): kalorisumma vecka/månad mot målet, verklig förbrukning ur 4 veckors loggning + vikt (minst 14 dagar, ≥ 6 loggade dagar och ≥ 3 vägningar per vecka).
 
 ### Övriga nycklar
 - Plantext högst 300 tecken överallt (`PLAN_MAX`). Anteckning och plan sparas även medan man skriver (500 ms) och när sidan göms; anteckningen sparas till dagen den visades för (`data-day`). Idag, Vecka och Historik följer med till nästa dag efter midnatt om man inte bläddrat bort (v0.12.0).
