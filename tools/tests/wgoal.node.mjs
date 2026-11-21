@@ -21,3 +21,9 @@ test('plan: datum, takt, för snabbt, nått', () => {
   assert.equal(weightPlan({ target: 80.05, rate: 0.5 }, 80, '2026-11-21').reached, true);
   assert.equal(weightPlan({ target: 75, rate: 0.5 }, null, '2026-11-21'), null);
 });
+test('takt utan målvikt (snabbval)', () => {
+  assert.deepEqual(validate({ wgoal: { rate: 0.5 } }).wgoal, { rate: 0.5 });
+  const p = weightPlan({ rate: 0.5 }, 112, '2026-11-21');
+  assert.equal(p.open, true); assert.equal(p.rate, -0.5); assert.equal(p.kcalDay, -550); assert.equal(p.tooFast, false);
+  assert.equal(weightPlan({ rate: 1.2 }, 112, '2026-11-21').tooFast, true);
+});

@@ -44,6 +44,16 @@ updateOnline();
 
 /* ---------- Snackbar (undo, update) ---------- */
 let snackTimer = null;
+// Takt utan datum (snabbval eller Inställningar utan målvikt); behåller målvikten om en finns. Högst 1 % av vikten per vecka.
+function quickGoal(r) {
+  if (!(r >= 0.05 && r <= 4)) { snackbar('Fyll i datum eller takt per vecka', null, null, 3000); return; }
+  const cur = currentWeight(S.state);
+  if (cur != null && r > cur * 0.01 + 1e-9) { snackbar(`För snabbt – högst ${fmtNum(Math.round(wOut(cur * 0.01) * 10) / 10)} ${wUnit()} per vecka (1 %)`, null, null, 4000); return; }
+  const g = S.state.wgoal, rate = Math.round(r * 100) / 100;
+  S.state.wgoal = g?.target != null && (cur == null || g.target < cur) ? { target: g.target, rate } : { rate };
+  persist(); render(); snackbar('Viktmålet sparat', null, null, 2500);
+}
+
 function snackbar(text, actionText, action, ms = 5000) {
   const bar = document.getElementById('snackbar'), btn = document.getElementById('snack-action');
   document.getElementById('snack-text').textContent = text;
@@ -593,10 +603,16 @@ app.addEventListener('click', (ev) => {
       setGoal(S.state, today(), { kcal: v }); persist(); render(); snackbar(`Kalorimål ${kcal(v)} kcal sparat från idag`, null, null, 3000);
       return;
     }
+    case 'wgquick': {   // 2026-11-21: snabbval av takt i Idag; samma val igen = av
+      const r = Number(t.dataset.val), g = S.state.wgoal;
+      if (g && !g.date && Math.abs(g.rate - r) < 0.005) { delete S.state.wgoal; persist(); render(); snackbar('Inget viktmål', null, null, 2500); return; }
+      quickGoal(r); return;
+    }
     case 'wgoalsave': {   // Viktmål (2026-11-21): högst 1 % av vikten per vecka
       const v = (i) => document.getElementById(i)?.value.trim() ?? '';
       const tRaw = v('wg-target'), dRaw = v('wg-date'), rRaw = v('wg-rate');
-      if (!tRaw) { delete S.state.wgoal; persist(); render(); snackbar('Inget viktmål', null, null, 2500); return; }
+      if (!tRaw && !rRaw) { delete S.state.wgoal; persist(); render(); snackbar('Inget viktmål', null, null, 2500); return; }
+      if (!tRaw) { quickGoal(wIn(parseNum(rRaw))); return; }
       const target = wIn(parseNum(tRaw)), rate = rRaw ? wIn(parseNum(rRaw)) : null;
       if (!(target >= 20 && target <= 400)) { snackbar('Ange en målvikt', null, null, 3000); return; }
       if (dRaw && !(validDate(dRaw) && dRaw > today())) { snackbar('Datumet måste vara efter idag', null, null, 3000); return; }

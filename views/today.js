@@ -25,6 +25,21 @@ function summaryCard() {
     posts.length ? el('p', { class: 'sum-more', text: 'Allt du ätit i dag ▾' }) : null),
     posts.length ? [dayList(posts), el('button', { class: 'link dl-ai', 'data-act': 'dayai', text: '📋 Kopiera för kontroll med AI' })] : null);
 }
+// Snabbval av takt (2026-11-21): 0,25 / 0,5 / 1 kg och 1 % per vecka, bara de som är ≤ 1 % av vikten.
+function goalChips(e) {
+  const cur = currentWeight(S.state);
+  if (cur == null) return null;
+  const max = Math.floor(cur * 0.01 * 100) / 100, g = S.state.wgoal;
+  const opts = [0.25, 0.5, 1].filter((r) => r <= max + 1e-9);
+  if (!opts.includes(max)) opts.push(max);
+  const r2 = (v) => fmtNum(Math.round(wOut(v) * 100) / 100, 2);
+  return el('div', {},
+    el('p', { class: 'small', text: 'Mål – gå ner per vecka:' }),
+    el('div', { class: 'chips en-chips' }, opts.map((r) => el('button', {
+      class: 'chip' + (g && !g.date && Math.abs(g.rate - r) < 0.005 ? ' on' : ''), 'data-act': 'wgquick', 'data-val': r,
+      text: r === max ? `1 % (${r2(r)} ${wUnit()})` : `${r2(r)} ${wUnit()}`,
+    }))));
+}
 // 2026-11-21: förbrukningen i klartext under dagens kalorier (bara idag, kvalitet ≥ 25 %).
 function energyHint() {
   if (S.current !== today()) return null;
@@ -33,6 +48,7 @@ function energyHint() {
   const r50 = (x) => Math.round(x / 50) * 50, p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
   return el('div', { class: 'card en-hint' },
     el('p', {}, el('span', { text: 'Utifrån din loggning och vikt håller du vikten på' }), ' ', el('strong', { text: `≈ ${kcal(r50(e.tdee))} kcal/dag` }), '.'),
+    goalChips(e),
     p && !p.reached ? el('p', {}, el('span', { text: 'Äter du' }), ' ', el('strong', { text: `≈ ${kcal(r50(e.tdee + p.kcalDay))} kcal/dag` }), ' ', el('span', { text: 'följer vikten ditt mål.' })) : null,
     el('p', { class: 'muted small', text: `Kvalitet ${Math.round(e.quality * 100)} % – se Trend.` }));
 }

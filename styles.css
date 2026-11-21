@@ -753,3 +753,4 @@ main .day-head + * { margin-top: 10px; }
 .en-how summary { cursor: pointer; font-size: .8125rem; color: var(--primary); margin-top: 8px; }
 .en-hint p { margin: 0 0 4px; font-size: .9rem; }
 .en-hint p:last-child { margin: 0; }
+.en-chips { margin: 6px 0 10px; }

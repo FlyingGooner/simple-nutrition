@@ -32,6 +32,7 @@ export function goalLine(cur, actual) {
   if (!p) return null;
   const kg = (v) => `${fmtNum(r1(wOut(v)))} ${wUnit()}`, rate = (v) => `${signed(wOut(v))} ${wUnit()}/v`;
   const part = (label, value, cls) => el('span', { class: 'wg-part' + (cls ? ' ' + cls : '') }, el('span', { text: label }), ' ', el('strong', { text: value }));
+  if (p.open) return el('p', { class: 'w-sub wg' }, part('Mål', rate(p.rate)), actual != null ? [' · ', part('senaste 4 v', rate(actual))] : null);
   if (p.reached) return el('p', { class: 'w-sub wg' }, part('Mål', kg(p.target)), ' · ', el('span', { class: 'goal-ok', text: 'Nått 🎉' }));
   return el('p', { class: 'w-sub wg' },
     part('Mål', kg(p.target)), ' · ',
