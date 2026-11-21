@@ -1,6 +1,6 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
 import { parseKey, sumN, postN, goalFor, setGoal, addDays, habitDay, habitStreak, dayCheck, energyEstimate, weightPlan, currentWeight } from '../store.js';
-import { today, S, setOpen, el, svg, stepper, stat, kcal, fmtNum, pct, dateTitle, wOut, wUnit, amountText, mealName, reasonName, arrange } from '../ui.js';
+import { today, S, setOpen, el, svg, stepper, stat, kcal, fmtNum, pct, dateTitle, wOut, wIn, wUnit, amountText, mealName, reasonName, arrange } from '../ui.js';
 import { viewAdd } from './add.js';
 import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
 import { OUTCOMES } from '../habit-store.js';
@@ -16,7 +16,7 @@ function summaryCard() {
   const sec = `daysum-${S.current}`;
   // 2026-11-21: vikten i samma kort – vänster öppnar dagen, höger fyller i vikt.
   const w = S.state.weights[S.current];
-  const tile = el('button', { class: 'w-tile' + (S.weighOpen ? ' on' : ''), 'data-act': 'weighopen', 'aria-expanded': String(!!S.weighOpen), 'aria-label': 'Vikt idag' },
+  const tile = el('button', { class: 'w-tile', 'data-act': 'weighopen', 'aria-label': 'Vikt idag' },
       el('span', { class: 'w-tile-k', text: '⚖️ Vikt' }),
       el('strong', { text: w != null ? `${fmtNum(wOut(w))} ${wUnit()}` : '–' }));
   return el('div', { class: 'card sum-card sum-wrap' },
@@ -29,8 +29,7 @@ function summaryCard() {
       svg('rect', { class: 'kbar-fill' + (over ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, n[0] / g.kcal) * 1000) / 10, height: 6, rx: 2 })) : null,
     el('p', { class: 'macros' }, macro('Protein', n[1], g.prot), ' · ', macro('Kolh.', n[2], g.kolh), ' · ', macro('Fett', n[3])),
     posts.length ? el('p', { class: 'sum-more', text: 'Allt du ätit i dag ▾' }) : null), tile)),
-    posts.length ? [dayList(posts), el('button', { class: 'link dl-ai', 'data-act': 'dayai', text: '📋 Kopiera för kontroll med AI' })] : null),
-    S.weighOpen ? weightForm(w) : null);
+    posts.length ? [dayList(posts), el('button', { class: 'link dl-ai', 'data-act': 'dayai', text: '📋 Kopiera för kontroll med AI' })] : null));
 }
 // Snabbval av takt (2026-11-21): 0,25 / 0,5 / 1 kg och 1 % per vecka, bara de som är ≤ 1 % av vikten.
 function goalChips(e) {
@@ -222,12 +221,23 @@ function mealCard(m, posts) {
     body);
 }
 
-function weightForm(w) {
-  return el('div', { class: 'w-form' },
-    el('div', { class: 'weigh-row' },
-      el('input', { type: 'text', inputmode: 'decimal', id: 'weight', value: w != null ? fmtNum(wOut(w)) : '', placeholder: wUnit(), 'aria-label': `Vikt i ${wUnit()}` }),
-      el('button', { class: 'weigh-save', 'data-act': 'weightsave', text: 'Spara' })),
-    el('p', { class: 'muted small', text: 'Väg dig gärna på morgonen. Trenden räknas på 7-dagars medel.' }));
+// 2026-11-21: vikt i en popup – reglage runt gårdagens (senaste) vikt, ± 0,1 per steg, OK/Avbryt.
+export function openWeightDialog(onSave) {
+  const d = document.getElementById('weight-dialog');
+  if (!d || typeof d.showModal !== 'function') return;
+  const r = d.querySelector('#wd-range'), out = d.querySelector('#wd-val');
+  const keys = Object.keys(S.state.weights).filter((k) => k <= S.current).sort();
+  const prev = keys.filter((k) => k < S.current).pop();
+  const own = S.state.weights[S.current], base = own ?? (prev ? S.state.weights[prev] : null) ?? (keys.length ? S.state.weights[keys[keys.length - 1]] : 80);
+  const b = Math.round(wOut(base) * 10) / 10, span = wUnit() === 'kg' ? 5 : 10;
+  r.min = String(Math.max(0, Math.round((b - span) * 10) / 10)); r.max = String(Math.round((b + span) * 10) / 10); r.value = String(b);
+  const show = () => { out.textContent = `${fmtNum(Number(r.value))} ${wUnit()}`; };
+  const step = (dv) => { r.value = String(Math.round((Number(r.value) + dv) * 10) / 10); show(); };
+  r.oninput = show;
+  d.querySelector('#wd-minus').onclick = () => step(-0.1);
+  d.querySelector('#wd-plus').onclick = () => step(0.1);
+  d.onclose = () => { if (d.returnValue === 'ok') onSave(Math.round(wIn(Number(r.value)) * 10) / 10); };
+  d.returnValue = ''; show(); d.showModal();
 }
 
 export function viewToday() {

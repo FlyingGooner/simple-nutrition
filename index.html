@@ -251,6 +251,22 @@
       </details>
     </section>
   </template>
+  <dialog id="weight-dialog" aria-labelledby="wd-title">
+    <form method="dialog">
+      <h2 id="wd-title">Vikt</h2>
+      <p class="wd-val" id="wd-val" aria-live="polite"></p>
+      <div class="wd-row">
+        <button type="button" class="wd-step" id="wd-minus" aria-label="Minska 0,1">−</button>
+        <input type="range" id="wd-range" step="0.1" aria-label="Vikt">
+        <button type="button" class="wd-step" id="wd-plus" aria-label="Öka 0,1">+</button>
+      </div>
+      <p class="muted small">Väg dig gärna på morgonen. Trenden räknas på 7-dagars medel.</p>
+      <div class="dlg-actions">
+        <button type="submit" class="btn-text" value="cancel">Avbryt</button>
+        <button type="submit" class="btn-filled" value="ok">OK</button>
+      </div>
+    </form>
+  </dialog>
   <dialog id="confirm-dialog" aria-labelledby="cd-title">
     <form method="dialog">
       <h2 id="cd-title">Radera all data?</h2>

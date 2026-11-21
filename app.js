@@ -4,7 +4,7 @@ import { today, S, setOpen, el, kcal, dateTitle, parseNum, wType, isCardio, pars
 import { lastPost, QUICK_ADD, setLevel, dropLevels, quickGroup, EST_MAX } from './store.js';
 import { mealName, wIn, wOut, wUnit, shortDate, dIn, dUnit, setUnits } from './ui.js';
 import { topLayer, layerDepth, closeTop, dishDirty, defaultQuickG } from './nav.js';
-import { viewToday, dayPosts, dayText } from './views/today.js';
+import { viewToday, dayPosts, dayText, openWeightDialog } from './views/today.js';
 import { resultsList, pickGrams, pickSum, unitsOf, isBulk, bulkDefault, EST_GROUP } from './views/add.js';
 import { viewWeek } from './views/week.js';
 import { viewTrend } from './views/trend.js';
@@ -404,9 +404,9 @@ app.addEventListener('click', (ev) => {
       else delete S.state.weights[S.current];
       S.weighOpen = false; persist(); break;
     }
-    case 'weighopen':   // 2026-11-21: vikt-rutan i kcal-kortet
-      S.weighOpen = !S.weighOpen;
-      break;
+    case 'weighopen':   // 2026-11-21: vikt-rutan i kcal-kortet öppnar popupen
+      openWeightDialog((kg) => { if (kg >= 20 && kg <= 400) { S.state.weights[S.current] = kg; persist(); render(); } });
+      return;
     // Lägg till
     case 'addopen': S.open = null; openAdd('meal', id); return;
     case 'addclose': S.add = null; break;
