@@ -1,6 +1,6 @@
 // View: Trend – weight (7-day average), the last 4 weeks as a table, weight chart 12 weeks, kcal vs weight.
-import { avg7Of, weightPlan, addDays, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
-import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions, arrange, wOut, wUnit } from '../ui.js';
+import { avg7Of, weightPlan, energyEstimate, periodEnergy, currentWeight, addDays, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
+import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions, arrange, wOut, wUnit, stat } from '../ui.js';
 
 // 7-day average of the weights in [k-6, k], or null.
 export const avg7 = (k) => avg7Of(S.state.weights, k);
@@ -38,6 +38,51 @@ export function goalLine(cur, actual) {
     p.tooFast ? part('Hinns inte med högst 1 %/v, tidigast', shortDate(p.earliest)) : part(S.state.wgoal.date ? 'senast' : 'klart ≈', shortDate(p.eta)), ' · ',
     part('takt', rate(p.rate)),
     actual != null ? [' · ', part('senaste 4 v', rate(actual))] : null);
+}
+
+/* Förbrukning (2026-11-21): räknas från dag ett, med kvalitet som datan själv avgör. */
+const r50 = (x) => Math.round(x / 50) * 50;
+export const signedK = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + kcal(Math.abs(n));
+const WHY = {
+  precision: 'Säkrare med fler dagar – väg dig minst 3 gånger i veckan. Full kvalitet efter 2–4 veckor.',
+  logging: 'Dagar utan loggning drar ner – logga all mat varje dag.',
+  low: 'Förbrukningen ser för låg ut – en del mat verkar inte vara loggad.',
+  high: 'Förbrukningen ser för hög ut – troligen vätska som försvinner. Det jämnar ut sig.',
+  stable: 'Veckorna skiljer sig mycket – logga lika noga varje dag.',
+};
+export function energyCard() {
+  const e = energyEstimate(S.state, today()), h2 = el('h2', { text: 'Förbrukning' });
+  const how = el('details', { class: 'en-how' }, el('summary', { text: 'Så räknas det' }),
+    el('p', { class: 'muted small', text: 'Förbrukningen räknas från vad du loggat och hur vikten ändrats de senaste 4 veckorna (1 kg ≈ 7 700 kcal). Vikten svänger av vätska, så den säkras med tiden. Kvaliteten avgörs av datan: hur mycket vikten brusar, hur många dagar du loggat, om resultatet är rimligt för din kropp och om veckorna stämmer med varandra. Logga all mat och väg dig minst 3 gånger i veckan – då når kvaliteten 100 % efter 2–4 veckor. Glömmer du alltid samma saker blir siffran förbrukning enligt din loggning, och den fungerar lika bra för att nå målet.' }));
+  if (!e || !e.ready) return el('section', { class: 'card' }, h2,
+    el('p', { class: 'muted', text: 'Logga mat och väg dig några dagar, så räknas din förbrukning ut.' }), how);
+  const q = Math.round(e.quality * 100), rough = q < 25, lo = r50(Math.max(800, e.tdee - 1.5 * e.se)), hi = r50(e.tdee + 1.5 * e.se);
+  const why = q >= 95 ? null : WHY[e.weakest === 'plausible' ? (e.low ? 'low' : 'high') : e.weakest];
+  const plan = weightPlan(S.state.wgoal, currentWeight(S.state), today());
+  return el('section', { class: 'card' }, h2,
+    el('p', { class: 'en-val' + (rough ? ' rough' : '') }, el('strong', { text: rough ? `${kcal(lo)}–${kcal(hi)}` : `≈ ${kcal(r50(e.tdee))}` }), ' kcal/dag'),
+    el('div', { class: 'en-q' }, el('span', { text: 'Kvalitet' }),
+      svg('svg', { class: 'en-bar', viewBox: '0 0 100 8', preserveAspectRatio: 'none', role: 'meter', 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': q, 'aria-label': 'Kvalitet' },
+        svg('rect', { class: 'en-bg', x: 0, y: 0, width: 100, height: 8, rx: 4 }), svg('rect', { class: 'en-fill' + (q >= 75 ? ' ok' : ''), x: 0, y: 0, width: Math.max(q, 2), height: 8, rx: 4 })),
+      el('strong', { text: `${q} %` })),
+    rough ? el('p', { class: 'muted small', text: 'Grov uppskattning ännu.' }) : null,
+    why ? el('p', { class: 'small', text: why }) : null,
+    plan && !plan.reached && !rough ? el('p', { class: 'small' }, el('span', { text: 'För takten i ditt viktmål: ät ungefär' }), ' ', el('strong', { text: `${kcal(r50(e.tdee + plan.kcalDay))} kcal/dag` })) : null,
+    !e.hasProfile ? el('p', { class: 'muted small', text: 'Fyll i längd, födelseår och kön under Inställningar → Kalorier → Om dig, så kan appen också bedöma om förbrukningen är rimlig.' }) : null,
+    how);
+}
+// Kalorisumma för en period (vecka/månad): mot målet, enligt vikten och mot förbrukningen.
+export function energyStats(from, to) {
+  const pe = periodEnergy(S.state, from, to > today() ? today() : to);
+  if (!pe.logged) return null;
+  const e = energyEstimate(S.state, today()), useE = e && e.ready && e.quality >= 0.25;
+  const items = [
+    pe.vsGoal != null ? stat(signedK(pe.vsGoal), 'kcal mot kalorimålet') : null,
+    useE ? stat(signedK(Math.round(pe.kcal - e.tdee * pe.logged)), 'kcal mot förbrukningen') : null,
+    pe.wKcal != null ? stat(signedK(pe.wKcal), 'kcal enligt vikten') : null,
+  ].filter(Boolean);
+  return items.length ? el('div', {}, el('div', { class: 'stats' }, items),
+    el('p', { class: 'muted small', text: `Summa för ${pe.logged} loggade dagar. Minus = underskott. Vikten räknas på 7-dagars medel (1 kg ≈ 7 700 kcal).` })) : null;
 }
 
 function weeks(n) {
@@ -123,5 +168,5 @@ function compare() {
 }
 
 export function viewTrend() {
-  return arrange('trend', { weight: () => summary(), weeks: table, compare });
+  return arrange('trend', { weight: () => summary(), energy: energyCard, weeks: table, compare });
 }

@@ -127,7 +127,7 @@ export function sessionText(w) {
 export const LAYOUT = {
   today: [['plan', 'Min plan'], ['meals', 'Måltider'], ['train', 'Träning och extra fusk'], ['score', 'Dagens följsamhet'], ['kcal', 'Kalorier'], ['weight', 'Vikt']],
   week: [['weight', 'Vikt'], ['habits', 'Vanor'], ['days', 'Dag för dag'], ['training', 'Träning'], ['kcal', 'Kalorier']],
-  trend: [['weight', 'Vikt och kurva'], ['weeks', 'Vecka för vecka'], ['compare', 'Vad hänger ihop']],
+  trend: [['weight', 'Vikt och kurva'], ['energy', 'Förbrukning'], ['weeks', 'Vecka för vecka'], ['compare', 'Vad hänger ihop']],
   history: [['weight', 'Vikt och följsamhet'], ['calendar', 'Kalender'], ['more', 'Träning och kcal']],
 };
 export const LAYOUT_VIEWS = { today: 'Idag', week: 'Vecka', trend: 'Trend', history: 'Historik' };

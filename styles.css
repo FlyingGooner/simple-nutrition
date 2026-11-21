@@ -741,3 +741,13 @@ main .day-head + * { margin-top: 10px; }
 .dl-ai { display: block; margin: 10px auto 0; padding: 8px 0; }
 .date-in { width: 160px; }
 .wg .wg-part { white-space: nowrap; }
+.en-val { margin: 0 0 6px; font-size: .875rem; color: var(--muted); }
+.en-val strong { font-size: 2rem; font-weight: 400; color: var(--fg); font-variant-numeric: tabular-nums; }
+.en-val.rough strong { color: var(--muted); }
+.en-q { display: flex; align-items: center; gap: 10px; font-size: .875rem; color: var(--muted); }
+.en-q strong { color: var(--fg); font-variant-numeric: tabular-nums; min-width: 3.5em; text-align: right; }
+.en-bar { flex: 1; height: 8px; }
+.en-bg { fill: var(--outline); opacity: .35; }
+.en-fill { fill: var(--primary); }
+.en-fill.ok { fill: var(--ok); }
+.en-how summary { cursor: pointer; font-size: .8125rem; color: var(--primary); margin-top: 8px; }
