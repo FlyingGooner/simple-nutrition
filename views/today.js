@@ -46,7 +46,7 @@ function headGoal(posts) {
   let goal = goalFor(S.state, today()).kcal, from = 'Kalorimål';
   if (goal == null) {
     const e = energyEstimate(S.state, today()), p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
-    if (!e || !e.ready || e.quality < 0.25) return null;
+    if (!e || !e.ready || e.quality < 0.25) { const f = forecastLine(); return f ? el('div', { class: 'head-goal' }, f) : null; }   // prognosen syns ändå
     goal = Math.round((e.tdee + (p && !p.reached ? p.kcalDay : 0)) / 50) * 50;
     from = p && !p.reached ? 'För viktmålet' : 'Håller vikten';
   }
