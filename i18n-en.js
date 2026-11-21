@@ -414,6 +414,7 @@ I18N.add({
   [/^eller takt, (kg|lb) per vecka$/, 'or pace, $1 per week'],
   [/^högst (.+)$/, 'max $1'],
   [/^Kaloriråd räknas på 0,5 %\/v: Takt (.+) (kg|lb)\/v ≈ (.+) kcal\/dag (underskott|överskott)\.$/, (g) => `Calorie advice uses 0.5 %/wk: pace ${g[1]} ${g[2]}/wk ≈ ${g[3]} kcal/day ${g[4] === 'underskott' ? 'deficit' : 'surplus'}.`],
+  [/^≈ (.+) kcal\/dag (underskott|överskott) på (\d+) dagar \(1 kg ≈ 7 700 kcal\)$/, (g) => `≈ ${g[1]} kcal/day ${g[2] === 'underskott' ? 'deficit' : 'surplus'} over ${g[3]} days (1 kg ≈ 7,700 kcal)`],
   [/^Takt (.+) (kg|lb)\/v ≈ (.+) kcal\/dag (underskott|överskott)\.$/, (g) => `Pace ${g[1]} ${g[2]}/wk ≈ ${g[3]} kcal/day ${g[4] === 'underskott' ? 'deficit' : 'surplus'}.`],
   [/^Hinns inte med högst 1 % per vecka – tidigast (.+)\.$/, 'Not possible at max 1 % per week – earliest $1.'],
   [/^För snabbt – högst 1 % per vecka\. Tidigast (.+)$/, 'Too fast – max 1 % per week. Earliest $1'],
