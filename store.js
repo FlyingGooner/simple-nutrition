@@ -244,6 +244,27 @@ export function weightPlan(g, cur, todayK) {
   };
 }
 
+// Prognos (2026-11-21): faktisk trend (minsta kvadrat över vägningarna de senaste 28 dagarna, minst 4 vägningar över ≥ 10 dagar)
+// → när målvikten nås, och jämfört med planen: i fas (±7 dagar eller ±25 % av takten), före, efter eller fel håll.
+export function weightForecast(state, todayK) {
+  const g = state.wgoal, cur = currentWeight(state), p = weightPlan(g, cur, todayK);
+  if (!p || p.reached) return null;
+  const from = addDays(todayK, -27), ws = Object.keys(state.weights).filter((k) => k >= from && k <= todayK).sort()
+    .map((k) => [daysTo(from, k), state.weights[k]]);
+  if (ws.length < 4 || ws[ws.length - 1][0] - ws[0][0] < 10) return { ready: false, weighs: ws.length };
+  const mx = ws.reduce((a, w) => a + w[0], 0) / ws.length, my = ws.reduce((a, w) => a + w[1], 0) / ws.length;
+  const slope = ws.reduce((a, w) => a + (w[0] - mx) * (w[1] - my), 0) / ws.reduce((a, w) => a + (w[0] - mx) ** 2, 0);   // kg/dag
+  const week = slope * 7;
+  if (p.open) {
+    const ratio = week / p.rate;   // båda negativa vid nedgång
+    return { ready: true, week, status: ratio <= 0 ? 'wrong' : ratio >= 0.75 && ratio <= 1.25 ? 'on' : ratio > 1.25 ? 'ahead' : 'behind' };
+  }
+  const diff = p.target - cur;
+  if (Math.sign(slope) !== Math.sign(diff) || Math.abs(slope) < 1e-4) return { ready: true, week, status: 'wrong' };
+  const date = addDays(todayK, Math.ceil(diff / slope)), planned = g.date || p.eta, gap = daysTo(planned, date);
+  return { ready: true, week, date, planned, gap, status: Math.abs(gap) <= 7 ? 'on' : gap < 0 ? 'ahead' : 'behind' };
+}
+
 /* ---------- Energi: summering och förbrukning (2026-11-21) ---------- */
 // Komplett dag (beslut 2026-11-21): varje måltid har mat eller är markerad ⏭️ Hoppade över, minst 800 kcal, och dagen är slut.
 // Bara kompletta dagar räknas i förbrukning och kalorisummor. ✅/🍰 utan mat = man åt men loggade inte.

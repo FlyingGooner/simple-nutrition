@@ -787,3 +787,7 @@ main .day-head + * { margin-top: 10px; }
 .en-rows li:first-child { border-top: 0; }
 .en-rows strong { font-variant-numeric: tabular-nums; font-weight: 500; }
 .en-rows strong.neg { color: var(--ok); }
+.fc { margin-top: 4px; }
+.fc-ok { color: var(--ok); }
+.fc-dev { color: var(--dev); }
+.head-goal .fc { margin: 6px 0 0; text-align: center; }

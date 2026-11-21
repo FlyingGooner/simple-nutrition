@@ -34,3 +34,13 @@ test('takt i procent följer vikten', () => {
   assert.equal(weightPlan({ pct: 1 }, 112, '2026-11-21').rate, -1.12);
   assert.equal(weightPlan({ pct: 0.5, target: 100 }, 80, '2026-11-21').rate, 0.4);   // upp mot målet
 });
+test('prognos: i fas, efter, fel håll', async () => {
+  const { weightForecast, addDays } = await import('../../store.js');
+  const T = '2026-11-21', w = (perDay) => Object.fromEntries(Array.from({ length: 21 }, (_, i) => [addDays(T, -20 + i), Math.round((100 + (i - 20) * perDay) * 10) / 10]));
+  // 100 kg idag, mål 95 kg om 10 veckor (0,5 kg/v)
+  const on = weightForecast(validate({ weights: w(-0.5 / 7), wgoal: { target: 95, date: addDays(T, 70) } }), T);
+  assert.equal(on.status, 'on');
+  assert.equal(weightForecast(validate({ weights: w(-0.25 / 7), wgoal: { target: 95, date: addDays(T, 70) } }), T).status, 'behind');
+  assert.equal(weightForecast(validate({ weights: w(0.2 / 7), wgoal: { target: 95, date: addDays(T, 70) } }), T).status, 'wrong');
+  assert.equal(weightForecast(validate({ weights: { [T]: 100 }, wgoal: { target: 95, date: addDays(T, 70) } }), T).ready, false);
+});

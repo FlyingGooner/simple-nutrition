@@ -1,5 +1,5 @@
 // View: Trend – weight (7-day average), the last 4 weeks as a table, weight chart 12 weeks, kcal vs weight.
-import { avg7Of, weightPlan, energyEstimate, periodEnergy, currentWeight, addDays, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
+import { avg7Of, weightPlan, weightForecast, energyEstimate, periodEnergy, currentWeight, addDays, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
 import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions, arrange, wOut, wUnit, stat } from '../ui.js';
 
 // 7-day average of the weights in [k-6, k], or null.
@@ -32,13 +32,26 @@ export function goalLine(cur, actual) {
   if (!p) return null;
   const kg = (v) => `${fmtNum(r1(wOut(v)))} ${wUnit()}`, rate = (v) => `${signed(wOut(v))} ${wUnit()}/v`;
   const part = (label, value, cls) => el('span', { class: 'wg-part' + (cls ? ' ' + cls : '') }, el('span', { text: label }), ' ', el('strong', { text: value }));
-  if (p.open) return el('p', { class: 'w-sub wg' }, part('Mål', rate(p.rate)), actual != null ? [' · ', part('senaste 4 v', rate(actual))] : null);
+  if (p.open) return [el('p', { class: 'w-sub wg' }, part('Mål', rate(p.rate)), actual != null ? [' · ', part('senaste 4 v', rate(actual))] : null), forecastLine()];
   if (p.reached) return el('p', { class: 'w-sub wg' }, part('Mål', kg(p.target)), ' · ', el('span', { class: 'goal-ok', text: 'Nått 🎉' }));
-  return el('p', { class: 'w-sub wg' },
+  return [el('p', { class: 'w-sub wg' },
     part('Mål', kg(p.target)), ' · ',
     p.tooFast ? part('Hinns inte med högst 1 %/v, tidigast', shortDate(p.earliest)) : part(S.state.wgoal.date ? 'senast' : 'klart ≈', shortDate(p.eta)), ' · ',
     part('takt', rate(p.rate)),
-    actual != null ? [' · ', part('senaste 4 v', rate(actual))] : null);
+    actual != null ? [' · ', part('senaste 4 v', rate(actual))] : null), forecastLine()];
+}
+// "Är jag i fas?" (2026-11-21) – prognos från den faktiska trenden.
+export function forecastLine() {
+  const f = weightForecast(S.state, today());
+  if (!f) return null;
+  if (!f.ready) return el('p', { class: 'w-sub fc', text: 'Prognos när du vägt dig minst 4 gånger under 10 dagar.' });
+  const wk = (d) => Math.max(1, Math.round(Math.abs(d) / 7));
+  const [cls, label] = { on: ['ok', '✅ I fas'], ahead: ['ok', '🚀 Före'], behind: ['dev', '⚠️ Efter'], wrong: ['dev', '⚠️ Trenden går åt fel håll'] }[f.status];
+  return el('p', { class: 'w-sub fc' },
+    el('strong', { class: 'fc-' + cls, text: label + (f.gap != null && f.status !== 'on' ? ` ≈ ${wk(f.gap)} v` : '') }),
+    f.date ? [' · ', el('span', { text: 'prognos' }), ' ', el('strong', { text: shortDate(f.date) })] : null,
+    f.planned ? [' · ', el('span', { text: 'plan' }), ' ', el('strong', { text: shortDate(f.planned) })] : null,
+    ' · ', el('span', { text: 'trend' }), ' ', el('strong', { text: `${signed(wOut(f.week))} ${wUnit()}/v` }));
 }
 
 /* Förbrukning (2026-11-21): räknas från dag ett, med kvalitet som datan själv avgör. */

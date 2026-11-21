@@ -1,4 +1,5 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
+import { forecastLine } from './trend.js';
 import { sumN, postN, goalFor, setGoal, addDays, habitDay, habitStreak, dayCheck, energyEstimate, weightPlan, currentWeight } from '../store.js';
 import { today, S, setOpen, el, svg, stepper, kcal, fmtNum, pct, dateTitle, wOut, wUnit, amountText, mealName, reasonName, arrange } from '../ui.js';
 import { viewAdd } from './add.js';
@@ -56,7 +57,8 @@ function headGoal(posts) {
       el('span', { class: 'hg-left' + (left < 0 ? ' over' : ''), text: left < 0 ? `${kcal(-left)} över` : `${kcal(left)} kvar` })),
     svg('svg', { class: 'kbar', viewBox: '0 0 100 6', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
       svg('rect', { class: 'kbar-bg', x: 0, y: 0, width: 100, height: 6, rx: 2 }),
-      svg('rect', { class: 'kbar-fill' + (left < 0 ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, eaten / goal) * 1000) / 10, height: 6, rx: 2 })));
+      svg('rect', { class: 'kbar-fill' + (left < 0 ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, eaten / goal) * 1000) / 10, height: 6, rx: 2 })),
+    forecastLine());
 }
 // Komplett dag (2026-11-21): säg vad som saknas för att dagen ska räknas i statistiken.
 function dayNote() {
