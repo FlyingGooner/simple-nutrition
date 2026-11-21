@@ -77,7 +77,8 @@ function weightCard(ws) {
     el('p', { class: 'w-sub', text: last == null ? 'Ingen vägning den här veckan än'
       : bw == null ? 'Ingen vägning veckan innan att jämföra med'
       : `mot ${shortDate(base)} (${kg1(bw)} ${wUnit()}) · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'} denna vecka` }),
-    d ? kcalDayLine(last - bw, base, cur[cur.length - 1]) : null,
+    // Underskott/överskott räknas bara inom aktuell vecka (2026-11-21): första till sista vägningen.
+    cur.length > 1 ? kcalDayLine(last - S.state.weights[cur[0]], cur[0], cur[cur.length - 1]) : null,
     kcalWeightChart(ws));
 }
 
