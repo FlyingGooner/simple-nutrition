@@ -1,6 +1,6 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
 import { forecastLine } from './trend.js';
-import { sumN, postN, goalFor, setGoal, addDays, habitDay, habitStreak, dayCheck, energyEstimate, weightPlan, currentWeight } from '../store.js';
+import { parseKey, sumN, postN, goalFor, setGoal, addDays, habitDay, habitStreak, dayCheck, energyEstimate, weightPlan, currentWeight } from '../store.js';
 import { today, S, setOpen, el, svg, stepper, kcal, fmtNum, pct, dateTitle, wOut, wUnit, amountText, mealName, reasonName, arrange } from '../ui.js';
 import { viewAdd } from './add.js';
 import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
@@ -59,6 +59,14 @@ function headGoal(posts) {
       svg('rect', { class: 'kbar-bg', x: 0, y: 0, width: 100, height: 6, rx: 2 }),
       svg('rect', { class: 'kbar-fill' + (left < 0 ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, eaten / goal) * 1000) / 10, height: 6, rx: 2 })),
     forecastLine());
+}
+// Påminnelse om vägning (2026-11-21): bara idag, när senaste vägningen är 4 dagar gammal eller äldre och idag saknar vägning.
+function weighNote() {
+  if (S.current !== today() || S.state.weights[today()] != null) return null;
+  const keys = Object.keys(S.state.weights).sort(), last = keys[keys.length - 1];
+  if (!last) return null;
+  const days = Math.round((parseKey(today()) - parseKey(last)) / 864e5);
+  return days >= 4 ? el('p', { class: 'day-note small', text: `Väg dig idag – senaste vägningen var ${days} dagar sedan. Prognosen och förbrukningen blir säkrare med minst 3 vägningar i veckan.` }) : null;
 }
 // Komplett dag (2026-11-21): säg vad som saknas för att dagen ska räknas i statistiken.
 function dayNote() {
@@ -230,7 +238,7 @@ export function viewToday() {
       other.length ? mealCard({ id: '_other', name: 'Övrigt' }, other) : null),
     train: () => [el('div', { class: 'workouts' }, workoutCards()), addRow()],
     score: () => el('p', { class: 'summary' }, r.count ? ['Dagens följsamhet: ', el('strong', { text: `${fmtNum(r.score)}/${r.count}` }), ' · ' + pct(r.ratio)] : 'Inget loggat ännu.'),
-    kcal: () => [summaryCard(), dayNote(), energyHint(),
+    kcal: () => [summaryCard(), dayNote(), weighNote(), energyHint(),
       !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
         ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera maten från igår' }) : null],
     weight: () => weightCard(),

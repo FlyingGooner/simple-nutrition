@@ -33,7 +33,8 @@ function dayTable(ws, st) {
         el('td', { class: 'wk-open', text: DAYS2[i] }),
         el('td', { class: cls(r), text: r == null ? '–' : pct(r) }),
         el('td', { class: 'dt-train', text: w.length ? '🏋️ ' + w.map(sessionText).join(', ') : '–' }),
-        el('td', { class: d.logged && !dayCheck(S.state, d.k, today()).ok ? 'dt-inc' : '', text: d.logged ? kcal(d.kcal) + (dayCheck(S.state, d.k, today()).ok ? '' : ' ○') : '–' }),
+        // Vanor men ingen mat (2026-11-21): tydligt att dagen inte räknas.
+        el('td', { class: (d.logged && !dayCheck(S.state, d.k, today()).ok) || (!d.logged && r != null) ? 'dt-inc' : '', text: d.logged ? kcal(d.kcal) + (dayCheck(S.state, d.k, today()).ok ? '' : ' ○') : r != null ? 'ingen mat ○' : '–' }),
         el('td', { text: kg != null ? fmtNum(kg) : '–' }));
     })));
 }
