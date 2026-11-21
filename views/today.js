@@ -1,5 +1,4 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
-import { forecastLine } from './trend.js';
 import { parseKey, sumN, postN, goalFor, setGoal, addDays, habitDay, habitStreak, dayCheck, energyEstimate, weightPlan, currentWeight } from '../store.js';
 import { today, S, setOpen, el, svg, stepper, stat, kcal, fmtNum, pct, dateTitle, wOut, wUnit, amountText, mealName, reasonName, arrange } from '../ui.js';
 import { viewAdd } from './add.js';
@@ -54,24 +53,17 @@ function headGoalInner(posts) {
   const e = energyEstimate(S.state, today()), p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
   const eOk = e && e.ready && e.quality >= 0.25, r50 = (x) => Math.round(x / 50) * 50;
   const eat = eOk && p && !p.reached ? r50(e.tdee + p.kcalDay) : null;
-  const info = eOk ? el('p', { class: 'hg-info' }, el('span', { text: 'Håller vikten' }), ' ', el('strong', { text: `≈ ${kcal(r50(e.tdee))}` }),
-    ` · ${Math.round(e.quality * 100)} %`,
-    goal != null && eat != null && Math.abs(goal - eat) >= 50 ? [' · ', el('button', { class: 'link hg-switch', 'data-act': 'tdeegoal', 'data-val': eat, text: `Byt till ${kcal(eat)}` })] : null) : null;
   if (goal == null) {
-    if (!eOk) { const f = forecastLine(); return f ? el('div', { class: 'head-goal' }, f) : null; }   // prognosen syns ändå
+    if (!eOk) return null;   // 2026-11-21: prognos och viktmål finns under Trend
     goal = eat ?? r50(e.tdee);
     from = eat != null ? 'För viktmålet' : 'Håller vikten';
   }
   const eaten = Math.round(sumN(posts)[0]), left = goal - eaten;
   return el('div', { class: 'head-goal' },
-    el('div', { class: 'hg-row' }, el('span', { class: 'hg-from', text: from }),
+    el('div', { class: 'hg-row' }, el('span', { class: 'hg-from', text: 'Idag' }),
       el('span', {}, el('strong', { text: kcal(eaten) }), ` / ${kcal(goal)} kcal`),
       el('span', { class: 'hg-left' + (left < 0 ? ' over' : ''), text: left < 0 ? `${kcal(-left)} över` : `${kcal(left)} kvar` })),
-    svg('svg', { class: 'kbar', viewBox: '0 0 100 6', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
-      svg('rect', { class: 'kbar-bg', x: 0, y: 0, width: 100, height: 6, rx: 2 }),
-      svg('rect', { class: 'kbar-fill' + (left < 0 ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, eaten / goal) * 1000) / 10, height: 6, rx: 2 })),
-    from === 'Håller vikten' ? null : info,
-    forecastLine());
+  );
 }
 // Påminnelse om vägning (2026-11-21): bara idag, när senaste vägningen är 4 dagar gammal eller äldre och idag saknar vägning.
 function weighNote() {
