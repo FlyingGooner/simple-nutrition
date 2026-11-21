@@ -139,20 +139,15 @@ function aheadTiles() {
     t.ahead.map(([m, v], i) => [i ? ' ·' : '', ' ', el('span', { text: `${m} mån` }), ' ', el('strong', { text: `${t.target != null && Math.abs(v - t.target) < 0.05 ? '🎯 ' : ''}${fmtNum(r1(wOut(v)))}` })]));
 }
 
-function weeks(n) {
-  const out = [];
-  let ws = weekStart(today());
-  for (let i = 0; i < n; i++, ws = addDays(ws, -7)) out.push(ws);
-  return out;
-}
 
-function table() {
-  const rows = weeks(5).map((ws) => {
+// Vecka för vecka (2026-11-21): under Månad, med månadens veckor (wsList = veckostarter, äldst först).
+export function weekTable(wsList) {
+  const rows = wsList.map((ws) => {
     const st = weekStats(S.state, ws), end = addDays(ws, 6) > today() ? today() : addDays(ws, 6);
     return { ws, st, h: habitWeek(S.state, ws), w: avg7(end), cur: ws === weekStart(today()) };
   });
-  const list = rows.slice(0, 4).filter((r) => r.st.logged || r.h.count || r.w != null || weekSessions(r.ws).all);
-  if (!list.length) return el('section', { class: 'card' }, el('h2', { text: 'Vecka för vecka' }), el('p', { class: 'muted small', text: 'Inget loggat de senaste veckorna.' }));
+  const list = rows.filter((r) => r.st.logged || r.h.count || r.w != null || weekSessions(r.ws).all);
+  if (!list.length) return el('section', { class: 'card' }, el('h2', { text: 'Vecka för vecka' }), el('p', { class: 'muted small', text: 'Inget loggat de här veckorna.' }));
   return el('section', { class: 'card' }, el('h2', { text: 'Vecka för vecka' }),
     el('table', { class: 'wk-table' },
       el('thead', {}, el('tr', {}, ['v', 'Vikt', '±', '✅', '🍰', '🏋️', 'kcal/d'].map((h) => el('th', { scope: 'col', text: h })))),
@@ -203,5 +198,5 @@ function chart() {
 }
 
 export function viewTrend() {
-  return arrange('trend', { weight: () => summary(), energy: energyCard, weeks: table });   // fliken Historik och mål
+  return arrange('trend', { weight: () => summary(), energy: energyCard });   // fliken Historik och mål
 }
