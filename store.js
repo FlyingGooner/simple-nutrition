@@ -195,7 +195,8 @@ export function setGoal(state, k, patch) {
 }
 /* ---------- Viktmål (2026-11-21) ---------- */
 // wgoal = { target: kg, date: datum } eller { target: kg, rate: kg/vecka }. Takten får vara högst 1 % av kroppsvikten per vecka.
-export const WGOAL_MAX = 0.01, KCAL_PER_KG = 7700;
+export const WGOAL_MAX = 0.01;
+export const KCAL_PER_KG = 7700;
 // Utan target (2026-11-21, snabbval i Idag): { rate } = gå ner rate kg/vecka tills vidare.
 // pct (2026-11-21): takt i procent av nuvarande vikt per vecka (0,05–1), i stället för rate i kg.
 function cleanWgoal(x) {

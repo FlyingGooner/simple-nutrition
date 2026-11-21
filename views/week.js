@@ -5,14 +5,14 @@ import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goa
 
 const DAYS = ['M', 'T', 'O', 'T', 'F', 'L', 'S'];
 
-// Dag för dag (v0.5.12): vanor, träning, kcal och vikt per dag i en tabell. Tryck på en rad = öppna dagen.
+// Dag för dag (v0.5.12): vanor, träning och kcal per dag i en tabell. Tryck på en rad = öppna dagen.
 function dayTable(ws, st) {
   const h = habitWeek(S.state, ws), thr = S.state.settings.successThreshold;
   const cls = (r) => (r == null ? '' : r >= thr ? 'good-t' : r >= 0.5 ? 'mid-t' : 'low-t');
   return el('table', { class: 'wk-table day-table' },
-    el('thead', {}, el('tr', {}, ['Dag', 'Vanor', 'Träning', 'kcal', 'Vikt'].map((t) => el('th', { text: t })))),
+    el('thead', {}, el('tr', {}, ['Dag', 'Vanor', 'Träning', 'kcal'].map((t) => el('th', { text: t })))),
     el('tbody', {}, st.days.map((d, i) => {
-      const r = h.days[i]?.ratio ?? null, w = S.state.workouts[d.k] || [], kg = S.state.weights[d.k];
+      const r = h.days[i]?.ratio ?? null, w = S.state.workouts[d.k] || [];
       return el('tr', { 'data-act': 'goto', 'data-val': d.k, class: d.k === today() ? 'is-today' : '' },
         el('td', { class: 'wk-open', text: DAYS2[i] }),
         el('td', { class: cls(r), text: r == null ? '–' : pct(r) }),
@@ -21,7 +21,7 @@ function dayTable(ws, st) {
         // Idag (2026-11-21): pågår, räknas när dagen är slut – markeras med … i stället för ○.
         ...[(() => { const c = dayCheck(S.state, d.k, today()), now = c.reason === 'today';
           return el('td', { class: !now && ((d.logged && !c.ok) || (!d.logged && r != null)) ? 'dt-inc' : '', text: d.logged ? kcal(d.kcal) + (c.ok ? '' : now ? ' …' : ' ○') : r != null && !now ? 'ingen mat ○' : '–' }); })()],
-        el('td', { text: kg != null ? fmtNum(kg) : '–' }));
+      );   // Vikt-kolumnen bort (2026-11-21): vikten syns i diagrammet ovanför
     })));
 }
 const DAYS2 = ['Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör', 'Sön'];
@@ -51,9 +51,8 @@ function kcalWeightChart(ws) {
       pts.length > 1 ? svg('polyline', { class: 'kw-line', points: pts.map((p) => p.map(r1).join(',')).join(' ') }) : null,
       pts.map((p) => svg('circle', { class: 'kw-dot', cx: r1(p[0]), cy: r1(p[1]), r: 2.6 })),
       days.map((k, i) => svg('text', { class: 'kw-day' + (i >= 7 ? ' cur' : ''), x: r1(i * cw + cw / 2), y: H - 8, 'text-anchor': 'middle' }, DAYS[i % 7]))),
-    el('p', { class: 'kw-legend' },
-      el('span', { class: 'lg-bar' }), el('span', { text: 'kcal per dag' }),
-      el('span', { class: 'lg-line' }), el('span', { text: 'vikt' }),
+    // Förklaring bara för de streckade linjerna (2026-11-21): staplar och viktlinje förklarar sig själva.
+    (ref || goal) && el('p', { class: 'kw-legend' },
       ref ? [el('span', { class: 'lg-ref' }), el('span', { text: `håller vikten ≈ ${kcal(ref)}` })] : null,
       goal ? [el('span', { class: 'lg-goal' }), el('span', { text: `kalorimål ${kcal(goal)}` })] : null));
 }
@@ -90,8 +89,8 @@ function habitCard(ws) {
       stat(pct(h.ratio), 'följsamhet'),
       stat(`${h.cheat + h.extraCheat}`, '🍰 fusk', h.extraCheat ? ` (${h.extraCheat} extra)` : '')),
     el('p', { class: 'muted small center', text: `✅ ${h.followed} följde · ⏭️ ${h.skipped} hoppade över` }),
-    reasons.length ? [el('h2', { class: 'goal-h', text: 'Vanligaste orsak' }),
-      el('ul', { class: 'compare' }, reasons.map(([id, n]) => el('li', {}, el('span', { text: reasonName(id) }), el('strong', { text: String(n) }))))] : null);
+    // En rad (2026-11-21): vanligaste orsaker i stället för rubrik + lista.
+    reasons.length ? el('p', { class: 'muted small center', text: `Vanligaste orsak: ${reasons.map(([id, n]) => `${reasonName(id)} (${n})`).join(', ')}` }) : null);
 }
 
 function trainingCard(ws) {

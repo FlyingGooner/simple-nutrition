@@ -806,7 +806,8 @@ main .day-head + * { margin-top: 10px; }
 .en-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
 .en-goal { margin: 0 0 6px; display: grid; justify-items: end; font-size: .75rem; color: var(--muted); }
 .en-goal strong { font-size: 1.25rem; font-weight: 500; color: var(--fg); font-variant-numeric: tabular-nums; }
-.en-why { margin: 8px 0 0; }
+.en-compact { margin: 4px 0 0; font-size: 1.125rem; }
+.en-how .small + .muted { margin-top: 8px; }
 .fc-big { font-size: .9375rem; color: var(--fg); margin-top: 8px; }
 .hg-info { margin: 6px 0 0; font-size: .8125rem; color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
 .hg-info strong { color: var(--fg); font-weight: 500; }

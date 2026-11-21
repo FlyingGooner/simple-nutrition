@@ -12,7 +12,7 @@ const delta = (n) => el('span', { class: 'delta' + (n < 0 ? ' down' : ''), text:
 export function kcalDayLine(dKg, fromK, toK) {
   const days = Math.round((parseKey(toK).getTime() - parseKey(fromK).getTime()) / 864e5);
   const n = days > 0 && dKg ? Math.round(Math.abs(dKg) * KCAL_PER_KG / days / 10) * 10 : 0;
-  return n ? el('p', { class: 'w-sub' + (dKg < 0 ? ' kd-down' : ''), text: `≈ ${n.toLocaleString('sv-SE')} kcal/dag ${dKg < 0 ? 'underskott' : 'överskott'} på ${days} dagar (1 kg ≈ 7 700 kcal)` }) : null;
+  return n ? el('p', { class: 'w-sub' + (dKg < 0 ? ' kd-down' : ''), text: `≈ ${n.toLocaleString('sv-SE')} kcal/dag ${dKg < 0 ? 'underskott' : 'överskott'} · ${days} dagar` }) : null;
 }
 
 function summary(t) {
@@ -93,6 +93,10 @@ export function energyCard() {
   const why = q >= 95 ? null : WHY[e.weakest === 'plausible' ? (e.low ? 'low' : 'high') : e.weakest];
   const plan = weightPlan(S.state.wgoal, currentWeight(S.state), today());
   const forGoal = plan && !plan.reached && !rough ? r50(e.tdee + plan.kcalDay) : null;
+  // Låg kvalitet (2026-11-21): en kompakt rad i stället för hela kortet; förklaringen under Så räknas det.
+  if (q < 50) return el('section', { class: 'card' }, h2,
+    el('p', { class: 'en-compact' }, el('strong', { text: rough ? `${kcal(lo)}–${kcal(hi)}` : `≈ ${kcal(r50(e.tdee))}` }), ` kcal/dag · kvalitet ${q} %`),
+    why ? el('details', { class: 'en-how' }, el('summary', { text: 'Så räknas det' }), el('p', { class: 'small', text: why }), how.lastChild) : how);
   return el('section', { class: 'card en-card' }, h2,
     el('div', { class: 'en-top' },
       el('p', { class: 'en-val' + (rough ? ' rough' : '') }, el('strong', { text: rough ? `${kcal(lo)}–${kcal(hi)}` : `≈ ${kcal(r50(e.tdee))}` }), ' kcal/dag'),
@@ -101,7 +105,6 @@ export function energyCard() {
       svg('svg', { class: 'en-bar', viewBox: '0 0 100 8', preserveAspectRatio: 'none', role: 'meter', 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': q, 'aria-label': 'Kvalitet' },
         svg('rect', { class: 'en-bg', x: 0, y: 0, width: 100, height: 8, rx: 4 }), svg('rect', { class: 'en-fill' + (q >= 75 ? ' ok' : ''), x: 0, y: 0, width: Math.max(q, 2), height: 8, rx: 4 })),
       el('strong', { text: `${q} %` })),
-    why && q < 50 ? el('p', { class: 'small en-why', text: why }) : null,
     how);
 }
 // Kalorisumma för en period (vecka/månad): mot målet, enligt vikten och mot förbrukningen.
@@ -113,7 +116,6 @@ export function energyStats(from, to) {
   const items = [
     pe.vsGoal != null ? row('Mot kalorimålet', pe.vsGoal) : null,
     useE ? row('Mot förbrukningen', Math.round(pe.kcal - e.tdee * pe.logged)) : null,
-    pe.wKcal != null ? row(pe.wKcal > 0 ? 'Kaloriöverskott enligt vikten' : 'Kaloriunderskott enligt vikten', pe.wKcal) : null,
   ].filter(Boolean);
   return items.length ? el('ul', { class: 'en-rows' }, items) : null;   // städning 2026-11-21: ingen förklaringsrad
 }
@@ -174,7 +176,7 @@ function chart() {
   const vals = [...line.map((p) => p[1]), ...dots.map((p) => p[1])];
   const lo = Math.floor(Math.min(...vals) - 0.5), hi = Math.ceil(Math.max(...vals) + 0.5);
   const W = 320, H = 150, pad = 26, bottom = 16;
-  const x = (i) => pad + i * (W - pad - 6) / (n - 1), y = (v) => 8 + (hi - v) * (H - 8 - bottom) / (hi - lo);
+  const x = (i) => pad + i * (W - pad - 6) / (n - 1), y = (v) => 16 + (hi - v) * (H - 16 - bottom) / (hi - lo);
   const r = (v) => Math.round(v * 10) / 10;
   const d = line.map((p, j) => `${j ? 'L' : 'M'}${r(x(p[0]))},${r(y(p[1]))}`).join(' ');
   const long = n > 365;
@@ -185,8 +187,9 @@ function chart() {
       [lo, (lo + hi) / 2, hi].map((v) => [svg('line', { class: 'grid', x1: pad, x2: W, y1: y(v), y2: y(v) }), svg('text', { class: 'ax', x: 0, y: y(v) + 3 }, fmtNum(r1(v)))]),
       ticks.map((i, j) => svg('text', { class: 'ax', x: x(i), y: H - 3, 'text-anchor': j === 0 ? 'start' : j === 2 ? 'end' : 'middle' }, label(days[i]))),
       dots.map((p) => svg('circle', { class: 'w-dot-extra', cx: r(x(p[0])), cy: r(y(p[1])), r: 2 })),
-      svg('path', { class: 'w-line', d })),
-    el('p', { class: 'legend' }, el('span', { class: 'lg lg-w' }), ' 7-dagars medel', dots.length ? [el('span', { class: 'lg lg-wx' }), ' vägning'] : null, ` · ${span}`)];
+      svg('path', { class: 'w-line', d }),
+      // Förklaringen i diagrammet (2026-11-21) i stället för en egen rad.
+      svg('text', { class: 'ax', x: W, y: 8, 'text-anchor': 'end' }, `7-dagars medel · ${span}`))];
 }
 
 export function viewTrend() {

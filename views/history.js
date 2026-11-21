@@ -91,7 +91,7 @@ export function viewHistory() {
         el('span', { class: 'lg good' }), ` ≥ ${pct(S.state.settings.successThreshold)}`, el('span', { class: 'lg mid' }), ' 50 %+', el('span', { class: 'lg low' }), ' < 50 %',
         el('span', { class: 'lg lg-weigh' }), ' Vägning', el('span', { class: 'lg lg-train' }), ' Träning')),
     more: () => el('section', { class: 'card' }, el('div', { class: 'stats' },
-      stat(String(sessions), 'pass i månaden', km ? ` · ${Math.round(dOut(km) * 10) / 10} ${dUnit()}` : ''),
+      sessions ? stat(String(sessions), 'pass i månaden', km ? ` · ${Math.round(dOut(km) * 10) / 10} ${dUnit()}` : '') : null,   // 0 pass döljs (2026-11-21)
       stat(a7 == null ? '–' : kcal(a7), 'kcal/dag i snitt')),
       energyStats(mFrom, mTo)),
     }),
