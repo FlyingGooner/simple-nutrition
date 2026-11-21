@@ -756,3 +756,10 @@ main .day-head + * { margin-top: 10px; }
 .en-chips { margin: 6px 0 10px; }
 .day-note { margin: 4px 4px 8px; color: var(--dev); }
 .dt-inc { color: var(--muted); }
+.day-head .head-goal { grid-column: 1 / -1; grid-row: 3; margin: 10px 8px 0; }
+.hg-row { display: flex; align-items: baseline; gap: 8px; font-size: .875rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.hg-row strong { color: var(--fg); font-size: 1rem; }
+.hg-from { flex: 1; }
+.hg-left { color: var(--fg); font-weight: 500; }
+.hg-left.over { color: var(--dev); }
+.head-goal .kbar { margin: 6px 0 0; }

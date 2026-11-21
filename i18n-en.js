@@ -193,7 +193,7 @@ I18N.add({
   'Passtyper och mål': 'Workout types and goals',
   'Gym-typer kan kombineras till ett pass (Push + Pull = 1 pass). Kondition loggas med sträcka och tid.': 'Gym types can be combined into one session (Push + Pull = 1 session). Cardio is logged with distance and time.',
   'Mål per vecka': 'Goal per week', 'Alla pass': 'All workouts', 'Inget mål': 'No goal', 'Kondition': 'Cardio',
-  'Total förbrukning': 'Total expenditure', 'Använd som kalorimål': 'Use as calorie goal',
+  'Total förbrukning': 'Total expenditure', 'För viktmålet': 'For weight goal', 'Håller vikten': 'Maintain weight', 'Använd som kalorimål': 'Use as calorie goal',
   'Inga kompletta dagar – varje måltid behöver mat eller ⏭️, och minst 800 kcal.': 'No complete days – every meal needs food or ⏭️, and at least 800 kcal.',
   'Ofullständiga dagar drar ner – ge varje måltid mat eller markera ⏭️ Hoppade över.': 'Incomplete days lower it – give every meal food or mark ⏭️ Skipped.',
   'Under 800 kcal – dagen räknas inte i statistiken. Fattas något? Använd snabbvalen.': 'Under 800 kcal – the day does not count in the statistics. Missing something? Use the quick picks.',

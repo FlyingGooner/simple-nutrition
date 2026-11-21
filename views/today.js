@@ -40,6 +40,24 @@ function goalChips(e) {
       text: r === max ? `1 % (${r2(r)} ${wUnit()})` : `${r2(r)} ${wUnit()}`,
     }))));
 }
+// Dagens mål överst (2026-11-21): kalorimålet, annars förbrukning + viktmålets kcal/dag (kvalitet ≥ 25 %).
+function headGoal(posts) {
+  let goal = goalFor(S.state, today()).kcal, from = 'Kalorimål';
+  if (goal == null) {
+    const e = energyEstimate(S.state, today()), p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
+    if (!e || !e.ready || e.quality < 0.25) return null;
+    goal = Math.round((e.tdee + (p && !p.reached ? p.kcalDay : 0)) / 50) * 50;
+    from = p && !p.reached ? 'För viktmålet' : 'Håller vikten';
+  }
+  const eaten = Math.round(sumN(posts)[0]), left = goal - eaten;
+  return el('div', { class: 'head-goal' },
+    el('div', { class: 'hg-row' }, el('span', { class: 'hg-from', text: from }),
+      el('span', {}, el('strong', { text: kcal(eaten) }), ` / ${kcal(goal)} kcal`),
+      el('span', { class: 'hg-left' + (left < 0 ? ' over' : ''), text: left < 0 ? `${kcal(-left)} över` : `${kcal(left)} kvar` })),
+    svg('svg', { class: 'kbar', viewBox: '0 0 100 6', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
+      svg('rect', { class: 'kbar-bg', x: 0, y: 0, width: 100, height: 6, rx: 2 }),
+      svg('rect', { class: 'kbar-fill' + (left < 0 ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, eaten / goal) * 1000) / 10, height: 6, rx: 2 })));
+}
 // Komplett dag (2026-11-21): säg vad som saknas för att dagen ska räknas i statistiken.
 function dayNote() {
   const d = dayCheck(S.state, S.current, null);
@@ -198,7 +216,8 @@ export function viewToday() {
     stepper('Byt dag', ['prev', 'Föregående dag'], 'today', ['next', 'Nästa dag'], isToday,
       isToday ? [el('span', { class: 'today-badge', text: 'IDAG' }), dateTitle(S.current)] : dateTitle(S.current), null, isToday ? '' : 'not-today'),
     el('div', { class: 'streak' }, el('span', { title: 'Lyckade dagar i rad', text: `🔥 ${st} ${st === 1 ? 'dag' : 'dagar'} i rad` }),
-      isToday ? null : el('button', { class: 'link back-today', 'data-act': 'today', text: '↩ Till idag' }))),
+      isToday ? null : el('button', { class: 'link back-today', 'data-act': 'today', text: '↩ Till idag' })),
+    isToday ? headGoal(posts) : null),
     ...arrange('today', {
     plan: () => S.state.settings.planText ? el('p', { class: 'plan', text: S.state.settings.planText }) : null,
     meals: () => el('div', { class: 'meals' },
