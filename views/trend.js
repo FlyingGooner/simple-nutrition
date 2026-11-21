@@ -46,15 +46,20 @@ export function forecastLine() {
   if (!f) return null;
   if (!f.ready) return el('p', { class: 'w-sub fc', text: 'Prognos när du vägt dig minst 4 gånger under 10 dagar.' });
   const wk = (d) => Math.max(1, Math.round(Math.abs(d) / 7));
+  // Mål och utfall i kg per vecka (2026-11-21), två decimaler så att små skillnader syns.
+  const kgw = (v) => `${v > 0 ? '+' : v < 0 ? '−' : '±'}${fmtNum(Math.abs(wOut(v)), 2)} ${wUnit()}/v`;
+  const p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
+  const outcome = [' · ', el('span', { text: 'utfall' }), ' ', el('strong', { text: kgw(f.week) })];
+  const goalRate = p && !p.reached && !p.auto ? [' · ', el('span', { text: 'mål' }), ' ', el('strong', { text: kgw(p.rate) })] : null;
   if (f.status === 'none') return el('p', { class: 'w-sub fc' }, el('span', { text: 'Prognos: målet nås' }), ' ', el('strong', { text: `≈ ${shortDate(f.date)}` }),
-    ' · ', el('span', { text: 'trend' }), ' ', el('strong', { text: `${signed(wOut(f.week))} ${wUnit()}/v` }));
+    outcome);
   if (f.status === 'wrong' && S.state.wgoal && !S.state.wgoal.date && S.state.wgoal.rate == null && S.state.wgoal.pct == null) return el('p', { class: 'w-sub fc' }, el('strong', { class: 'fc-dev', text: '⚠️ Trenden går åt fel håll' }));
   const [cls, label] = { on: ['ok', '✅ I fas'], ahead: ['ok', '🚀 Före'], behind: ['dev', '⚠️ Efter'], wrong: ['dev', '⚠️ Trenden går åt fel håll'] }[f.status];
   return el('p', { class: 'w-sub fc' },
     el('strong', { class: 'fc-' + cls, text: label + (f.gap != null && f.status !== 'on' ? ` ≈ ${wk(f.gap)} v` : '') }),
     f.date ? [' · ', el('span', { text: 'prognos' }), ' ', el('strong', { text: shortDate(f.date) })] : null,
     f.planned ? [' · ', el('span', { text: 'plan' }), ' ', el('strong', { text: shortDate(f.planned) })] : null,
-    ' · ', el('span', { text: 'trend' }), ' ', el('strong', { text: `${signed(wOut(f.week))} ${wUnit()}/v` }));
+    goalRate, outcome);
 }
 
 /* Förbrukning (2026-11-21): räknas från dag ett, med kvalitet som datan själv avgör. */
