@@ -14,7 +14,10 @@ function summaryCard() {
   // Utan kalorimål (standard): bara dagens summa, ingen stapel eller "kvar".
   // 2026-11-18: tryck på kortet → allt du ätit i dag, samma sak från flera måltider ihopslaget.
   const sec = `daysum-${S.current}`;
-  return el('details', { class: 'card sum-card day-sum', 'data-sec': sec, open: setOpen.has(sec) && posts.length > 0, 'aria-label': 'Dagens kalorier' },
+  // 2026-11-21: vikten i samma kort – vänster öppnar dagen, höger fyller i vikt.
+  const w = S.state.weights[S.current];
+  return el('div', { class: 'card sum-card sum-wrap' }, el('div', { class: 'sum-split' },
+    el('details', { class: 'day-sum', 'data-sec': sec, open: setOpen.has(sec) && posts.length > 0, 'aria-label': 'Dagens kalorier' },
     el('summary', {}, headShown ? null : el('div', { class: 'sum-top' },
       el('span', { class: 'sum-big' }, el('strong', { text: kcal(n[0]) }), has ? ` / ${kcal(g.kcal)} kcal` : ' kcal idag'),
       has ? el('span', { class: 'sum-left' + (over ? ' over' : ''), text: over ? `${kcal(-left)} över` : `${kcal(left)} kvar` }) : null),
@@ -23,7 +26,11 @@ function summaryCard() {
       svg('rect', { class: 'kbar-fill' + (over ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, n[0] / g.kcal) * 1000) / 10, height: 6, rx: 2 })) : null,
     el('p', { class: 'macros' }, macro('Protein', n[1], g.prot), ' · ', macro('Kolh.', n[2], g.kolh), ' · ', macro('Fett', n[3])),
     posts.length ? el('p', { class: 'sum-more', text: 'Allt du ätit i dag ▾' }) : null),
-    posts.length ? [dayList(posts), el('button', { class: 'link dl-ai', 'data-act': 'dayai', text: '📋 Kopiera för kontroll med AI' })] : null);
+    posts.length ? [dayList(posts), el('button', { class: 'link dl-ai', 'data-act': 'dayai', text: '📋 Kopiera för kontroll med AI' })] : null),
+    el('button', { class: 'w-tile' + (S.weighOpen ? ' on' : ''), 'data-act': 'weighopen', 'aria-expanded': String(!!S.weighOpen), 'aria-label': 'Vikt idag' },
+      el('span', { class: 'w-tile-k', text: '⚖️ Vikt' }),
+      el('strong', { text: w != null ? `${fmtNum(wOut(w))} ${wUnit()}` : '–' }))),
+    S.weighOpen ? weightForm(w) : null);
 }
 // Snabbval av takt (2026-11-21): 0,25 / 0,5 / 1 kg och 1 % per vecka, bara de som är ≤ 1 % av vikten.
 function goalChips(e) {
@@ -215,10 +222,8 @@ function mealCard(m, posts) {
     body);
 }
 
-function weightCard() {
-  const w = S.state.weights[S.current];
-  return el('details', { class: 'card weigh-extra', 'data-sec': 'weight' },
-    el('summary', { text: w != null ? `Vikt ${fmtNum(wOut(w))} ${wUnit()}` : 'Vikt idag (valfritt)' }),
+function weightForm(w) {
+  return el('div', { class: 'w-form' },
     el('div', { class: 'weigh-row' },
       el('input', { type: 'text', inputmode: 'decimal', id: 'weight', value: w != null ? fmtNum(wOut(w)) : '', placeholder: wUnit(), 'aria-label': `Vikt i ${wUnit()}` }),
       el('button', { class: 'weigh-save', 'data-act': 'weightsave', text: 'Spara' })),
@@ -254,7 +259,7 @@ export function viewToday() {
     kcal: () => [summaryCard(), dayNote(), weighNote(), energyHint(),
       !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
         ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera maten från igår' }) : null],
-    weight: () => weightCard(),
+    weight: () => null,   // 2026-11-21: ligger i kcal-kortet
     }),
     posts.length || S.state.weights[S.current] != null || S.state.habits[S.current] || S.state.workouts[S.current]
       ? el('p', { class: 'clear-day center' }, el('button', { class: 'link danger', 'data-act': 'clearday', text: '🗑 Rensa dagen' })) : null,

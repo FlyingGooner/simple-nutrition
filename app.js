@@ -402,8 +402,12 @@ app.addEventListener('click', (ev) => {
       const v = wIn(parseNum(document.getElementById('weight')?.value));
       if (v >= 20 && v <= 400) S.state.weights[S.current] = Math.round(v * 10) / 10;
       else delete S.state.weights[S.current];
-      persist(); break;
+      S.weighOpen = false; persist(); break;
     }
+    case 'weighopen':   // 2026-11-21: vikt-rutan i kcal-kortet
+      S.weighOpen = !S.weighOpen;
+      if (S.weighOpen) setTimeout(() => document.getElementById('weight')?.focus(), 0);
+      break;
     // Lägg till
     case 'addopen': S.open = null; openAdd('meal', id); return;
     case 'addclose': S.add = null; break;
