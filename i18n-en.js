@@ -370,6 +370,7 @@ I18N.add({
   [/^(.+) saknar mat – lägg till eller markera ⏭️, annars räknas dagen inte i statistiken\.$/, (g, tr) => `${g[1].split(', ').map(tr).join(', ')} has no food – add some or mark ⏭️, otherwise the day does not count in the statistics.`],
   [/^Summa för (\d+) kompletta dagar( \((\d+) ofullständiga räknas inte\))?\. Minus = underskott\. Vikten räknas på 7-dagars medel \(1 kg ≈ 7 700 kcal\)\.$/, (g) => `Total for ${g[1]} complete days${g[3] ? ` (${g[3]} incomplete not counted)` : ''}. Minus = deficit. Weight uses a 7-day average (1 kg ≈ 7,700 kcal).`],
   [/^håller vikten ≈ (.+)$/, 'maintain ≈ $1'],
+  [/^vikt (.+)$/, 'weight $1'],
   [/^kalorimål (.+)$/, 'calorie goal $1'],
   [/^−(.+) %\/v$/, '−$1 %/wk'],
   [/^🚀 Före(?: ≈ (\d+) v)?$/, (g) => `🚀 Ahead${g[1] ? ` ≈ ${g[1]} wk` : ''}`],

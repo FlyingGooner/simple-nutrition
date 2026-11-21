@@ -44,6 +44,7 @@ export function kcalWeightChart(from, n = 7) {
   const Yw = (v) => top + 6 + (hi - v) / (hi - lo || 1) * (bot - top - 12);
   const pts = kg.map((v, i) => (v == null ? null : [i * cw + cw / 2, Yw(v)])).filter(Boolean);
   const r1 = (x) => Math.round(x * 10) / 10;
+  const kgTxt = (v) => (v.length > 1 ? `${fmtNum(r1(wOut(Math.min(...v))))}–${fmtNum(r1(wOut(Math.max(...v))))} ${wUnit()}` : `${fmtNum(r1(wOut(v[0])))} ${wUnit()}`);
   return el('div', { class: 'kw' },
     svg('svg', { class: 'kw-chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Kalorier per dag och vikt' },
       kc.map((v, i) => (v ? svg('rect', { class: 'kw-bar' + (dayCheck(S.state, days[i], t).ok ? '' : ' inc'), x: r1(i * cw + cw * 0.18), y: r1(Yk(v)), width: r1(cw * 0.64), height: r1(bot - Yk(v)), rx: 2 }) : null)),
@@ -53,7 +54,10 @@ export function kcalWeightChart(from, n = 7) {
       pts.map((p) => svg('circle', { class: 'kw-dot', cx: r1(p[0]), cy: r1(p[1]), r: n > 7 ? 1.8 : 2.6 })),
       days.map((k, i) => svg('text', { class: 'kw-day cur', x: r1(i * cw + cw / 2), y: H - 8, 'text-anchor': 'middle' }, label(k, i)))),
     // Förklaring bara för de streckade linjerna (2026-11-21): staplar och viktlinje förklarar sig själva.
-    (ref || goal) && el('p', { class: 'kw-legend' },
+    // Förklaring alltid (2026-11-21): vad staplar och linje är.
+    el('p', { class: 'kw-legend' },
+      el('span', { class: 'lg-bar' }), el('span', { text: 'kcal per dag' }),
+      pts.length ? [el('span', { class: 'lg-line' }), el('span', { text: `vikt ${kgTxt(ws_)}` })] : null,
       ref ? [el('span', { class: 'lg-ref' }), el('span', { text: `håller vikten ≈ ${kcal(ref)}` })] : null,
       goal ? [el('span', { class: 'lg-goal' }), el('span', { text: `kalorimål ${kcal(goal)}` })] : null));
 }
