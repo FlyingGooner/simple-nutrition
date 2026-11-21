@@ -1,5 +1,5 @@
 // View: Historik – månadskalender färgad efter följsamhet (vanor, som i follow-diet-tracker), streaks, träning och kcal som stöd.
-import { addDays, dateKey, parseKey, sumN, habitDay, habitStreak, habitRange, habitLongest } from '../store.js';
+import { periodEnergy, addDays, dateKey, parseKey, sumN, habitDay, habitStreak, habitRange, habitLongest } from '../store.js';
 import { energyStats } from './trend.js';
 import { today, S, el, svg, stepper, stat, kcal, pct, shortDate, arrange, wOut, wUnit, dOut, dUnit } from '../ui.js';
 // (dateKey/parseKey används även av monthWeight)
@@ -58,10 +58,10 @@ export function dayClass(k) {
   const r = habitDay(S.state, k).ratio;
   return r == null ? 'none' : r >= S.state.settings.successThreshold ? 'good' : r >= 0.5 ? 'mid' : 'low';
 }
+// Snitt de senaste n dagarna före idag, bara kompletta dagar (2026-11-21).
 function avgKcal(n) {
-  let s = 0, c = 0;
-  for (let i = 0; i < n; i++) { const l = S.state.log[addDays(today(), -i)]; if (l?.length) { s += sumN(l)[0]; c++; } }
-  return c ? Math.round(s / c) : null;
+  const pe = periodEnergy(S.state, addDays(today(), -n), addDays(today(), -1), today());
+  return pe.logged ? Math.round(pe.kcal / pe.logged) : null;
 }
 
 export function viewHistory() {

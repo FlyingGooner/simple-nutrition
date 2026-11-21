@@ -276,11 +276,26 @@ export function weightForecast(state, todayK) {
 // Komplett dag (beslut 2026-11-21): varje måltid har mat eller är markerad ⏭️ Hoppade över, minst 800 kcal, och dagen är slut.
 // Bara kompletta dagar räknas i förbrukning och kalorisummor. ✅/🍰 utan mat = man åt men loggade inte.
 export const DAY_MIN_KCAL = 800;
+// En måltid krävs från dagen den första gången användes (post eller vana) – en ny måltid gör inte gamla dagar ofullständiga.
+// Aldrig använd måltid krävs bara på senaste dagen och framåt (så att Idag säger till). Cache per datamängd.
+let useCache = { sig: '', first: {}, last: '' };
+function mealFirstUse(state) {
+  const days = Object.keys(state.log), hd = Object.keys(state.habits);
+  const sig = `${days.length}|${hd.length}|${state.meals.map((m) => m.id).join(',')}|${days.reduce((n, k) => n + state.log[k].length, 0)}`;
+  if (useCache.state === state && useCache.sig === sig) return useCache;
+  const first = {};
+  const mark = (id, k) => { if (!first[id] || k < first[id]) first[id] = k; };
+  for (const k of days) for (const p of state.log[k]) mark(p.m, k);
+  for (const k of hd) for (const id of Object.keys(state.habits[k] || {})) mark(id, k);
+  useCache = { state, sig, first, last: days.sort().pop() || '' };
+  return useCache;
+}
 export function dayCheck(state, k, todayK) {
   const posts = state.log[k] || [], h = state.habits[k] || {};
-  const kcal = Math.round(sumN(posts)[0]);
+  const kcal = Math.round(sumN(posts)[0]), use = mealFirstUse(state);
   const skipped = (id) => { const x = h[id]; return (x && typeof x === 'object' ? x.outcome : x) === 'skipped'; };
-  const missing = state.meals.filter((m) => !skipped(m.id) && !posts.some((p) => p.m === m.id)).map((m) => m.name);
+  const required = (m) => (use.first[m.id] ? use.first[m.id] <= k : k >= use.last);
+  const missing = state.meals.filter((m) => required(m) && !skipped(m.id) && !posts.some((p) => p.m === m.id)).map((m) => m.name);
   const reason = todayK && k >= todayK ? 'today' : !posts.length ? 'empty' : missing.length ? 'missing' : kcal < DAY_MIN_KCAL ? 'low' : null;
   return { ok: !reason, reason, missing, kcal, hasFood: posts.length > 0 };
 }
@@ -596,6 +611,7 @@ export const EXPORT_EXAMPLE = {
   foods: [{ id: 'f1', name: 'Proteinbar X', n: [380, 30, 35, 12], u: ['st', 55] }],
   aliases: { bar: 'u:f1' },
   weights: { '2026-11-10': 113 },
+  wgoal: { target: 105, date: '2027-05-01' },
   habits: { '2026-11-10': { m1: { outcome: 'followed' }, m2: { outcome: 'cheat', reason: 'out-lunch', note: 'Jobbmiddag' } } },
   workouts: { '2026-11-10': [{ types: ['push', 'pull'] }] },
   layout: { week: { order: ['weight', 'habits', 'days', 'training', 'kcal'], hidden: [] } },

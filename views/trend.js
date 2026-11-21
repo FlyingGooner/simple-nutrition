@@ -35,8 +35,8 @@ export function goalLine(cur, actual) {
   if (p.open) return [el('p', { class: 'w-sub wg' }, part('Mål', rate(p.rate)), actual != null ? [' · ', part('senaste 4 v', rate(actual))] : null), forecastLine()];
   if (p.reached) return el('p', { class: 'w-sub wg' }, part('Mål', kg(p.target)), ' · ', el('span', { class: 'goal-ok', text: 'Nått 🎉' }));
   return [el('p', { class: 'w-sub wg' },
-    part('Mål', kg(p.target)), ' · ',
-    p.auto ? null : [p.tooFast ? part('Hinns inte med högst 1 %/v, tidigast', shortDate(p.earliest)) : part(S.state.wgoal.date ? 'senast' : 'klart ≈', shortDate(p.eta)), ' · ',
+    part('Mål', kg(p.target)),
+    p.auto ? null : [' · ', p.tooFast ? part('Hinns inte med högst 1 %/v, tidigast', shortDate(p.earliest)) : part(S.state.wgoal.date ? 'senast' : 'klart ≈', shortDate(p.eta)), ' · ',
     part('takt', rate(p.rate))],
     actual != null ? [' · ', part('senaste 4 v', rate(actual))] : null), forecastLine()];
 }
@@ -128,7 +128,7 @@ function table() {
           el('td', { class: r.h.ratio == null ? '' : r.h.ratio >= S.state.settings.successThreshold ? 'good-t' : r.h.ratio >= 0.5 ? 'mid-t' : 'low-t', text: pct(r.h.ratio) }),
           el('td', { text: r.h.count || r.h.extraCheat ? String(r.h.cheat + r.h.extraCheat) : '–' }),
           el('td', { text: (() => { const g = goals(r.ws).find((x) => x.key === 'workoutGoal'); const n = weekSessions(r.ws).all; return g ? `${n}/${g.goal}` : n ? String(n) : '–'; })() }),
-          el('td', { text: r.st.avg != null ? kcal(r.st.avg) : '–' }));
+          (() => { const pe = periodEnergy(S.state, r.ws, addDays(r.ws, 6), today()); return el('td', { text: pe.logged ? kcal(pe.kcal / pe.logged) : '–' }); })());   // kompletta dagar
       }))));
 }
 
@@ -170,7 +170,8 @@ function compare() {
   for (const ws of weeks(52).slice(1)) {
     const st = weekStats(S.state, ws), h = habitWeek(S.state, ws), a = avg7(addDays(ws, 6)), b = avg7(addDays(ws, -1));
     if (a == null || b == null || (!h.count && st.logged < 4)) continue;
-    rows.push({ good: h.ratio != null ? h.ratio >= thr : null, trained: weekSessions(ws).all >= wg, under: st.logged >= 4 && st.days[6].goal != null ? st.avg <= st.days[6].goal : null, d: a - b });
+    const pe = periodEnergy(S.state, ws, addDays(ws, 6), today());
+    rows.push({ good: h.ratio != null ? h.ratio >= thr : null, trained: weekSessions(ws).all >= wg, under: pe.logged >= 4 && st.days[6].goal != null ? pe.kcal / pe.logged <= st.days[6].goal : null, d: a - b });
   }
   const body = rows.length < 4 ? [el('p', { class: 'muted small', text: `Fler veckor behövs (${rows.length}/4) – veckor med loggning och vikt före och efter.` })] : (() => {
     const mean = (l) => l.reduce((s, r) => s + r.d, 0) / l.length;

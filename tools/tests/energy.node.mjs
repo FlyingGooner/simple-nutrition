@@ -59,3 +59,13 @@ test('komplett dag: alla måltider mat eller ⏭️, minst 800 kcal, inte idag',
   const pe = periodEnergy(validate({ meals, log: { [k]: [post('a', 900)] } }), k, k, T);
   assert.equal(pe.logged, 0); assert.equal(pe.partial, 1);
 });
+test('ny måltid gör inte gamla dagar ofullständiga', () => {
+  const post = (m, k) => ({ id: 'p' + m + k, m, ref: 'q:est-home', name: 'x', q: 1, n: [900, 0, 0, 0] });
+  const meals = [{ id: 'a', name: 'Frukost' }, { id: 'b', name: 'Lunch' }, { id: 'c', name: 'Kvällsmat' }];
+  const d1 = '2026-11-18', d2 = '2026-11-20';
+  const st = validate({ meals, log: { [d1]: [post('a', 1), post('b', 1)], [d2]: [post('a', 2), post('b', 2), post('c', 2)] } });
+  assert.equal(dayCheck(st, d1, T).ok, true);            // c användes först d2
+  const st2 = validate({ meals, log: { [d1]: [post('a', 1), post('b', 1)], [d2]: [post('a', 2)] } });
+  assert.deepEqual(dayCheck(st2, d2, T).missing, ['Lunch', 'Kvällsmat']);   // aldrig använd krävs på senaste dagen
+  assert.equal(dayCheck(st2, d1, T).ok, true);
+});
