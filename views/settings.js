@@ -45,30 +45,24 @@ function editableList(kind, items) {
 function wgoalSection() {
   const g = S.state.wgoal, cur = currentWeight(S.state), p = weightPlan(g, cur, today());
   const w1 = (v) => fmtNum(Math.round(wOut(v) * 10) / 10), u = wUnit();
-  // Två lägen (2026-11-21): Målvikt (valfritt datum, annars prognos) eller Takt (kg eller % per vecka).
-  const mode = S.wgMode || (g && g.target == null ? 'rate' : 'weight');
+  // Ett formulär (2026-11-21): målvikt, takt och datum är alla valfria – takt och datum utesluter varandra.
   const field = (id, label, value, ph, type = 'text') => el('label', { class: 'goal-row' }, el('span', { text: label }),
     el('input', { type, inputmode: type === 'text' ? 'decimal' : undefined, class: type === 'text' ? 'num-in' : 'num-in date-in', value, placeholder: ph, id, 'aria-label': label }));
   const info = !g ? null : cur == null ? 'Väg dig under Idag så räknas takten ut.'
     : p.reached ? 'Målet är nått.'
     : `${p.auto ? 'Kaloriråd räknas på 0,5 %/v: ' : ''}Takt ${w1(Math.abs(p.rate))} ${u}/v ≈ ${kcal(Math.abs(p.kcalDay))} kcal/dag ${p.kcalDay < 0 ? 'underskott' : 'överskott'}.`;
   return [
-    el('div', { class: 'chips wg-mode', role: 'group', 'aria-label': 'Typ av viktmål' },
-      [['weight', 'Målvikt'], ['rate', 'Takt']].map(([m, t]) => el('button', { class: 'chip' + (mode === m ? ' on' : ''), 'data-act': 'wgmode', 'data-val': m, 'aria-pressed': String(mode === m), text: t }))),
-    mode === 'weight' ? [
-      field('wg-target', `Målvikt (${u})`, g?.target != null ? w1(g.target) : '', cur ? w1(cur) : ''),
-      field('wg-date', 'Klart senast (valfritt)', g?.date ?? '', '', 'date'),
-    ] : el('label', { class: 'goal-row' }, el('span', { text: 'Gå ner per vecka' }),
-      el('input', { type: 'text', inputmode: 'decimal', class: 'num-in', id: 'wg-rate', 'aria-label': 'Takt per vecka', value: g?.target == null && g?.pct != null ? fmtNum(g.pct, 2) : g?.target == null && g?.rate ? w1(g.rate) : '', placeholder: '0,5' }),
+    field('wg-target', `Målvikt (${u}, valfritt)`, g?.target != null ? w1(g.target) : '', cur ? w1(cur) : ''),
+    el('label', { class: 'goal-row' }, el('span', { text: 'Gå ner per vecka (valfritt)' }),
+      el('input', { type: 'text', inputmode: 'decimal', class: 'num-in', id: 'wg-rate', 'aria-label': 'Takt per vecka', value: g?.pct != null ? fmtNum(g.pct, 2) : g?.rate ? w1(g.rate) : '', placeholder: '0,5' }),
       el('select', { id: 'wg-unit', 'aria-label': 'Enhet för takten' }, [[u, u], ['%', '%']].map(([v, t]) => el('option', { value: v, selected: (g?.pct != null) === (v === '%'), text: t })))),
+    field('wg-date', 'Klart senast (valfritt)', g?.date ?? '', '', 'date'),
     el('div', { class: 'save-row' },
       g ? el('button', { class: 'link', 'data-act': 'wgoaloff', text: 'Ta bort mål' }) : null,
       el('button', { class: 'weigh-save', 'data-act': 'wgoalsave', text: 'Spara viktmål' })),
     info ? el('p', { class: 'small', text: info }) : null,
     g ? forecastLine() : null,
-    el('p', { class: 'muted small', text: mode === 'weight'
-      ? 'Välj datum, eller lämna det tomt så visar appen en prognos för när du når målet utifrån din vikttrend. Högst 1 % av vikten per vecka – ett för tidigt datum sparas inte.'
-      : 'I kg eller i procent av vikten (procent följer vikten när den sjunker). Högst 1 % av vikten per vecka – snabbare än så är svårt att hålla och tappar mest vätska och muskler.' }),
+    el('p', { class: 'muted small', text: 'Fyll i målvikt, takt eller båda. Med målvikt kan du i stället för takt välja ett datum. Utan takt och datum räknar appen på 0,5 % av vikten per vecka och visar när du når målet. Högst 1 % av vikten per vecka – snabbare än så är svårt att hålla och tappar mest vätska och muskler.' }),
   ];
 }
 
