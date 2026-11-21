@@ -234,11 +234,15 @@ export function weightPlan(g, cur, todayK) {
   }
   const diff = g.target - cur, dir = Math.sign(diff), max = cur * WGOAL_MAX;
   if (Math.abs(diff) < 0.1) return { reached: true, target: g.target, cur };
-  const need = g.date ? (daysTo(todayK, g.date) > 0 ? Math.abs(diff) / (daysTo(todayK, g.date) / 7) : Infinity) : g.rate;
-  const rate = Math.min(need, max), tooFast = need > max + 1e-9;
+  // Gränsen räknar med att vikten ändras (2026-11-21): högst 1 % av vikten varje vecka, så vid 1 % tar det ln(mål/nu)/ln(1 ∓ 0,01) veckor.
+  const minWeeks = Math.log(g.target / cur) / Math.log(dir < 0 ? 1 - WGOAL_MAX : 1 + WGOAL_MAX), minDays = Math.ceil(minWeeks * 7);
+  const days = g.date ? daysTo(todayK, g.date) : null;
+  const need = g.date ? (days > 0 ? Math.abs(diff) / (days / 7) : Infinity) : g.rate;
+  const tooFast = g.date ? days < minDays : need > max + 1e-9;
+  const rate = g.date ? (tooFast ? Math.abs(diff) / minWeeks : need) : Math.min(need, max);
   return {
     reached: false, target: g.target, cur, diff, max, tooFast, rate: dir * rate, need: dir * need,
-    earliest: addDays(todayK, Math.ceil(Math.abs(diff) / max * 7)),
+    earliest: addDays(todayK, minDays),
     eta: g.date && !tooFast ? g.date : addDays(todayK, Math.ceil(Math.abs(diff) / rate * 7)),
     kcalDay: Math.round(dir * rate * KCAL_PER_KG / 7),
   };

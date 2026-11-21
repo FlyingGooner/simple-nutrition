@@ -74,7 +74,17 @@ function withUndo(label, change) {
 
 /* ---------- Router (mobile only, see ../STIL.md) ---------- */
 const VIEWS = { today: viewToday, week: () => viewWeek(), trend: viewTrend, history: viewHistory, settings: viewSettings };
+// Ett viktmål med datum får aldrig kräva mer än 1 % per vecka (2026-11-21): halkar man efter flyttas datumet till det tidigaste möjliga.
+function keepGoalPossible() {
+  const g = S.state.wgoal;
+  if (!g?.date) return;
+  const p = weightPlan(g, currentWeight(S.state), today());
+  if (!p?.tooFast) return;
+  g.date = p.earliest; persist();
+  setTimeout(() => snackbar(`Viktmålet flyttat till ${shortDate(p.earliest)} – högst 1 % per vecka`, null, null, 5000), 0);
+}
 function render() {
+  keepGoalPossible();
   app.dataset.view = view;
   const nodes = [view === 'trend' ? el('div', { class: 'card day-head view-head' }, el('h1', { class: 'view-title step-title', text: 'Trend' })) : null, VIEWS[view]()];
   app.replaceChildren(...nodes.flat(Infinity).filter(Boolean));

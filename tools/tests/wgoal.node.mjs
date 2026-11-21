@@ -16,7 +16,9 @@ test('plan: datum, takt, för snabbt, nått', () => {
   const ok = weightPlan({ target: 75, rate: 0.5 }, 80, '2026-11-21');
   assert.equal(ok.tooFast, false); assert.equal(ok.rate, -0.5); assert.equal(ok.kcalDay, -550); assert.equal(ok.eta, '2027-01-30');
   const fast = weightPlan({ target: 75, date: '2026-12-01' }, 80, '2026-11-21');
-  assert.equal(fast.tooFast, true); assert.equal(fast.rate, -0.8); assert.equal(fast.earliest, '2027-01-04');
+  assert.equal(fast.tooFast, true); assert.ok(fast.rate > -0.8 && fast.rate < -0.77); assert.equal(fast.earliest, '2027-01-05');
+  assert.equal(weightPlan({ target: 75, date: '2027-01-05' }, 80, '2026-11-21').tooFast, false);   // exakt tidigaste datum går
+  assert.equal(weightPlan({ target: 75, date: '2027-01-04' }, 80, '2026-11-21').tooFast, true);
   assert.equal(weightPlan({ target: 85, rate: 0.9 }, 80, '2026-11-21').tooFast, true);   // upp i vikt: samma gräns
   assert.equal(weightPlan({ target: 80.05, rate: 0.5 }, 80, '2026-11-21').reached, true);
   assert.equal(weightPlan({ target: 75, rate: 0.5 }, null, '2026-11-21'), null);

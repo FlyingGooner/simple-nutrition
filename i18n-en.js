@@ -371,6 +371,7 @@ I18N.add({
   [/^−(.+) %\/v$/, '−$1 %/wk'],
   [/^🚀 Före(?: ≈ (\d+) v)?$/, (g) => `🚀 Ahead${g[1] ? ` ≈ ${g[1]} wk` : ''}`],
   [/^⚠️ Efter(?: ≈ (\d+) v)?$/, (g) => `⚠️ Behind${g[1] ? ` ≈ ${g[1]} wk` : ''}`],
+  [/^Viktmålet flyttat till (.+) – högst 1 % per vecka$/, 'Weight goal moved to $1 – max 1 % per week'],
   [/^Kvalitet (\d+) % – se Trend\.$/, 'Quality $1 % – see Trend.'],
   [/^(.+) kcal\/dag$/, (g) => `${g[1]} kcal/day`],
   [/^Fitness buddy v([\d.]+) · inga externa anrop · näringsvärden från Livsmedelsverket$/, (g) => `Fitness buddy v${g[1]} · no external requests · nutrition values from the Swedish Food Agency`],
