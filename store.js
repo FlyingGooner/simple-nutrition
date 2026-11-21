@@ -281,7 +281,7 @@ export function weightForecast(state, todayK) {
   if (Math.sign(slope) !== Math.sign(diff) || Math.abs(slope) < 1e-4) return { ready: true, week, status: 'wrong' };
   const date = addDays(todayK, Math.ceil(diff / slope));
   if (p.auto) return { ready: true, week, date, status: 'none' };   // inget datum valt: bara prognosen
-  const planned = g.date || p.eta, gap = daysTo(planned, date);
+  const planned = p.tooFast ? p.earliest : g.date || p.eta, gap = daysTo(planned, date);   // för snabbt datum flyttas ändå till tidigaste
   return { ready: true, week, date, planned, gap, status: Math.abs(gap) <= 7 ? 'on' : gap < 0 ? 'ahead' : 'behind' };
 }
 
