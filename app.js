@@ -45,12 +45,12 @@ updateOnline();
 /* ---------- Snackbar (undo, update) ---------- */
 let snackTimer = null;
 // Takt utan datum (snabbval eller Inställningar utan målvikt); behåller målvikten om en finns. Högst 1 % av vikten per vecka.
-function quickGoal(r) {
+function quickGoal(r, keepTarget = true) {
   if (!(r >= 0.05 && r <= 4)) { snackbar('Fyll i datum eller takt per vecka', null, null, 3000); return; }
   const cur = currentWeight(S.state);
   if (cur != null && r > cur * 0.01 + 1e-9) { snackbar(`För snabbt – högst ${fmtNum(Math.round(wOut(cur * 0.01) * 10) / 10)} ${wUnit()} per vecka (1 %)`, null, null, 4000); return; }
   const g = S.state.wgoal, rate = Math.round(r * 100) / 100;
-  S.state.wgoal = g?.target != null && (cur == null || g.target < cur) ? { target: g.target, rate } : { rate };
+  S.state.wgoal = keepTarget && g?.target != null && (cur == null || g.target < cur) ? { target: g.target, rate } : { rate };
   persist(); render(); snackbar('Viktmålet sparat', null, null, 2500);
 }
 
@@ -628,28 +628,26 @@ app.addEventListener('click', (ev) => {
       if (g && !g.date && g.pct == null && Math.abs(g.rate - r) < 0.005) { delete S.state.wgoal; persist(); render(); snackbar('Inget viktmål', null, null, 2500); return; }
       quickGoal(r); return;
     }
-    case 'wgoalsave': {   // Viktmål (2026-11-21): högst 1 % av vikten per vecka
+    case 'wgmode': S.wgMode = t.dataset.val; render(); return;
+    case 'wgoaloff': withUndo('Viktmålet togs bort', () => { delete S.state.wgoal; }); return;
+    case 'wgoalsave': {   // Viktmål (2026-11-21): Målvikt (valfritt datum) eller Takt (kg/%), högst 1 % av vikten per vecka
       const v = (i) => document.getElementById(i)?.value.trim() ?? '';
-      const tRaw = v('wg-target'), dRaw = v('wg-date'), rRaw = v('wg-rate');
-      if (!tRaw && !rRaw) { delete S.state.wgoal; persist(); render(); snackbar('Inget viktmål', null, null, 2500); return; }
-      if (v('wg-unit') === '%' && rRaw && !dRaw) {   // takt i procent av vikten (2026-11-21)
-        const pc = parseNum(rRaw), t = tRaw ? wIn(parseNum(tRaw)) : null;
-        if (!(pc >= 0.05 && pc <= 1)) { snackbar('Ange 0,05–1 % per vecka', null, null, 3000); return; }
-        if (tRaw && !(t >= 20 && t <= 400)) { snackbar('Ange en målvikt', null, null, 3000); return; }
-        S.state.wgoal = t ? { target: Math.round(t * 10) / 10, pct: Math.round(pc * 100) / 100 } : { pct: Math.round(pc * 100) / 100 };
-        persist(); render(); snackbar('Viktmålet sparat', null, null, 2500); return;
+      if (document.getElementById('wg-rate')) {   // läge Takt
+        const rRaw = v('wg-rate');
+        if (!rRaw) { snackbar('Ange takt per vecka', null, null, 3000); return; }
+        if (v('wg-unit') === '%') {
+          const pc = parseNum(rRaw);
+          if (!(pc >= 0.05 && pc <= 1)) { snackbar('Ange 0,05–1 % per vecka', null, null, 3000); return; }
+          S.state.wgoal = { pct: Math.round(pc * 100) / 100 }; persist(); render(); snackbar('Viktmålet sparat', null, null, 2500); return;
+        }
+        quickGoal(wIn(parseNum(rRaw)), false); return;
       }
-      if (!tRaw) { quickGoal(wIn(parseNum(rRaw))); return; }
-      const target = wIn(parseNum(tRaw)), rate = rRaw ? wIn(parseNum(rRaw)) : null;
+      const tRaw = v('wg-target'), dRaw = v('wg-date'), target = wIn(parseNum(tRaw));
       if (!(target >= 20 && target <= 400)) { snackbar('Ange en målvikt', null, null, 3000); return; }
       if (dRaw && !(validDate(dRaw) && dRaw > today())) { snackbar('Datumet måste vara efter idag', null, null, 3000); return; }
-      if (!dRaw && !(rate >= 0.05 && rate <= 4)) { snackbar('Fyll i datum eller takt per vecka', null, null, 3000); return; }
-      const g = dRaw ? { target: Math.round(target * 10) / 10, date: dRaw } : { target: Math.round(target * 10) / 10, rate: Math.round(rate * 100) / 100 };
+      const g = dRaw ? { target: Math.round(target * 10) / 10, date: dRaw } : { target: Math.round(target * 10) / 10 };
       const p = weightPlan(g, currentWeight(S.state), today());
-      if (p?.tooFast) {
-        snackbar(dRaw ? `För snabbt – högst 1 % per vecka. Tidigast ${shortDate(p.earliest)}` : `För snabbt – högst ${fmtNum(Math.round(wOut(p.max) * 10) / 10)} ${wUnit()} per vecka (1 %)`, null, null, 4000);
-        return;
-      }
+      if (p?.tooFast) { snackbar(`För snabbt – högst 1 % per vecka. Tidigast ${shortDate(p.earliest)}`, null, null, 4000); return; }
       S.state.wgoal = g; persist(); render(); snackbar('Viktmålet sparat', null, null, 2500);
       return;
     }

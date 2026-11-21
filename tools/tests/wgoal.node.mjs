@@ -7,7 +7,7 @@ const { validate, weightPlan, currentWeight } = await import('../../store.js');
 test('validate wgoal', () => {
   assert.deepEqual(validate({ wgoal: { target: 75.04, date: '2027-03-01' } }).wgoal, { target: 75, date: '2027-03-01' });
   assert.deepEqual(validate({ wgoal: { target: 75, rate: 0.5 } }).wgoal, { target: 75, rate: 0.5 });
-  assert.equal(validate({ wgoal: { target: 75 } }).wgoal, undefined);
+  assert.deepEqual(validate({ wgoal: { target: 75 } }).wgoal, { target: 75 });   // målvikt utan datum = prognos
   assert.equal(validate({ wgoal: { target: 10, rate: 0.5 } }).wgoal, undefined);
 });
 test('plan: datum, takt, för snabbt, nått', () => {
@@ -45,4 +45,14 @@ test('prognos: i fas, efter, fel håll', async () => {
   assert.equal(weightForecast(validate({ weights: w(-0.25 / 7), wgoal: { target: 95, date: addDays(T, 70) } }), T).status, 'behind');
   assert.equal(weightForecast(validate({ weights: w(0.2 / 7), wgoal: { target: 95, date: addDays(T, 70) } }), T).status, 'wrong');
   assert.equal(weightForecast(validate({ weights: { [T]: 100 }, wgoal: { target: 95, date: addDays(T, 70) } }), T).ready, false);
+});
+test('målvikt utan datum: prognos utan status, kaloriråd på 0,5 %', async () => {
+  const { weightForecast, addDays } = await import('../../store.js');
+  const T = '2026-11-21', weights = {};
+  for (let i = 0; i <= 20; i++) weights[addDays(T, -20 + i)] = Math.round((100 + (20 - i) * 0.5 / 7) * 10) / 10;   // 102,9 → 100, −0,5 kg/v
+  const st = validate({ weights, wgoal: { target: 95 } });
+  const p = weightPlan(st.wgoal, 100, T);
+  assert.equal(p.auto, true); assert.equal(p.rate, -0.5);
+  const f = weightForecast(st, T);
+  assert.equal(f.status, 'none'); assert.ok(f.date > addDays(T, 60) && f.date < addDays(T, 90), f.date);
 });

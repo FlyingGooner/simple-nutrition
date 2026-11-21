@@ -36,8 +36,8 @@ export function goalLine(cur, actual) {
   if (p.reached) return el('p', { class: 'w-sub wg' }, part('Mål', kg(p.target)), ' · ', el('span', { class: 'goal-ok', text: 'Nått 🎉' }));
   return [el('p', { class: 'w-sub wg' },
     part('Mål', kg(p.target)), ' · ',
-    p.tooFast ? part('Hinns inte med högst 1 %/v, tidigast', shortDate(p.earliest)) : part(S.state.wgoal.date ? 'senast' : 'klart ≈', shortDate(p.eta)), ' · ',
-    part('takt', rate(p.rate)),
+    p.auto ? null : [p.tooFast ? part('Hinns inte med högst 1 %/v, tidigast', shortDate(p.earliest)) : part(S.state.wgoal.date ? 'senast' : 'klart ≈', shortDate(p.eta)), ' · ',
+    part('takt', rate(p.rate))],
     actual != null ? [' · ', part('senaste 4 v', rate(actual))] : null), forecastLine()];
 }
 // "Är jag i fas?" (2026-11-21) – prognos från den faktiska trenden.
@@ -46,6 +46,9 @@ export function forecastLine() {
   if (!f) return null;
   if (!f.ready) return el('p', { class: 'w-sub fc', text: 'Prognos när du vägt dig minst 4 gånger under 10 dagar.' });
   const wk = (d) => Math.max(1, Math.round(Math.abs(d) / 7));
+  if (f.status === 'none') return el('p', { class: 'w-sub fc' }, el('span', { text: 'Prognos: målet nås' }), ' ', el('strong', { text: `≈ ${shortDate(f.date)}` }),
+    ' · ', el('span', { text: 'trend' }), ' ', el('strong', { text: `${signed(wOut(f.week))} ${wUnit()}/v` }));
+  if (f.status === 'wrong' && S.state.wgoal && !S.state.wgoal.date && S.state.wgoal.rate == null && S.state.wgoal.pct == null) return el('p', { class: 'w-sub fc' }, el('strong', { class: 'fc-dev', text: '⚠️ Trenden går åt fel håll' }));
   const [cls, label] = { on: ['ok', '✅ I fas'], ahead: ['ok', '🚀 Före'], behind: ['dev', '⚠️ Efter'], wrong: ['dev', '⚠️ Trenden går åt fel håll'] }[f.status];
   return el('p', { class: 'w-sub fc' },
     el('strong', { class: 'fc-' + cls, text: label + (f.gap != null && f.status !== 'on' ? ` ≈ ${wk(f.gap)} v` : '') }),

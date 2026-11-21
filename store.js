@@ -209,8 +209,7 @@ function cleanWgoal(x) {
   const o = { target: Math.round(x.target * 10) / 10 };
   if (validDate(x.date)) o.date = x.date;
   else if (num(x.rate, 0.05, 4)) o.rate = Math.round(x.rate * 100) / 100;
-  else return null;
-  return o;
+  return o;   // bara target (2026-11-21): målvikt utan datum – appen visar prognos, kaloriråd räknas på 0,5 %/v
 }
 // 7-dagars medel av vägningarna i [k-6, k], eller null.
 export function avg7Of(weights, k) {
@@ -227,6 +226,8 @@ const daysTo = (a, b) => Math.round((parseKey(b) - parseKey(a)) / 864e5);
 // Plan från vikten cur idag: takt som behövs (kg/v, med tecken), högsta takt (1 %), tidigaste datum och ungefärligt kcal/dag.
 export function weightPlan(g, cur, todayK) {
   if (!g || cur == null) return null;
+  const auto = g.target != null && !g.date && g.rate == null && g.pct == null;   // målvikt utan datum eller takt
+  if (auto) g = { ...g, pct: 0.5 };
   if (g.pct != null) g = { ...g, rate: cur * g.pct / 100 };
   if (g.target == null) {
     const max = cur * WGOAL_MAX, rate = Math.min(g.rate, max);
@@ -241,7 +242,7 @@ export function weightPlan(g, cur, todayK) {
   const tooFast = g.date ? days < minDays : need > max + 1e-9;
   const rate = g.date ? (tooFast ? Math.abs(diff) / minWeeks : need) : Math.min(need, max);
   return {
-    reached: false, target: g.target, cur, diff, max, tooFast, rate: dir * rate, need: dir * need,
+    reached: false, auto, target: g.target, cur, diff, max, tooFast, rate: dir * rate, need: dir * need,
     earliest: addDays(todayK, minDays),
     eta: g.date && !tooFast ? g.date : addDays(todayK, Math.ceil(Math.abs(diff) / rate * 7)),
     kcalDay: Math.round(dir * rate * KCAL_PER_KG / 7),
@@ -265,7 +266,9 @@ export function weightForecast(state, todayK) {
   }
   const diff = p.target - cur;
   if (Math.sign(slope) !== Math.sign(diff) || Math.abs(slope) < 1e-4) return { ready: true, week, status: 'wrong' };
-  const date = addDays(todayK, Math.ceil(diff / slope)), planned = g.date || p.eta, gap = daysTo(planned, date);
+  const date = addDays(todayK, Math.ceil(diff / slope));
+  if (p.auto) return { ready: true, week, date, status: 'none' };   // inget datum valt: bara prognosen
+  const planned = g.date || p.eta, gap = daysTo(planned, date);
   return { ready: true, week, date, planned, gap, status: Math.abs(gap) <= 7 ? 'on' : gap < 0 ? 'ahead' : 'behind' };
 }
 
@@ -572,7 +575,7 @@ export const EXPORT_SCHEMA = {
   foods: 'lista { id, name, n per 100 g, u?: [mått, gram per mått] }, egna produkter, max 1000',
   aliases: 'objekt sökord (gemener, ≤ 40 tecken) → ref, max 1000',
   weights: 'objekt datum → kg 20–400 (en decimal)',
-  wgoal: 'valfritt { target: målvikt kg 20–400, date: datum } eller { target, rate: kg per vecka 0,05–4 } eller { rate } (gå ner rate kg/vecka utan målvikt) eller { pct, target? } (takt i % av nuvarande vikt per vecka, 0,05–1); appen tillåter högst 1 % av kroppsvikten per vecka',
+  wgoal: 'valfritt { target: målvikt kg 20–400, date: datum } eller { target, rate: kg per vecka 0,05–4 } eller { rate } (gå ner rate kg/vecka utan målvikt) eller { pct, target? } (takt i % av nuvarande vikt per vecka, 0,05–1) eller { target } (målvikt utan datum: prognos visas, kaloriråd på 0,5 %/v); appen tillåter högst 1 % av kroppsvikten per vecka',
   habits: 'objekt datum → { måltids-id | "extra-<n>": { outcome: "followed" | "cheat" | "skipped", reason?: orsaks-id, note?: ≤ 140 tecken } }',
   workouts: 'objekt datum → lista { types: [passtyp-id], km?, sec? }',
   settings: '{ reasons: [{ id, name }], successThreshold: 0,5–1, planText ≤ 300, workoutTypes: [{ id, name, kind: "gym" | "cardio" }], workoutGoal, gymGoal, cardioGoal }',
