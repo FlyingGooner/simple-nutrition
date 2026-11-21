@@ -1,5 +1,5 @@
 // View: Vecka – vanor först (följsamhet, fusk, orsaker, träning), sedan kalorier som stöd (beslut 2026-11-09).
-import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCheck, energyEstimate, goalFor, sumN } from '../store.js';
+import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCheck, energyEstimate, goalFor, sumN, periodEnergy } from '../store.js';
 import { goalLine, energyStats } from './trend.js';
 import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goals, weekSessions, sessionText, fmtNum, arrange, wOut, wUnit } from '../ui.js';
 
@@ -129,9 +129,10 @@ export function viewWeek(ws = S.week) {
       el('p', { class: 'muted small', text: '○ = räknas inte i statistiken (en måltid saknar mat, under 800 kcal eller idag).' })),
     training: () => trainingCard(ws),
     kcal: () => el('section', { class: 'card' }, el('h2', { text: 'Kalorier' }),
-      el('div', { class: 'stats' },
-        stat(st.avg == null ? '–' : kcal(st.avg), 'kcal per dag i snitt'),
-        st.hasGoal ? stat(`${st.within}/${st.logged}`, 'dagar inom mål') : stat(String(st.logged), 'dagar med mat loggad')),
+      // Snittet räknar bara kompletta dagar (2026-11-21), samma regel som förbrukningen.
+      (() => { const pe = periodEnergy(S.state, ws, addDays(ws, 6), today()); return el('div', { class: 'stats' },
+        stat(pe.logged ? kcal(pe.kcal / pe.logged) : '–', 'kcal per dag i snitt'),
+        st.hasGoal ? stat(`${st.within}/${st.logged}`, 'dagar inom mål') : stat(`${pe.logged}/${st.logged}`, 'kompletta dagar')); })(),
       st.logged && st.hasGoal ? kcalBars(st) : null,
       energyStats(ws, addDays(ws, 6))),
     }),
