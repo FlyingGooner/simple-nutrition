@@ -842,3 +842,5 @@ main .day-head + * { margin-top: 10px; }
 /* Kcal-kortet lägre (2026-11-21) */
 .day-sum .sum-top .sum-more { margin: 0; white-space: nowrap; }
 .day-sum .macros { margin: 2px 0 0; }
+.kw-grid { stroke: var(--line, rgba(0,0,0,.12)); stroke-width: .6; stroke-dasharray: 2 2; }
+.kw-ax { fill: var(--muted); font-size: 9px; font-variant-numeric: tabular-nums; }

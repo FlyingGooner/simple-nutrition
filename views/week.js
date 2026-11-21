@@ -37,19 +37,24 @@ export function kcalWeightChart(from, n = 7) {
   if (kc.filter(Boolean).length + kg.filter((x) => x != null).length < 2) return null;
   const e = energyEstimate(S.state, t), ref = e && e.ready && e.quality >= 0.25 ? Math.round(e.tdee / 50) * 50 : null;
   const goal = goalFor(S.state, days[n - 1] > t ? t : days[n - 1]).kcal ?? null;
-  const W = 320, H = 120, top = 8, bot = 96, cw = W / n;
+  const W = 320, H = 120, top = 8, bot = 96, AX = 30, cw = (W - AX) / n;   // AX: plats för viktskalan till höger (2026-11-21)
   const kmax = Math.max(...kc.filter(Boolean), ref ?? 0, goal ?? 0, 1000) * 1.08;
   const Yk = (v) => bot - v / kmax * (bot - top);
   const ws_ = kg.filter((x) => x != null), lo = Math.min(...ws_) - 0.3, hi = Math.max(...ws_) + 0.3;
   const Yw = (v) => top + 6 + (hi - v) / (hi - lo || 1) * (bot - top - 12);
   const pts = kg.map((v, i) => (v == null ? null : [i * cw + cw / 2, Yw(v)])).filter(Boolean);
   const r1 = (x) => Math.round(x * 10) / 10;
+  // Viktskala: lägsta, högsta och (om det finns plats) mitten, med svaga stödlinjer.
+  const ticks = !ws_.length ? [] : Math.max(...ws_) - Math.min(...ws_) < 0.2 ? [Math.max(...ws_)]
+    : [Math.max(...ws_), (Math.max(...ws_) + Math.min(...ws_)) / 2, Math.min(...ws_)];
   const kgTxt = (v) => (v.length > 1 ? `${fmtNum(r1(wOut(Math.min(...v))))}–${fmtNum(r1(wOut(Math.max(...v))))} ${wUnit()}` : `${fmtNum(r1(wOut(v[0])))} ${wUnit()}`);
   return el('div', { class: 'kw' },
     svg('svg', { class: 'kw-chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Kalorier per dag och vikt' },
       kc.map((v, i) => (v ? svg('rect', { class: 'kw-bar' + (dayCheck(S.state, days[i], t).ok ? '' : ' inc'), x: r1(i * cw + cw * 0.18), y: r1(Yk(v)), width: r1(cw * 0.64), height: r1(bot - Yk(v)), rx: 2 }) : null)),
-      ref ? svg('line', { class: 'kw-ref', x1: 0, x2: W, y1: r1(Yk(ref)), y2: r1(Yk(ref)) }) : null,
-      goal ? svg('line', { class: 'kw-goal', x1: 0, x2: W, y1: r1(Yk(goal)), y2: r1(Yk(goal)) }) : null,
+      ticks.map((v) => [svg('line', { class: 'kw-grid', x1: 0, x2: W - AX, y1: r1(Yw(v)), y2: r1(Yw(v)) }),
+        svg('text', { class: 'kw-ax', x: W - AX + 4, y: r1(Yw(v) + 3) }, fmtNum(r1(wOut(v))))]),
+      ref ? svg('line', { class: 'kw-ref', x1: 0, x2: W - AX, y1: r1(Yk(ref)), y2: r1(Yk(ref)) }) : null,
+      goal ? svg('line', { class: 'kw-goal', x1: 0, x2: W - AX, y1: r1(Yk(goal)), y2: r1(Yk(goal)) }) : null,
       pts.length > 1 ? svg('polyline', { class: 'kw-line', points: pts.map((p) => p.map(r1).join(',')).join(' ') }) : null,
       pts.map((p) => svg('circle', { class: 'kw-dot', cx: r1(p[0]), cy: r1(p[1]), r: n > 7 ? 1.8 : 2.6 })),
       days.map((k, i) => svg('text', { class: 'kw-day cur', x: r1(i * cw + cw / 2), y: H - 8, 'text-anchor': 'middle' }, label(k, i)))),
