@@ -53,7 +53,7 @@ const WHY = {
 export function energyCard() {
   const e = energyEstimate(S.state, today()), h2 = el('h2', { text: 'Förbrukning' });
   const how = el('details', { class: 'en-how' }, el('summary', { text: 'Så räknas det' }),
-    el('p', { class: 'muted small', text: 'Förbrukningen räknas från vad du loggat och hur vikten ändrats de senaste 4 veckorna (1 kg ≈ 7 700 kcal). Vikten svänger av vätska, så den säkras med tiden. Kvaliteten avgörs av datan: hur mycket vikten brusar, hur många dagar du loggat, om resultatet är rimligt för din kropp och om veckorna stämmer med varandra. Logga all mat och väg dig minst 3 gånger i veckan – då når kvaliteten 100 % efter 2–4 veckor. Glömmer du alltid samma saker blir siffran förbrukning enligt din loggning, och den fungerar lika bra för att nå målet.' }));
+    el('p', { class: 'muted small', text: 'Förbrukningen räknas från vad du loggat och hur vikten ändrats de senaste 4 veckorna (1 kg ≈ 7 700 kcal). Vikten svänger av vätska, så den säkras med tiden. Kvaliteten avgörs av datan: hur mycket vikten brusar, hur många dagar du loggat, om resultatet är rimligt och om veckorna stämmer med varandra. Logga all mat och väg dig minst 3 gånger i veckan – då når kvaliteten 100 % efter 2–4 veckor. Glömmer du alltid samma saker blir siffran förbrukning enligt din loggning, och den fungerar lika bra för att nå målet.' }));
   if (!e || !e.ready) return el('section', { class: 'card' }, h2,
     el('p', { class: 'muted', text: 'Logga mat och väg dig några dagar, så räknas din förbrukning ut.' }), how);
   const q = Math.round(e.quality * 100), rough = q < 25, lo = r50(Math.max(800, e.tdee - 1.5 * e.se)), hi = r50(e.tdee + 1.5 * e.se);
@@ -68,7 +68,6 @@ export function energyCard() {
     rough ? el('p', { class: 'muted small', text: 'Grov uppskattning ännu.' }) : null,
     why ? el('p', { class: 'small', text: why }) : null,
     plan && !plan.reached && !rough ? el('p', { class: 'small' }, el('span', { text: 'För takten i ditt viktmål: ät ungefär' }), ' ', el('strong', { text: `${kcal(r50(e.tdee + plan.kcalDay))} kcal/dag` })) : null,
-    !e.hasProfile ? el('p', { class: 'muted small', text: 'Fyll i längd, födelseår och kön under Inställningar → Kalorier → Om dig, så kan appen också bedöma om förbrukningen är rimlig.' }) : null,
     how);
 }
 // Kalorisumma för en period (vecka/månad): mot målet, enligt vikten och mot förbrukningen.

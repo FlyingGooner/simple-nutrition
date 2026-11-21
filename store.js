@@ -140,13 +140,6 @@ export function validate(raw) {
       if (isObj(raw.layout[v])) s.layout[v] = { order: ids(raw.layout[v].order), hidden: ids(raw.layout[v].hidden) };
     }
   }
-  if (isObj(raw.profile)) {   // 2026-11-21: valfritt, för rimlighetskontroll av förbrukningen
-    const o = {};
-    if (num(raw.profile.height, 100, 250)) o.height = Math.round(raw.profile.height);
-    if (Number.isInteger(raw.profile.born) && raw.profile.born >= 1900 && raw.profile.born <= 2020) o.born = raw.profile.born;
-    if (raw.profile.sex === 'm' || raw.profile.sex === 'f') o.sex = raw.profile.sex;
-    if (Object.keys(o).length) s.profile = o;
-  }
   const wg = cleanWgoal(raw.wgoal);
   if (wg) s.wgoal = wg;
   if (isObj(raw.weights)) {
@@ -254,14 +247,10 @@ export function periodEnergy(state, from, to) {
   const dw = a != null && b != null ? b - a : null;
   return { days, logged, kcal: Math.round(kcal), vsGoal: gDays ? Math.round(gK - gSum) : null, gDays, dw, wKcal: dw == null ? null : Math.round(dw * KCAL_PER_KG) };
 }
-// Viloförbrukning (Mifflin–St Jeor), eller null utan längd, födelseår och kön.
-export function bmr(profile, kg, year) {
-  if (!profile || !profile.height || !profile.born || !profile.sex || kg == null) return null;
-  return 10 * kg + 6.25 * profile.height - 5 * (year - profile.born) + (profile.sex === 'm' ? 5 : -161);
-}
 const clamp01 = (x) => Math.max(0, Math.min(1, x));
 // Förbrukning (kcal/dag) över de senaste 28 dagarna t.o.m. igår: snitt loggat − viktens lutning × 7 700.
-// Kvaliteten bedöms av datan själv: precision (viktens brus och antal dagar), loggning, rimlighet och stabilitet vecka för vecka.
+// Kvaliteten bedöms av datan själv: precision (viktens brus och antal dagar), loggning, stabilitet vecka för vecka och en golvspärr.
+// Ingen profil behövs (beslut 2026-11-21): loggar man ärligt syns det i vikten; konsekvent glömska ger förbrukning enligt ens loggning, vilket räcker för målet.
 export function energyEstimate(state, todayK) {
   const end = addDays(todayK, -1), keys = [...Object.keys(state.log), ...Object.keys(state.weights)].filter((k) => k <= end).sort();
   if (!keys.length) return null;
@@ -283,18 +272,15 @@ export function energyEstimate(state, todayK) {
     if (w.logged >= 5 && w.dw != null) weekly.push(w.kcal / w.logged - w.dw * KCAL_PER_KG / 7);
   }
   const sd = weekly.length >= 2 ? Math.sqrt(weekly.reduce((a, x, _, l) => a + (x - l.reduce((p, q) => p + q, 0) / l.length) ** 2, 0) / (weekly.length - 1)) : null;
-  const base = bmr(state.profile, my, Number(todayK.slice(0, 4)));
-  const ratio = base ? tdee / base : null;
   const f = {
     precision: clamp01(1 - (se - 75) / 425),                                 // ≤ 75 kcal → 100 %, ≥ 500 → 0
     logging: clamp01((pe.logged / span - 0.5) / 0.4),                        // ≥ 90 % av dagarna loggade → 100 %
-    plausible: ratio != null ? (ratio < 1.1 ? clamp01((ratio - 0.8) / 0.3) : clamp01((2.6 - ratio) / 0.6))
-      : (tdee < 1500 ? clamp01((tdee - 1000) / 500) : clamp01((5000 - tdee) / 1000)),
+    plausible: tdee < 1300 ? clamp01((tdee - 900) / 400) : clamp01((6000 - tdee) / 1500),   // under ~1 300 kcal/dag förbrukar ingen vuxen – då saknas mat i loggen
     stable: sd == null ? 1 : clamp01(1 - (sd - 350) / 650),                 // vecka för vecka är brusigare; ≤ 350 kcal spridning → 100 %
   };
   const quality = f.precision * f.logging * f.plausible * f.stable;
   const weakest = Object.keys(f).reduce((a, b) => (f[b] < f[a] ? b : a));
-  return { ready: true, tdee: Math.round(tdee), se: Math.round(se), quality, f, weakest, low: tdee < (base ? base * 1.1 : 1500), span, logged: pe.logged, weighs: ws.length, weekly: weekly.map(Math.round), hasProfile: base != null };
+  return { ready: true, tdee: Math.round(tdee), se: Math.round(se), quality, f, weakest, low: tdee < 1300, span, logged: pe.logged, weighs: ws.length, weekly: weekly.map(Math.round) };
 }
 
 export function weekStats(state, ws) {
@@ -536,7 +522,6 @@ export const EXPORT_SCHEMA = {
   foods: 'lista { id, name, n per 100 g, u?: [mått, gram per mått] }, egna produkter, max 1000',
   aliases: 'objekt sökord (gemener, ≤ 40 tecken) → ref, max 1000',
   weights: 'objekt datum → kg 20–400 (en decimal)',
-  profile: 'valfritt { height: cm 100–250, born: födelseår 1900–2020, sex: "m" | "f" }, används bara för att bedöma om förbrukningen är rimlig',
   wgoal: 'valfritt { target: målvikt kg 20–400, date: datum } eller { target, rate: kg per vecka 0,05–4 }; appen tillåter högst 1 % av kroppsvikten per vecka',
   habits: 'objekt datum → { måltids-id | "extra-<n>": { outcome: "followed" | "cheat" | "skipped", reason?: orsaks-id, note?: ≤ 140 tecken } }',
   workouts: 'objekt datum → lista { types: [passtyp-id], km?, sec? }',

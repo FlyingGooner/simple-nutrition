@@ -2,10 +2,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 globalThis.localStorage = { getItem: () => null, setItem() {} };
-const { validate, energyEstimate, periodEnergy, bmr, addDays } = await import('../../store.js');
+const { validate, energyEstimate, periodEnergy, addDays } = await import('../../store.js');
 const T = '2026-11-21';
 // Deterministiskt "brus" ±0,3 kg.
-function mk(days, eat, burn, { logEvery = 1, weighEvery = 1, profile = { height: 180, born: 1985, sex: 'm' } } = {}) {
+function mk(days, eat, burn, { logEvery = 1, weighEvery = 1 } = {}) {
   const log = {}, weights = {};
   let w = 85;
   for (let i = 0; i < days; i++) {
@@ -14,13 +14,9 @@ function mk(days, eat, burn, { logEvery = 1, weighEvery = 1, profile = { height:
     w += (eat - burn) / 7700;
     if (i % weighEvery === 0) weights[k] = Math.round((w + 0.3 * Math.sin(i * 2.3)) * 10) / 10;
   }
-  return validate({ log, weights, profile });
+  return validate({ log, weights });
 }
-test('profil valideras', () => {
-  assert.deepEqual(validate({ profile: { height: 180.4, born: 1985, sex: 'm' } }).profile, { height: 180, born: 1985, sex: 'm' });
-  assert.equal(validate({ profile: { height: 20, sex: 'x' } }).profile, undefined);
-  assert.equal(Math.round(bmr({ height: 180, born: 1986, sex: 'm' }, 80, 2026)), 1730);
-});
+test('profil sparas inte', () => { assert.equal(validate({ profile: { height: 180 } }).profile, undefined); });
 test('få data: låg kvalitet; 4 veckor noggrant: hög och nära sann förbrukning', () => {
   assert.equal(energyEstimate(validate({}), T), null);
   const early = energyEstimate(mk(5, 2000, 2600), T);

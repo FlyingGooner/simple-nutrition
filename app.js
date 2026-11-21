@@ -2,7 +2,7 @@
 import { load, save, validate, validDate, currentWeight, weightPlan, addDays, weekStart, setGoal, goalFor, findRef, cleanText, uid, dishTotal } from './store.js';
 import { today, S, setOpen, el, kcal, dateTitle, parseNum, wType, isCardio, parseDur, fmtNum, amountText, layoutOf, LAYOUT_VIEWS } from './ui.js';
 import { lastPost, QUICK_ADD, setLevel, dropLevels, quickGroup, EST_MAX } from './store.js';
-import { mealName, imperial, wIn, wOut, wUnit, shortDate, dIn, dUnit, setUnits } from './ui.js';
+import { mealName, wIn, wOut, wUnit, shortDate, dIn, dUnit, setUnits } from './ui.js';
 import { topLayer, layerDepth, closeTop, dishDirty, defaultQuickG } from './nav.js';
 import { viewToday, dayPosts, dayText } from './views/today.js';
 import { resultsList, pickGrams, pickSum, unitsOf, isBulk, bulkDefault, EST_GROUP } from './views/add.js';
@@ -608,18 +608,6 @@ app.addEventListener('click', (ev) => {
         return;
       }
       S.state.wgoal = g; persist(); render(); snackbar('Viktmålet sparat', null, null, 2500);
-      return;
-    }
-    case 'profilesave': {   // Om dig (2026-11-21): valfria, tomt = bort
-      const v = (i) => document.getElementById(i)?.value.trim() ?? '';
-      const hRaw = v('pf-height'), bRaw = v('pf-born'), sex = v('pf-sex');
-      const h = hRaw ? Math.round(parseNum(hRaw) * (imperial() ? 2.54 : 1)) : null, b = bRaw ? Math.round(parseNum(bRaw)) : null;
-      if (hRaw && !(h >= 100 && h <= 250)) { snackbar('Ange längd 100–250 cm', null, null, 3000); return; }
-      if (bRaw && !(b >= 1900 && b <= 2020)) { snackbar('Ange födelseår, t.ex. 1985', null, null, 3000); return; }
-      const o = {};
-      if (h) o.height = h; if (b) o.born = b; if (sex === 'm' || sex === 'f') o.sex = sex;
-      if (Object.keys(o).length) S.state.profile = o; else delete S.state.profile;
-      persist(); render(); snackbar('Sparat', null, null, 2000);
       return;
     }
     case 'macrosave': {

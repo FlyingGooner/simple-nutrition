@@ -59,22 +59,6 @@ function wgoalSection() {
   ];
 }
 
-// Om dig (2026-11-21): valfritt, bara för att bedöma om förbrukningen är rimlig.
-function profileSection() {
-  const p = S.state.profile || {}, imp = imperial();
-  const h = p.height ? (imp ? String(Math.round(p.height / 2.54)) : String(p.height)) : '';
-  return [
-    el('label', { class: 'goal-row' }, el('span', { text: imp ? 'Längd (tum)' : 'Längd (cm)' }),
-      el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: h, id: 'pf-height', 'aria-label': imp ? 'Längd (tum)' : 'Längd (cm)' })),
-    el('label', { class: 'goal-row' }, el('span', { text: 'Födelseår' }),
-      el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: p.born ? String(p.born) : '', placeholder: 't.ex. 1985', id: 'pf-born', 'aria-label': 'Födelseår' })),
-    el('label', { class: 'goal-row' }, el('span', { text: 'Kön' }),
-      el('select', { id: 'pf-sex', 'aria-label': 'Kön' }, [['', '–'], ['f', 'Kvinna'], ['m', 'Man']].map(([v, t]) => el('option', { value: v, selected: (p.sex || '') === v, text: t })))),
-    el('div', { class: 'save-row' }, el('button', { class: 'weigh-save', 'data-act': 'profilesave', text: 'Spara' })),
-    el('p', { class: 'muted small', text: 'Valfritt. Används bara för att bedöma om din uträknade förbrukning är rimlig (viloförbrukning enligt Mifflin–St Jeor). Stannar i telefonen.' }),
-  ];
-}
-
 function helpCard() {
   const frag = document.importNode((document.getElementById(self.I18N.lang() === 'en' ? 'help-tpl-en' : 'help-tpl') || document.getElementById('help-tpl')).content, true);
   const sec = frag.querySelector('.help');
@@ -155,7 +139,6 @@ export function viewSettings() {
               Array.from({ length: 15 }, (_, i) => el('option', { value: i, selected: i === s[k], text: i ? `${i} pass` : 'Inget mål' }))))))),
     group('kcal', 'Kalorier', g.kcal ? `${kcal(g.kcal)} kcal/dag` : 'Inget mål',
       sec('wgoal', 'Viktmål', S.state.wgoal ? `${fmtNum(Math.round(wOut(S.state.wgoal.target) * 10) / 10)} ${wUnit()}` : 'Inget mål', wgoalSection()),
-      sec('profile', 'Om dig', S.state.profile ? [S.state.profile.height ? (imperial() ? `${Math.round(S.state.profile.height / 2.54)} tum` : `${S.state.profile.height} cm`) : '', S.state.profile.born || ''].filter(Boolean).join(' · ') || 'Ifyllt' : 'Valfritt', profileSection()),
       sec('goal', 'Kalorimål', g.kcal ? `${kcal(g.kcal)} kcal/dag` : 'Inget mål',
         el('label', { class: 'goal-row' }, el('span', { text: 'kcal per dag' }),
           el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: g.kcal ? String(g.kcal) : '', placeholder: 'Inget mål', id: 'g-kcal', 'aria-label': 'Kalorimål per dag' }),
