@@ -1,6 +1,7 @@
 // View: Historik – månadskalender färgad efter följsamhet (vanor, som i follow-diet-tracker), streaks, träning och kcal som stöd.
 import { periodEnergy, addDays, dateKey, parseKey, sumN, habitDay } from '../store.js';
 import { energyStats, kcalDayLine } from './trend.js';
+import { kcalWeightChart } from './week.js';
 import { today, S, el, svg, stepper, stat, kcal, pct, shortDate, arrange, wOut, wUnit, dOut, dUnit } from '../ui.js';
 // (dateKey/parseKey används även av monthWeight)
 
@@ -37,7 +38,7 @@ function monthWeight(extra = null) {
     el('div', { class: 'w-row' },
       el('span', { class: 'w-label', text: 'Vikt' }),
       el('span', { class: 'w-now', text: lastK ? `${kg1(W(lastK))} ${wUnit()}` : '–' }),
-      spark,
+      extra ? el('span', { class: 'w-flex' }) : spark,   // med stapeldiagram behövs ingen minikurva (2026-11-21)
       d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), text: dTxt }) : null),
     el('p', { class: 'w-sub', text: !lastK ? 'Ingen vägning den här månaden'
       : !baseK ? 'Första vägningen – inget att jämföra med än'
@@ -74,7 +75,7 @@ export function viewHistory() {
   return [
     el('div', { class: 'card day-head' }, stepper('Byt månad', ['mprev', 'Föregående månad'], 'mnow', ['mnext', 'Nästa månad'], S.month >= today().slice(0, 7), title.charAt(0).toUpperCase() + title.slice(1))),
     ...arrange('history', {
-    weight: () => monthWeight(),   // följsamhet över tid flyttad till Historik och mål (2026-11-21)
+    weight: () => monthWeight(kcalWeightChart(`${S.month}-01`, new Date(y, m, 0).getDate())),   // följsamhet över tid flyttad till Historik och mål (2026-11-21)
     calendar: () => el('section', { class: 'card' },
       el('div', { class: 'cal-head' }, ['M', 'T', 'O', 'T', 'F', 'L', 'S'].map((d) => el('span', { text: d }))),
       el('div', { class: 'cal' }, cells),

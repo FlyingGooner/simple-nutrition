@@ -26,16 +26,17 @@ function dayTable(ws, st) {
 }
 const DAYS2 = ['Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör', 'Sön'];
 
-// Kalorier och vikt i samma diagram (2026-11-21): förra + denna vecka, staplar = kcal per dag, linje = vikt,
+// Kalorier och vikt i samma diagram (2026-11-21): bara den visade perioden (vecka eller månad, 2026-11-21), staplar = kcal per dag, linje = vikt,
 // streckad linje = vad som håller vikten (förbrukningen) eller kalorimålet. Ofullständiga dagar ljusare.
-function kcalWeightChart(ws) {
-  const days = Array.from({ length: 14 }, (_, i) => addDays(ws, i - 7)), t = today();
+export function kcalWeightChart(from, n = 7) {
+  const days = Array.from({ length: n }, (_, i) => addDays(from, i)), t = today();
+  const label = (k, i) => (n <= 7 ? DAYS[i] : (i % 5 === 0 || i === n - 1) ? String(Number(k.slice(8))) : '');
   const kc = days.map((k) => (k > t ? null : Math.round(sumN(S.state.log[k] || [])[0]) || null));
   const kg = days.map((k) => S.state.weights[k] ?? null);
   if (kc.filter(Boolean).length + kg.filter((x) => x != null).length < 2) return null;
   const e = energyEstimate(S.state, t), ref = e && e.ready && e.quality >= 0.25 ? Math.round(e.tdee / 50) * 50 : null;
-  const goal = goalFor(S.state, addDays(ws, 6)).kcal ?? null;
-  const W = 320, H = 120, top = 8, bot = 96, cw = W / 14;
+  const goal = goalFor(S.state, days[n - 1] > t ? t : days[n - 1]).kcal ?? null;
+  const W = 320, H = 120, top = 8, bot = 96, cw = W / n;
   const kmax = Math.max(...kc.filter(Boolean), ref ?? 0, goal ?? 0, 1000) * 1.08;
   const Yk = (v) => bot - v / kmax * (bot - top);
   const ws_ = kg.filter((x) => x != null), lo = Math.min(...ws_) - 0.3, hi = Math.max(...ws_) + 0.3;
@@ -43,14 +44,13 @@ function kcalWeightChart(ws) {
   const pts = kg.map((v, i) => (v == null ? null : [i * cw + cw / 2, Yw(v)])).filter(Boolean);
   const r1 = (x) => Math.round(x * 10) / 10;
   return el('div', { class: 'kw' },
-    svg('svg', { class: 'kw-chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Kalorier per dag och vikt, förra och denna vecka' },
-      svg('rect', { class: 'kw-cur', x: 7 * cw, y: 0, width: 7 * cw, height: bot + 2, rx: 6 }),
+    svg('svg', { class: 'kw-chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Kalorier per dag och vikt' },
       kc.map((v, i) => (v ? svg('rect', { class: 'kw-bar' + (dayCheck(S.state, days[i], t).ok ? '' : ' inc'), x: r1(i * cw + cw * 0.18), y: r1(Yk(v)), width: r1(cw * 0.64), height: r1(bot - Yk(v)), rx: 2 }) : null)),
       ref ? svg('line', { class: 'kw-ref', x1: 0, x2: W, y1: r1(Yk(ref)), y2: r1(Yk(ref)) }) : null,
       goal ? svg('line', { class: 'kw-goal', x1: 0, x2: W, y1: r1(Yk(goal)), y2: r1(Yk(goal)) }) : null,
       pts.length > 1 ? svg('polyline', { class: 'kw-line', points: pts.map((p) => p.map(r1).join(',')).join(' ') }) : null,
-      pts.map((p) => svg('circle', { class: 'kw-dot', cx: r1(p[0]), cy: r1(p[1]), r: 2.6 })),
-      days.map((k, i) => svg('text', { class: 'kw-day' + (i >= 7 ? ' cur' : ''), x: r1(i * cw + cw / 2), y: H - 8, 'text-anchor': 'middle' }, DAYS[i % 7]))),
+      pts.map((p) => svg('circle', { class: 'kw-dot', cx: r1(p[0]), cy: r1(p[1]), r: n > 7 ? 1.8 : 2.6 })),
+      days.map((k, i) => svg('text', { class: 'kw-day cur', x: r1(i * cw + cw / 2), y: H - 8, 'text-anchor': 'middle' }, label(k, i)))),
     // Förklaring bara för de streckade linjerna (2026-11-21): staplar och viktlinje förklarar sig själva.
     (ref || goal) && el('p', { class: 'kw-legend' },
       ref ? [el('span', { class: 'lg-ref' }), el('span', { text: `håller vikten ≈ ${kcal(ref)}` })] : null,
@@ -79,7 +79,7 @@ function weightCard(ws) {
       : `mot ${shortDate(base)} (${kg1(bw)} ${wUnit()}) · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'} denna vecka` }),
     // Underskott/överskott räknas bara inom aktuell vecka (2026-11-21): första till sista vägningen.
     cur.length > 1 ? kcalDayLine(last - S.state.weights[cur[0]], cur[0], cur[cur.length - 1]) : null,
-    kcalWeightChart(ws));
+    kcalWeightChart(ws, 7));
 }
 
 function habitCard(ws) {

@@ -73,7 +73,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - **Vecka:** vikten (senaste vägningen mot första vägningen veckan innan, med minikurva), följsamhet, fusk och vanligaste orsak, dag för dag (vanor, pass, kcal, vikt – tryck för att öppna dagen), träning mot målen och kalorisnitt.
 - **Historik** (historik och mål över hela tiden): vikten (7-dagars medel) och förändringen senaste 4 veckorna, en större viktkurva, viktmålet med prognos och **Om trenden håller**: vikten om 1, 3 och 6 månader räknat på utfallet de senaste 4 veckorna (🎯 = målvikten nådd). Har du målvikt utan datum står det tydligt när du når den, t.ex. "🎯 100 kg ≈ 13 maj 2027". Kortet Total förbrukning visar förbrukningen och kcal för viktmålet bredvid varandra. Sedan en tabell vecka för vecka (vikt, följsamhet, fusk, pass, kcal – tryck för att öppna veckan). Viktkortet visar också följsamhet 7 och 30 dagar och streaks.
 - **Månad:** vikten i månaden mot senaste vägningen månaden innan (med minikurva), sedan månadskalendern färgad efter följsamhet med markering för vägning och träning, och sist månadens pass, kcal-snitt (kompletta dagar) och kalorisumma.
-- Vecka jämför enskilda vägningar, Historik 7-dagars medel. Kcal/dag under vikten i Vecka räknas bara på veckans egna vägningar.
+- Vecka och Månad har ett diagram för perioden: kcal per dag som staplar och vikten som linje. Vecka jämför enskilda vägningar, Historik 7-dagars medel. Kcal/dag under vikten i Vecka räknas bara på veckans egna vägningar.
 
 ## Kortordning
 - Under **Inställningar → Utseende → Kortordning** väljer du ordningen på korten i Dag, Vecka, Månad och Historik. ↑ ↓ flyttar, ● visas, ○ döljer. **Återställ** ger standardordningen tillbaka, för en vy eller för alla vyer längst ner.
