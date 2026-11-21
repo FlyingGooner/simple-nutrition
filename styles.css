@@ -751,3 +751,5 @@ main .day-head + * { margin-top: 10px; }
 .en-fill { fill: var(--primary); }
 .en-fill.ok { fill: var(--ok); }
 .en-how summary { cursor: pointer; font-size: .8125rem; color: var(--primary); margin-top: 8px; }
+.en-hint p { margin: 0 0 4px; font-size: .9rem; }
+.en-hint p:last-child { margin: 0; }

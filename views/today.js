@@ -1,5 +1,5 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
-import { sumN, postN, goalFor, addDays, habitDay, habitStreak } from '../store.js';
+import { sumN, postN, goalFor, addDays, habitDay, habitStreak, energyEstimate, weightPlan, currentWeight } from '../store.js';
 import { today, S, setOpen, el, svg, stepper, kcal, fmtNum, pct, dateTitle, wOut, wUnit, amountText, mealName, reasonName, arrange } from '../ui.js';
 import { viewAdd } from './add.js';
 import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
@@ -24,6 +24,17 @@ function summaryCard() {
     el('p', { class: 'macros' }, macro('Protein', n[1], g.prot), ' · ', macro('Kolh.', n[2], g.kolh), ' · ', macro('Fett', n[3])),
     posts.length ? el('p', { class: 'sum-more', text: 'Allt du ätit i dag ▾' }) : null),
     posts.length ? [dayList(posts), el('button', { class: 'link dl-ai', 'data-act': 'dayai', text: '📋 Kopiera för kontroll med AI' })] : null);
+}
+// 2026-11-21: förbrukningen i klartext under dagens kalorier (bara idag, kvalitet ≥ 25 %).
+function energyHint() {
+  if (S.current !== today()) return null;
+  const e = energyEstimate(S.state, today());
+  if (!e || !e.ready || e.quality < 0.25) return null;
+  const r50 = (x) => Math.round(x / 50) * 50, p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
+  return el('div', { class: 'card en-hint' },
+    el('p', {}, el('span', { text: 'Utifrån din loggning och vikt håller du vikten på' }), ' ', el('strong', { text: `≈ ${kcal(r50(e.tdee))} kcal/dag` }), '.'),
+    p && !p.reached ? el('p', {}, el('span', { text: 'Äter du' }), ' ', el('strong', { text: `≈ ${kcal(r50(e.tdee + p.kcalDay))} kcal/dag` }), ' ', el('span', { text: 'följer vikten ditt mål.' })) : null,
+    el('p', { class: 'muted small', text: `Kvalitet ${Math.round(e.quality * 100)} % – se Trend.` }));
 }
 // Sammanställning: en rad per livsmedel/rätt (samma ref och samma enhet slås ihop), störst kcal först.
 // 2026-11-18: dagen som text – för att låta en AI (t.ex. Gemini) räkna på samma dag och jämföra.
@@ -172,7 +183,7 @@ export function viewToday() {
       other.length ? mealCard({ id: '_other', name: 'Övrigt' }, other) : null),
     train: () => [el('div', { class: 'workouts' }, workoutCards()), addRow()],
     score: () => el('p', { class: 'summary' }, r.count ? ['Dagens följsamhet: ', el('strong', { text: `${fmtNum(r.score)}/${r.count}` }), ' · ' + pct(r.ratio)] : 'Inget loggat ännu.'),
-    kcal: () => [summaryCard(),
+    kcal: () => [summaryCard(), energyHint(),
       !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
         ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera maten från igår' }) : null],
     weight: () => weightCard(),

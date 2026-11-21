@@ -193,7 +193,7 @@ I18N.add({
   'Passtyper och mål': 'Workout types and goals',
   'Gym-typer kan kombineras till ett pass (Push + Pull = 1 pass). Kondition loggas med sträcka och tid.': 'Gym types can be combined into one session (Push + Pull = 1 session). Cardio is logged with distance and time.',
   'Mål per vecka': 'Goal per week', 'Alla pass': 'All workouts', 'Inget mål': 'No goal', 'Kondition': 'Cardio',
-  'Total förbrukning': 'Total expenditure',
+  'Total förbrukning': 'Total expenditure', 'Utifrån din loggning och vikt håller du vikten på': 'Based on your logging and weight you keep your weight at', 'Äter du': 'If you eat', 'följer vikten ditt mål.': 'your weight follows your goal.',
   'Så räknas det': 'How it is calculated',
   'Kvalitet': 'Quality',
   'Grov uppskattning ännu.': 'Rough estimate so far.',
@@ -359,6 +359,7 @@ I18N.add({
   [/^Ta bort sökordet (.+)$/, (g) => `Remove the search word ${g[1]}`],
   [/^Mål: (.+)$/, 'Goal: $1'],
   [/^Mål per vecka, (.+)$/, 'Goal per week, $1'],
+  [/^Kvalitet (\d+) % – se Trend\.$/, 'Quality $1 % – see Trend.'],
   [/^(.+) kcal\/dag$/, (g) => `${g[1]} kcal/day`],
   [/^Fitness buddy v([\d.]+) · inga externa anrop · näringsvärden från Livsmedelsverket$/, (g) => `Fitness buddy v${g[1]} · no external requests · nutrition values from the Swedish Food Agency`],
 
