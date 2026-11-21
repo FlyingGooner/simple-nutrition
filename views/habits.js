@@ -1,7 +1,7 @@
 // Vanor och träning i Idag (porterat från follow-diet-tracker/views/today.js). Rendering via el() only.
 import { OUTCOMES } from '../habit-store.js';
 import { weekStart, QUICK_ADD, quickGroup, quickById, postN } from '../store.js';
-import { S, el, kcal, reasonName, isCardio, goals, sessionText, dUnit } from '../ui.js';
+import { S, el, kcal, reasonName, isCardio, goals, sessionText, dUnit, fmtNum, wOut, wUnit } from '../ui.js';
 
 export const dayHabits = () => S.state.habits[S.current] || {};
 
@@ -90,7 +90,10 @@ export function workoutCards() {
 }
 
 export function addRow() {
+  const w = S.state.weights[S.current];   // 2026-11-21: vikt som tredje knapp, öppnar vikt-popupen
   return el('div', { class: 'add-row' },
     el('button', { class: 'extra', 'data-act': 'extra', text: '+ Extra fusk' }),
-    el('button', { class: 'extra extra-train', 'data-act': 'wnew', disabled: !!S.wdraft }, el('span', { text: '+ Träningspass' }), goalBadge()));
+    el('button', { class: 'extra extra-train', 'data-act': 'wnew', disabled: !!S.wdraft }, el('span', { text: '+ Träning' }), goalBadge()),
+    el('button', { class: 'extra', 'data-act': 'weighopen', 'aria-label': 'Vikt idag' },
+      el('span', { text: w != null ? `⚖️ ${fmtNum(wOut(w))} ${wUnit()}` : '+ Vikt' })));
 }
