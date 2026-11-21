@@ -117,10 +117,10 @@ T.test('namn från data visas som text', async () => {
   T.ok(app.textContent.includes('<img src=x'), 'texten syns');
   q('[data-act="today"]').click();
 });
-T.test('vecka visar staplar, dag öppnar Idag', async () => {
+T.test('vecka visar dag för dag, dag öppnar Idag', async () => {
   await tab('week');
-  T.eq(app.querySelectorAll('.kb-row').length, 7);
-  app.querySelectorAll('.kb-row')[0].click(); await T.wait();
+  T.eq(app.querySelectorAll('.day-table tbody tr').length, 7);
+  app.querySelectorAll('.day-table tbody tr')[0].click(); await T.wait();
   T.eq(location.hash, '#today');
   await tab('today');
 });

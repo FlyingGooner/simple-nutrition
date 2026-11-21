@@ -5,22 +5,6 @@ import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goa
 
 const DAYS = ['M', 'T', 'O', 'T', 'F', 'L', 'S'];
 
-function kcalBars(st) {
-  const max = Math.max(...st.days.map((d) => Math.max(d.kcal, d.goal ?? 0)), 1) * 1.05;
-  return el('ul', { class: 'kbars' }, st.days.map((d, i) => {
-    const w = Math.round(d.kcal / max * 1000) / 10, gx = d.goal != null ? Math.round(d.goal / max * 1000) / 10 : null;
-    const cls = !d.logged ? 'none' : d.goal == null || d.kcal <= d.goal * 1.05 ? 'good' : 'over';
-    // Utan kalorimål: bara siffran per dag, ingen stapel (beslut 2026-11-10).
-    return el('li', {}, el('button', { class: 'kb-row' + (st.hasGoal ? '' : ' kb-nobar'), 'data-act': 'goto', 'data-val': d.k, 'aria-label': `${shortDate(d.k)}: ${d.logged ? kcal(d.kcal) + ' kcal' : 'ingen mat loggad'}` },
-      el('span', { class: 'kb-day', text: DAYS[i] }),
-      !st.hasGoal ? null : svg('svg', { class: 'kb', viewBox: '0 0 100 10', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
-        svg('rect', { class: 'kb-bg', x: 0, y: 0, width: 100, height: 10, rx: 1 }),
-        d.logged ? svg('rect', { class: 'kb-' + cls, x: 0, y: 0, width: w, height: 10, rx: 1 }) : null,
-        gx != null ? svg('line', { class: 'kb-goal', x1: gx, x2: gx, y1: 0, y2: 10 }) : null),
-      el('span', { class: 'kb-n', text: d.logged ? kcal(d.kcal) : '–' })));
-  }));
-}
-
 // Dag för dag (v0.5.12): vanor, träning, kcal och vikt per dag i en tabell. Tryck på en rad = öppna dagen.
 function dayTable(ws, st) {
   const h = habitWeek(S.state, ws), thr = S.state.settings.successThreshold;
@@ -98,16 +82,13 @@ function weightCard(ws) {
 }
 
 function habitCard(ws) {
-  const h = habitWeek(S.state, ws), thr = S.state.settings.successThreshold;
+  const h = habitWeek(S.state, ws);
   const reasons = Object.entries(h.reasons).sort((a, b) => b[1] - a[1]).slice(0, 3);
-  const cls = (r) => (r == null ? 'none' : r >= thr ? 'good' : r >= 0.5 ? 'mid' : 'low');
   return el('section', { class: 'card' },
     el('div', { class: 'stats' },
       stat(pct(h.ratio), 'följsamhet'),
       stat(`${h.cheat + h.extraCheat}`, '🍰 fusk', h.extraCheat ? ` (${h.extraCheat} extra)` : '')),
     el('p', { class: 'muted small center', text: `✅ ${h.followed} följde · ⏭️ ${h.skipped} hoppade över` }),
-    el('div', { class: 'week-days' }, h.days.map((d, i) => el('button', { class: 'wd', 'data-act': 'goto', 'data-val': d.k, 'aria-label': `${shortDate(d.k)}: ${pct(d.ratio)}` },
-      el('span', { text: DAYS[i] }), el('span', { class: 'dot ' + cls(d.ratio) })))),
     reasons.length ? [el('h2', { class: 'goal-h', text: 'Vanligaste orsak' }),
       el('ul', { class: 'compare' }, reasons.map(([id, n]) => el('li', {}, el('span', { text: reasonName(id) }), el('strong', { text: String(n) }))))] : null);
 }
@@ -136,7 +117,6 @@ export function viewWeek(ws = S.week) {
       (() => { const pe = periodEnergy(S.state, ws, addDays(ws, 6), today()); return el('div', { class: 'stats' },
         stat(pe.logged ? kcal(pe.kcal / pe.logged) : '–', 'kcal per dag i snitt'),
         st.hasGoal ? stat(`${st.within}/${st.logged}`, 'dagar inom mål') : stat(`${pe.logged}/${st.logged}`, 'kompletta dagar')); })(),
-      st.logged && st.hasGoal ? kcalBars(st) : null,
       energyStats(ws, addDays(ws, 6))),
     }),
   ];
