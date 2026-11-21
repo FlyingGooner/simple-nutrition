@@ -16,7 +16,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - **Ärligt: inget är 100 % säkert.** Det som återstår är din egen telefon – lås den med kod och håll den uppdaterad – ett svagt backup-lösenord, och att appens kod på GitHub Pages inte ändras av någon obehörig. Men för den här sortens uppgifter finns inget säkrare praktiskt sätt än att de aldrig lämnar telefonen.
 
 ## Vanor
-- Tryck på utfallet för måltiden. Tryck igen på samma för att ta bort det.
+- Tomma måltider visas som en rad – tryck på raden för att se knapparna och Mat. Tryck på utfallet för måltiden. Tryck igen på samma för att ta bort det.
 - Vid 🍰 Fusk: välj en orsak (t.ex. Utemat eller Sug) och skriv gärna en kort anteckning. Vid Snacks eller Utemat kan du välja hur mycket (t.ex. Lite ≈ 250, en Magnum) – då loggas kcal i måltiden. Tryck igen för att ta bort.
 - Ifyllda måltider visas hopfällda som en rad (val, rätt och kcal) – tryck på raden för att ändra. 🍰 Fusk utan orsak hålls öppen tills orsaken är vald.
 - **+ Extra fusk** loggar snacks mellan måltiderna. Välj direkt hur mycket: Lite ≈ 250 · Mellan ≈ 500 · Mycket ≈ 950 – då sparas det och kortet fälls ihop. Vill du ange exakt vad det var trycker du på **+ Välj vara eller rätt** och väljer i samma meny som för mat (t.ex. chips eller en kanelbulle). Tryck på raden för att ändra.

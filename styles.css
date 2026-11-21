@@ -486,8 +486,17 @@ dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
 .day-table th:nth-child(3), .day-table td.dt-train { text-align: left; overflow: hidden; text-overflow: ellipsis; padding-left: 8px; }
 .day-table tr.is-today td:first-child { color: var(--primary); }
 .meal-done { padding: 2px 14px; }
+.meal-empty { padding: 2px 14px; }
 .meal-done > summary { list-style: none; cursor: pointer; min-height: 48px; }
+.meal-empty > summary { list-style: none; cursor: pointer; min-height: 48px; }
 .meal-done > summary::-webkit-details-marker { display: none; }
+.meal-empty > summary::-webkit-details-marker { display: none; }
+.meal-empty > summary { justify-content: flex-start; }
+.meal-empty > summary .fill-tag { margin-left: auto; }
+.meal-empty > summary::after { content: "▸"; color: var(--muted); }
+.meal-empty:not(:has(.fill-tag)) > summary::after { margin-left: auto; }
+.meal-empty[open] { padding: 8px 14px 4px; }
+.meal-empty[open] > summary::after { content: "▾"; }
 .meal-done > summary .meal-name { min-width: 0; }
 .meal-done > summary .tag { max-width: 45%; flex: none; }
 .meal-done > summary .meal-kcal { flex: none; }

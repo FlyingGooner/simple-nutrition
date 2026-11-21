@@ -16,7 +16,7 @@ The same text is in the app under **Settings → General → Help and manual** w
 - **Honestly: nothing is 100 % safe.** What remains is your own phone – lock it with a code and keep it updated – a weak backup password, and that the app's code on GitHub Pages is not changed by someone unauthorised. But for this kind of data there is no safer practical way than never letting it leave the phone.
 
 ## Habits
-- Tap the outcome for the meal. Tap the same one again to remove it.
+- Empty meals are shown as one line – tap the line to see the buttons and Food. Tap the outcome for the meal. Tap the same one again to remove it.
 - With 🍰 Cheat: choose a reason (e.g. Eating out or Craving) and add a short note if you like. With Snacks or Eating out you can choose how much (e.g. A little ≈ 250, a Magnum) – the kcal are then logged in the meal. Tap again to remove.
 - Filled-in meals are folded into one line (choice, dish and kcal) – tap the line to change it. 🍰 Cheat without a reason stays open until a reason is chosen.
 - **+ Extra cheat** logs snacks between meals. Choose how much right away: A little ≈ 250 · Medium ≈ 500 · A lot ≈ 950 – it is saved and the card folds. To enter exactly what it was, tap **+ Choose food or dish** and pick from the same menu as for food (e.g. crisps or a cinnamon bun). Tap the line to change it.
