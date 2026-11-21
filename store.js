@@ -335,7 +335,10 @@ export function energyEstimate(state, todayK) {
   // Fönstret börjar vid första loggade dagen (högst 28 dagar bakåt): vägningar innan man började logga säger inget om intaget.
   const end = addDays(todayK, -1), keys = Object.keys(state.log).filter((k) => k <= end && k >= addDays(end, -27)).sort();
   if (!keys.length) return Object.keys(state.weights).length ? { ready: false, logged: 0, weighs: 0, span: 0 } : null;
-  const start = keys[0];
+  // Uppstarten (2026-11-21): de första 3 dagarna efter att loggningen började hoppas över – vikten faller då mest av vätska
+  // och glykogen, vilket annars ger för hög förbrukning. Bara när det finns minst 7 dagar kvar efter dem.
+  const first = Object.keys(state.log).sort()[0];
+  const start = keys[0] === first && Math.round((parseKey(end) - parseKey(first)) / 864e5) + 1 >= 10 ? addDays(first, 3) : keys[0];
   const span = Math.round((parseKey(end) - parseKey(start)) / 864e5) + 1;
   const pe = periodEnergy(state, start, end);
   const ws = [];

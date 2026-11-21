@@ -30,7 +30,7 @@ test('slarv sänker kvaliteten', () => {
   assert.equal(e.weakest, 'logging'); assert.ok(e.quality < 0.3);
 });
 test('orimligt låg förbrukning = mat saknas i loggen', () => {
-  const e = energyEstimate(mk(28, 1000, 1000), T);
+  const e = energyEstimate(mk(28, 900, 900), T);
   assert.equal(e.weakest, 'plausible'); assert.equal(e.low, true); assert.ok(e.quality < 0.3);
 });
 test('periodEnergy: mot mål och enligt vikten', () => {
@@ -42,7 +42,13 @@ test('vägningar innan loggningen började sänker inte loggningen', () => {
   const st = mk(12, 2000, 2600);
   for (let i = 13; i < 40; i++) st.weights[addDays(T, -i)] = 86;
   const e = energyEstimate(st, T);
-  assert.equal(e.f.logging, 1); assert.equal(e.span, 12);
+  assert.equal(e.f.logging, 1); assert.equal(e.span, 9);   // de 3 första dagarna (uppstarten) räknas inte
+});
+test('uppstarten: vätskeras de första dagarna ger inte för hög förbrukning', () => {
+  const st = mk(12, 2100, 2650);
+  for (let i = 0; i < 3; i++) st.weights[addDays(T, -12 + i)] += 1.2 - i * 0.4;   // snabbt vätskefall i början
+  const e = energyEstimate(st, T);
+  assert.ok(Math.abs(e.tdee - 2650) < 300, `tdee ${e.tdee}`);
 });
 test('komplett dag: alla måltider mat eller ⏭️, minst 800 kcal, inte idag', () => {
   const k = '2026-11-20', post = (m, kc) => ({ id: 'p' + m, m, ref: 'q:est-home', name: 'x', q: 1, n: [kc, 0, 0, 0] });
