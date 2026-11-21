@@ -113,7 +113,7 @@ export function energyStats(from, to) {
   const items = [
     pe.vsGoal != null ? row('Mot kalorimålet', pe.vsGoal) : null,
     useE ? row('Mot förbrukningen', Math.round(pe.kcal - e.tdee * pe.logged)) : null,
-    pe.wKcal != null ? row('Enligt vikten', pe.wKcal) : null,
+    pe.wKcal != null ? row(pe.wKcal > 0 ? 'Kaloriöverskott enligt vikten' : 'Kaloriunderskott enligt vikten', pe.wKcal) : null,
   ].filter(Boolean);
   return items.length ? el('ul', { class: 'en-rows' }, items) : null;   // städning 2026-11-21: ingen förklaringsrad
 }
