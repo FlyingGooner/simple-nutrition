@@ -86,7 +86,7 @@ function keepGoalPossible() {
 function render() {
   keepGoalPossible();
   app.dataset.view = view;
-  const nodes = [view === 'trend' ? el('div', { class: 'card day-head view-head' }, el('h1', { class: 'view-title step-title', text: 'Trend' })) : null, VIEWS[view]()];
+  const nodes = [VIEWS[view]()];   // städning 2026-11-21: inget rubrikkort i Trend – fliken säger redan var man är
   app.replaceChildren(...nodes.flat(Infinity).filter(Boolean));
   for (const t of tabbar.querySelectorAll('[data-view]')) {
     const on = t.dataset.view === view;

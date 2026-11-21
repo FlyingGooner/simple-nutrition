@@ -52,10 +52,10 @@ export function forecastLine() {
   const outcome = [' · ', el('span', { text: 'utfall' }), ' ', el('strong', { text: kgw(f.week) })];
   const goalRate = p && !p.reached && !p.auto ? [' · ', el('span', { text: 'mål' }), ' ', el('strong', { text: kgw(p.rate) })] : null;
   // Målvikt utan datum (2026-11-21): tydligt när målet nås, med år.
-  if (f.status === 'none') return el('p', { class: 'w-sub fc fc-big' },
-    el('span', { text: '🎯' }), ' ', el('strong', { text: `${fmtNum(r1(wOut(S.state.wgoal.target)))} ${wUnit()}` }), ' ', el('span', { text: 'nås ungefär' }), ' ',
-    el('strong', { class: 'fc-ok', text: parseKey(f.date).toLocaleDateString(globalThis.I18N?.lang() === 'en' ? 'en-GB' : 'sv-SE', { day: 'numeric', month: 'long', year: 'numeric' }) }),
-    el('br'), el('span', { class: 'muted', text: 'om trenden håller' }), outcome);
+  if (f.status === 'none') return el('p', { class: 'w-sub fc fc-big' },   // en rad (städning 2026-11-21)
+    el('span', { text: '🎯' }), ' ', el('strong', { text: `${fmtNum(r1(wOut(S.state.wgoal.target)))} ${wUnit()}` }), ' ≈ ',
+    el('strong', { class: 'fc-ok', text: parseKey(f.date).toLocaleDateString(globalThis.I18N?.lang() === 'en' ? 'en-GB' : 'sv-SE', { day: 'numeric', month: 'short', year: 'numeric' }) }),
+    outcome);
   if (f.status === 'wrong' && S.state.wgoal && !S.state.wgoal.date && S.state.wgoal.rate == null && S.state.wgoal.pct == null) return el('p', { class: 'w-sub fc' }, el('strong', { class: 'fc-dev', text: '⚠️ Trenden går åt fel håll' }));
   const [cls, label] = { on: ['ok', '✅ I fas'], ahead: ['ok', '🚀 Före'], behind: ['dev', '⚠️ Efter'], wrong: ['dev', '⚠️ Trenden går åt fel håll'] }[f.status];
   return el('p', { class: 'w-sub fc' },
@@ -85,7 +85,7 @@ export function energyCard() {
   const why = q >= 95 ? null : WHY[e.weakest === 'plausible' ? (e.low ? 'low' : 'high') : e.weakest];
   const plan = weightPlan(S.state.wgoal, currentWeight(S.state), today());
   const forGoal = plan && !plan.reached && !rough ? r50(e.tdee + plan.kcalDay) : null;
-  return el('section', { class: 'card' }, h2,
+  return el('section', { class: 'card en-card' }, h2,
     el('div', { class: 'en-top' },
       el('p', { class: 'en-val' + (rough ? ' rough' : '') }, el('strong', { text: rough ? `${kcal(lo)}–${kcal(hi)}` : `≈ ${kcal(r50(e.tdee))}` }), ' kcal/dag'),
       forGoal ? el('p', { class: 'en-goal' }, el('strong', { text: `≈ ${kcal(forGoal)}` }), el('span', { text: 'för viktmålet' })) : null),
@@ -93,7 +93,7 @@ export function energyCard() {
       svg('svg', { class: 'en-bar', viewBox: '0 0 100 8', preserveAspectRatio: 'none', role: 'meter', 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': q, 'aria-label': 'Kvalitet' },
         svg('rect', { class: 'en-bg', x: 0, y: 0, width: 100, height: 8, rx: 4 }), svg('rect', { class: 'en-fill' + (q >= 75 ? ' ok' : ''), x: 0, y: 0, width: Math.max(q, 2), height: 8, rx: 4 })),
       el('strong', { text: `${q} %` })),
-    why ? el('p', { class: 'small en-why', text: why }) : null,
+    why && q < 50 ? el('p', { class: 'small en-why', text: why }) : null,
     how);
 }
 // Kalorisumma för en period (vecka/månad): mot målet, enligt vikten och mot förbrukningen.
@@ -107,19 +107,16 @@ export function energyStats(from, to) {
     useE ? row('Mot förbrukningen', Math.round(pe.kcal - e.tdee * pe.logged)) : null,
     pe.wKcal != null ? row('Enligt vikten', pe.wKcal) : null,
   ].filter(Boolean);
-  return items.length ? el('div', {}, el('ul', { class: 'en-rows' }, items),
-    el('p', { class: 'muted small', text: `${pe.logged} kompletta dagar${pe.partial ? `, ${pe.partial} räknas inte` : ''} · minus = underskott` })) : null;
+  return items.length ? el('ul', { class: 'en-rows' }, items) : null;   // städning 2026-11-21: ingen förklaringsrad
 }
 
 // Prognos om 1, 3 och 6 månader (2026-11-21) från utfallet de senaste 4 veckorna.
 function aheadTiles() {
   const t = weightTrend(S.state, today());
   if (!t.ready) return null;
-  return el('div', { class: 'ahead' },
-    el('p', { class: 'ahead-h' }, el('span', { text: 'Vikten om trenden håller' })),
-    el('div', { class: 'ahead-row' }, t.ahead.map(([m, v]) => el('div', { class: 'ahead-cell' },
-      el('span', { class: 'ahead-n', text: `${fmtNum(r1(wOut(v)))}` }),
-      el('span', { class: 'ahead-l', text: t.target != null && Math.abs(v - t.target) < 0.05 ? `🎯 ${m} mån` : `${m} mån` })))));
+  // En rad (städning 2026-11-21): "Om trenden håller: 1 mån 109,9 · 3 mån 105,7 · 6 mån 99,4"
+  return el('p', { class: 'w-sub ahead' }, el('span', { text: 'Om trenden håller:' }),
+    t.ahead.map(([m, v], i) => [i ? ' ·' : '', ' ', el('span', { text: `${m} mån` }), ' ', el('strong', { text: `${t.target != null && Math.abs(v - t.target) < 0.05 ? '🎯 ' : ''}${fmtNum(r1(wOut(v)))}` })]));
 }
 
 function weeks(n) {
@@ -142,7 +139,7 @@ function table() {
       el('tbody', {}, list.map((r) => {
         const prev = avg7(addDays(r.ws, -1));
         return el('tr', { 'data-act': 'openweek', 'data-val': r.ws },
-          el('td', {}, el('button', { class: 'link wk-open', 'data-act': 'openweek', 'data-val': r.ws, text: String(isoWeek(r.ws)) }), r.cur ? el('small', { class: 'wk-cur', text: 'pågår' }) : null),
+          el('td', {}, el('button', { class: 'link wk-open', 'data-act': 'openweek', 'data-val': r.ws, text: String(isoWeek(r.ws)) }), r.cur ? ' •' : null),
           el('td', { text: r.w != null ? fmtNum(r1(r.w)) : '–' }),
           el('td', {}, r.w != null && prev != null ? el('span', { class: 'delta' + (r.w - prev < 0 ? ' down' : ''), text: signed(r.w - prev) }) : '–'),
           el('td', { class: r.h.ratio == null ? '' : r.h.ratio >= S.state.settings.successThreshold ? 'good-t' : r.h.ratio >= 0.5 ? 'mid-t' : 'low-t', text: pct(r.h.ratio) }),

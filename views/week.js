@@ -112,6 +112,7 @@ function habitCard(ws) {
 
 function trainingCard(ws) {
   const c = weekSessions(ws), gs = goals(ws);
+  if (!c.all && !gs.length) return null;   // städning 2026-11-21: inget att visa
   return el('section', { class: 'card' }, el('h2', { text: 'Träning' }),
     el('div', { class: 'stats' }, gs.length ? gs.map((g) => stat(`${g.n}/${g.goal}`, g.label)) : stat(String(c.all), 'pass')),
     el('p', { class: 'muted small center', text: `Gym ${c.gym} · Kondition ${c.cardio}` }));
@@ -126,7 +127,7 @@ export function viewWeek(ws = S.week) {
     weight: () => weightCard(ws),
     habits: () => habitCard(ws),
     days: () => el('section', { class: 'card' }, el('h2', { text: 'Dag för dag' }), dayTable(ws, st),
-      el('p', { class: 'muted small', text: '○ räknas inte (måltid saknar mat, under 800 kcal eller idag)' })),
+      el('p', { class: 'muted small', text: '○ räknas inte' })),
     training: () => trainingCard(ws),
     kcal: () => el('section', { class: 'card' }, el('h2', { text: 'Kalorier' }),
       // Snittet räknar bara kompletta dagar (2026-11-21), samma regel som förbrukningen.

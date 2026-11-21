@@ -812,3 +812,13 @@ main .day-head + * { margin-top: 10px; }
 .hg-info { margin: 6px 0 0; font-size: .8125rem; color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
 .hg-info strong { color: var(--fg); font-weight: 500; }
 .hg-switch { min-height: 0; padding: 0; font-size: .8125rem; }
+/* Städning 2026-11-21: tätare – mindre siffror, mindre luft */
+.stat-n { font-size: 1.5rem; }
+.stat { padding: 4px 0; }
+.ahead { margin-top: 6px; }
+.ahead strong { color: var(--fg); font-weight: 500; }
+.fc-big { margin-top: 6px; }
+.en-card .en-val strong { font-size: 1.75rem; }
+.en-rows { margin: 8px 0 0; }
+.en-rows li { padding: 4px 0; }
+.kw { margin-top: 6px; }

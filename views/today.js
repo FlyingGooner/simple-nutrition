@@ -16,7 +16,7 @@ function summaryCard() {
   // 2026-11-18: tryck på kortet → allt du ätit i dag, samma sak från flera måltider ihopslaget.
   const sec = `daysum-${S.current}`;
   return el('details', { class: 'card sum-card day-sum', 'data-sec': sec, open: setOpen.has(sec) && posts.length > 0, 'aria-label': 'Dagens kalorier' },
-    el('summary', {}, el('div', { class: 'sum-top' },
+    el('summary', {}, headShown ? null : el('div', { class: 'sum-top' },
       el('span', { class: 'sum-big' }, el('strong', { text: kcal(n[0]) }), has ? ` / ${kcal(g.kcal)} kcal` : ' kcal idag'),
       has ? el('span', { class: 'sum-left' + (over ? ' over' : ''), text: over ? `${kcal(-left)} över` : `${kcal(left)} kvar` }) : null),
     has ? svg('svg', { class: 'kbar', viewBox: '0 0 100 6', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
@@ -42,7 +42,13 @@ function goalChips(e) {
     }))));
 }
 // Dagens mål överst (2026-11-21): kalorimålet, annars förbrukning + viktmålets kcal/dag (kvalitet ≥ 25 %).
+let headShown = false;   // städning 2026-11-21: visar dagkortet redan dagens kcal, hoppar kortet nedan över summan
 function headGoal(posts) {
+  const out = headGoalInner(posts);
+  headShown = !!out && !!out.querySelector('.hg-row');
+  return out;
+}
+function headGoalInner(posts) {
   // 2026-11-21 (städning): allt om dagens mål samlat här – förbrukningen som en liten rad, inget eget kort när viktmål finns.
   let goal = goalFor(S.state, today()).kcal, from = 'Kalorimål';
   const e = energyEstimate(S.state, today()), p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
@@ -237,7 +243,7 @@ export function viewToday() {
       isToday ? [el('span', { class: 'today-badge', text: 'IDAG' }), dateTitle(S.current)] : dateTitle(S.current), null, isToday ? '' : 'not-today'),
     el('div', { class: 'streak' }, el('span', { title: 'Lyckade dagar i rad', text: `🔥 ${st} ${st === 1 ? 'dag' : 'dagar'} i rad` }),
       isToday ? null : el('button', { class: 'link back-today', 'data-act': 'today', text: '↩ Till idag' })),
-    isToday ? headGoal(posts) : null),
+    isToday ? headGoal(posts) : (headShown = false, null)),
     ...arrange('today', {
     plan: () => S.state.settings.planText ? el('p', { class: 'plan', text: S.state.settings.planText }) : null,
     meals: () => el('div', { class: 'meals' },
