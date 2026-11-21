@@ -34,7 +34,9 @@ function dayTable(ws, st) {
         el('td', { class: cls(r), text: r == null ? '–' : pct(r) }),
         el('td', { class: 'dt-train', text: w.length ? '🏋️ ' + w.map(sessionText).join(', ') : '–' }),
         // Vanor men ingen mat (2026-11-21): tydligt att dagen inte räknas.
-        el('td', { class: (d.logged && !dayCheck(S.state, d.k, today()).ok) || (!d.logged && r != null) ? 'dt-inc' : '', text: d.logged ? kcal(d.kcal) + (dayCheck(S.state, d.k, today()).ok ? '' : ' ○') : r != null ? 'ingen mat ○' : '–' }),
+        // Idag (2026-11-21): pågår, räknas när dagen är slut – markeras med … i stället för ○.
+        ...[(() => { const c = dayCheck(S.state, d.k, today()), now = c.reason === 'today';
+          return el('td', { class: !now && ((d.logged && !c.ok) || (!d.logged && r != null)) ? 'dt-inc' : '', text: d.logged ? kcal(d.kcal) + (c.ok ? '' : now ? ' …' : ' ○') : r != null && !now ? 'ingen mat ○' : '–' }); })()],
         el('td', { text: kg != null ? fmtNum(kg) : '–' }));
     })));
 }
@@ -127,7 +129,7 @@ export function viewWeek(ws = S.week) {
     weight: () => weightCard(ws),
     habits: () => habitCard(ws),
     days: () => el('section', { class: 'card' }, el('h2', { text: 'Dag för dag' }), dayTable(ws, st),
-      el('p', { class: 'muted small', text: '○ räknas inte' })),
+      el('p', { class: 'muted small', text: '○ räknas inte · … idag, räknas när dagen är slut' })),
     training: () => trainingCard(ws),
     kcal: () => el('section', { class: 'card' }, el('h2', { text: 'Kalorier' }),
       // Snittet räknar bara kompletta dagar (2026-11-21), samma regel som förbrukningen.
