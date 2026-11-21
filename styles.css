@@ -809,3 +809,6 @@ main .day-head + * { margin-top: 10px; }
 .en-goal strong { font-size: 1.25rem; font-weight: 500; color: var(--fg); font-variant-numeric: tabular-nums; }
 .en-why { margin: 8px 0 0; }
 .fc-big { font-size: .9375rem; color: var(--fg); margin-top: 8px; }
+.hg-info { margin: 6px 0 0; font-size: .8125rem; color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
+.hg-info strong { color: var(--fg); font-weight: 500; }
+.hg-switch { min-height: 0; padding: 0; font-size: .8125rem; }

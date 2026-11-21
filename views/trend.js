@@ -109,7 +109,7 @@ export function energyStats(from, to) {
     pe.wKcal != null ? row('Enligt vikten', pe.wKcal) : null,
   ].filter(Boolean);
   return items.length ? el('div', {}, el('ul', { class: 'en-rows' }, items),
-    el('p', { class: 'muted small', text: `Summa för ${pe.logged} kompletta dagar${pe.partial ? ` (${pe.partial} ofullständiga räknas inte)` : ''}. Minus = underskott. Vikten räknas på 7-dagars medel (1 kg ≈ 7 700 kcal).` })) : null;
+    el('p', { class: 'muted small', text: `${pe.logged} kompletta dagar${pe.partial ? `, ${pe.partial} räknas inte` : ''} · minus = underskott` })) : null;
 }
 
 // Prognos om 1, 3 och 6 månader (2026-11-21) från utfallet de senaste 4 veckorna.

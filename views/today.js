@@ -11,7 +11,7 @@ export const dayPosts = () => S.state.log[S.current] || [];
 function summaryCard() {
   const posts = dayPosts(), n = sumN(posts), g = goalFor(S.state, S.current);
   const macro = (label, v, goal) => el('span', { class: 'macro' }, `${label} `, el('strong', { text: fmtNum(v, 0) }), goal ? ` / ${goal} g` : ' g');
-  const has = g.kcal != null, left = has ? g.kcal - n[0] : 0, over = left < 0;
+  const has = g.kcal != null && S.current !== today(), left = has ? g.kcal - n[0] : 0, over = left < 0;   // idag: målet står överst
   // Utan kalorimål (standard): bara dagens summa, ingen stapel eller "kvar".
   // 2026-11-18: tryck på kortet → allt du ätit i dag, samma sak från flera måltider ihopslaget.
   const sec = `daysum-${S.current}`;
@@ -43,12 +43,18 @@ function goalChips(e) {
 }
 // Dagens mål överst (2026-11-21): kalorimålet, annars förbrukning + viktmålets kcal/dag (kvalitet ≥ 25 %).
 function headGoal(posts) {
+  // 2026-11-21 (städning): allt om dagens mål samlat här – förbrukningen som en liten rad, inget eget kort när viktmål finns.
   let goal = goalFor(S.state, today()).kcal, from = 'Kalorimål';
+  const e = energyEstimate(S.state, today()), p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
+  const eOk = e && e.ready && e.quality >= 0.25, r50 = (x) => Math.round(x / 50) * 50;
+  const eat = eOk && p && !p.reached ? r50(e.tdee + p.kcalDay) : null;
+  const info = eOk ? el('p', { class: 'hg-info' }, el('span', { text: 'Håller vikten' }), ' ', el('strong', { text: `≈ ${kcal(r50(e.tdee))}` }),
+    ` · ${Math.round(e.quality * 100)} %`,
+    goal != null && eat != null && Math.abs(goal - eat) >= 50 ? [' · ', el('button', { class: 'link hg-switch', 'data-act': 'tdeegoal', 'data-val': eat, text: `Byt till ${kcal(eat)}` })] : null) : null;
   if (goal == null) {
-    const e = energyEstimate(S.state, today()), p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
-    if (!e || !e.ready || e.quality < 0.25) { const f = forecastLine(); return f ? el('div', { class: 'head-goal' }, f) : null; }   // prognosen syns ändå
-    goal = Math.round((e.tdee + (p && !p.reached ? p.kcalDay : 0)) / 50) * 50;
-    from = p && !p.reached ? 'För viktmålet' : 'Håller vikten';
+    if (!eOk) { const f = forecastLine(); return f ? el('div', { class: 'head-goal' }, f) : null; }   // prognosen syns ändå
+    goal = eat ?? r50(e.tdee);
+    from = eat != null ? 'För viktmålet' : 'Håller vikten';
   }
   const eaten = Math.round(sumN(posts)[0]), left = goal - eaten;
   return el('div', { class: 'head-goal' },
@@ -58,6 +64,7 @@ function headGoal(posts) {
     svg('svg', { class: 'kbar', viewBox: '0 0 100 6', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
       svg('rect', { class: 'kbar-bg', x: 0, y: 0, width: 100, height: 6, rx: 2 }),
       svg('rect', { class: 'kbar-fill' + (left < 0 ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, eaten / goal) * 1000) / 10, height: 6, rx: 2 })),
+    from === 'Håller vikten' ? null : info,
     forecastLine());
 }
 // Påminnelse om vägning (2026-11-21): bara idag, när senaste vägningen är 4 dagar gammal eller äldre och idag saknar vägning.
@@ -83,14 +90,8 @@ function energyHint() {
   if (!e || !e.ready || e.quality < 0.25) return null;
   const r50 = (x) => Math.round(x / 50) * 50, p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
   const q = el('p', { class: 'muted small', text: `Kvalitet ${Math.round(e.quality * 100)} % – se Trend.` });
-  // Med viktmål (2026-11-21): kompakt – två siffror, inga snabbval (målet ändras under Inställningar).
-  if (p && !p.reached) {
-    const eat = r50(e.tdee + p.kcalDay), kg = goalFor(S.state, today()).kcal;
-    return el('div', { class: 'card en-hint' },
-      el('div', { class: 'stats' }, stat(`≈ ${kcal(r50(e.tdee))}`, 'kcal/dag håller vikten'), stat(`≈ ${kcal(eat)}`, 'kcal/dag för viktmålet')),
-      kg != null && Math.abs(kg - eat) >= 50 ? el('button', { class: 'link', 'data-act': 'tdeegoal', 'data-val': eat, text: `Byt kalorimålet (${kcal(kg)}) till ${kcal(eat)}` }) : null,
-      q);
-  }
+  // Med viktmål (städning 2026-11-21): inget kort – siffrorna står överst i dagkortet.
+  if (p && !p.reached) return null;
   return el('div', { class: 'card en-hint' },
     el('p', {}, el('span', { text: 'Utifrån din loggning och vikt håller du vikten på' }), ' ', el('strong', { text: `≈ ${kcal(r50(e.tdee))} kcal/dag` }), '.'),
     goalChips(e), q);

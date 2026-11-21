@@ -1,6 +1,6 @@
 // View: Vecka – vanor först (följsamhet, fusk, orsaker, träning), sedan kalorier som stöd (beslut 2026-11-09).
 import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCheck, energyEstimate, goalFor, sumN, periodEnergy } from '../store.js';
-import { goalLine, energyStats } from './trend.js';
+import { energyStats } from './trend.js';
 import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goals, weekSessions, sessionText, fmtNum, arrange, wOut, wUnit } from '../ui.js';
 
 const DAYS = ['M', 'T', 'O', 'T', 'F', 'L', 'S'];
@@ -89,7 +89,6 @@ function weightCard(ws) {
       el('span', { class: 'w-now', text: last != null ? `${kg1(last)} ${wUnit()}` : '–' }),
       el('span', { class: 'w-flex' }),
       d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), text: dTxt }) : null),
-    ws === weekStart(today()) ? goalLine(currentWeight(S.state), null) : null,
     el('p', { class: 'w-sub', text: last == null ? 'Ingen vägning den här veckan än'
       : bw == null ? 'Ingen vägning veckan innan att jämföra med'
       : `mot ${shortDate(base)} (${kg1(bw)} ${wUnit()}) · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'} denna vecka` }),
@@ -127,7 +126,7 @@ export function viewWeek(ws = S.week) {
     weight: () => weightCard(ws),
     habits: () => habitCard(ws),
     days: () => el('section', { class: 'card' }, el('h2', { text: 'Dag för dag' }), dayTable(ws, st),
-      el('p', { class: 'muted small', text: '○ = räknas inte i statistiken (en måltid saknar mat, under 800 kcal eller idag).' })),
+      el('p', { class: 'muted small', text: '○ räknas inte (måltid saknar mat, under 800 kcal eller idag)' })),
     training: () => trainingCard(ws),
     kcal: () => el('section', { class: 'card' }, el('h2', { text: 'Kalorier' }),
       // Snittet räknar bara kompletta dagar (2026-11-21), samma regel som förbrukningen.
