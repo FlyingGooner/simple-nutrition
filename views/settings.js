@@ -33,6 +33,7 @@ function editableList(kind, items) {
       kind === 'workoutTypes' ? el('select', { class: 'w-kind', 'data-act': 'wkind', 'data-id': it.id, 'aria-label': `Sort för ${it.name}` },
         el('option', { value: 'gym', selected: it.kind === 'gym', text: 'Gym' }),
         el('option', { value: 'cardio', selected: it.kind === 'cardio', text: 'Kondition' })) : null,
+      kind === 'meals' ? el('button', { class: 'chip sm' + (it.opt ? '' : ' on'), 'data-act': 'mealopt', 'data-id': it.id, 'aria-pressed': String(!it.opt), title: 'Krävs för att dagen ska räknas i statistiken', text: it.opt ? 'Valfri' : 'Krävs' }) : null,
       el('button', { class: 'icon sm', 'data-act': 'up', 'data-kind': kind, 'data-id': it.id, 'aria-label': 'Flytta upp', disabled: i === 0, text: '↑' }),
       el('button', { class: 'icon sm danger', 'data-act': 'del', 'data-kind': kind, 'data-id': it.id, 'aria-label': `Ta bort ${it.name}`, disabled: items.length <= min, text: '✕' })))),
     items.length < max ? el('button', { class: 'link', 'data-act': 'add', 'data-kind': kind, text: '+ ' + addLabel }) : null,

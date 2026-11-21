@@ -30,7 +30,7 @@ export function defaults() {
   return {
     version: 1,
     goals: [{ from: '2000-01-01' }],                    // inget kalorimål från start (beslut 2026-11-10)
-    meals: [{ id: 'm1', name: 'Frukost' }, { id: 'm2', name: 'Lunch' }, { id: 'm3', name: 'Mellanmål' }, { id: 'm4', name: 'Middag' }],
+    meals: [{ id: 'm1', name: 'Frukost' }, { id: 'm2', name: 'Lunch' }, { id: 'm3', name: 'Mellanmål', opt: true }, { id: 'm4', name: 'Middag' }],
     log: {}, dishes: [], foods: [], aliases: Object.create(null), weights: {}, layout: {},
     backup: { remind: 'month', last: null, asked: null },   // v0.7.0: påminnelse om backup
     habits: {}, workouts: {}, settings: habitSettings(fdtDefaults().settings),
@@ -108,7 +108,7 @@ export function validate(raw) {
   if (Array.isArray(raw.meals)) {
     const seen = new Set();
     const m = raw.meals.filter((x) => isObj(x) && ID_RE.test(x.id) && !seen.has(x.id) && seen.add(x.id) && cleanText(x.name, 40))
-      .slice(0, LIM.meals).map((x) => ({ id: x.id, name: cleanText(x.name, 40) }));
+      .slice(0, LIM.meals).map((x) => (x.opt === true ? { id: x.id, name: cleanText(x.name, 40), opt: true } : { id: x.id, name: cleanText(x.name, 40) }));   // opt: valfri måltid (2026-11-21)
     if (m.length) s.meals = m;
   }
   if (isObj(raw.log)) {
@@ -294,7 +294,7 @@ export function dayCheck(state, k, todayK) {
   const posts = state.log[k] || [], h = state.habits[k] || {};
   const kcal = Math.round(sumN(posts)[0]), use = mealFirstUse(state);
   const skipped = (id) => { const x = h[id]; return (x && typeof x === 'object' ? x.outcome : x) === 'skipped'; };
-  const required = (m) => (use.first[m.id] ? use.first[m.id] <= k : k >= use.last);
+  const required = (m) => !m.opt && (use.first[m.id] ? use.first[m.id] <= k : k >= use.last);
   const missing = state.meals.filter((m) => required(m) && !skipped(m.id) && !posts.some((p) => p.m === m.id)).map((m) => m.name);
   const reason = todayK && k >= todayK ? 'today' : !posts.length ? 'empty' : missing.length ? 'missing' : kcal < DAY_MIN_KCAL ? 'low' : null;
   return { ok: !reason, reason, missing, kcal, hasFood: posts.length > 0 };
@@ -580,7 +580,7 @@ export const EXPORT_README = 'Backup från Fitness buddy. Ändra bara inom "data
 export const EXPORT_SCHEMA = {
   version: 'tal, 1',
   goals: 'lista { from: datum, kcal?: 500–10000, prot?: 10–500, kolh?: 10–1000 }, sorteras på from, mål utan kcal = inget kalorimål från det datumet, max 100',
-  meals: 'lista { id, name ≤ 60 tecken }, 1–10 st',
+  meals: 'lista { id, name ≤ 60 tecken, opt?: true = valfri (krävs inte för att dagen ska räknas i statistiken) }, 1–10 st',
   log: 'objekt datum → lista av poster, max 100 poster per dag och 3650 dagar',
   'post (vara)': '{ id, m: måltids-id, ref: "l:<livsmedel>" | "b:<beräknad>" | "u:<egen produkt-id>" | "p:<schablon-id>", name, g: gram 0–10000, n: per 100 g (kcal ≤ 950, övriga ≤ 105 var och tillsammans), u?: [mått, antal] }',
   'post (rätt)': '{ id, m, ref: "r:<rätt-id>", name, q: andel av satsen 0,0001–50, n: totalt för andelen (kcal ≤ 20000, gram ≤ 2000), u?: ["port." | "av satsen" | "g", mängd] }',

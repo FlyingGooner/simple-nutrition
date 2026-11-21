@@ -726,6 +726,12 @@ app.addEventListener('change', (ev) => {
   const t = ev.target;
   switch (t.dataset.act) {
     case 'importfile': readBackup(t); return;
+    case 'mealopt': {   // 2026-11-21: valfri måltid krävs inte för komplett dag
+      const m = S.state.meals.find((x) => x.id === t.dataset.id);
+      if (!m) return;
+      if (m.opt) delete m.opt; else m.opt = true;
+      persist(); render(); snackbar(m.opt ? `${m.name} är valfri` : `${m.name} krävs`, null, null, 2500); return;
+    }
     case 'rename': {
       const it = listOf(t.dataset.kind)?.find((x) => x.id === t.dataset.id);
       const v = cleanText(t.value, 40);

@@ -187,9 +187,13 @@ function mealCard(m, posts) {
   ];
   const e = other ? null : dayHabits()[m.id];
   // Ifylld måltid fälls ihop till en rad: val + rätt + kcal (fusk utan orsak hålls öppen tills orsaken är vald).
+  // Ifyllt eller inte (2026-11-21): krävd måltid utan mat och utan ⏭️ = "○ Fyll i", valfri = "Valfri".
+  const need = !other && !posts.length && e?.outcome !== 'skipped';
+  const mark = !need ? null : m.opt ? el('span', { class: 'fill-tag opt', text: 'Valfri' })
+    : el('span', { class: 'fill-tag', title: 'Lägg till mat eller tryck ⏭️, annars räknas dagen inte i statistiken', text: '○ Fyll i' });
   if (!e || !OUTCOMES[e.outcome] || (e.outcome === 'cheat' && !e.reason)) {
-    return el('section', { class: 'card meal', 'aria-label': m.name },
-      el('div', { class: 'meal-head' }, el('span', { class: 'meal-name', text: m.name })), body);
+    return el('section', { class: 'card meal' + (need && !m.opt ? ' meal-need' : ''), 'aria-label': m.name },
+      el('div', { class: 'meal-head' }, el('span', { class: 'meal-name', text: m.name }), mark), body);
   }
   const o = OUTCOMES[e.outcome], msec = `meal-${S.current}-${m.id}`;
   return el('details', { class: 'card meal meal-done', 'data-sec': msec, open: setOpen.has(msec) || editing || (S.sel && posts.some((p) => S.sel.includes(p.id))), 'aria-label': m.name },
@@ -197,7 +201,7 @@ function mealCard(m, posts) {
       el('span', { class: 'meal-name' }, m.name,
         posts.length ? el('small', { class: 'meal-what', text: posts.map((p) => p.name).join(', ') }) : null),
       el('span', { class: `tag tag-${e.outcome}`, text: `${o.icon} ${e.reason ? reasonName(e.reason) : o.label}` }),
-      posts.length ? el('span', { class: 'meal-kcal', text: `${kcal(total)} kcal` }) : null),
+      posts.length ? el('span', { class: 'meal-kcal', text: `${kcal(total)} kcal` }) : mark),
     body);
 }
 

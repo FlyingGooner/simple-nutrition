@@ -69,3 +69,9 @@ test('ny måltid gör inte gamla dagar ofullständiga', () => {
   assert.deepEqual(dayCheck(st2, d2, T).missing, ['Lunch', 'Kvällsmat']);   // aldrig använd krävs på senaste dagen
   assert.equal(dayCheck(st2, d1, T).ok, true);
 });
+test('valfri måltid krävs inte', () => {
+  const k = '2026-11-20', post = (m) => ({ id: 'p' + m, m, ref: 'q:est-home', name: 'x', q: 1, n: [900, 0, 0, 0] });
+  const st = validate({ meals: [{ id: 'a', name: 'Frukost' }, { id: 'b', name: 'Mellanmål', opt: true }], log: { [k]: [post('a')], '2026-11-19': [post('b')] } });
+  assert.equal(st.meals[1].opt, true);
+  assert.equal(dayCheck(st, k, T).ok, true);
+});
