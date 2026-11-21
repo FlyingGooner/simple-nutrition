@@ -193,7 +193,7 @@ I18N.add({
   'Passtyper och mål': 'Workout types and goals',
   'Gym-typer kan kombineras till ett pass (Push + Pull = 1 pass). Kondition loggas med sträcka och tid.': 'Gym types can be combined into one session (Push + Pull = 1 session). Cardio is logged with distance and time.',
   'Mål per vecka': 'Goal per week', 'Alla pass': 'All workouts', 'Inget mål': 'No goal', 'Kondition': 'Cardio',
-  'Förbrukning': 'Expenditure',
+  'Total förbrukning': 'Total expenditure',
   'Så räknas det': 'How it is calculated',
   'Kvalitet': 'Quality',
   'Grov uppskattning ännu.': 'Rough estimate so far.',

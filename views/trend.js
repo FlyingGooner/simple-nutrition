@@ -51,7 +51,7 @@ const WHY = {
   stable: 'Veckorna skiljer sig mycket – logga lika noga varje dag.',
 };
 export function energyCard() {
-  const e = energyEstimate(S.state, today()), h2 = el('h2', { text: 'Förbrukning' });
+  const e = energyEstimate(S.state, today()), h2 = el('h2', { text: 'Total förbrukning' });
   const how = el('details', { class: 'en-how' }, el('summary', { text: 'Så räknas det' }),
     el('p', { class: 'muted small', text: 'Förbrukningen räknas från vad du loggat och hur vikten ändrats de senaste 4 veckorna (1 kg ≈ 7 700 kcal). Vikten svänger av vätska, så den säkras med tiden. Kvaliteten avgörs av datan: hur mycket vikten brusar, hur många dagar du loggat, om resultatet är rimligt och om veckorna stämmer med varandra. Logga all mat och väg dig minst 3 gånger i veckan – då når kvaliteten 100 % efter 2–4 veckor. Glömmer du alltid samma saker blir siffran förbrukning enligt din loggning, och den fungerar lika bra för att nå målet.' }));
   if (!e || !e.ready) return el('section', { class: 'card' }, h2,
