@@ -1,5 +1,5 @@
 // View: Trend – weight (7-day average), the last 4 weeks as a table, weight chart 12 weeks, kcal vs weight.
-import { avg7Of, weightPlan, weightForecast, weightTrend, energyEstimate, periodEnergy, currentWeight, addDays, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
+import { avg7Of, weightPlan, weightForecast, weightTrend, energyEstimate, periodEnergy, currentWeight, addDays, KCAL_PER_KG, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
 import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions, arrange, wOut, wUnit, stat } from '../ui.js';
 
 // 7-day average of the weights in [k-6, k], or null.
@@ -8,18 +8,26 @@ const r1 = (x) => Math.round(x * 10) / 10;
 const signed = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + fmtNum(Math.abs(r1(n)));
 const delta = (n) => el('span', { class: 'delta' + (n < 0 ? ' down' : ''), text: `${signed(wOut(n))} ${wUnit()} ${n < 0 ? '▼' : n > 0 ? '▲' : ''}`.trim() });
 
+// Viktförändring som kcal/dag (2026-11-21): dKg mellan två datum, 1 kg ≈ 7 700 kcal. Delas av Vecka, Historik och Trend.
+export function kcalDayLine(dKg, fromK, toK) {
+  const days = Math.round((parseKey(toK).getTime() - parseKey(fromK).getTime()) / 864e5);
+  const n = days > 0 && dKg ? Math.round(Math.abs(dKg) * KCAL_PER_KG / days / 10) * 10 : 0;
+  return n ? el('p', { class: 'w-sub', text: `≈ ${n.toLocaleString('sv-SE')} kcal/dag ${dKg < 0 ? 'underskott' : 'överskott'} på ${days} dagar (1 kg ≈ 7 700 kcal)` }) : null;
+}
+
 function summary(t) {
   const keys = Object.keys(S.state.weights).sort();
   if (!keys.length) return el('section', { class: 'card w-sum' }, el('p', { class: 'muted', text: 'Ingen vägning ännu. Fyll i vikt under Idag – trenden räknas på 7-dagars medel.' }));
   const lastK = keys[keys.length - 1], now = avg7(lastK);
-  let back = avg7(addDays(lastK, -28));
-  if (back == null) { const first = keys.find((k) => k >= addDays(lastK, -28)); back = first && first < lastK ? avg7(first) : null; }
+  let backK = addDays(lastK, -28), back = avg7(backK);
+  if (back == null) { const first = keys.find((k) => k >= addDays(lastK, -28)); backK = first; back = first && first < lastK ? avg7(first) : null; }
   // Kompakt (v0.5.14): siffror på en rad + kurvan i samma kort.
   return el('section', { class: 'card w-card' },
     el('div', { class: 'w-row' },
       el('span', { class: 'w-label', text: 'Vikt' }),
       el('span', { class: 'w-now', text: `${fmtNum(r1(wOut(now)))} ${wUnit()}` }),
       back != null ? el('span', { class: 'w-chg' }, delta(now - back), el('small', { text: ' 4 v' })) : null),
+    back != null ? kcalDayLine(now - back, backK, lastK) : null,
     chart(),
     goalLine(now, null),
     aheadTiles());   // städning 2026-11-21: "Totalt sedan" bort – kurvan visar hela tiden

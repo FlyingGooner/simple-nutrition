@@ -1,6 +1,6 @@
 // View: Historik – månadskalender färgad efter följsamhet (vanor, som i follow-diet-tracker), streaks, träning och kcal som stöd.
 import { periodEnergy, addDays, dateKey, parseKey, sumN, habitDay, habitStreak, habitRange, habitLongest } from '../store.js';
-import { energyStats } from './trend.js';
+import { energyStats, kcalDayLine } from './trend.js';
 import { today, S, el, svg, stepper, stat, kcal, pct, shortDate, arrange, wOut, wUnit, dOut, dUnit } from '../ui.js';
 // (dateKey/parseKey används även av monthWeight)
 
@@ -51,6 +51,7 @@ function monthWeight(extra = null) {
     el('p', { class: 'w-sub', text: !lastK ? 'Ingen vägning den här månaden'
       : !baseK ? 'Första vägningen – inget att jämföra med än'
       : `${prevK ? 'mot' : 'sedan'} ${shortDate(baseK)} (${kg1(W(baseK))} ${wUnit()}) · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'}` }),
+    d ? kcalDayLine(W(lastK) - W(baseK), baseK, lastK) : null,
     extra);
 }
 

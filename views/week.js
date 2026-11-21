@@ -1,6 +1,6 @@
 // View: Vecka – vanor först (följsamhet, fusk, orsaker, träning), sedan kalorier som stöd (beslut 2026-11-09).
-import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCheck, energyEstimate, goalFor, sumN, periodEnergy, KCAL_PER_KG } from '../store.js';
-import { energyStats } from './trend.js';
+import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCheck, energyEstimate, goalFor, sumN, periodEnergy } from '../store.js';
+import { energyStats, kcalDayLine } from './trend.js';
 import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goals, weekSessions, sessionText, fmtNum, arrange, wOut, wUnit } from '../ui.js';
 
 const DAYS = ['M', 'T', 'O', 'T', 'F', 'L', 'S'];
@@ -67,9 +67,6 @@ function weightCard(ws) {
   const base = prev.length ? prev[0] : null, bw = base ? S.state.weights[base] : null;
   const d = last != null && bw != null ? Math.round((last - bw) * 10) / 10 : null;
   const dTxt = d == null ? '' : d === 0 ? `±0 ${wUnit()}` : `${d > 0 ? '+' : '−'}${fmtNum(wOut(Math.abs(d)))} ${wUnit()}`;
-  // Kalorier per dag (2026-11-21): viktförändringen räknad som underskott/överskott per dag, 1 kg ≈ 7 700 kcal.
-  const days = d != null ? Math.round((Date.parse(cur[cur.length - 1]) - Date.parse(base)) / 864e5) : 0;
-  const perDay = days > 0 && d !== 0 ? Math.round(Math.abs(d) * KCAL_PER_KG / days / 10) * 10 : null;
   const kg1 = (v) => wOut(v).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   // Kompakt (v0.5.14): en rad – vikt till vänster, förändring till höger, jämförelsen i liten text.
   return el('section', { class: 'card w-card' },
@@ -81,7 +78,7 @@ function weightCard(ws) {
     el('p', { class: 'w-sub', text: last == null ? 'Ingen vägning den här veckan än'
       : bw == null ? 'Ingen vägning veckan innan att jämföra med'
       : `mot ${shortDate(base)} (${kg1(bw)} ${wUnit()}) · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'} denna vecka` }),
-    perDay ? el('p', { class: 'w-sub', text: `≈ ${perDay.toLocaleString('sv-SE')} kcal/dag ${d < 0 ? 'underskott' : 'överskott'} på ${days} dagar (1 kg ≈ 7 700 kcal)` }) : null,
+    d ? kcalDayLine(last - bw, base, cur[cur.length - 1]) : null,
     kcalWeightChart(ws));
 }
 
