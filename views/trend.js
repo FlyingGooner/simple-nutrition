@@ -76,12 +76,13 @@ export function energyStats(from, to) {
   const pe = periodEnergy(S.state, from, to > today() ? today() : to, today());
   if (!pe.logged) return pe.partial ? el('p', { class: 'muted small', text: 'Inga kompletta dagar – varje måltid behöver mat eller ⏭️, och minst 800 kcal.' }) : null;
   const e = energyEstimate(S.state, today()), useE = e && e.ready && e.quality >= 0.25;
+  const row = (label, v) => el('li', {}, el('span', { text: label }), el('strong', { class: v < 0 ? 'neg' : '', text: `${signedK(v)} kcal` }));
   const items = [
-    pe.vsGoal != null ? stat(signedK(pe.vsGoal), 'kcal mot kalorimålet') : null,
-    useE ? stat(signedK(Math.round(pe.kcal - e.tdee * pe.logged)), 'kcal mot förbrukningen') : null,
-    pe.wKcal != null ? stat(signedK(pe.wKcal), 'kcal enligt vikten') : null,
+    pe.vsGoal != null ? row('Mot kalorimålet', pe.vsGoal) : null,
+    useE ? row('Mot förbrukningen', Math.round(pe.kcal - e.tdee * pe.logged)) : null,
+    pe.wKcal != null ? row('Enligt vikten', pe.wKcal) : null,
   ].filter(Boolean);
-  return items.length ? el('div', {}, el('div', { class: 'stats' }, items),
+  return items.length ? el('div', {}, el('ul', { class: 'en-rows' }, items),
     el('p', { class: 'muted small', text: `Summa för ${pe.logged} kompletta dagar${pe.partial ? ` (${pe.partial} ofullständiga räknas inte)` : ''}. Minus = underskott. Vikten räknas på 7-dagars medel (1 kg ≈ 7 700 kcal).` })) : null;
 }
 

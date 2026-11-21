@@ -197,7 +197,13 @@ export function setGoal(state, k, patch) {
 // wgoal = { target: kg, date: datum } eller { target: kg, rate: kg/vecka }. Takten får vara högst 1 % av kroppsvikten per vecka.
 export const WGOAL_MAX = 0.01, KCAL_PER_KG = 7700;
 // Utan target (2026-11-21, snabbval i Idag): { rate } = gå ner rate kg/vecka tills vidare.
+// pct (2026-11-21): takt i procent av nuvarande vikt per vecka (0,05–1), i stället för rate i kg.
 function cleanWgoal(x) {
+  if (isObj(x) && num(x.pct, 0.05, 1) && !validDate(x.date)) {
+    const o = { pct: Math.round(x.pct * 100) / 100 };
+    if (num(x.target, 20, 400)) o.target = Math.round(x.target * 10) / 10;
+    return o;
+  }
   if (isObj(x) && x.target == null && num(x.rate, 0.05, 4)) return { rate: Math.round(x.rate * 100) / 100 };
   if (!isObj(x) || !num(x.target, 20, 400)) return null;
   const o = { target: Math.round(x.target * 10) / 10 };
@@ -221,6 +227,7 @@ const daysTo = (a, b) => Math.round((parseKey(b) - parseKey(a)) / 864e5);
 // Plan från vikten cur idag: takt som behövs (kg/v, med tecken), högsta takt (1 %), tidigaste datum och ungefärligt kcal/dag.
 export function weightPlan(g, cur, todayK) {
   if (!g || cur == null) return null;
+  if (g.pct != null) g = { ...g, rate: cur * g.pct / 100 };
   if (g.target == null) {
     const max = cur * WGOAL_MAX, rate = Math.min(g.rate, max);
     return { reached: false, open: true, cur, max, tooFast: g.rate > max + 1e-9, rate: -rate, need: -g.rate, kcalDay: Math.round(-rate * KCAL_PER_KG / 7) };
@@ -540,7 +547,7 @@ export const EXPORT_SCHEMA = {
   foods: 'lista { id, name, n per 100 g, u?: [mått, gram per mått] }, egna produkter, max 1000',
   aliases: 'objekt sökord (gemener, ≤ 40 tecken) → ref, max 1000',
   weights: 'objekt datum → kg 20–400 (en decimal)',
-  wgoal: 'valfritt { target: målvikt kg 20–400, date: datum } eller { target, rate: kg per vecka 0,05–4 } eller { rate } (gå ner rate kg/vecka utan målvikt); appen tillåter högst 1 % av kroppsvikten per vecka',
+  wgoal: 'valfritt { target: målvikt kg 20–400, date: datum } eller { target, rate: kg per vecka 0,05–4 } eller { rate } (gå ner rate kg/vecka utan målvikt) eller { pct, target? } (takt i % av nuvarande vikt per vecka, 0,05–1); appen tillåter högst 1 % av kroppsvikten per vecka',
   habits: 'objekt datum → { måltids-id | "extra-<n>": { outcome: "followed" | "cheat" | "skipped", reason?: orsaks-id, note?: ≤ 140 tecken } }',
   workouts: 'objekt datum → lista { types: [passtyp-id], km?, sec? }',
   settings: '{ reasons: [{ id, name }], successThreshold: 0,5–1, planText ≤ 300, workoutTypes: [{ id, name, kind: "gym" | "cardio" }], workoutGoal, gymGoal, cardioGoal }',

@@ -27,3 +27,10 @@ test('takt utan målvikt (snabbval)', () => {
   assert.equal(p.open, true); assert.equal(p.rate, -0.5); assert.equal(p.kcalDay, -550); assert.equal(p.tooFast, false);
   assert.equal(weightPlan({ rate: 1.2 }, 112, '2026-11-21').tooFast, true);
 });
+test('takt i procent följer vikten', () => {
+  assert.deepEqual(validate({ wgoal: { pct: 0.5 } }).wgoal, { pct: 0.5 });
+  assert.deepEqual(validate({ wgoal: { pct: 0.75, target: 100 } }).wgoal, { pct: 0.75, target: 100 });
+  assert.equal(validate({ wgoal: { pct: 2 } }).wgoal, undefined);
+  assert.equal(weightPlan({ pct: 1 }, 112, '2026-11-21').rate, -1.12);
+  assert.equal(weightPlan({ pct: 0.5, target: 100 }, 80, '2026-11-21').rate, 0.4);   // upp mot målet
+});

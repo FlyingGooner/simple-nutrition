@@ -36,7 +36,7 @@ function goalChips(e) {
   return el('div', {},
     el('p', { class: 'small', text: 'Mål – gå ner per vecka:' }),
     el('div', { class: 'chips en-chips' }, opts.map((r) => el('button', {
-      class: 'chip' + (g && !g.date && Math.abs(g.rate - r) < 0.005 ? ' on' : ''), 'data-act': 'wgquick', 'data-val': r,
+      class: 'chip' + (g && !g.date && (r === max ? g.pct === 1 : g.pct == null && Math.abs(g.rate - r) < 0.005) ? ' on' : ''), 'data-act': 'wgquick', 'data-val': r, 'data-pct': r === max ? '1' : null,
       text: r === max ? `1 % (${r2(r)} ${wUnit()})` : `${r2(r)} ${wUnit()}`,
     }))));
 }

@@ -1,5 +1,5 @@
 // View: Vecka – vanor först (följsamhet, fusk, orsaker, träning), sedan kalorier som stöd (beslut 2026-11-09).
-import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCheck } from '../store.js';
+import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCheck, energyEstimate, goalFor, sumN } from '../store.js';
 import { goalLine, energyStats } from './trend.js';
 import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goals, weekSessions, sessionText, fmtNum, arrange, wOut, wUnit } from '../ui.js';
 
@@ -39,6 +39,38 @@ function dayTable(ws, st) {
 }
 const DAYS2 = ['Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör', 'Sön'];
 
+// Kalorier och vikt i samma diagram (2026-11-21): förra + denna vecka, staplar = kcal per dag, linje = vikt,
+// streckad linje = vad som håller vikten (förbrukningen) eller kalorimålet. Ofullständiga dagar ljusare.
+function kcalWeightChart(ws) {
+  const days = Array.from({ length: 14 }, (_, i) => addDays(ws, i - 7)), t = today();
+  const kc = days.map((k) => (k > t ? null : Math.round(sumN(S.state.log[k] || [])[0]) || null));
+  const kg = days.map((k) => S.state.weights[k] ?? null);
+  if (kc.filter(Boolean).length + kg.filter((x) => x != null).length < 2) return null;
+  const e = energyEstimate(S.state, t), ref = e && e.ready && e.quality >= 0.25 ? Math.round(e.tdee / 50) * 50 : null;
+  const goal = goalFor(S.state, addDays(ws, 6)).kcal ?? null;
+  const W = 320, H = 120, top = 8, bot = 96, cw = W / 14;
+  const kmax = Math.max(...kc.filter(Boolean), ref ?? 0, goal ?? 0, 1000) * 1.08;
+  const Yk = (v) => bot - v / kmax * (bot - top);
+  const ws_ = kg.filter((x) => x != null), lo = Math.min(...ws_) - 0.3, hi = Math.max(...ws_) + 0.3;
+  const Yw = (v) => top + 6 + (hi - v) / (hi - lo || 1) * (bot - top - 12);
+  const pts = kg.map((v, i) => (v == null ? null : [i * cw + cw / 2, Yw(v)])).filter(Boolean);
+  const r1 = (x) => Math.round(x * 10) / 10;
+  return el('div', { class: 'kw' },
+    svg('svg', { class: 'kw-chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Kalorier per dag och vikt, förra och denna vecka' },
+      svg('rect', { class: 'kw-cur', x: 7 * cw, y: 0, width: 7 * cw, height: bot + 2, rx: 6 }),
+      kc.map((v, i) => (v ? svg('rect', { class: 'kw-bar' + (dayCheck(S.state, days[i], t).ok ? '' : ' inc'), x: r1(i * cw + cw * 0.18), y: r1(Yk(v)), width: r1(cw * 0.64), height: r1(bot - Yk(v)), rx: 2 }) : null)),
+      ref ? svg('line', { class: 'kw-ref', x1: 0, x2: W, y1: r1(Yk(ref)), y2: r1(Yk(ref)) }) : null,
+      goal ? svg('line', { class: 'kw-goal', x1: 0, x2: W, y1: r1(Yk(goal)), y2: r1(Yk(goal)) }) : null,
+      pts.length > 1 ? svg('polyline', { class: 'kw-line', points: pts.map((p) => p.map(r1).join(',')).join(' ') }) : null,
+      pts.map((p) => svg('circle', { class: 'kw-dot', cx: r1(p[0]), cy: r1(p[1]), r: 2.6 })),
+      days.map((k, i) => svg('text', { class: 'kw-day' + (i >= 7 ? ' cur' : ''), x: r1(i * cw + cw / 2), y: H - 8, 'text-anchor': 'middle' }, DAYS[i % 7]))),
+    el('p', { class: 'kw-legend' },
+      el('span', { class: 'lg-bar' }), el('span', { text: 'kcal per dag' }),
+      el('span', { class: 'lg-line' }), el('span', { text: 'vikt' }),
+      ref ? [el('span', { class: 'lg-ref' }), el('span', { text: `håller vikten ≈ ${kcal(ref)}` })] : null,
+      goal ? [el('span', { class: 'lg-goal' }), el('span', { text: `kalorimål ${kcal(goal)}` })] : null));
+}
+
 // Vikt (v0.5.13): senaste vägningen i veckan mot den tidigaste vägningen veckan innan.
 function weightCard(ws) {
   const inRange = (from) => [0, 1, 2, 3, 4, 5, 6].map((i) => addDays(from, i)).filter((k) => S.state.weights[k] != null);
@@ -48,32 +80,19 @@ function weightCard(ws) {
   const base = prev.length ? prev[0] : null, bw = base ? S.state.weights[base] : null;
   const d = last != null && bw != null ? Math.round((last - bw) * 10) / 10 : null;
   const dTxt = d == null ? '' : d === 0 ? `±0 ${wUnit()}` : `${d > 0 ? '+' : '−'}${fmtNum(wOut(Math.abs(d)))} ${wUnit()}`;
-  // Kompakt (v0.5.14): en rad – vikt till vänster, förändring till höger, jämförelsen i liten text.
-  // v0.5.15: minikurva i mitten över förra + denna vecka (alla vägningar), jämförelse- och senaste punkten markerade.
   const kg1 = (v) => wOut(v).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-  const spark = (() => {
-    const ks = [...prev, ...cur];
-    if (ks.length < 2) return el('span', { class: 'w-spark' });
-    const p0 = addDays(ws, -7), idx = (k) => { let i = 0; while (addDays(p0, i) < k) i++; return i; };
-    const vs = ks.map((k) => S.state.weights[k]), lo = Math.min(...vs), hi = Math.max(...vs), rng = hi - lo || 1;
-    const X = (k) => Math.round(4 + idx(k) * 92 / 13), Y = (v) => Math.round((22 - (v - lo) / rng * 18) * 10) / 10;
-    const pts = ks.map((k) => [X(k), Y(S.state.weights[k])]);
-    return svg('svg', { class: 'w-spark', viewBox: '0 0 100 26', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
-      svg('line', { class: 'sp-wk', x1: 50, x2: 50, y1: 0, y2: 26 }),
-      svg('polyline', { class: 'sp-line', points: pts.map((p) => p.join(',')).join(' ') }),
-      base ? svg('line', { class: 'sp-base', x1: X(base), x2: X(base), y1: Y(bw), y2: Y(bw) }) : null,
-      last != null ? svg('line', { class: 'sp-last', x1: pts[pts.length - 1][0], x2: pts[pts.length - 1][0], y1: pts[pts.length - 1][1], y2: pts[pts.length - 1][1] }) : null);
-  })();
+  // Kompakt (v0.5.14): en rad – vikt till vänster, förändring till höger, jämförelsen i liten text.
   return el('section', { class: 'card w-card' },
     el('div', { class: 'w-row' },
       el('span', { class: 'w-label', text: 'Vikt' }),
       el('span', { class: 'w-now', text: last != null ? `${kg1(last)} ${wUnit()}` : '–' }),
-      spark,
+      el('span', { class: 'w-flex' }),
       d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), text: dTxt }) : null),
     ws === weekStart(today()) ? goalLine(currentWeight(S.state), null) : null,
     el('p', { class: 'w-sub', text: last == null ? 'Ingen vägning den här veckan än'
       : bw == null ? 'Ingen vägning veckan innan att jämföra med'
-      : `mot ${shortDate(base)} (${kg1(bw)} ${wUnit()}) · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'} denna vecka` }));
+      : `mot ${shortDate(base)} (${kg1(bw)} ${wUnit()}) · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'} denna vecka` }),
+    kcalWeightChart(ws));
 }
 
 function habitCard(ws) {

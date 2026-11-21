@@ -51,11 +51,13 @@ function wgoalSection() {
   return [
     field('wg-target', `Målvikt (${u})`, g?.target != null ? w1(g.target) : '', 'Ingen'),
     field('wg-date', 'Klart senast', g?.date ?? '', '', 'date'),
-    field('wg-rate', `eller takt, ${u} per vecka`, g?.rate ? w1(g.rate) : '', cur ? `högst ${w1(cur * 0.01)}` : 'högst 1 %'),
+    el('label', { class: 'goal-row' }, el('span', { text: 'eller takt per vecka' }),
+      el('input', { type: 'text', inputmode: 'decimal', class: 'num-in', id: 'wg-rate', 'aria-label': 'Takt per vecka', value: g?.pct != null ? fmtNum(g.pct, 2) : g?.rate ? w1(g.rate) : '', placeholder: 'högst 1 %' }),
+      el('select', { id: 'wg-unit', 'aria-label': 'Enhet för takten' }, [[u, u], ['%', '%']].map(([v, t]) => el('option', { value: v, selected: (g?.pct != null) === (v === '%'), text: t })))),
     el('div', { class: 'save-row' }, el('button', { class: 'weigh-save', 'data-act': 'wgoalsave', text: 'Spara viktmål' })),
     info ? el('p', { class: 'small', text: info }) : null,
     p?.tooFast ? el('p', { class: 'small', text: `Hinns inte med högst 1 % per vecka – tidigast ${shortDate(p.earliest)}.` }) : null,
-    el('p', { class: 'muted small', text: 'Fyll i datum eller takt. Takten får vara högst 1 % av din vikt per vecka – snabbare än så är svårt att hålla och tappar mest vätska och muskler. Vikten räknas som 7-dagars medel. Utan målvikt: bara takten, ner i vikt tills vidare. Töm båda för inget mål.' }),
+    el('p', { class: 'muted small', text: 'Fyll i datum eller takt, i kg eller i procent av vikten (procent följer vikten när den sjunker). Takten får vara högst 1 % av din vikt per vecka – snabbare än så är svårt att hålla och tappar mest vätska och muskler. Vikten räknas som 7-dagars medel. Utan målvikt: bara takten, ner i vikt tills vidare. Töm båda för inget mål.' }),
   ];
 }
 
@@ -138,7 +140,7 @@ export function viewSettings() {
             el('select', { 'data-act': 'wgoal', 'data-val': k, 'aria-label': `Mål per vecka, ${label.toLowerCase()}` },
               Array.from({ length: 15 }, (_, i) => el('option', { value: i, selected: i === s[k], text: i ? `${i} pass` : 'Inget mål' }))))))),
     group('kcal', 'Kalorier', g.kcal ? `${kcal(g.kcal)} kcal/dag` : 'Inget mål',
-      sec('wgoal', 'Viktmål', !S.state.wgoal ? 'Inget mål' : S.state.wgoal.target == null ? `−${fmtNum(Math.round(wOut(S.state.wgoal.rate) * 100) / 100)} ${wUnit()}/v` : `${fmtNum(Math.round(wOut(S.state.wgoal.target) * 10) / 10)} ${wUnit()}`, wgoalSection()),
+      sec('wgoal', 'Viktmål', !S.state.wgoal ? 'Inget mål' : S.state.wgoal.pct != null && S.state.wgoal.target == null ? `−${fmtNum(S.state.wgoal.pct, 2)} %/v` : S.state.wgoal.target == null ? `−${fmtNum(Math.round(wOut(S.state.wgoal.rate) * 100) / 100)} ${wUnit()}/v` : `${fmtNum(Math.round(wOut(S.state.wgoal.target) * 10) / 10)} ${wUnit()}`, wgoalSection()),
       sec('goal', 'Kalorimål', g.kcal ? `${kcal(g.kcal)} kcal/dag` : 'Inget mål',
         el('label', { class: 'goal-row' }, el('span', { text: 'kcal per dag' }),
           el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: g.kcal ? String(g.kcal) : '', placeholder: 'Inget mål', id: 'g-kcal', 'aria-label': 'Kalorimål per dag' }),

@@ -611,13 +611,24 @@ app.addEventListener('click', (ev) => {
     }
     case 'wgquick': {   // 2026-11-21: snabbval av takt i Idag; samma val igen = av
       const r = Number(t.dataset.val), g = S.state.wgoal;
-      if (g && !g.date && Math.abs(g.rate - r) < 0.005) { delete S.state.wgoal; persist(); render(); snackbar('Inget viktmål', null, null, 2500); return; }
+      if (t.dataset.pct) {
+        if (g && g.pct === 1) { delete S.state.wgoal; persist(); render(); snackbar('Inget viktmål', null, null, 2500); return; }
+        S.state.wgoal = g?.target != null && !g.date ? { target: g.target, pct: 1 } : { pct: 1 }; persist(); render(); snackbar('Viktmålet sparat', null, null, 2500); return;
+      }
+      if (g && !g.date && g.pct == null && Math.abs(g.rate - r) < 0.005) { delete S.state.wgoal; persist(); render(); snackbar('Inget viktmål', null, null, 2500); return; }
       quickGoal(r); return;
     }
     case 'wgoalsave': {   // Viktmål (2026-11-21): högst 1 % av vikten per vecka
       const v = (i) => document.getElementById(i)?.value.trim() ?? '';
       const tRaw = v('wg-target'), dRaw = v('wg-date'), rRaw = v('wg-rate');
       if (!tRaw && !rRaw) { delete S.state.wgoal; persist(); render(); snackbar('Inget viktmål', null, null, 2500); return; }
+      if (v('wg-unit') === '%' && rRaw && !dRaw) {   // takt i procent av vikten (2026-11-21)
+        const pc = parseNum(rRaw), t = tRaw ? wIn(parseNum(tRaw)) : null;
+        if (!(pc >= 0.05 && pc <= 1)) { snackbar('Ange 0,05–1 % per vecka', null, null, 3000); return; }
+        if (tRaw && !(t >= 20 && t <= 400)) { snackbar('Ange en målvikt', null, null, 3000); return; }
+        S.state.wgoal = t ? { target: Math.round(t * 10) / 10, pct: Math.round(pc * 100) / 100 } : { pct: Math.round(pc * 100) / 100 };
+        persist(); render(); snackbar('Viktmålet sparat', null, null, 2500); return;
+      }
       if (!tRaw) { quickGoal(wIn(parseNum(rRaw))); return; }
       const target = wIn(parseNum(tRaw)), rate = rRaw ? wIn(parseNum(rRaw)) : null;
       if (!(target >= 20 && target <= 400)) { snackbar('Ange en målvikt', null, null, 3000); return; }
