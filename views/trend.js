@@ -181,28 +181,6 @@ function chart() {
     el('p', { class: 'legend' }, el('span', { class: 'lg lg-w' }), ' 7-dagars medel', dots.length ? [el('span', { class: 'lg lg-wx' }), ' vägning'] : null, ` · ${span}`)];
 }
 
-function compare() {
-  // Veckor med vikt före och efter: följsamhet (vanor), träning och – när maten loggats minst 4 dagar – kcal mot mål.
-  const rows = [], thr = S.state.settings.successThreshold, wg = S.state.settings.workoutGoal || 3;
-  for (const ws of weeks(52).slice(1)) {
-    const st = weekStats(S.state, ws), h = habitWeek(S.state, ws), a = avg7(addDays(ws, 6)), b = avg7(addDays(ws, -1));
-    if (a == null || b == null || (!h.count && st.logged < 4)) continue;
-    const pe = periodEnergy(S.state, ws, addDays(ws, 6), today());
-    rows.push({ good: h.ratio != null ? h.ratio >= thr : null, trained: weekSessions(ws).all >= wg, under: pe.logged >= 4 && st.days[6].goal != null ? pe.kcal / pe.logged <= st.days[6].goal : null, d: a - b });
-  }
-  if (rows.length < 4) return null;   // städning 2026-11-21: kortet visas först när det finns något att jämföra
-  const body = (() => {
-    const mean = (l) => l.reduce((s, r) => s + r.d, 0) / l.length;
-    const row = (label, l) => el('li', {}, el('span', { text: `${label} (${l.length})` }), el('strong', { text: l.length ? `${signed(wOut(mean(l)))} ${wUnit()}/v` : '–' }));
-    const pair = (k, yes, no) => (rows.some((r) => r[k] != null) ? [row(yes, rows.filter((r) => r[k] === true)), row(no, rows.filter((r) => r[k] === false))] : []);
-    return [el('ul', { class: 'compare' },
-      pair('good', `Bra veckor (≥ ${pct(thr)})`, 'Sämre veckor'),
-      pair('trained', `Med ≥ ${wg} pass`, 'Färre pass'),
-      pair('under', 'Under kalorimålet', 'Över kalorimålet'))];
-  })();
-  return el('section', { class: 'card' }, el('h2', { text: 'Vad hänger ihop' }), body);
-}
-
 export function viewTrend() {
-  return arrange('trend', { weight: () => summary(), energy: energyCard, weeks: table, compare });
+  return arrange('trend', { weight: () => summary(), energy: energyCard, weeks: table });
 }
