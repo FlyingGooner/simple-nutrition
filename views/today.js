@@ -25,7 +25,8 @@ function summaryCard() {
       svg('rect', { class: 'kbar-fill' + (over ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, n[0] / g.kcal) * 1000) / 10, height: 6, rx: 2 })) : null,
     el('p', { class: 'macros' }, macro('Protein', n[1], g.prot), ' · ', macro('Kolh.', n[2], g.kolh), ' · ', macro('Fett', n[3])),
     posts.length && (has || headShown) ? el('p', { class: 'sum-more', text: 'Allt du ätit i dag ▾' }) : null),
-    posts.length ? [dayList(posts), el('button', { class: 'link dl-ai', 'data-act': 'dayai', text: '📋 Kopiera för kontroll med AI' })] : null));
+    posts.length ? [dayList(posts), el('button', { class: 'link dl-ai', 'data-act': 'dayai', text: '📋 Kopiera för kontroll med AI' }),
+      el('button', { class: 'link danger dl-clear', 'data-act': 'clearday', text: '🗑 Rensa dagen' })] : null));   // 2026-11-21: Rensa dagen i listan
 }
 // Snabbval av takt (2026-11-21): 0,25 / 0,5 / 1 kg och 1 % per vecka, bara de som är ≤ 1 % av vikten.
 function goalChips(e) {
@@ -268,7 +269,7 @@ export function viewToday() {
     weight: () => null,   // 2026-11-21: ligger i kcal-kortet
     }),
     addRow(),   // 2026-11-21: knapparna längst ner
-    posts.length || S.state.weights[S.current] != null || S.state.habits[S.current] || S.state.workouts[S.current]
+    !posts.length && (S.state.weights[S.current] != null || S.state.habits[S.current] || S.state.workouts[S.current])   // med mat: i listan Allt du ätit
       ? el('p', { class: 'clear-day center' }, el('button', { class: 'link danger', 'data-act': 'clearday', text: '🗑 Rensa dagen' })) : null,
   ];
 }
