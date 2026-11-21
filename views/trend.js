@@ -1,5 +1,5 @@
 // View: Trend – weight (7-day average), the last 4 weeks as a table, weight chart 12 weeks, kcal vs weight.
-import { avg7Of, weightPlan, weightForecast, weightTrend, energyEstimate, periodEnergy, currentWeight, addDays, KCAL_PER_KG, parseKey, weekStart, isoWeek, weekStats, habitWeek } from '../store.js';
+import { avg7Of, weightPlan, weightForecast, weightTrend, energyEstimate, periodEnergy, currentWeight, addDays, KCAL_PER_KG, parseKey, weekStart, isoWeek, weekStats, habitWeek, habitStreak, habitRange, habitLongest } from '../store.js';
 import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions, arrange, wOut, wUnit, stat } from '../ui.js';
 
 // 7-day average of the weights in [k-6, k], or null.
@@ -15,6 +15,15 @@ export function kcalDayLine(dKg, fromK, toK) {
   return n ? el('p', { class: 'w-sub' + (dKg < 0 ? ' kd-down' : ''), text: `≈ ${n.toLocaleString('sv-SE')} kcal/dag ${dKg < 0 ? 'underskott' : 'överskott'} · ${days} dagar` }) : null;
 }
 
+// Flyttad från Månad (2026-11-21): följsamhet och streaks som en kompakt rad i samma kort som vikten.
+export function habitRow() {
+  const s = (n, l) => el('div', { class: 'ov-s' }, el('strong', { text: n }), el('span', { text: l }));
+  return el('div', { class: 'ov-stats' },
+    s(pct(habitRange(S.state, today(), 7)), '7 dagar'),
+    s(pct(habitRange(S.state, today(), 30)), '30 dagar'),
+    s(`🔥 ${habitStreak(S.state, today())}`, 'i rad'),
+    s(String(habitLongest(S.state)), 'längsta'));
+}
 function summary(t) {
   const keys = Object.keys(S.state.weights).sort();
   if (!keys.length) return el('section', { class: 'card w-sum' }, el('p', { class: 'muted', text: 'Ingen vägning ännu. Fyll i vikt under Idag – trenden räknas på 7-dagars medel.' }));
@@ -30,7 +39,8 @@ function summary(t) {
     back != null ? kcalDayLine(now - back, backK, lastK) : null,
     chart(),
     goalLine(now, null),
-    aheadTiles());   // städning 2026-11-21: "Totalt sedan" bort – kurvan visar hela tiden
+    aheadTiles(),
+    habitRow());   // städning 2026-11-21: "Totalt sedan" bort – kurvan visar hela tiden
 }
 
 // Viktmål (2026-11-21): mål, takt som behövs och takten de senaste 4 veckorna.
@@ -193,5 +203,5 @@ function chart() {
 }
 
 export function viewTrend() {
-  return arrange('trend', { weight: () => summary(), energy: energyCard, weeks: table });
+  return arrange('trend', { weight: () => summary(), energy: energyCard, weeks: table });   // fliken Historik och mål
 }

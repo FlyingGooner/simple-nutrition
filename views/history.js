@@ -1,19 +1,10 @@
 // View: Historik – månadskalender färgad efter följsamhet (vanor, som i follow-diet-tracker), streaks, träning och kcal som stöd.
-import { periodEnergy, addDays, dateKey, parseKey, sumN, habitDay, habitStreak, habitRange, habitLongest } from '../store.js';
+import { periodEnergy, addDays, dateKey, parseKey, sumN, habitDay } from '../store.js';
 import { energyStats, kcalDayLine } from './trend.js';
 import { today, S, el, svg, stepper, stat, kcal, pct, shortDate, arrange, wOut, wUnit, dOut, dUnit } from '../ui.js';
 // (dateKey/parseKey används även av monthWeight)
 
 // Vikt (v0.5.16): senaste vägningen i månaden mot senaste vägningen månaden innan, med minikurva över båda månaderna.
-// v0.6.2: följsamhet och streaks som en kompakt rad i samma kort som vikten.
-function habitRow() {
-  const s = (n, l) => el('div', { class: 'ov-s' }, el('strong', { text: n }), el('span', { text: l }));
-  return el('div', { class: 'ov-stats' },
-    s(pct(habitRange(S.state, today(), 7)), '7 dagar'),
-    s(pct(habitRange(S.state, today(), 30)), '30 dagar'),
-    s(`🔥 ${habitStreak(S.state, today())}`, 'i rad'),
-    s(String(habitLongest(S.state)), 'längsta'));
-}
 function monthWeight(extra = null) {
   const [y, m] = S.month.split('-').map(Number);
   const pm = m === 1 ? `${y - 1}-12` : `${y}-${String(m - 1).padStart(2, '0')}`;
@@ -83,7 +74,7 @@ export function viewHistory() {
   return [
     el('div', { class: 'card day-head' }, stepper('Byt månad', ['mprev', 'Föregående månad'], 'mnow', ['mnext', 'Nästa månad'], S.month >= today().slice(0, 7), title.charAt(0).toUpperCase() + title.slice(1))),
     ...arrange('history', {
-    weight: () => monthWeight(habitRow()),
+    weight: () => monthWeight(),   // följsamhet över tid flyttad till Historik och mål (2026-11-21)
     calendar: () => el('section', { class: 'card' },
       el('div', { class: 'cal-head' }, ['M', 'T', 'O', 'T', 'F', 'L', 'S'].map((d) => el('span', { text: d }))),
       el('div', { class: 'cal' }, cells),

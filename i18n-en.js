@@ -31,7 +31,7 @@ I18N.add({
   'Enhet': 'Unit',
   'Kolhydrater (g)': 'Carbs (g)',
   'Fett (g)': 'Fat (g)',
-  'Månad': 'Month',
+  'Månad': 'Month', 'Historik och mål': 'History and goals', 'Vikt, mål och följsamhet': 'Weight, goals and adherence',
   'Inkomst': 'Income',
   'Kostnad': 'Expense',
   'Belopp': 'Amount',
