@@ -252,9 +252,10 @@ const clamp01 = (x) => Math.max(0, Math.min(1, x));
 // Kvaliteten bedöms av datan själv: precision (viktens brus och antal dagar), loggning, stabilitet vecka för vecka och en golvspärr.
 // Ingen profil behövs (beslut 2026-11-21): loggar man ärligt syns det i vikten; konsekvent glömska ger förbrukning enligt ens loggning, vilket räcker för målet.
 export function energyEstimate(state, todayK) {
-  const end = addDays(todayK, -1), keys = [...Object.keys(state.log), ...Object.keys(state.weights)].filter((k) => k <= end).sort();
-  if (!keys.length) return null;
-  const start = keys[0] > addDays(end, -27) ? keys[0] : addDays(end, -27);
+  // Fönstret börjar vid första loggade dagen (högst 28 dagar bakåt): vägningar innan man började logga säger inget om intaget.
+  const end = addDays(todayK, -1), keys = Object.keys(state.log).filter((k) => k <= end && k >= addDays(end, -27)).sort();
+  if (!keys.length) return Object.keys(state.weights).length ? { ready: false, logged: 0, weighs: 0, span: 0 } : null;
+  const start = keys[0];
   const span = Math.round((parseKey(end) - parseKey(start)) / 864e5) + 1;
   const pe = periodEnergy(state, start, end);
   const ws = [];

@@ -38,3 +38,9 @@ test('periodEnergy: mot mål och enligt vikten', () => {
   const pe = periodEnergy(st, addDays(T, -7), addDays(T, -1));
   assert.equal(pe.logged, 7); assert.equal(pe.vsGoal, -1400); assert.ok(pe.wKcal < 0);
 });
+test('vägningar innan loggningen började sänker inte loggningen', () => {
+  const st = mk(12, 2000, 2600);
+  for (let i = 13; i < 40; i++) st.weights[addDays(T, -i)] = 86;
+  const e = energyEstimate(st, T);
+  assert.equal(e.f.logging, 1); assert.equal(e.span, 12);
+});
