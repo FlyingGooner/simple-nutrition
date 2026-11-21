@@ -826,3 +826,6 @@ dialog::backdrop { background: rgba(0,0,0,.25); }
   .tabbar, .version, dialog, #snackbar { -webkit-backdrop-filter: none; backdrop-filter: none; border: 1px solid var(--text); }
 }
 .brand { font-size: 1.75rem; font-weight: 700; letter-spacing: .01em; }
+/* Mindre apprubrik, tydligt versionsnummer (2026-11-21) */
+.brand { font-size: 1.25rem; font-weight: 600; letter-spacing: 0; }
+.version { font-size: .8125rem; font-weight: 600; line-height: 1; padding: 6px 12px; background: var(--fill-2); color: var(--text); -webkit-backdrop-filter: none; backdrop-filter: none; border: 0; box-shadow: none; }
