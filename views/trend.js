@@ -12,7 +12,7 @@ const delta = (n) => el('span', { class: 'delta' + (n < 0 ? ' down' : ''), text:
 export function kcalDayLine(dKg, fromK, toK) {
   const days = Math.round((parseKey(toK).getTime() - parseKey(fromK).getTime()) / 864e5);
   const n = days > 0 && dKg ? Math.round(Math.abs(dKg) * KCAL_PER_KG / days / 10) * 10 : 0;
-  return n ? el('p', { class: 'w-sub', text: `≈ ${n.toLocaleString('sv-SE')} kcal/dag ${dKg < 0 ? 'underskott' : 'överskott'} på ${days} dagar (1 kg ≈ 7 700 kcal)` }) : null;
+  return n ? el('p', { class: 'w-sub' + (dKg < 0 ? ' kd-down' : ''), text: `≈ ${n.toLocaleString('sv-SE')} kcal/dag ${dKg < 0 ? 'underskott' : 'överskott'} på ${days} dagar (1 kg ≈ 7 700 kcal)` }) : null;
 }
 
 function summary(t) {

@@ -460,6 +460,7 @@ main .w-card { padding: 10px 14px; }
 .w-chg small { color: var(--muted); font-weight: 400; font-size: .8125rem; }
 .w-card .delta:not(.down) { color: var(--muted); }
 .w-sub { margin: 0; font-size: .8125rem; color: var(--muted); }
+.w-sub.kd-down { color: var(--ok); }
 .w-card .chart { margin-top: 8px; }
 .w-card .legend { margin-top: 4px; }
 dialog h2 { text-transform: none; letter-spacing: 0; color: var(--fg); }
