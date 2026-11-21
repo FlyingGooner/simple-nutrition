@@ -1,7 +1,7 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
 import { forecastLine } from './trend.js';
 import { parseKey, sumN, postN, goalFor, setGoal, addDays, habitDay, habitStreak, dayCheck, energyEstimate, weightPlan, currentWeight } from '../store.js';
-import { today, S, setOpen, el, svg, stepper, kcal, fmtNum, pct, dateTitle, wOut, wUnit, amountText, mealName, reasonName, arrange } from '../ui.js';
+import { today, S, setOpen, el, svg, stepper, stat, kcal, fmtNum, pct, dateTitle, wOut, wUnit, amountText, mealName, reasonName, arrange } from '../ui.js';
 import { viewAdd } from './add.js';
 import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
 import { OUTCOMES } from '../habit-store.js';
@@ -82,13 +82,18 @@ function energyHint() {
   const e = energyEstimate(S.state, today());
   if (!e || !e.ready || e.quality < 0.25) return null;
   const r50 = (x) => Math.round(x / 50) * 50, p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
+  const q = el('p', { class: 'muted small', text: `Kvalitet ${Math.round(e.quality * 100)} % – se Trend.` });
+  // Med viktmål (2026-11-21): kompakt – två siffror, inga snabbval (målet ändras under Inställningar).
+  if (p && !p.reached) {
+    const eat = r50(e.tdee + p.kcalDay), kg = goalFor(S.state, today()).kcal;
+    return el('div', { class: 'card en-hint' },
+      el('div', { class: 'stats' }, stat(`≈ ${kcal(r50(e.tdee))}`, 'kcal/dag håller vikten'), stat(`≈ ${kcal(eat)}`, 'kcal/dag för viktmålet')),
+      kg != null && Math.abs(kg - eat) >= 50 ? el('button', { class: 'link', 'data-act': 'tdeegoal', 'data-val': eat, text: `Byt kalorimålet (${kcal(kg)}) till ${kcal(eat)}` }) : null,
+      q);
+  }
   return el('div', { class: 'card en-hint' },
     el('p', {}, el('span', { text: 'Utifrån din loggning och vikt håller du vikten på' }), ' ', el('strong', { text: `≈ ${kcal(r50(e.tdee))} kcal/dag` }), '.'),
-    goalChips(e),
-    p && !p.reached ? el('p', {}, el('span', { text: 'Äter du' }), ' ', el('strong', { text: `≈ ${kcal(r50(e.tdee + p.kcalDay))} kcal/dag` }), ' ', el('span', { text: 'följer vikten ditt mål.' })) : null,
-    p && !p.reached && Math.abs((goalFor(S.state, today()).kcal ?? 0) - r50(e.tdee + p.kcalDay)) >= 50
-      ? el('button', { class: 'link', 'data-act': 'tdeegoal', 'data-val': r50(e.tdee + p.kcalDay), text: 'Använd som kalorimål' }) : null,
-    el('p', { class: 'muted small', text: `Kvalitet ${Math.round(e.quality * 100)} % – se Trend.` }));
+    goalChips(e), q);
 }
 // Sammanställning: en rad per livsmedel/rätt (samma ref och samma enhet slås ihop), störst kcal först.
 // 2026-11-18: dagen som text – för att låta en AI (t.ex. Gemini) räkna på samma dag och jämföra.
