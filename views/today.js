@@ -242,12 +242,11 @@ function weekPill() {
   if (!wd) return null;
   const d = wd.d, p = weightPlan(S.state.wgoal, currentWeight(S.state), today()), g = p && !p.reached ? p : null;
   const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = g ? d - g.rate : 0;
-  const mark = !g ? '' : Math.abs(off) < 0.05 ? ' ✅' : off * Math.sign(g.rate) > 0 ? ' 🚀' : ' ⚠️';   // en rad (2026-11-22); hela texten i title   // utskrivet (2026-11-22)
-  // Två piller (2026-11-22): 🎯 bredvid elden, snittet på egen rad så att texten får plats.
-  return [g ? el('span', { class: 'wk-goal-pill', title: 'Veckomål', text: `🎯 ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}/v` }) : null, el('span', { class: 'wk-pill', title: `Veckans snitt mot veckan innan${g ? ` · veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}${Math.abs(off) < 0.05 ? ' · i fas' : ` · ${v(off)} ${wUnit()} ${off * Math.sign(g.rate) > 0 ? 'före' : 'efter'}`}` : ''}` }, '⚖️ ',   // snitt mot förra veckans snitt (2026-11-22)
-
-    el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v(d)} ${wUnit()}` }), ' mot förra veckans snitt',
-  )];
+  const mark = !g ? '' : Math.abs(off) < 0.05 || off * Math.sign(g.rate) > 0 ? ' ✓' : ' ⚠️';
+  // Ett piller (2026-11-22): ändringen och målet ihop, förklaringen i title.
+  return el('span', { class: 'wk-pill', title: `Veckans snitt mot förra veckans snitt${g ? ` · veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}/v` : ''}` }, '⚖️ ',
+    el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v(d)} ${wUnit()}` }),
+    g ? ` · 🎯 ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}/v${mark}` : ' i veckan');
 }
 export function viewToday() {
   if (S.add) return viewAdd();
@@ -263,7 +262,7 @@ export function viewToday() {
     el('div', { class: 'card day-head' },
     stepper('Byt dag', ['prev', 'Föregående dag'], 'today', ['next', 'Nästa dag'], isToday,
       isToday ? [el('span', { class: 'today-badge', text: 'IDAG' }), dateTitle(S.current)] : dateTitle(S.current), null, isToday ? '' : 'not-today'),
-    el('div', { class: 'streak' }, st ? el('span', { title: 'Lyckade dagar i rad', text: `🔥 ${st} ${st === 1 ? 'dag' : 'dagar'} i rad` }) : null,
+    el('div', { class: 'streak' }, st ? el('span', { title: 'Lyckade dagar i rad', text: `🔥 ${st} ${st === 1 ? 'dag' : 'dagar'}` }) : null,
       isToday ? weekPill() : null,   // 0 i rad visas inte (2026-11-21)
       isToday ? null : el('button', { class: 'link back-today', 'data-act': 'today', text: '↩ Till idag' })),
     isToday ? headGoal(posts) : (headShown = false, null)),
