@@ -84,7 +84,7 @@ export function goalRow(d, perWeek = false) {
   if (!p || p.reached) return null;
   // Förenklad (2026-11-22): mål och hur långt från det, inget mer.
   const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = d - p.rate, ahead = off * Math.sign(p.rate) > 0;
-  return el('p', { class: 'w-sub w-goal' }, `🎯 ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${wUnit()}/v · `,
+  return el('p', { class: 'w-sub w-goal' }, `${perWeek ? '' : 'snitt mot förra veckan · '}🎯 ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${wUnit()}/v · `,
     el('span', { class: Math.abs(off) < 0.05 || ahead ? 'kd-down' : 'wg-behind', text: Math.abs(off) < 0.05 ? 'i fas' : `${v(off)} ${wUnit()}${perWeek ? '/v' : ''} ${ahead ? 'före' : 'efter'}` }));
 }
 
@@ -104,7 +104,7 @@ function weightCard(ws) {
       el('span', { class: 'w-label', text: 'Vikt' }),
       el('span', { class: 'w-now', text: last != null ? `${kg1(last)} ${wUnit()}` : '–' }),
       el('span', { class: 'w-flex' }),
-      d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), title: 'Veckans snitt mot snittet veckan innan', text: '⌀ ' + dTxt }) : null),   // ⌀ = snitt (2026-11-22)
+      d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), title: 'Veckans snitt mot snittet veckan innan', text: dTxt }) : null),
     // Utfall mot veckomålet (2026-11-22).
     d != null ? goalRow(d) : null,
     last == null || bw == null ? el('p', { class: 'w-sub', text: last == null ? 'Ingen vägning den här veckan än' : 'Ingen vägning veckan innan att jämföra med' }) : null,
