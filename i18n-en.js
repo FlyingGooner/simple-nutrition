@@ -371,6 +371,7 @@ I18N.add({
   [/^Summa för (\d+) kompletta dagar( \((\d+) ofullständiga räknas inte\))?\. Minus = underskott\. Vikten räknas på 7-dagars medel \(1 kg ≈ 7 700 kcal\)\.$/, (g) => `Total for ${g[1]} complete days${g[3] ? ` (${g[3]} incomplete not counted)` : ''}. Minus = deficit. Weight uses a 7-day average (1 kg ≈ 7,700 kcal).`],
   [/^håller vikten ≈ (.+) kcal\/dag$/, 'maintain ≈ $1 kcal/day'],
   [/^håller vikten ≈ (.+)$/, 'maintain ≈ $1'],
+  [/^Denna vecka ([−+±][\d,.]*) (kg|lb) sedan (.+)$/, 'This week $1 $2 since $3'],
   [/^utfall ≈ (.+) kcal\/dag · som veckomålet$/, 'actual ≈ $1 kcal/day · same as weekly goal'],
   [/^utfall ≈ (.+) kcal\/dag · (.+) (över|under) veckomålet$/, (g) => `actual ≈ ${g[1]} kcal/day · ${g[2]} ${g[3] === 'över' ? 'over' : 'under'} weekly goal`],
   [/^veckomål ([−+][\d,.]+) (kg|lb)\/v ≈ (.+) kcal\/dag$/, 'weekly goal $1 $2/wk ≈ $3 kcal/day'],

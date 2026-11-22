@@ -1,5 +1,6 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
-import { parseKey, sumN, postN, goalFor, setGoal, addDays, habitDay, habitStreak, dayCheck, energyEstimate, weightPlan, currentWeight } from '../store.js';
+import { parseKey, sumN, postN, goalFor, setGoal, addDays, habitDay, habitStreak, dayCheck, energyEstimate, weightPlan, currentWeight, weekStart } from '../store.js';
+import { goalRow } from './week.js';
 import { today, S, setOpen, el, svg, stepper, stat, kcal, fmtNum, pct, dateTitle, wOut, wIn, wUnit, amountText, mealName, reasonName, arrange, habitsOnly } from '../ui.js';
 import { viewAdd } from './add.js';
 import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
@@ -235,6 +236,18 @@ export function openWeightDialog(onSave) {
   d.returnValue = ''; show(); d.showModal();
 }
 
+// Utfall mot veckomålet (2026-11-22): senaste vägningen denna vecka mot sista vägningen veckan innan (helst söndagen).
+function weekGoalCard() {
+  if (S.current !== today() || !S.state.wgoal) return null;
+  const ws = weekStart(today()), keys = Object.keys(S.state.weights).sort();
+  const base = keys.filter((k) => k < ws && k >= addDays(ws, -7)).pop(), last = keys.filter((k) => k >= ws && k <= today()).pop();
+  if (!base || !last) return null;
+  const d = Math.round((S.state.weights[last] - S.state.weights[base]) * 10) / 10, row = goalRow(d);
+  if (!row) return null;
+  const v = fmtNum(Math.round(wOut(Math.abs(d)) * 10) / 10);
+  return el('div', { class: 'card wk-goal-today' },
+    el('p', { class: 'w-sub', text: `Denna vecka ${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v} ${wUnit()} sedan ${Number(base.slice(8))}/${Number(base.slice(5, 7))}` }), row);
+}
 export function viewToday() {
   if (S.add) return viewAdd();
   const isToday = S.current === today();
@@ -261,7 +274,7 @@ export function viewToday() {
       extraCards(),
       other.length ? mealCard({ id: '_other', name: 'Övrigt' }, other) : null),
     train: () => el('div', { class: 'workouts' }, workoutCards()),
-    kcal: () => habitsOnly() ? [weighNote()] : [summaryCard(), weighNote(),   // 2026-11-22: förbrukningsraden borttagen (inga mål på Idag)
+    kcal: () => habitsOnly() ? [weekGoalCard(), weighNote()] : [summaryCard(), weekGoalCard(), weighNote(),   // 2026-11-22: förbrukningsraden borttagen (inga mål på Idag)
       !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
         ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera maten från igår' }) : null],
     weight: () => null,   // 2026-11-21: ligger i kcal-kortet
