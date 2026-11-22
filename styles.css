@@ -855,5 +855,5 @@ details[open] > :not(summary) { animation: m3e-in .35s var(--spring); }
 .wk-goal-today .wg-out .delta { font-size: 1.125rem; }
 .day-head .streak { flex-wrap: wrap; gap: 6px; }
 .wk-pill .delta { font-weight: 700; }
-.wk-pill { text-align: center; }
+.day-head .streak > .wk-pill { text-align: center; padding: 4px 14px; line-height: 1.35; }
 .wk-pill .wk-goal { display: block; font-size: .8125rem; font-weight: 400; color: var(--muted); }
