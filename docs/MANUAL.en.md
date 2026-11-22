@@ -71,7 +71,7 @@ The same text is in the app under **Settings → General → Help and manual** w
 - **Calorie total:** Week and History (the Workouts and kcal card) show the week's and month's total vs the calorie goal, vs expenditure and what the weight says (minus = deficit).
 
 ## Week, Trend and History
-- **Week:** the weight (latest weigh-in vs the first weigh-in the week before, with a mini curve), adherence, cheats and most common reason, day by day (habits, workouts, kcal – tap to open the day), training against the goals and calorie average.
+- **Week:** the weight (latest weigh-in vs the last weigh-in the week before, and actual vs the weekly goal, with a mini curve), adherence, cheats and most common reason, day by day (habits, workouts, kcal – tap to open the day), training against the goals and calorie average.
 - **Trend:** the weight (7-day average) and the change over the last 4 weeks, a larger weight curve, the weight goal with forecast and **If the trend holds**: your weight in 1, 3 and 6 months based on the actual change over the last 4 weeks (🎯 = goal weight reached). With a goal weight but no date it says clearly when you reach it, e.g. "🎯 100 kg ≈ 13 May 2027". The Total expenditure card shows expenditure and kcal for the weight goal side by side. Then a table week by week (weight, adherence, cheats, workouts, kcal – tap to open the week).
 - **History:** the weight this month vs the latest weigh-in the month before (with a mini curve), adherence over 7 and 30 days and streaks in one card, then the month calendar coloured by adherence with marks for weigh-ins and training, and last the month's workouts, kcal average (complete days) and calorie total.
 - Week compares single weigh-ins, Trend 7-day averages.

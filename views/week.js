@@ -83,13 +83,13 @@ export function goalRow(d, perWeek = false) {
   return el('p', { class: 'w-sub w-goal', text: `veckomål ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${u} · ${perWeek ? `utfall ${d < 0 ? '−' : '+'}${v(d)} ${u} · ` : ''}${Math.abs(off) < 0.05 ? 'i fas ✅' : off * Math.sign(p.rate) > 0 ? `${v(off)} ${u} före 🚀` : `${v(off)} ${u} efter ⚠️`}` });
 }
 
-// Vikt (v0.5.13): senaste vägningen i veckan mot den tidigaste vägningen veckan innan.
+// Vikt (v0.5.13): senaste vägningen i veckan mot den sista vägningen veckan innan (2026-11-22).
 function weightCard(ws) {
   const inRange = (from) => [0, 1, 2, 3, 4, 5, 6].map((i) => addDays(from, i)).filter((k) => S.state.weights[k] != null);
   const cur = inRange(ws), prev = inRange(addDays(ws, -7));
   if (!cur.length && !prev.length) return null;
   const last = cur.length ? S.state.weights[cur[cur.length - 1]] : null;
-  const base = prev.length ? prev[0] : null, bw = base ? S.state.weights[base] : null;
+  const base = prev.length ? prev[prev.length - 1] : null,   // sista vägningen veckan innan (2026-11-22, som Idag) bw = base ? S.state.weights[base] : null;
   const d = last != null && bw != null ? Math.round((last - bw) * 10) / 10 : null;
   const dTxt = d == null ? '' : d === 0 ? `±0 ${wUnit()}` : `${d > 0 ? '+' : '−'}${fmtNum(wOut(Math.abs(d)))} ${wUnit()}`;
   const kg1 = (v) => wOut(v).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
