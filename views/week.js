@@ -38,7 +38,8 @@ export function kcalWeightChart(from, n = 7) {
   const e = energyEstimate(S.state, t), ref = e && e.ready && e.quality >= 0.25 ? Math.round(e.tdee / 50) * 50 : null;
   // Veckomålet i fokus (2026-11-22): med viktmål är målraden förbrukningen + underskottet för veckotakten.
   const plan = ref ? weightPlan(S.state.wgoal, currentWeight(S.state), t) : null, wk = plan && !plan.reached ? plan : null;
-  const goal = wk ? Math.round((ref + wk.kcalDay) / 50) * 50 : goalFor(S.state, days[n - 1] > t ? t : days[n - 1]).kcal ?? null;
+  // Sparat kalorimål gäller alltid (2026-11-22), som på Dag; annars det framräknade ur viktmålet.
+  const goal = goalFor(S.state, days[n - 1] > t ? t : days[n - 1]).kcal ?? (wk ? Math.round((ref + wk.kcalDay) / 50) * 50 : null);
   const W = 320, H = 120, top = 8, bot = 96, AX = 30, cw = (W - AX) / n;   // AX: plats för viktskalan till höger (2026-11-21)
   const kmax = Math.max(...kc.filter(Boolean), ref ?? 0, goal ?? 0, 1000) * 1.08;
   const Yk = (v) => bot - v / kmax * (bot - top);
