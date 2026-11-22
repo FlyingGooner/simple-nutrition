@@ -343,7 +343,7 @@ All användardata i **en** `localStorage`-nyckel, `sn.data` (prefix `sn.` enligt
 - Fungerar offline efter första besöket.
 
 ## Design
-Material Design 3 enligt `../STIL.md` (beslut 2026-11-22, åter efter Apple-stilen 2026-11-21); bara menyraden nertill är genomskinligt glas. Tonfärg `#237a4f` (nyckelfärgen `#2f7d5b` något mörkare för kontrast). Bottenmeny, bara mobil (390 px). Inga valstress: högst 5 varianter, "Normal" förvald.
+Material 3 Expressive (Googles senaste Material-version) enligt `../STIL.md` (beslut 2026-11-22, åter efter Apple-stilen 2026-11-21); bara menyraden nertill är genomskinligt glas. Tonfärg `#237a4f` (nyckelfärgen `#2f7d5b` något mörkare för kontrast). Bottenmeny, bara mobil (390 px). Inga valstress: högst 5 varianter, "Normal" förvald.
 
 ## Byggordning
 **Status 2026-11-09:** v0.1–v0.5 byggda (release 0.5.0: vanor, träning, import från Följ planen, gröna färger). v0.6 (manual med bilder) väntar på CSP-beslut: bilderna bäddas in som `data:` i testfilen, vilket kräver `img-src 'self' data:` som i follow-diet-tracker (förhandsprövning + godkännande).
