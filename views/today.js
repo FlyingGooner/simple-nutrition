@@ -238,12 +238,11 @@ export function openWeightDialog(onSave) {
 
 // Utfall mot veckomålet (2026-11-22): senaste vägningen denna vecka mot sista vägningen veckan innan (helst söndagen).
 function weekGoalCard() {
-  if (S.current !== today() || !S.state.wgoal) return null;
+  if (S.current !== today()) return null;   // även utan viktmål (2026-11-22)
   const ws = weekStart(today()), keys = Object.keys(S.state.weights).sort();
   const base = keys.filter((k) => k < ws && k >= addDays(ws, -7)).pop(), last = keys.filter((k) => k >= ws && k <= today()).pop();
   if (!base || !last) return null;
-  const d = Math.round((S.state.weights[last] - S.state.weights[base]) * 10) / 10, row = goalRow(d);
-  if (!row) return null;
+  const d = Math.round((S.state.weights[last] - S.state.weights[base]) * 10) / 10, row = goalRow(d);   // null utan viktmål
   const v = fmtNum(Math.round(wOut(Math.abs(d)) * 10) / 10);
   return el('div', { class: 'card wk-goal-today' },
     // Färg (2026-11-22): grönt nedåt, rött uppåt.
