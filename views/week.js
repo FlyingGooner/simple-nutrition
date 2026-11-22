@@ -37,6 +37,8 @@ export function kcalWeightChart(from, n = 7) {
   if (kc.filter(Boolean).length + kg.filter((x) => x != null).length < 2) return null;
   const e = energyEstimate(S.state, t), ref = e && e.ready && e.quality >= 0.25 ? Math.round(e.tdee / 50) * 50 : null;
   const goal = goalFor(S.state, days[n - 1] > t ? t : days[n - 1]).kcal ?? null;
+  const okK = kc.filter((v, i) => v && dayCheck(S.state, days[i], t).ok);
+  const pace = ref && okK.length >= 3 ? ((avg) => ({ avg, kg: (avg - ref) * 7 / 7700 }))(Math.round(okK.reduce((a, b) => a + b, 0) / okK.length / 50) * 50) : null;
   const W = 320, H = 120, top = 8, bot = 96, AX = 30, cw = (W - AX) / n;   // AX: plats för viktskalan till höger (2026-11-21)
   const kmax = Math.max(...kc.filter(Boolean), ref ?? 0, goal ?? 0, 1000) * 1.08;
   const Yk = (v) => bot - v / kmax * (bot - top);
@@ -63,7 +65,9 @@ export function kcalWeightChart(from, n = 7) {
     el('p', { class: 'kw-legend' },
       el('span', { class: 'lg-bar' }), el('span', { text: 'kcal per dag' }),
       pts.length ? [el('span', { class: 'lg-line' }), el('span', { text: `vikt ${kgTxt(ws_)}` })] : null,
-      ref ? [el('span', { class: 'lg-ref' }), el('span', { text: `håller vikten ≈ ${kcal(ref)}` })] : null,
+      ref ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-ref' }), el('span', { text: `håller vikten ≈ ${kcal(ref)} kcal/dag` })) : null,
+      // Samma takt (2026-11-22): snittet för räknade dagar i perioden = vad som ger kursen vikten har nu.
+      ref && pace ? el('span', { class: 'lg-item lg-pace', text: `samma takt som nu ≈ ${kcal(pace.avg)} kcal/dag (${pace.kg < 0 ? '−' : '+'}${fmtNum(Math.round(wOut(Math.abs(pace.kg)) * 10) / 10)} ${wUnit()}/v)` }) : null,
       goal ? [el('span', { class: 'lg-goal' }), el('span', { text: `ditt kalorimål ${kcal(goal)}` + ((m) => !m ? '' : m.kgWeek < -0.02 ? ` (≈ −${fmtNum(Math.round(wOut(-m.kgWeek) * 100) / 100, 2)} ${wUnit()}/v)` : m.kgWeek > 0.02 ? ` (≈ +${fmtNum(Math.round(wOut(m.kgWeek) * 100) / 100, 2)} ${wUnit()}/v)` : ' (håller vikten)')(goalMeaning(S.state, goal, t)) })] : null));
 }
 

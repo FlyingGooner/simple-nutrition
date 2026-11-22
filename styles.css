@@ -708,6 +708,8 @@ main .day-head + * { margin-top: 10px; }
 .kw-day.cur { fill: var(--fg); }
 .kw-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin: 4px 0 0; font-size: .75rem; color: var(--muted); }
 .kw-legend > span:nth-child(even) { margin-right: 8px; }
+.kw-legend > .lg-item { display: inline-flex; align-items: center; gap: 6px; margin-right: 8px; }
+.kw-legend > .lg-pace { flex-basis: 100%; color: var(--fg); }
 .lg-bar, .lg-line, .lg-ref, .lg-goal { display: inline-block; width: 14px; height: 0; }
 .lg-bar { height: 10px; width: 8px; border-radius: 2px; background: var(--primary); opacity: .55; }
 .lg-line { border-top: 2px solid var(--fg); }
