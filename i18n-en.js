@@ -374,6 +374,8 @@ I18N.add({
   [/^utfall ≈ (.+) kcal\/dag · som veckomålet$/, 'actual ≈ $1 kcal/day · same as weekly goal'],
   [/^utfall ≈ (.+) kcal\/dag · (.+) (över|under) veckomålet$/, (g) => `actual ≈ ${g[1]} kcal/day · ${g[2]} ${g[3] === 'över' ? 'over' : 'under'} weekly goal`],
   [/^veckomål ([−+][\d,.]+) (kg|lb)\/v ≈ (.+) kcal\/dag$/, 'weekly goal $1 $2/wk ≈ $3 kcal/day'],
+  [/^veckomål ([−+][\d,.]+) (kg|lb)\/v · utfall ([−+][\d,.]+) (kg|lb)\/v · i fas ✅$/, 'weekly goal $1 $2/wk · actual $3 $4/wk · on track ✅'],
+  [/^veckomål ([−+][\d,.]+) (kg|lb)\/v · utfall ([−+][\d,.]+) (kg|lb)\/v · ([\d,.]+) (kg|lb)\/v (före 🚀|efter ⚠️)$/, (g) => `weekly goal ${g[1]} ${g[2]}/wk · actual ${g[3]} ${g[4]}/wk · ${g[5]} ${g[6]}/wk ${g[7][0] === 'f' ? 'ahead 🚀' : 'behind ⚠️'}`],
   [/^veckomål ([−+][\d,.]+) (kg|lb) · i fas ✅$/, 'weekly goal $1 $2 · on track ✅'],
   [/^veckomål ([−+][\d,.]+) (kg|lb) · ([\d,.]+) (kg|lb) (före 🚀|efter ⚠️)$/, (g) => `weekly goal ${g[1]} ${g[2]} · ${g[3]} ${g[4]} ${g[5][0] === 'f' ? 'ahead 🚀' : 'behind ⚠️'}`],
   [/^samma takt som nu ≈ (.+) kcal\/dag \((.+)\/v\)$/, 'same pace as now ≈ $1 kcal/day ($2/wk)'],

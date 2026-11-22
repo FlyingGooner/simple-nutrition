@@ -75,6 +75,14 @@ export function kcalWeightChart(from, n = 7) {
       goal && !wk ? [el('span', { class: 'lg-goal' }), el('span', { text: `ditt kalorimål ${kcal(goal)}` + ((m) => !m ? '' : m.kgWeek < -0.02 ? ` (≈ −${fmtNum(Math.round(wOut(-m.kgWeek) * 100) / 100, 2)} ${wUnit()}/v)` : m.kgWeek > 0.02 ? ` (≈ +${fmtNum(Math.round(wOut(m.kgWeek) * 100) / 100, 2)} ${wUnit()}/v)` : ' (håller vikten)')(goalMeaning(S.state, goal, t)) })] : null));
 }
 
+// Utfall mot veckomålet (2026-11-22): d = ändring i kg per vecka; perWeek = visa som kg/v (Månad).
+export function goalRow(d, perWeek = false) {
+  const p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
+  if (!p || p.reached) return null;
+  const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), u = wUnit() + (perWeek ? '/v' : ''), off = d - p.rate;
+  return el('p', { class: 'w-sub w-goal', text: `veckomål ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${u} · ${perWeek ? `utfall ${d < 0 ? '−' : '+'}${v(d)} ${u} · ` : ''}${Math.abs(off) < 0.05 ? 'i fas ✅' : off * Math.sign(p.rate) > 0 ? `${v(off)} ${u} före 🚀` : `${v(off)} ${u} efter ⚠️`}` });
+}
+
 // Vikt (v0.5.13): senaste vägningen i veckan mot den tidigaste vägningen veckan innan.
 function weightCard(ws) {
   const inRange = (from) => [0, 1, 2, 3, 4, 5, 6].map((i) => addDays(from, i)).filter((k) => S.state.weights[k] != null);
@@ -93,7 +101,7 @@ function weightCard(ws) {
       el('span', { class: 'w-flex' }),
       d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), text: dTxt }) : null),
     // Utfall mot veckomålet (2026-11-22).
-    ((p) => !p || p.reached || d == null ? null : el('p', { class: 'w-sub w-goal', text: `veckomål ${p.rate < 0 ? '−' : '+'}${fmtNum(Math.round(wOut(Math.abs(p.rate)) * 10) / 10)} ${wUnit()} · ${Math.abs(d - p.rate) < 0.05 ? 'i fas ✅' : (d - p.rate) * Math.sign(p.rate) > 0 ? `${fmtNum(Math.round(wOut(Math.abs(d - p.rate)) * 10) / 10)} ${wUnit()} före 🚀` : `${fmtNum(Math.round(wOut(Math.abs(d - p.rate)) * 10) / 10)} ${wUnit()} efter ⚠️`}` }))(weightPlan(S.state.wgoal, currentWeight(S.state), today())),
+    d != null ? goalRow(d) : null,
     el('p', { class: 'w-sub', text: last == null ? 'Ingen vägning den här veckan än'
       : bw == null ? 'Ingen vägning veckan innan att jämföra med'
       : `mot ${shortDate(base)} (${kg1(bw)} ${wUnit()}) · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'} denna vecka` }),
