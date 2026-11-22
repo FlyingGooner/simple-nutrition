@@ -14,19 +14,20 @@ function summaryCard() {
   // Utan kalorimål (standard): bara dagens summa, ingen stapel eller "kvar".
   // 2026-11-18: tryck på kortet → allt du ätit i dag, samma sak från flera måltider ihopslaget.
   const sec = `daysum-${S.current}`;
+  const any = posts.length || S.state.weights[S.current] != null || S.state.habits[S.current] || S.state.workouts[S.current];   // 2026-11-22: Rensa dagen alltid här
   return el('div', { class: 'card sum-card sum-wrap' },
-    el('details', { class: 'day-sum', 'data-sec': sec, open: setOpen.has(sec) && posts.length > 0, 'aria-label': 'Dagens kalorier' },
+    el('details', { class: 'day-sum', 'data-sec': sec, open: setOpen.has(sec) && !!any, 'aria-label': 'Dagens kalorier' },
     el('summary', {}, headShown ? null : el('div', { class: 'sum-top' },
       el('span', { class: 'sum-big' }, el('strong', { text: kcal(n[0]) }), has ? ` / ${kcal(g.kcal)} kcal` : ' kcal idag'),
       has ? el('span', { class: 'sum-left' + (over ? ' over' : ''), text: over ? `${kcal(-left)} över` : `${kcal(left)} kvar` })
-        : posts.length ? el('span', { class: 'sum-more', text: 'Allt du ätit ▾' }) : null),   // 2026-11-21: på samma rad, lägre kort
+        : any ? el('span', { class: 'sum-more', text: posts.length ? 'Allt du ätit ▾' : 'Mer ▾' }) : null),   // 2026-11-21: på samma rad, lägre kort
     has ? svg('svg', { class: 'kbar', viewBox: '0 0 100 6', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
       svg('rect', { class: 'kbar-bg', x: 0, y: 0, width: 100, height: 6, rx: 2 }),
       svg('rect', { class: 'kbar-fill' + (over ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, n[0] / g.kcal) * 1000) / 10, height: 6, rx: 2 })) : null,
     el('p', { class: 'macros' }, macro('Protein', n[1], g.prot), ' · ', macro('Kolh.', n[2], g.kolh), ' · ', macro('Fett', n[3])),
-    posts.length && (has || headShown) ? el('p', { class: 'sum-more', text: 'Allt du ätit i dag ▾' }) : null),
-    posts.length ? [dayList(posts), el('button', { class: 'link dl-ai', 'data-act': 'dayai', text: '📋 Kopiera för kontroll med AI' }),
-      el('button', { class: 'link danger dl-clear', 'data-act': 'clearday', text: '🗑 Rensa dagen' })] : null));   // 2026-11-21: Rensa dagen i listan
+    any && (has || headShown) ? el('p', { class: 'sum-more', text: posts.length ? 'Allt du ätit i dag ▾' : 'Mer ▾' }) : null),
+    posts.length ? [dayList(posts), el('button', { class: 'link dl-ai', 'data-act': 'dayai', text: '📋 Kopiera för kontroll med AI' })] : null,
+    any ? el('button', { class: 'link danger dl-clear', 'data-act': 'clearday', text: '🗑 Rensa dagen' }) : null));   // 2026-11-21: Rensa dagen i listan
 }
 // Snabbval av takt (2026-11-21): 0,25 / 0,5 / 1 kg och 1 % per vecka, bara de som är ≤ 1 % av vikten.
 function goalChips(e) {
@@ -266,8 +267,6 @@ export function viewToday() {
     weight: () => null,   // 2026-11-21: ligger i kcal-kortet
     }),
     addRow(),   // 2026-11-21: knapparna längst ner
-    !posts.length && (S.state.weights[S.current] != null || S.state.habits[S.current] || S.state.workouts[S.current])   // med mat: i listan Allt du ätit
-      ? el('p', { class: 'clear-day center' }, el('button', { class: 'link danger', 'data-act': 'clearday', text: '🗑 Rensa dagen' })) : null,
   ];
 }
 // Markeringsläge (håll in en post): Kopiera till en dag eller Radera, på en gång.

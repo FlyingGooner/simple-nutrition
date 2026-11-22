@@ -3,7 +3,7 @@
 I18N.setKey('sn.lang');
 I18N.add({
   '📋 Kopiera för kontroll med AI': '📋 Copy to check with AI', 'Dagen är kopierad – klistra in den i Gemini': 'The day is copied – paste it into Gemini', 'Kunde inte kopiera': 'Could not copy',
-  'Allt du ätit i dag ▾': 'Everything you ate today ▾', 'Övrigt': 'Other',
+  'Allt du ätit i dag ▾': 'Everything you ate today ▾', 'Övrigt': 'Other', 'Mer ▾': 'More ▾',
   'Öppnas snabbare och fungerar utan nät': 'Opens faster and works offline', 'Installera': 'Install', 'Visa hur': 'Show how', '📲 Installera som app': '📲 Install as an app',
   '📲 Installera som app – öppnas snabbare och fungerar utan nät': '📲 Install as an app – opens faster and works offline', 'Installera som app': 'Install as an app', 'Tryck på Dela ⬆️ längst ner i Safari.': 'Tap Share ⬆️ at the bottom of Safari.', 'Välj Lägg till på hemskärmen.': 'Choose Add to Home Screen.', 'Tryck Lägg till. Öppna sedan appen från hemskärmen.': 'Tap Add. Then open the app from the home screen.',
   'Öppna, ladda ner, GitHub': 'Open, download, GitHub',
