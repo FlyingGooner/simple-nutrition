@@ -198,12 +198,7 @@ function mealCard(m, posts) {
   const need = !other && !posts.length && e?.outcome !== 'skipped';
   const mark = !need ? null : m.opt ? el('span', { class: 'fill-tag opt', text: 'Valfri' })
     : el('span', { class: 'fill-tag', title: 'Lägg till mat eller tryck ⏭️, annars räknas dagen inte i statistiken', text: '○ Fyll i' });
-  // Tom måltid (2026-11-21): en rad tills du trycker – knapparna och Mat syns när den fälls ut.
-  if (!other && !e && !posts.length && !open) {
-    const msec = `meal-${S.current}-${m.id}`;
-    return el('details', { class: 'card meal meal-empty' + (need && !m.opt ? ' meal-need' : ''), 'data-sec': msec, open: setOpen.has(msec), 'aria-label': m.name },
-      el('summary', { class: 'meal-head' }, el('span', { class: 'meal-name', text: m.name }), mark), body);
-  }
+  // Tom måltid visas utfälld så vanan (✅ 🍰 ⏭️) kan fyllas i direkt (2026-11-22, ångrar 634bc4a).
   if (!e || !OUTCOMES[e.outcome] || (e.outcome === 'cheat' && !e.reason)) {
     return el('section', { class: 'card meal' + (need && !m.opt ? ' meal-need' : ''), 'aria-label': m.name },
       el('div', { class: 'meal-head' }, el('span', { class: 'meal-name', text: m.name }), mark), body);
