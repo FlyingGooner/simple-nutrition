@@ -104,7 +104,7 @@ function weightCard(ws) {
       el('span', { class: 'w-label', text: 'Vikt' }),
       el('span', { class: 'w-now', text: last != null ? `${kg1(last)} ${wUnit()}` : '–' }),
       el('span', { class: 'w-flex' }),
-      d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), text: dTxt }) : null),
+      d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), title: 'Veckans snitt mot snittet veckan innan', text: '⌀ ' + dTxt }) : null),   // ⌀ = snitt (2026-11-22)
     // Utfall mot veckomålet (2026-11-22).
     d != null ? goalRow(d) : null,
     last == null || bw == null ? el('p', { class: 'w-sub', text: last == null ? 'Ingen vägning den här veckan än' : 'Ingen vägning veckan innan att jämföra med' }) : null,
