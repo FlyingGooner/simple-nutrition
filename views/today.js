@@ -8,11 +8,19 @@ import { OUTCOMES } from '../habit-store.js';
 
 export const dayPosts = () => S.state.log[S.current] || [];
 
+// Dagens kalorimål (2026-11-22), samma regel som diagrammen: sparat mål gäller; annars förbrukningen + viktmålets takt,
+// annars det som håller vikten; null när förbrukningen inte är säker än.
+function dayGoal(k) {
+  const saved = goalFor(S.state, k).kcal; if (saved != null) return saved;
+  const e = energyEstimate(S.state, today()); if (!e || !e.ready || e.quality < 0.25) return null;
+  const p = weightPlan(S.state.wgoal, currentWeight(S.state), today()), r50 = (x) => Math.round(x / 50) * 50;
+  return p && !p.reached ? r50(e.tdee + p.kcalDay) : r50(e.tdee);
+}
 function summaryCard() {
-  const posts = dayPosts(), n = sumN(posts), g = goalFor(S.state, S.current);
+  const posts = dayPosts(), n = sumN(posts), g = { kcal: dayGoal(S.current) };
   const macro = (label, v, goal) => el('span', { class: 'macro' }, `${label} `, el('strong', { text: fmtNum(v, 0) }), goal ? ` / ${goal} g` : ' g');
-  const has = false,   // 2026-11-22: inga mål på Idag
-   _g = g.kcal, left = has ? g.kcal - n[0] : 0, over = left < 0;   // idag: målet står överst
+  // 2026-11-22: kalorier mot målet igen – sparat kalorimål, annars det appen räknar fram (förbrukning ± viktmålets takt).
+  const has = g.kcal != null, left = has ? Math.round(g.kcal - n[0]) : 0, over = left < 0;
   // Utan kalorimål (standard): bara dagens summa, ingen stapel eller "kvar".
   // 2026-11-18: tryck på kortet → allt du ätit i dag, samma sak från flera måltider ihopslaget.
   const sec = `daysum-${S.current}`;
