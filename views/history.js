@@ -42,7 +42,7 @@ function monthWeight(extra = null) {
       d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), text: dTxt }) : null),
     !lastK || !baseK ? el('p', { class: 'w-sub', text: !lastK ? 'Ingen vägning den här månaden' : 'Första vägningen – inget att jämföra med än' }) : null,   // förenklad (2026-11-22)
     // Veckomålet (2026-11-22): utfall i kg/v mellan jämförelsevägningarna.
-    ((days) => days >= 3 ? goalRow((W(lastK) - W(baseK)) / days * 7, true) : null)(lastK && baseK ? Math.round((parseKey(lastK) - parseKey(baseK)) / 864e5) : 0),
+    ((days) => days >= 3 ? goalRow((W(lastK) - W(baseK)) / days * 7, prevK ? 'mot förra månaden · ' : 'mot månadens första vägning · ') : null)(lastK && baseK ? Math.round((parseKey(lastK) - parseKey(baseK)) / 864e5) : 0),
     extra);
 }
 

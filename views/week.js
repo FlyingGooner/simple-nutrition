@@ -79,12 +79,12 @@ export function weekDelta(ws) {
   return a == null || b == null ? null : { a, b, d: Math.round((a - b) * 10) / 10 };
 }
 // Utfall mot veckomålet (2026-11-22): d = ändring i kg per vecka; perWeek = visa som kg/v (Månad).
-export function goalRow(d, perWeek = false) {
+export function goalRow(d, pre = 'snitt mot förra veckan · ') {   // pre: vad ändringen jämförs med
   const p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
   if (!p || p.reached) return null;
   // Förenklad igen (2026-11-22): bara målet och ✓ när veckans ändring når det – ändringen själv står redan stort bredvid.
   const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = d - p.rate, ok = Math.abs(off) < 0.05 || off * Math.sign(p.rate) > 0;
-  return el('p', { class: 'w-sub w-goal' }, `${perWeek ? '' : 'snitt mot förra veckan · '}🎯 ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${wUnit()}/v `,
+  return el('p', { class: 'w-sub w-goal' }, pre, `🎯 ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${wUnit()}/v `,
     el('span', { class: ok ? 'kd-down' : 'wg-behind', text: ok ? '✓' : '⚠️' }));
 }
 
