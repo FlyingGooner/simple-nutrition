@@ -50,19 +50,20 @@ function wgoalSection() {
     el('input', { type, inputmode: type === 'text' ? 'decimal' : undefined, class: type === 'text' ? 'num-in' : 'num-in date-in', value, placeholder: ph, id, 'aria-label': label }));
   const info = !g ? null : cur == null ? 'Väg dig under Idag så räknas takten ut.'
     : p.reached ? 'Målet är nått.'
-    : `${p.auto ? 'Kaloriråd räknas på 0,5 %/v: ' : ''}Takt ${w1(Math.abs(p.rate))} ${u}/v ≈ ${kcal(Math.abs(p.kcalDay))} kcal/dag ${p.kcalDay < 0 ? 'underskott' : 'överskott'}.`;
+    : `Takt ${w1(Math.abs(p.rate))} ${u}/v ≈ ${kcal(Math.abs(p.kcalDay))} kcal/dag ${p.kcalDay < 0 ? 'underskott' : 'överskott'}.`;
+  // Takt krävs (2026-11-22): äldre mål med datum eller utan takt fylls i med den takt planen räknar med.
+  const rateVal = g?.pct != null ? fmtNum(g.pct, 2) : g?.rate ? w1(g.rate) : p && !p.reached && p.rate ? w1(Math.abs(p.rate)) : '';
   return [
     field('wg-target', `Målvikt (${u}, valfritt)`, g?.target != null ? w1(g.target) : '', cur ? w1(cur) : ''),
-    el('label', { class: 'goal-row' }, el('span', { text: 'Gå ner per vecka (valfritt)' }),
-      el('input', { type: 'text', inputmode: 'decimal', class: 'num-in', id: 'wg-rate', 'aria-label': 'Takt per vecka', value: g?.pct != null ? fmtNum(g.pct, 2) : g?.rate ? w1(g.rate) : '', placeholder: '0,5' }),
+    el('label', { class: 'goal-row' }, el('span', { text: 'Takt per vecka' }),
+      el('input', { type: 'text', inputmode: 'decimal', class: 'num-in', id: 'wg-rate', 'aria-label': 'Takt per vecka', value: rateVal, placeholder: '0,5' }),
       el('select', { id: 'wg-unit', 'aria-label': 'Enhet för takten' }, [[u, u], ['%', '%']].map(([v, t]) => el('option', { value: v, selected: (g?.pct != null) === (v === '%'), text: t })))),
-    field('wg-date', 'Klart senast (valfritt)', g?.date ?? '', '', 'date'),
     el('div', { class: 'save-row' },
       g ? el('button', { class: 'link', 'data-act': 'wgoaloff', text: 'Ta bort mål' }) : null,
       el('button', { class: 'weigh-save', 'data-act': 'wgoalsave', text: 'Spara viktmål' })),
     info ? el('p', { class: 'small', text: info }) : null,
     g ? forecastLine() : null,
-    el('p', { class: 'muted small', text: 'Fyll i målvikt, takt eller båda. Med målvikt kan du i stället för takt välja ett datum. Utan takt och datum räknar appen på 0,5 % av vikten per vecka och visar när du når målet. Högst 1 % av vikten per vecka – snabbare än så är svårt att hålla och tappar mest vätska och muskler.' }),
+    el('p', { class: 'muted small', text: 'Takten per vecka krävs, målvikten är valfri. Kalorimålet = det du faktiskt gör av med (räknas fram ur maten du loggar och hur vikten ändras över tid) minus underskottet för takten, så det justeras efter hur det går i praktiken. Högst 1 % av vikten per vecka – snabbare än så är svårt att hålla och tappar mest vätska och muskler.' }),
   ];
 }
 

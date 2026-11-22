@@ -640,8 +640,9 @@ app.addEventListener('click', (ev) => {
     case 'wgoaloff': withUndo('Viktmålet togs bort', () => { delete S.state.wgoal; }); return;
     case 'wgoalsave': {   // Viktmål (2026-11-21): Målvikt (valfritt datum) eller Takt (kg/%), högst 1 % av vikten per vecka
       const v = (i) => document.getElementById(i)?.value.trim() ?? '';
-      const tRaw = v('wg-target'), rRaw = v('wg-rate'), dRaw = v('wg-date'), pctU = v('wg-unit') === '%';
-      if (!tRaw && !rRaw) { snackbar('Fyll i målvikt eller takt', null, null, 3000); return; }
+      // Takt krävs (2026-11-22): inget datum, ingen automatisk takt.
+      const tRaw = v('wg-target'), rRaw = v('wg-rate'), dRaw = '', pctU = v('wg-unit') === '%';
+      if (!rRaw) { snackbar('Fyll i takt per vecka', null, null, 3000); return; }
       const g = {};
       if (tRaw) {
         const target = wIn(parseNum(tRaw));
