@@ -246,7 +246,10 @@ function weekGoalCard() {
   if (!row) return null;
   const v = fmtNum(Math.round(wOut(Math.abs(d)) * 10) / 10);
   return el('div', { class: 'card wk-goal-today' },
-    el('p', { class: 'w-sub', text: `Denna vecka ${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v} ${wUnit()} sedan ${Number(base.slice(8))}/${Number(base.slice(5, 7))}` }), row);
+    // Färg (2026-11-22): grönt nedåt, rött uppåt.
+    el('p', { class: 'wg-out' }, el('span', { text: 'Utfall mot veckan innan' }), ' ',
+      el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v} ${wUnit()}` }), ' ',
+      el('span', { class: 'muted', text: `sedan ${Number(base.slice(8))}/${Number(base.slice(5, 7))}` })), row);
 }
 export function viewToday() {
   if (S.add) return viewAdd();
