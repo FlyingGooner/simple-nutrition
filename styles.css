@@ -264,7 +264,7 @@ main .help-wrap { margin-top: 10px; }
 .sum-big { color: var(--muted); font-size: .9375rem; }
 .sum-big strong { color: var(--fg); font-weight: 500; }
 .sum-left { font-weight: 500; color: var(--ok); }
-.sum-left.over { color: var(--muted); }
+.sum-left.over { color: var(--dev); background: none; font-weight: 600; }
 .kbar { display: block; width: 100%; height: 8px; margin: 8px 0 6px; }
 .kbar-bg { fill: var(--surface-container-high); }
 .kbar-fill { fill: var(--primary); } .kbar-fill.over { fill: var(--outline); }
