@@ -246,7 +246,7 @@ function weekGoalCard() {
   return el('div', { class: 'card wk-goal-today' },
     // Färg (2026-11-22): grönt nedåt, rött uppåt.
     el('p', { class: 'wg-out' }, el('span', { text: 'Veckans snitt mot veckan innan' }), ' ',
-      el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v} ${wUnit()}` }), row);
+      el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v} ${wUnit()}` })), row);
 }
 export function viewToday() {
   if (S.add) return viewAdd();
