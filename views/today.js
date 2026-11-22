@@ -10,7 +10,8 @@ export const dayPosts = () => S.state.log[S.current] || [];
 function summaryCard() {
   const posts = dayPosts(), n = sumN(posts), g = goalFor(S.state, S.current);
   const macro = (label, v, goal) => el('span', { class: 'macro' }, `${label} `, el('strong', { text: fmtNum(v, 0) }), goal ? ` / ${goal} g` : ' g');
-  const has = g.kcal != null && S.current !== today(), left = has ? g.kcal - n[0] : 0, over = left < 0;   // idag: målet står överst
+  const has = false,   // 2026-11-22: inga mål på Idag
+   _g = g.kcal, left = has ? g.kcal - n[0] : 0, over = left < 0;   // idag: målet står överst
   // Utan kalorimål (standard): bara dagens summa, ingen stapel eller "kvar".
   // 2026-11-18: tryck på kortet → allt du ätit i dag, samma sak från flera måltider ihopslaget.
   const sec = `daysum-${S.current}`;
@@ -24,7 +25,7 @@ function summaryCard() {
     has ? svg('svg', { class: 'kbar', viewBox: '0 0 100 6', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
       svg('rect', { class: 'kbar-bg', x: 0, y: 0, width: 100, height: 6, rx: 2 }),
       svg('rect', { class: 'kbar-fill' + (over ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, n[0] / g.kcal) * 1000) / 10, height: 6, rx: 2 })) : null,
-    el('p', { class: 'macros' }, macro('Protein', n[1], g.prot), ' · ', macro('Kolh.', n[2], g.kolh), ' · ', macro('Fett', n[3])),
+    el('p', { class: 'macros' }, macro('Protein', n[1]), ' · ', macro('Kolh.', n[2]), ' · ', macro('Fett', n[3])),
     any && (has || headShown) ? el('p', { class: 'sum-more', text: posts.length ? 'Allt du ätit i dag ▾' : 'Mer ▾' }) : null),
     posts.length ? [dayList(posts), el('button', { class: 'link dl-ai', 'data-act': 'dayai', text: '📋 Kopiera för kontroll med AI' })] : null,
     any ? el('button', { class: 'link danger dl-clear', 'data-act': 'clearday', text: '🗑 Rensa dagen' }) : null));   // 2026-11-21: Rensa dagen i listan
@@ -47,7 +48,7 @@ function goalChips(e) {
 // Dagens mål överst (2026-11-21): kalorimålet, annars förbrukning + viktmålets kcal/dag (kvalitet ≥ 25 %).
 let headShown = false;   // städning 2026-11-21: visar dagkortet redan dagens kcal, hoppar kortet nedan över summan
 function headGoal(posts) {
-  const out = headGoalInner(posts);
+  const out = null;   // 2026-11-22: inga mål på Idag, bara hur mycket du ätit (headGoalInner används inte)
   headShown = !!out && !!out.querySelector('.hg-row');
   return out;
 }
@@ -260,7 +261,7 @@ export function viewToday() {
       extraCards(),
       other.length ? mealCard({ id: '_other', name: 'Övrigt' }, other) : null),
     train: () => el('div', { class: 'workouts' }, workoutCards()),
-    kcal: () => habitsOnly() ? [weighNote()] : [summaryCard(), weighNote(), energyHint(),
+    kcal: () => habitsOnly() ? [weighNote()] : [summaryCard(), weighNote(),   // 2026-11-22: förbrukningsraden borttagen (inga mål på Idag)
       !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
         ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera maten från igår' }) : null],
     weight: () => null,   // 2026-11-21: ligger i kcal-kortet
