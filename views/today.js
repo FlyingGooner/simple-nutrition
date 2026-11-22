@@ -245,7 +245,7 @@ function weekPill() {
   const mark = !g ? '' : Math.abs(off) < 0.05 ? ' ✅' : off * Math.sign(g.rate) > 0 ? ' 🚀' : ' ⚠️';   // en rad (2026-11-22); hela texten i title   // utskrivet (2026-11-22)
   return el('span', { class: 'wk-pill', title: `Veckans snitt mot veckan innan${g ? ` · veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}${Math.abs(off) < 0.05 ? ' · i fas' : ` · ${v(off)} ${wUnit()} ${off * Math.sign(g.rate) > 0 ? 'före' : 'efter'}`}` : ''}` }, '⚖️ ',
     el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v(d)} ${wUnit()}` }), ' i veckan',
-    g ? el('span', { class: 'wk-goal', text: `· mål ${g.rate < 0 ? '−' : '+'}${v(g.rate)}${mark}` }) : null);
+    g ? el('span', { class: 'wk-goal', text: `· 🎯 ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}` }) : null);   // 🎯 = veckomålet (2026-11-22)
 }
 export function viewToday() {
   if (S.add) return viewAdd();
