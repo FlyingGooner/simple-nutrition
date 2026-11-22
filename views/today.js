@@ -80,7 +80,7 @@ function weighNote() {
 function dayNote() {
   const d = dayCheck(S.state, S.current, null);
   if (!d.hasFood || d.ok) return null;
-  const text = d.reason === 'missing' ? `${d.missing.join(', ')} saknar mat – lägg till eller markera ⏭️, annars räknas dagen inte i statistiken.`
+  const text = d.reason === 'missing' ? 'Fyll i det som har orange ram, annars räknas dagen inte i statistiken.'   // 2026-11-22: ramarna visar var
     : `Under 800 kcal – dagen räknas inte i statistiken. Fattas något? Använd snabbvalen.`;
   return el('p', { class: 'day-note small', text });
 }
@@ -206,7 +206,7 @@ function mealCard(m, posts) {
       el('div', { class: 'meal-head' }, el('span', { class: 'meal-name', text: m.name }), mark), body);
   }
   const o = OUTCOMES[e.outcome], msec = `meal-${S.current}-${m.id}`;
-  return el('details', { class: 'card meal meal-done', 'data-sec': msec, open: setOpen.has(msec) || editing || (S.sel && posts.some((p) => S.sel.includes(p.id))), 'aria-label': m.name },
+  return el('details', { class: 'card meal meal-done' + (need && !m.opt ? ' meal-need' : ''), 'data-sec': msec, open: setOpen.has(msec) || editing || (S.sel && posts.some((p) => S.sel.includes(p.id))), 'aria-label': m.name },
     el('summary', { class: 'meal-head' },
       el('span', { class: 'meal-name' }, m.name,
         posts.length ? el('small', { class: 'meal-what', text: posts.map((p) => p.name).join(', ') }) : null),

@@ -825,3 +825,10 @@ details[open] > :not(summary) { animation: m3e-in .35s var(--spring); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: 0s !important; }
 }
+/* Det som behöver fyllas i (2026-11-22): orange ram runt krävd måltid som saknar mat, och runt själva Mat-raden när vanan redan är vald */
+:root { --need: #e8710a; } @media (prefers-color-scheme: dark) { :root { --need: #ffb68a; } }
+.meal-need { box-shadow: inset 0 0 0 2px var(--need); }
+.meal-need .fill-tag:not(.opt) { color: var(--need); font-weight: 600; }
+.meal-need:is(section, [open]):has(.hab .on) { box-shadow: none; }
+.meal-need:is(section, [open]):has(.hab .on) .meal-food > summary { box-shadow: inset 0 0 0 2px var(--need); border-radius: var(--r-md); }
+.day-note { color: var(--need); }
