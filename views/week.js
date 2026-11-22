@@ -87,7 +87,7 @@ export function goalRow(d, pre = 'snitt mot förra veckan · ') {   // pre: vad 
   // Förenklad igen (2026-11-22): bara målet och ✓ när veckans ändring når det – ändringen själv står redan stort bredvid.
   const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = d - p.rate, ok = Math.abs(off) < 0.05 || off * Math.sign(p.rate) > 0;
   return el('p', { class: 'w-sub w-goal' }, pre, `🎯 ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${wUnit()}/v `,
-    el('span', { class: ok ? 'kd-down' : 'wg-behind', text: ok ? '✓' : '⚠️' }));
+    el('span', { class: ok ? 'kd-down' : 'wg-behind', text: ok ? '🟢' : '🟠' }));
 }
 
 // Vikt (v0.5.13): senaste vägningen i veckan mot den sista vägningen veckan innan (2026-11-22).

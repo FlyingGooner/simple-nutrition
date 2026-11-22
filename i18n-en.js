@@ -425,7 +425,7 @@ I18N.add({
   [/^Vecka (\d+)$/, 'Week $1'],
   [/^v\. ?(\d+)$/, 'wk $1'],
   [/^🔥 (\d+) dagar?$/, (g) => `🔥 ${g[1]} day${g[1] === '1' ? '' : 's'}`],
-  [/^· 🎯 ([−+][\d,.]+) (kg|lb)\/v( ✓| ⚠️)?$/, (g) => `· 🎯 ${g[1]} ${g[2]}/wk${g[3] || ''}`],
+  [/^· 🎯 ([−+][\d,.]+) (kg|lb)\/v( 🟢| 🟠)?$/, (g) => `· 🎯 ${g[1]} ${g[2]}/wk${g[3] || ''}`],
   [/^Veckans snitt mot förra veckans snitt(?: · veckomål ([−+][\d,.]+) (kg|lb)\/v)?$/, (g) => "This week's average vs last week's average" + (g[1] ? ` · weekly goal ${g[1]} ${g[2]}/wk` : '')],
   [/^(🔥 )?(\d+) dagar i rad$/, (g) => `${g[1] || ''}${g[2]} days in a row`],
   [/^(🔥 )?(\d+) dag i rad$/, (g) => `${g[1] || ''}${g[2]} day in a row`],

@@ -242,7 +242,7 @@ function weekPill() {
   if (!wd) return null;
   const d = wd.d, p = weightPlan(S.state.wgoal, currentWeight(S.state), today()), g = p && !p.reached ? p : null;
   const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = g ? d - g.rate : 0;
-  const mark = !g ? '' : Math.abs(off) < 0.05 || off * Math.sign(g.rate) > 0 ? ' ✓' : ' ⚠️';
+  const mark = !g ? '' : Math.abs(off) < 0.05 || off * Math.sign(g.rate) > 0 ? ' 🟢' : ' 🟠';
   // Ett piller (2026-11-22): ändringen och målet ihop, förklaringen i title.
   return el('span', { class: 'wk-pill', title: `Veckans snitt mot förra veckans snitt${g ? ` · veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}/v` : ''}` }, '⚖️ ',
     el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v(d)} ${wUnit()}` }),
