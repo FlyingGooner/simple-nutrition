@@ -378,6 +378,7 @@ I18N.add({
   [/^🎯 ≈ (.+) kcal\/dag$/, '🎯 ≈ $1 kcal/day'],
   [/^🎯 ([−+][\d,.]+) (kg|lb)\/v · $/, '🎯 $1 $2/wk · '],
   [/^snitt mot förra veckan · 🎯 ([−+][\d,.]+) (kg|lb)\/v · $/, 'avg vs last week · 🎯 $1 $2/wk · '],
+  [/^([\d,.]+) (kg|lb)(\/v)? (bättre|sämre) än målet$/, (g) => `${g[1]} ${g[2]}${g[3] ? '/wk' : ''} ${g[4] === 'bättre' ? 'better' : 'worse'} than the goal`],
   [/^([\d,.]+) (kg|lb)(\/v)? (före|efter)$/, (g) => `${g[1]} ${g[2]}${g[3] ? '/wk' : ''} ${g[4] === 'före' ? 'ahead' : 'behind'}`],
   [/^utfall ≈ (.+) kcal\/dag · som veckomålet$/, 'actual ≈ $1 kcal/day · same as weekly goal'],
   [/^utfall ≈ (.+) kcal\/dag · (.+) (över|under) veckomålet$/, (g) => `actual ≈ ${g[1]} kcal/day · ${g[2]} ${g[3] === 'över' ? 'over' : 'under'} weekly goal`],

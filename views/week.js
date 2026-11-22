@@ -85,7 +85,7 @@ export function goalRow(d, perWeek = false) {
   // Förenklad (2026-11-22): mål och hur långt från det, inget mer.
   const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = d - p.rate, ahead = off * Math.sign(p.rate) > 0;
   return el('p', { class: 'w-sub w-goal' }, `${perWeek ? '' : 'snitt mot förra veckan · '}🎯 ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${wUnit()}/v · `,
-    el('span', { class: Math.abs(off) < 0.05 || ahead ? 'kd-down' : 'wg-behind', text: Math.abs(off) < 0.05 ? 'i fas' : `${v(off)} ${wUnit()}${perWeek ? '/v' : ''} ${ahead ? 'före' : 'efter'}` }));
+    el('span', { class: Math.abs(off) < 0.05 || ahead ? 'kd-down' : 'wg-behind', text: Math.abs(off) < 0.05 ? 'i fas' : `${v(off)} ${wUnit()}${perWeek ? '/v' : ''} ${ahead ? 'bättre' : 'sämre'} än målet` }));
 }
 
 // Vikt (v0.5.13): senaste vägningen i veckan mot den sista vägningen veckan innan (2026-11-22).
