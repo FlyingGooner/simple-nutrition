@@ -197,6 +197,7 @@ function mealCard(m, posts) {
   // Ifyllt eller inte (2026-11-21): krävd måltid utan mat och utan ⏭️ = "○ Fyll i", valfri = "Valfri".
   const need = !other && !posts.length && e?.outcome !== 'skipped';
   const mark = !need ? null : m.opt ? el('span', { class: 'fill-tag opt', text: 'Valfri' })
+    : e ? el('span', { class: 'fill-tag', title: 'Vanan är vald – lägg till maten för kalorierna, annars räknas dagen inte i statistiken', text: '○ Lägg till mat (kcal)' })
     : el('span', { class: 'fill-tag', title: 'Lägg till mat eller tryck ⏭️, annars räknas dagen inte i statistiken', text: '○ Fyll i' });
   // Tom måltid visas utfälld så vanan (✅ 🍰 ⏭️) kan fyllas i direkt (2026-11-22, ångrar 634bc4a).
   if (!e || !OUTCOMES[e.outcome] || (e.outcome === 'cheat' && !e.reason)) {
