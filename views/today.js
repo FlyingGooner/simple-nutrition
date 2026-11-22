@@ -244,8 +244,8 @@ function weekPill() {
   const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = g ? d - g.rate : 0;
   const mark = !g ? '' : Math.abs(off) < 0.05 ? ' ✅' : off * Math.sign(g.rate) > 0 ? ' 🚀' : ' ⚠️';
   return el('span', { class: 'wk-pill', title: `Veckans snitt mot veckan innan${g ? ` · veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}` : ''}` }, '⚖️ ',
-    el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v(d)} ${wUnit()}` }),
-    g ? ` · mål ${g.rate < 0 ? '−' : '+'}${v(g.rate)}${mark}` : '');
+    el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v(d)} ${wUnit()}` }), ' mot förra veckan',
+    g ? el('span', { class: 'wk-goal', text: `veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}${mark}` }) : null);
 }
 export function viewToday() {
   if (S.add) return viewAdd();
