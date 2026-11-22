@@ -40,10 +40,7 @@ function monthWeight(extra = null) {
       el('span', { class: 'w-now', text: lastK ? `${kg1(W(lastK))} ${wUnit()}` : '–' }),
       extra ? el('span', { class: 'w-flex' }) : spark,   // med stapeldiagram behövs ingen minikurva (2026-11-21)
       d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), text: dTxt }) : null),
-    el('p', { class: 'w-sub', text: !lastK ? 'Ingen vägning den här månaden'
-      : !baseK ? 'Första vägningen – inget att jämföra med än'
-      : `${prevK ? 'mot' : 'sedan'} ${shortDate(baseK)} (${kg1(W(baseK))} ${wUnit()}) · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'}` }),
-    d ? kcalDayLine(W(lastK) - W(baseK), baseK, lastK) : null,
+    !lastK || !baseK ? el('p', { class: 'w-sub', text: !lastK ? 'Ingen vägning den här månaden' : 'Första vägningen – inget att jämföra med än' }) : null,   // förenklad (2026-11-22)
     // Veckomålet (2026-11-22): utfall i kg/v mellan jämförelsevägningarna.
     ((days) => days >= 3 ? goalRow((W(lastK) - W(baseK)) / days * 7, true) : null)(lastK && baseK ? Math.round((parseKey(lastK) - parseKey(baseK)) / 864e5) : 0),
     extra);

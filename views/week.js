@@ -39,8 +39,6 @@ export function kcalWeightChart(from, n = 7) {
   // Veckomålet i fokus (2026-11-22): med viktmål är målraden förbrukningen + underskottet för veckotakten.
   const plan = ref ? weightPlan(S.state.wgoal, currentWeight(S.state), t) : null, wk = plan && !plan.reached ? plan : null;
   const goal = wk ? Math.round((ref + wk.kcalDay) / 50) * 50 : goalFor(S.state, days[n - 1] > t ? t : days[n - 1]).kcal ?? null;
-  const okK = kc.filter((v, i) => v && dayCheck(S.state, days[i], t).ok);
-  const pace = ref && okK.length >= 3 ? ((avg) => ({ avg, kg: (avg - ref) * 7 / 7700 }))(Math.round(okK.reduce((a, b) => a + b, 0) / okK.length / 50) * 50) : null;
   const W = 320, H = 120, top = 8, bot = 96, AX = 30, cw = (W - AX) / n;   // AX: plats för viktskalan till höger (2026-11-21)
   const kmax = Math.max(...kc.filter(Boolean), ref ?? 0, goal ?? 0, 1000) * 1.08;
   const Yk = (v) => bot - v / kmax * (bot - top);
@@ -57,22 +55,18 @@ export function kcalWeightChart(from, n = 7) {
       kc.map((v, i) => (v ? svg('rect', { class: 'kw-bar' + (dayCheck(S.state, days[i], t).ok ? '' : ' inc'), x: r1(i * cw + cw * 0.18), y: r1(Yk(v)), width: r1(cw * 0.64), height: r1(bot - Yk(v)), rx: 2 }) : null)),
       ticks.map((v) => [svg('line', { class: 'kw-grid', x1: 0, x2: W - AX, y1: r1(Yw(v)), y2: r1(Yw(v)) }),
         svg('text', { class: 'kw-ax', x: W - AX + 4, y: r1(Yw(v) + 3) }, fmtNum(r1(wOut(v))))]),
-      ref ? svg('line', { class: 'kw-ref', x1: 0, x2: W - AX, y1: r1(Yk(ref)), y2: r1(Yk(ref)) }) : null,
+      ref && !wk ? svg('line', { class: 'kw-ref', x1: 0, x2: W - AX, y1: r1(Yk(ref)), y2: r1(Yk(ref)) }) : null,
       goal ? svg('line', { class: 'kw-goal', x1: 0, x2: W - AX, y1: r1(Yk(goal)), y2: r1(Yk(goal)) }) : null,
       pts.length > 1 ? svg('polyline', { class: 'kw-line', points: pts.map((p) => p.map(r1).join(',')).join(' ') }) : null,
       pts.map((p) => svg('circle', { class: 'kw-dot', cx: r1(p[0]), cy: r1(p[1]), r: n > 7 ? 1.8 : 2.6 })),
       days.map((k, i) => svg('text', { class: 'kw-day cur', x: r1(i * cw + cw / 2), y: H - 8, 'text-anchor': 'middle' }, label(k, i)))),
     // Förklaring bara för de streckade linjerna (2026-11-21): staplar och viktlinje förklarar sig själva.
     // Förklaring alltid (2026-11-21): vad staplar och linje är.
+    // Förenklad (2026-11-22): bara staplar och målraden; utan viktmål raden för håller vikten.
     el('p', { class: 'kw-legend' },
       el('span', { class: 'lg-bar' }), el('span', { text: 'kcal per dag' }),
-      pts.length ? [el('span', { class: 'lg-line' }), el('span', { text: `vikt ${kgTxt(ws_)}` })] : null,
-      ref ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-ref' }), el('span', { text: `håller vikten ≈ ${kcal(ref)} kcal/dag` })) : null,
-      // Samma takt (2026-11-22): snittet för räknade dagar i perioden = vad som ger kursen vikten har nu.
-      ref && pace && wk ? el('span', { class: 'lg-item lg-pace', text: `utfall ≈ ${kcal(pace.avg)} kcal/dag · ${pace.avg === goal ? 'som veckomålet' : `${kcal(Math.abs(pace.avg - goal))} ${pace.avg > goal ? 'över' : 'under'} veckomålet`}` }) : null,
-      ref && pace && !wk ? el('span', { class: 'lg-item lg-pace', text: `samma takt som nu ≈ ${kcal(pace.avg)} kcal/dag (${pace.kg < 0 ? '−' : '+'}${fmtNum(Math.round(wOut(Math.abs(pace.kg)) * 10) / 10)} ${wUnit()}/v)` }) : null,
-      goal && wk ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-goal' }), el('span', { text: `veckomål ${wk.rate < 0 ? '−' : '+'}${fmtNum(Math.round(wOut(Math.abs(wk.rate)) * 100) / 100, 2)} ${wUnit()}/v ≈ ${kcal(goal)} kcal/dag` })) : null,
-      goal && !wk ? [el('span', { class: 'lg-goal' }), el('span', { text: `ditt kalorimål ${kcal(goal)}` + ((m) => !m ? '' : m.kgWeek < -0.02 ? ` (≈ −${fmtNum(Math.round(wOut(-m.kgWeek) * 100) / 100, 2)} ${wUnit()}/v)` : m.kgWeek > 0.02 ? ` (≈ +${fmtNum(Math.round(wOut(m.kgWeek) * 100) / 100, 2)} ${wUnit()}/v)` : ' (håller vikten)')(goalMeaning(S.state, goal, t)) })] : null));
+      goal ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-goal' }), el('span', { text: `🎯 ≈ ${kcal(goal)} kcal/dag` }))
+        : ref ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-ref' }), el('span', { text: `håller vikten ≈ ${kcal(ref)} kcal/dag` })) : null));
 }
 
 // Veckans snitt (måndag–idag/söndag) mot snittet för veckan innan (2026-11-22). null utan vägningar i båda.
@@ -88,8 +82,10 @@ export function weekDelta(ws) {
 export function goalRow(d, perWeek = false) {
   const p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
   if (!p || p.reached) return null;
-  const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), u = wUnit() + (perWeek ? '/v' : ''), off = d - p.rate;
-  return el('p', { class: 'w-sub w-goal', text: `veckomål ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${u} · ${perWeek ? `utfall ${d < 0 ? '−' : '+'}${v(d)} ${u} · ` : ''}${Math.abs(off) < 0.05 ? 'i fas ✅' : off * Math.sign(p.rate) > 0 ? `${v(off)} ${u} före 🚀` : `${v(off)} ${u} efter ⚠️`}` });
+  // Förenklad (2026-11-22): mål och hur långt från det, inget mer.
+  const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = d - p.rate, ahead = off * Math.sign(p.rate) > 0;
+  return el('p', { class: 'w-sub w-goal' }, `🎯 ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${wUnit()}/v · `,
+    el('span', { class: Math.abs(off) < 0.05 || ahead ? 'kd-down' : 'wg-behind', text: Math.abs(off) < 0.05 ? 'i fas' : `${v(off)} ${wUnit()}${perWeek ? '/v' : ''} ${ahead ? 'före' : 'efter'}` }));
 }
 
 // Vikt (v0.5.13): senaste vägningen i veckan mot den sista vägningen veckan innan (2026-11-22).
@@ -111,11 +107,7 @@ function weightCard(ws) {
       d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), text: dTxt }) : null),
     // Utfall mot veckomålet (2026-11-22).
     d != null ? goalRow(d) : null,
-    el('p', { class: 'w-sub', text: last == null ? 'Ingen vägning den här veckan än'
-      : bw == null ? 'Ingen vägning veckan innan att jämföra med'
-      : `snitt ${kg1(wd.a)} mot ${kg1(bw)} ${wUnit()} · ${cur.length} vägning${cur.length === 1 ? '' : 'ar'} denna vecka` }),
-    // Underskott/överskott räknas bara inom aktuell vecka (2026-11-21): första till sista vägningen.
-    cur.length > 1 ? kcalDayLine(last - S.state.weights[cur[0]], cur[0], cur[cur.length - 1]) : null,
+    last == null || bw == null ? el('p', { class: 'w-sub', text: last == null ? 'Ingen vägning den här veckan än' : 'Ingen vägning veckan innan att jämföra med' }) : null,
     kcalWeightChart(ws, 7));
 }
 

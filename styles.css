@@ -857,3 +857,4 @@ details[open] > :not(summary) { animation: m3e-in .35s var(--spring); }
 .wk-pill .delta { font-weight: 700; }
 .day-head .streak > .wk-pill { text-align: center; padding: 4px 14px; line-height: 1.35; }
 .wk-pill .wk-goal { margin-left: 4px; font-size: .875rem; font-weight: 400; color: var(--muted); }
+.w-goal .kd-down { color: var(--ok); } .w-goal .wg-behind { color: var(--cheat); }
