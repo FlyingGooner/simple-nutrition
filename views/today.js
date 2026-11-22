@@ -1,6 +1,6 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
 import { parseKey, sumN, postN, goalFor, setGoal, addDays, habitDay, habitStreak, dayCheck, energyEstimate, weightPlan, currentWeight, weekStart } from '../store.js';
-import { goalRow } from './week.js';
+import { goalRow, weekDelta } from './week.js';
 import { today, S, setOpen, el, svg, stepper, stat, kcal, fmtNum, pct, dateTitle, wOut, wIn, wUnit, amountText, mealName, reasonName, arrange, habitsOnly } from '../ui.js';
 import { viewAdd } from './add.js';
 import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
@@ -239,16 +239,14 @@ export function openWeightDialog(onSave) {
 // Utfall mot veckomålet (2026-11-22): senaste vägningen denna vecka mot sista vägningen veckan innan (helst söndagen).
 function weekGoalCard() {
   if (S.current !== today()) return null;   // även utan viktmål (2026-11-22)
-  const ws = weekStart(today()), keys = Object.keys(S.state.weights).sort();
-  const base = keys.filter((k) => k < ws && k >= addDays(ws, -7)).pop(), last = keys.filter((k) => k >= ws && k <= today()).pop();
-  if (!base || !last) return null;
-  const d = Math.round((S.state.weights[last] - S.state.weights[base]) * 10) / 10, row = goalRow(d);   // null utan viktmål
+  const wd = weekDelta(today());   // 7-dagarssnitt mot veckan innan (2026-11-22): mindre fladder än enskilda vägningar
+  if (!wd) return null;
+  const d = wd.d, row = goalRow(d);   // null utan viktmål
   const v = fmtNum(Math.round(wOut(Math.abs(d)) * 10) / 10);
   return el('div', { class: 'card wk-goal-today' },
     // Färg (2026-11-22): grönt nedåt, rött uppåt.
-    el('p', { class: 'wg-out' }, el('span', { text: 'Utfall mot veckan innan' }), ' ',
-      el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v} ${wUnit()}` }), ' ',
-      el('span', { class: 'muted', text: `sedan ${Number(base.slice(8))}/${Number(base.slice(5, 7))}` })), row);
+    el('p', { class: 'wg-out' }, el('span', { text: 'Snitt 7 dagar mot veckan innan' }), ' ',
+      el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v} ${wUnit()}` }), row);
 }
 export function viewToday() {
   if (S.add) return viewAdd();
