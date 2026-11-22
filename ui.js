@@ -129,7 +129,7 @@ export function sessionText(w) {
 // Okända id:n ignoreras, nya kort (senare versioner) läggs sist, så sparad ordning går aldrig sönder.
 export const LAYOUT = {
   today: [['plan', 'Min plan'], ['meals', 'Måltider'], ['train', 'Träning och extra fusk'], ['kcal', 'Kalorier'], ['weight', 'Vikt']],
-  week: [['weight', 'Vikt'], ['habits', 'Vanor'], ['days', 'Dag för dag'], ['training', 'Träning'], ['kcal', 'Kalorier']],
+  week: [['weight', 'Vikt'], ['habits', 'Vanor'], ['days', 'Dag för dag'], ['training', 'Träning']],
   trend: [['weight', 'Vikt, mål och följsamhet'], ['energy', 'Total förbrukning']],
   history: [['weight', 'Vikt'], ['calendar', 'Kalender'], ['more', 'Träning och kcal'], ['weeks', 'Vecka för vecka']],
 };

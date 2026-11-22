@@ -639,7 +639,7 @@ export const EXPORT_EXAMPLE = {
   wgoal: { target: 105, date: '2027-05-01' },
   habits: { '2026-11-10': { m1: { outcome: 'followed' }, m2: { outcome: 'cheat', reason: 'out-lunch', note: 'Jobbmiddag' } } },
   workouts: { '2026-11-10': [{ types: ['push', 'pull'] }] },
-  layout: { week: { order: ['weight', 'habits', 'days', 'training', 'kcal'], hidden: [] } },
+  layout: { week: { order: ['weight', 'habits', 'days', 'training'], hidden: [] } },
   backup: { remind: 'month', last: '2026-11-10' },
 };
 export function exportText(state, today) {

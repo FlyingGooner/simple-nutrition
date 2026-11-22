@@ -144,12 +144,7 @@ export function viewWeek(ws = S.week) {
     days: () => el('section', { class: 'card' }, el('h2', { text: 'Dag för dag' }), dayTable(ws, st),
       el('p', { class: 'muted small', text: '○ räknas inte · ⏳ idag, räknas när dagen är slut' })),
     training: () => trainingCard(ws),
-    kcal: () => el('section', { class: 'card' }, el('h2', { text: 'Kalorier' }),
-      // Snittet räknar bara kompletta dagar (2026-11-21), samma regel som förbrukningen.
-      (() => { const pe = periodEnergy(S.state, ws, addDays(ws, 6), today()); return el('div', { class: 'stats' },
-        stat(pe.logged ? kcal(pe.kcal / pe.logged) : '–', 'kcal per dag i snitt'),
-        st.hasGoal ? stat(`${st.within}/${st.logged}`, 'dagar inom mål') : stat(`${pe.logged}/${st.logged}`, 'kompletta dagar')); })(),
-      energyStats(ws, addDays(ws, 6))),
+    // Kortet Kalorier borttaget (2026-11-22): snittet står i diagrammet under Vikt.
     }),
   ];
 }
