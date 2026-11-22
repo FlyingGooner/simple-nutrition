@@ -150,13 +150,13 @@ export function weekTable(wsList) {
   if (!list.length) return el('section', { class: 'card' }, el('h2', { text: 'Vecka för vecka' }), el('p', { class: 'muted small', text: 'Inget loggat de här veckorna.' }));
   return el('section', { class: 'card' }, el('h2', { text: 'Vecka för vecka' }),
     el('table', { class: 'wk-table' },
-      el('thead', {}, el('tr', {}, ['v', 'Vikt', '±', '✅', '🍰', '🏋️', 'kcal/d'].map((h) => el('th', { scope: 'col', text: h })))),
+      el('thead', {}, el('tr', {}, [self.I18N?.lang() === 'en' ? 'wk' : 'v', 'Vikt', '±', '✅', '🍰', '🏋️', 'kcal/d'].map((h) => el('th', { scope: 'col', text: h })))),
       el('tbody', {}, list.map((r) => {
         const prev = avg7(addDays(r.ws, -1));
         return el('tr', { 'data-act': 'openweek', 'data-val': r.ws },
           el('td', {}, el('button', { class: 'link wk-open', 'data-act': 'openweek', 'data-val': r.ws, text: String(isoWeek(r.ws)) }), r.cur ? ' •' : null),
-          el('td', { text: r.w != null ? fmtNum(r1(r.w)) : '–' }),
-          el('td', {}, r.w != null && prev != null ? el('span', { class: 'delta' + (r.w - prev < 0 ? ' down' : ''), text: signed(r.w - prev) }) : '–'),
+          el('td', { text: r.w != null ? wOut(r.w).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : '–' }),
+          el('td', {}, r.w != null && prev != null ? el('span', { class: 'delta' + (r.w - prev < 0 ? ' down' : ''), text: signed(wOut(r.w - prev)) }) : '–'),
           el('td', { class: r.h.ratio == null ? '' : r.h.ratio >= S.state.settings.successThreshold ? 'good-t' : r.h.ratio >= 0.5 ? 'mid-t' : 'low-t', text: pct(r.h.ratio) }),
           el('td', { text: r.h.count || r.h.extraCheat ? String(r.h.cheat + r.h.extraCheat) : '–' }),
           el('td', { text: (() => { const g = goals(r.ws).find((x) => x.key === 'workoutGoal'); const n = weekSessions(r.ws).all; return g ? `${n}/${g.goal}` : n ? String(n) : '–'; })() }),

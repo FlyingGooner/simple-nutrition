@@ -145,3 +145,6 @@ export function arrange(v, map) {
   const { order, hidden } = layoutOf(v);
   return order.filter((id) => !hidden.includes(id) && map[id]).map((id) => map[id]());
 }
+
+// Veckodagarnas begynnelsebokstäver (2026-11-22): på engelska M T W T F S S.
+export const dayLetters = () => (self.I18N?.lang() === 'en' ? ['M', 'T', 'W', 'T', 'F', 'S', 'S'] : ['M', 'T', 'O', 'T', 'F', 'L', 'S']);

@@ -2,7 +2,7 @@
 import { periodEnergy, weekStart, addDays, dateKey, parseKey, sumN, habitDay } from '../store.js';
 import { energyStats, kcalDayLine, weekTable } from './trend.js';
 import { kcalWeightChart, goalRow } from './week.js';
-import { today, S, el, svg, stepper, stat, kcal, pct, shortDate, arrange, wOut, wUnit, dOut, dUnit } from '../ui.js';
+import { today, S, el, svg, stepper, stat, kcal, pct, shortDate, arrange, wOut, wUnit, dOut, dUnit, dayLetters } from '../ui.js';
 // (dateKey/parseKey används även av monthWeight)
 
 // Vikt (v0.5.16): senaste vägningen i månaden mot senaste vägningen månaden innan, med minikurva över båda månaderna.
@@ -76,7 +76,7 @@ export function viewHistory() {
     ...arrange('history', {
     weight: () => monthWeight(kcalWeightChart(`${S.month}-01`, new Date(y, m, 0).getDate())),   // följsamhet över tid flyttad till Historik och mål (2026-11-21)
     calendar: () => el('section', { class: 'card' },
-      el('div', { class: 'cal-head' }, ['M', 'T', 'O', 'T', 'F', 'L', 'S'].map((d) => el('span', { text: d }))),
+      el('div', { class: 'cal-head' }, dayLetters().map((d) => el('span', { text: d }))),
       el('div', { class: 'cal' }, cells),
       el('p', { class: 'legend' },
         el('span', { class: 'lg good' }), ` ≥ ${pct(S.state.settings.successThreshold)}`, el('span', { class: 'lg mid' }), ' 50 %+', el('span', { class: 'lg low' }), ' < 50 %',

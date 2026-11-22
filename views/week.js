@@ -1,9 +1,9 @@
 // View: Vecka – vanor först (följsamhet, fusk, orsaker, träning), sedan kalorier som stöd (beslut 2026-11-09).
 import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCheck, energyEstimate, goalFor, goalMeaning, sumN, periodEnergy, weightPlan, avg7Of } from '../store.js';
 import { energyStats, kcalDayLine } from './trend.js';
-import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goals, weekSessions, sessionText, fmtNum, arrange, wOut, wUnit } from '../ui.js';
+import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goals, weekSessions, sessionText, fmtNum, arrange, wOut, wUnit, dayLetters } from '../ui.js';
 
-const DAYS = ['M', 'T', 'O', 'T', 'F', 'L', 'S'];
+const DAYS = dayLetters();
 
 // Dag för dag (v0.5.12): vanor, träning och kcal per dag i en tabell. Tryck på en rad = öppna dagen.
 function dayTable(ws, st) {
