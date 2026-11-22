@@ -44,7 +44,7 @@ function monthWeight(extra = null) {
       d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), text: dTxt }) : null),
     !lastK || d == null ? el('p', { class: 'w-sub', text: !lastK ? 'Ingen vägning den här månaden' : 'Inga vägningar förra månaden att jämföra med' }) : null,
     // Veckomålet: takten mellan snitten räknas per vecka, över avståndet mellan vägningarnas mittdatum.
-    d == null ? null : ((days) => { const ref = `snitt ${kg1(aCur)} mot ${kg1(aPrev)} ${wUnit()} förra månaden`;
+    d == null ? null : ((days) => { const ref = `månadens snitt ${kg1(aCur)} mot ${kg1(aPrev)} ${wUnit()} förra månaden`;
       return (days >= 3 ? goalRow((aCur - aPrev) / days * 7, ref + ' · ') : null) || el('p', { class: 'w-sub', text: ref }); })(day(cur) - day(prev)),
     extra);
 }

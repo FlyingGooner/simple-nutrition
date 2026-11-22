@@ -87,8 +87,8 @@ export function goalRow(d, pre = 'snitt mot förra veckan · ') {   // pre: vad 
   if (!p || p.reached) return null;
   // Förenklad igen (2026-11-22): bara målet och ✓ när veckans ändring når det – ändringen själv står redan stort bredvid.
   const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = d - p.rate, ok = Math.abs(off) < 0.05 || off * Math.sign(p.rate) > 0;
-  return el('p', { class: 'w-sub w-goal' }, pre, `🎯 ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${wUnit()}/v `,
-    el('span', { class: ok ? 'kd-down' : 'wg-behind', text: ok ? '🟢' : '🟠' }));
+  return el('p', { class: 'w-sub w-goal' }, pre, el('span', { class: 'nowrap' }, `🎯 ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${wUnit()}/v `,   // bryts som en enhet
+    el('span', { class: ok ? 'kd-down' : 'wg-behind', text: ok ? '🟢' : '🟠' })));
 }
 
 // Vikt (v0.5.13): senaste vägningen i veckan mot den sista vägningen veckan innan (2026-11-22).
@@ -110,7 +110,7 @@ function weightCard(ws) {
       d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), title: 'Veckans snitt mot snittet veckan innan', text: dTxt }) : null),
     // Utfall mot veckomålet (2026-11-22).
     // Snitten utskrivna (2026-11-22), som Månad: den stora siffran är senaste vägningen.
-    d != null ? ((ref) => goalRow(d, ref + ' · ') || el('p', { class: 'w-sub', text: ref }))(`snitt ${kg1(wd.a)} mot ${kg1(wd.b)} ${wUnit()} förra veckan`) : null,
+    d != null ? ((ref) => goalRow(d, ref + ' · ') || el('p', { class: 'w-sub', text: ref }))(`veckans snitt ${kg1(wd.a)} mot ${kg1(wd.b)} ${wUnit()} förra veckan`) : null,
     last == null || bw == null ? el('p', { class: 'w-sub', text: last == null ? 'Ingen vägning den här veckan än' : 'Ingen vägning veckan innan att jämföra med' }) : null,
     kcalWeightChart(ws, 7));
 }
