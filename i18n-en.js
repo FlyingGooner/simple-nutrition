@@ -375,6 +375,7 @@ I18N.add({
   [/^Veckans snitt mot veckan innan · veckomål ([−+][\d,.]+) (kg|lb)(?: · i fas| · ([\d,.]+) (kg|lb) (före|efter))$/, (g) => `This week's average vs last week · weekly goal ${g[1]} ${g[2]} · ` + (g[3] ? `${g[3]} ${g[4]} ${g[5] === 'före' ? 'ahead' : 'behind'}` : 'on track')],
   [/^Denna vecka ([−+±][\d,.]*) (kg|lb) sedan (.+)$/, 'This week $1 $2 since $3'],
   [/^snitt ([\d,.]+) mot ([\d,.]+) (kg|lb) förra månaden( ·)?$/, 'avg $1 vs $2 $3 last month$4'],
+  [/^snitt ([\d,.]+) mot ([\d,.]+) (kg|lb) förra veckan( ·)?$/, 'avg $1 vs $2 $3 last week$4'],
   [/^snitt ([\d\s]+) kcal\/dag$/, 'avg $1 kcal/day'],
   [/^🎯 ([−+][\d,.]+) (kg|lb)\/v$/, '🎯 $1 $2/wk'],
   [/^🎯 ([−+][\d,.]+) (kg|lb)\/v $/, '🎯 $1 $2/wk '],

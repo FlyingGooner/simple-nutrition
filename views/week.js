@@ -109,7 +109,8 @@ function weightCard(ws) {
       el('span', { class: 'w-flex' }),
       d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), title: 'Veckans snitt mot snittet veckan innan', text: dTxt }) : null),
     // Utfall mot veckomålet (2026-11-22).
-    d != null ? goalRow(d) : null,
+    // Snitten utskrivna (2026-11-22), som Månad: den stora siffran är senaste vägningen.
+    d != null ? ((ref) => goalRow(d, ref + ' · ') || el('p', { class: 'w-sub', text: ref }))(`snitt ${kg1(wd.a)} mot ${kg1(wd.b)} ${wUnit()} förra veckan`) : null,
     last == null || bw == null ? el('p', { class: 'w-sub', text: last == null ? 'Ingen vägning den här veckan än' : 'Ingen vägning veckan innan att jämföra med' }) : null,
     kcalWeightChart(ws, 7));
 }
