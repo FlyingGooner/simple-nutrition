@@ -199,8 +199,7 @@ function mealCard(m, posts) {
   const need = !other && !posts.length && e?.outcome !== 'skipped' && !(habitsOnly() && e);   // bara vanor: vald vana räcker
   const mark = !need ? null : m.opt ? el('span', { class: 'fill-tag opt', text: 'Valfri' })
     : e ? el('span', { class: 'fill-tag', title: 'Vanan är vald – lägg till maten för kalorierna, annars räknas dagen inte i statistiken', text: '○ Lägg till mat (kcal)' })
-    : habitsOnly() ? el('span', { class: 'fill-tag', title: 'Välj ✅, 🍰 eller ⏭️', text: '○ Fyll i' })
-    : el('span', { class: 'fill-tag', title: 'Lägg till mat eller tryck ⏭️, annars räknas dagen inte i statistiken', text: '○ Fyll i' });
+    : null;   // 2026-11-22: tom krävd måltid – den orange ramen räcker, ingen ○ Fyll i
   // Tom måltid visas utfälld så vanan (✅ 🍰 ⏭️) kan fyllas i direkt (2026-11-22, ångrar 634bc4a).
   if (!e || !OUTCOMES[e.outcome] || (e.outcome === 'cheat' && !e.reason)) {
     return el('section', { class: 'card meal' + (need && !m.opt ? ' meal-need' : ''), 'aria-label': m.name },
@@ -261,12 +260,13 @@ export function viewToday() {
       extraCards(),
       other.length ? mealCard({ id: '_other', name: 'Övrigt' }, other) : null),
     train: () => el('div', { class: 'workouts' }, workoutCards()),
-    kcal: () => habitsOnly() ? [weighNote()] : [summaryCard(), dayNote(), weighNote(), energyHint(),
+    kcal: () => habitsOnly() ? [weighNote()] : [summaryCard(), weighNote(), energyHint(),
       !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
         ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera maten från igår' }) : null],
     weight: () => null,   // 2026-11-21: ligger i kcal-kortet
     }),
     addRow(),   // 2026-11-21: knapparna längst ner
+    dayNote(),   // 2026-11-22: tipset om orange ram allra längst ner
   ];
 }
 // Markeringsläge (håll in en post): Kopiera till en dag eller Radera, på en gång.
