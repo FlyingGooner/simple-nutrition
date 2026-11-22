@@ -257,7 +257,7 @@ I18N.add({
   'Måtten byts bara i visningen – allt sparas som förut, så du kan byta när du vill.': 'Only the display changes – everything is stored as before, so you can switch whenever you like.',
   'Vikt i lb': 'Weight in lb', 'Sträcka i mi': 'Distance in mi', 'Ange sträckan i mi, t.ex. 5,2.': 'Enter the distance in mi, e.g. 5.2.', 'cup': 'cup', 'fl oz': 'fl oz', 'oz': 'oz',
   'Tillbaka': 'Back',
-  'IDAG': 'TODAY', 'kvar': 'left', 'över': 'over', 'Protein': 'Protein', 'Kolhydrater': 'Carbs', 'Fett': 'Fat', 'kolh': 'carbs', 'prot': 'prot',
+  'IDAG': 'TODAY', 'Ätit': 'Eaten', 'kvar': 'left', 'över': 'over', 'Protein': 'Protein', 'Kolhydrater': 'Carbs', 'Fett': 'Fat', 'kolh': 'carbs', 'prot': 'prot',
   'Spara vikt': 'Save weight', 'Vikt, kg': 'Weight, kg', 'kg': 'kg', 'Mål': 'Goal', 'Snitt': 'Average', 'Totalt': 'Total', 'Summa': 'Sum',
   'Lägg till mat': 'Add food', 'Lägg till pass': 'Add workout', 'Extra fusk': 'Extra cheat', '+ Extra fusk': '+ Extra cheat',
   'Orsak': 'Reason', 'Orsaker': 'Reasons', 'Anteckning': 'Note', 'Anteckning (valfritt)': 'Note (optional)', 'Passtyper': 'Workout types',
