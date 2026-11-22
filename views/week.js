@@ -1,5 +1,5 @@
 // View: Vecka – vanor först (följsamhet, fusk, orsaker, träning), sedan kalorier som stöd (beslut 2026-11-09).
-import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCheck, energyEstimate, goalFor, sumN, periodEnergy } from '../store.js';
+import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCheck, energyEstimate, goalFor, goalMeaning, sumN, periodEnergy } from '../store.js';
 import { energyStats, kcalDayLine } from './trend.js';
 import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goals, weekSessions, sessionText, fmtNum, arrange, wOut, wUnit } from '../ui.js';
 
@@ -64,7 +64,7 @@ export function kcalWeightChart(from, n = 7) {
       el('span', { class: 'lg-bar' }), el('span', { text: 'kcal per dag' }),
       pts.length ? [el('span', { class: 'lg-line' }), el('span', { text: `vikt ${kgTxt(ws_)}` })] : null,
       ref ? [el('span', { class: 'lg-ref' }), el('span', { text: `håller vikten ≈ ${kcal(ref)}` })] : null,
-      goal ? [el('span', { class: 'lg-goal' }), el('span', { text: `kalorimål ${kcal(goal)}` })] : null));
+      goal ? [el('span', { class: 'lg-goal' }), el('span', { text: `ditt kalorimål ${kcal(goal)}` + ((m) => !m ? '' : m.kgWeek < -0.02 ? ` (≈ −${fmtNum(Math.round(wOut(-m.kgWeek) * 100) / 100, 2)} ${wUnit()}/v)` : m.kgWeek > 0.02 ? ` (≈ +${fmtNum(Math.round(wOut(m.kgWeek) * 100) / 100, 2)} ${wUnit()}/v)` : ' (håller vikten)')(goalMeaning(S.state, goal, t)) })] : null));
 }
 
 // Vikt (v0.5.13): senaste vägningen i veckan mot den tidigaste vägningen veckan innan.

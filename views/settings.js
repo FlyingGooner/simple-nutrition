@@ -1,5 +1,5 @@
 // View: Inställningar – grupperna Vanor, Träning, Kalorier och Allmänt, var och en hopfälld för sig (beslut 2026-11-09).
-import { goalFor, findRef, addDays, currentWeight, weightPlan } from '../store.js';
+import { goalFor, goalMeaning, findRef, addDays, currentWeight, weightPlan } from '../store.js';
 import { today, S, setOpen, el, kcal, pct, shortDate, LAYOUT, LAYOUT_VIEWS, layoutOf, imperial, wOut, wUnit, fmtNum, habitsOnly } from '../ui.js';
 import { PLAN_MAX } from '../habit-store.js';
 import { savedPassword } from './data.js';
@@ -155,6 +155,8 @@ export function viewSettings() {
         el('label', { class: 'goal-row' }, el('span', { text: 'kcal per dag' }),
           el('input', { type: 'text', inputmode: 'numeric', class: 'num-in', value: g.kcal ? String(g.kcal) : '', placeholder: 'Inget mål', id: 'g-kcal', 'aria-label': 'Kalorimål per dag' }),
           el('button', { class: 'weigh-save', 'data-act': 'goalsave', text: 'Spara' })),
+        (() => { const m = goalMeaning(S.state, g.kcal, today());
+          return m ? el('p', { class: 'small goal-why', text: `Du gör av med ungefär ${kcal(m.tdee)} kcal/dag. Med ${kcal(g.kcal)} kcal/dag ${m.kgWeek < -0.02 ? `går du ner ungefär ${fmtNum(Math.round(wOut(-m.kgWeek) * 100) / 100, 2)} ${wUnit()} i veckan` : m.kgWeek > 0.02 ? `går du upp ungefär ${fmtNum(Math.round(wOut(m.kgWeek) * 100) / 100, 2)} ${wUnit()} i veckan` : 'håller du vikten'}.` }) : null; })(),
         el('p', { class: 'muted small', text: 'Valfritt – lämna tomt för inget mål. Ändringen gäller från idag; tidigare dagar jämförs med målet som gällde då.' })),
       sec('macros', 'Protein och kolhydrater', [g.prot ? `P ${g.prot} g` : '', g.kolh ? `K ${g.kolh} g` : ''].filter(Boolean).join(' · ') || 'Av',
         opt('prot', 'Protein, g per dag'), opt('kolh', 'Kolhydrater, g per dag'),

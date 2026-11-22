@@ -396,6 +396,8 @@ I18N.add({
   [/^([\d,.]+) år$/, (g) => `${g[1]} years`],
   [/^([\d\s\u00a0,.−-]+(?: kcal| g| kg)?) över$/, (g) => `${g[1]} over`],
   [/^([\d\s\u00a0,.−-]+(?: kcal| g| kg)?) kvar$/, (g) => `${g[1]} left`],
+  [/^ditt kalorimål ([\d\s ]+)(?: \(≈ ([−+][\d,.]+) (kg|lb)\/v\)| \(håller vikten\))?$/, (g) => `your calorie goal ${g[1]}` + (g[2] ? ` (≈ ${g[2]} ${g[3]}/wk)` : / \(/.test(g[0]) ? ' (keeps weight)' : '')],
+  [/^Du gör av med ungefär ([\d\s ]+) kcal\/dag\. Med ([\d\s ]+) kcal\/dag (?:går du (ner|upp) ungefär ([\d,.]+) (kg|lb) i veckan|håller du vikten)\.$/, (g) => `You burn about ${g[1]} kcal/day. At ${g[2]} kcal/day you ` + (g[3] ? `${g[3] === 'ner' ? 'lose' : 'gain'} about ${g[4]} ${g[5]} a week.` : 'keep your weight.')],
   [/^Fler veckor behövs \((\d+)\/4\) – veckor med loggning och vikt före och efter\.$/, (g) => `More weeks needed (${g[1]}/4) – weeks with logging and weight before and after.`],
   [/^✅ (\d+) följde · ⏭️ (\d+) hoppade över$/, '✅ $1 followed · ⏭️ $2 skipped'],
   [/^Vecka (\d+)$/, 'Week $1'],
