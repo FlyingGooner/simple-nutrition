@@ -372,6 +372,8 @@ I18N.add({
   [/^håller vikten ≈ (.+) kcal\/dag$/, 'maintain ≈ $1 kcal/day'],
   [/^håller vikten ≈ (.+)$/, 'maintain ≈ $1'],
   [/^snitt ([\d,.]+) mot ([\d,.]+) (kg|lb) · (\d+) vägningar? denna vecka$/, (g) => `average ${g[1]} vs ${g[2]} ${g[3]} · ${g[4]} weigh-in${g[4] === '1' ? '' : 's'} this week`],
+  [/^ · mål ([−+][\d,.]+)(.*)$/, ' · goal $1$2'],
+  [/^Veckans snitt mot veckan innan · veckomål (.+)$/, "This week's average vs last week · weekly goal $1"],
   [/^Denna vecka ([−+±][\d,.]*) (kg|lb) sedan (.+)$/, 'This week $1 $2 since $3'],
   [/^utfall ≈ (.+) kcal\/dag · som veckomålet$/, 'actual ≈ $1 kcal/day · same as weekly goal'],
   [/^utfall ≈ (.+) kcal\/dag · (.+) (över|under) veckomålet$/, (g) => `actual ≈ ${g[1]} kcal/day · ${g[2]} ${g[3] === 'över' ? 'over' : 'under'} weekly goal`],

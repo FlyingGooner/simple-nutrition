@@ -853,3 +853,5 @@ details[open] > :not(summary) { animation: m3e-in .35s var(--spring); }
 .wk-goal-today .w-sub { margin: 0; }
 .wk-goal-today .wg-out { margin: 0 0 2px; font-size: 1rem; }
 .wk-goal-today .wg-out .delta { font-size: 1.125rem; }
+.day-head .streak { flex-wrap: wrap; gap: 6px; }
+.wk-pill .delta { font-weight: 700; }

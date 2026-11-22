@@ -236,17 +236,16 @@ export function openWeightDialog(onSave) {
   d.returnValue = ''; show(); d.showModal();
 }
 
-// Utfall mot veckomålet (2026-11-22): senaste vägningen denna vecka mot sista vägningen veckan innan (helst söndagen).
-function weekGoalCard() {
-  if (S.current !== today()) return null;   // även utan viktmål (2026-11-22)
-  const wd = weekDelta(weekStart(today()));   // veckans snitt mot veckan innan (2026-11-22)
+// Veckans snitt mot veckan innan (2026-11-22): kompakt pill i dagrubriken – grönt ner, rött upp; med viktmål ✅/🚀/⚠️.
+function weekPill() {
+  const wd = weekDelta(weekStart(today()));
   if (!wd) return null;
-  const d = wd.d, row = goalRow(d);   // null utan viktmål
-  const v = fmtNum(Math.round(wOut(Math.abs(d)) * 10) / 10);
-  return el('div', { class: 'card wk-goal-today' },
-    // Färg (2026-11-22): grönt nedåt, rött uppåt.
-    el('p', { class: 'wg-out' }, el('span', { text: 'Veckans snitt mot veckan innan' }), ' ',
-      el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v} ${wUnit()}` })), row);
+  const d = wd.d, p = weightPlan(S.state.wgoal, currentWeight(S.state), today()), g = p && !p.reached ? p : null;
+  const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = g ? d - g.rate : 0;
+  const mark = !g ? '' : Math.abs(off) < 0.05 ? ' ✅' : off * Math.sign(g.rate) > 0 ? ' 🚀' : ' ⚠️';
+  return el('span', { class: 'wk-pill', title: `Veckans snitt mot veckan innan${g ? ` · veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}` : ''}` }, '⚖️ ',
+    el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v(d)} ${wUnit()}` }),
+    g ? ` · mål ${g.rate < 0 ? '−' : '+'}${v(g.rate)}${mark}` : '');
 }
 export function viewToday() {
   if (S.add) return viewAdd();
@@ -262,7 +261,8 @@ export function viewToday() {
     el('div', { class: 'card day-head' },
     stepper('Byt dag', ['prev', 'Föregående dag'], 'today', ['next', 'Nästa dag'], isToday,
       isToday ? [el('span', { class: 'today-badge', text: 'IDAG' }), dateTitle(S.current)] : dateTitle(S.current), null, isToday ? '' : 'not-today'),
-    el('div', { class: 'streak' }, st ? el('span', { title: 'Lyckade dagar i rad', text: `🔥 ${st} ${st === 1 ? 'dag' : 'dagar'} i rad` }) : null,   // 0 i rad visas inte (2026-11-21)
+    el('div', { class: 'streak' }, st ? el('span', { title: 'Lyckade dagar i rad', text: `🔥 ${st} ${st === 1 ? 'dag' : 'dagar'} i rad` }) : null,
+      isToday ? weekPill() : null,   // 0 i rad visas inte (2026-11-21)
       isToday ? null : el('button', { class: 'link back-today', 'data-act': 'today', text: '↩ Till idag' })),
     isToday ? headGoal(posts) : (headShown = false, null)),
     ...arrange('today', {
@@ -274,7 +274,7 @@ export function viewToday() {
       extraCards(),
       other.length ? mealCard({ id: '_other', name: 'Övrigt' }, other) : null),
     train: () => el('div', { class: 'workouts' }, workoutCards()),
-    kcal: () => habitsOnly() ? [weekGoalCard(), weighNote()] : [summaryCard(), weekGoalCard(), weighNote(),   // 2026-11-22: förbrukningsraden borttagen (inga mål på Idag)
+    kcal: () => habitsOnly() ? [weighNote()] : [summaryCard(), weighNote(),   // 2026-11-22: förbrukningsraden borttagen (inga mål på Idag)
       !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
         ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera maten från igår' }) : null],
     weight: () => null,   // 2026-11-21: ligger i kcal-kortet
