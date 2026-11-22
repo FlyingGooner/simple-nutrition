@@ -859,3 +859,4 @@ details[open] > :not(summary) { animation: m3e-in .35s var(--spring); }
 .wk-pill .wk-goal { margin-left: 4px; font-size: .875rem; font-weight: 400; color: var(--muted); }
 .w-goal .kd-down { color: var(--ok); } .w-goal .wg-behind { color: var(--cheat); }
 .day-head .streak > .wk-pill { white-space: nowrap; }
+.lg-bar.inc { opacity: .2; }
