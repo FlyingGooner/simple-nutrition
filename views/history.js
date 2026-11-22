@@ -14,9 +14,11 @@ function monthWeight(extra = null) {
   if (!cur.length && !prev.length) return extra ? el('section', { class: 'card w-card' }, extra) : null;
   const W = (k) => S.state.weights[k], kg1 = (v) => wOut(v).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const lastK = cur[cur.length - 1], prevK = prev[prev.length - 1];
-  // Jämför mot sista vägningen månaden innan; finns ingen, mot månadens första vägning (v0.5.17).
-  const baseK = prevK || (cur.length >= 2 ? cur[0] : null);
-  const d = lastK && baseK ? Math.round((W(lastK) - W(baseK)) * 10) / 10 : null;
+  // Månadens snitt mot förra månadens snitt (2026-11-22), som Vecka; bara när båda månaderna har vägningar.
+  const baseK = prevK;
+  const mean = (ks) => ks.reduce((a, k) => a + W(k), 0) / ks.length, day = (ks) => ks.reduce((a, k) => a + +parseKey(k), 0) / ks.length / 864e5;
+  const aCur = cur.length ? mean(cur) : null, aPrev = prev.length ? mean(prev) : null;
+  const d = aCur != null && aPrev != null ? Math.round((aCur - aPrev) * 10) / 10 : null;
   const dTxt = d == null ? '' : d === 0 ? `±0 ${wUnit()}` : `${d > 0 ? '+' : '−'}${kg1(Math.abs(d))} ${wUnit()}`;
   const ks = [...prev, ...cur];
   let spark = el('span', { class: 'w-spark' });
@@ -40,11 +42,10 @@ function monthWeight(extra = null) {
       el('span', { class: 'w-now', text: lastK ? `${kg1(W(lastK))} ${wUnit()}` : '–' }),
       extra ? el('span', { class: 'w-flex' }) : spark,   // med stapeldiagram behövs ingen minikurva (2026-11-21)
       d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), text: dTxt }) : null),
-    !lastK || !baseK ? el('p', { class: 'w-sub', text: !lastK ? 'Ingen vägning den här månaden' : 'Första vägningen – inget att jämföra med än' }) : null,   // förenklad (2026-11-22)
-    // Veckomålet (2026-11-22): utfall i kg/v mellan jämförelsevägningarna.
-    // Jämförelsen utskriven (2026-11-22): vilken vägning ändringen räknas från, t.ex. "mot 113,2 kg 31/10".
-    ((days) => { if (!lastK || !baseK) return null; const ref = `mot ${kg1(W(baseK))} ${wUnit()} ${shortDate(baseK)}`;
-      return (days >= 3 ? goalRow((W(lastK) - W(baseK)) / days * 7, ref + ' · ') : null) || el('p', { class: 'w-sub', text: ref }); })(lastK && baseK ? Math.round((parseKey(lastK) - parseKey(baseK)) / 864e5) : 0),
+    !lastK || d == null ? el('p', { class: 'w-sub', text: !lastK ? 'Ingen vägning den här månaden' : 'Inga vägningar förra månaden att jämföra med' }) : null,
+    // Veckomålet: takten mellan snitten räknas per vecka, över avståndet mellan vägningarnas mittdatum.
+    d == null ? null : ((days) => { const ref = `snitt ${kg1(aCur)} mot ${kg1(aPrev)} ${wUnit()} förra månaden`;
+      return (days >= 3 ? goalRow((aCur - aPrev) / days * 7, ref + ' · ') : null) || el('p', { class: 'w-sub', text: ref }); })(day(cur) - day(prev)),
     extra);
 }
 
