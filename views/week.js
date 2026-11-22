@@ -64,7 +64,7 @@ export function kcalWeightChart(from, n = 7) {
     // Förklaring alltid (2026-11-21): vad staplar och linje är.
     // Förenklad (2026-11-22): bara staplar och målraden; utan viktmål raden för håller vikten.
     el('p', { class: 'kw-legend' },
-      el('span', { class: 'lg-bar' }), el('span', { text: 'kcal per dag' }),
+      el('span', { class: 'lg-bar' }), el('span', { text: ((ok) => ok.length ? `snitt ${kcal(ok.reduce((x, y) => x + y, 0) / ok.length)} kcal/dag` : 'kcal per dag')(kc.filter((v, i) => v && dayCheck(S.state, days[i], t).ok)) }),   // snittet för klara dagar (2026-11-22)
       // Ljus stapel (2026-11-22): idag eller en dag som saknar måltider räknas inte än.
       kc.some((v, i) => v && !dayCheck(S.state, days[i], t).ok) ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-bar inc' }), el('span', { text: 'ej klar dag' })) : null,
       goal ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-goal' }), el('span', { text: `🎯 ≈ ${kcal(goal)} kcal/dag` }))
