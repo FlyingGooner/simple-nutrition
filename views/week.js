@@ -82,10 +82,10 @@ export function weekDelta(ws) {
 export function goalRow(d, perWeek = false) {
   const p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
   if (!p || p.reached) return null;
-  // Förenklad (2026-11-22): mål och hur långt från det, inget mer.
-  const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = d - p.rate, ahead = off * Math.sign(p.rate) > 0;
-  return el('p', { class: 'w-sub w-goal' }, `${perWeek ? '' : 'snitt mot förra veckan · '}🎯 ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${wUnit()}/v · `,
-    el('span', { class: Math.abs(off) < 0.05 || ahead ? 'kd-down' : 'wg-behind', text: Math.abs(off) < 0.05 ? 'i fas' : `${v(off)} ${wUnit()}${perWeek ? '/v' : ''} ${ahead ? 'bättre' : 'sämre'} än målet` }));
+  // Förenklad igen (2026-11-22): bara målet och ✓ när veckans ändring når det – ändringen själv står redan stort bredvid.
+  const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = d - p.rate, ok = Math.abs(off) < 0.05 || off * Math.sign(p.rate) > 0;
+  return el('p', { class: 'w-sub w-goal' }, `${perWeek ? '' : 'snitt mot förra veckan · '}🎯 ${p.rate < 0 ? '−' : '+'}${v(p.rate)} ${wUnit()}/v `,
+    el('span', { class: ok ? 'kd-down' : 'wg-behind', text: ok ? '✓' : '⚠️' }));
 }
 
 // Vikt (v0.5.13): senaste vägningen i veckan mot den sista vägningen veckan innan (2026-11-22).
