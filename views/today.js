@@ -239,13 +239,13 @@ export function openWeightDialog(onSave) {
 // Utfall mot veckomålet (2026-11-22): senaste vägningen denna vecka mot sista vägningen veckan innan (helst söndagen).
 function weekGoalCard() {
   if (S.current !== today()) return null;   // även utan viktmål (2026-11-22)
-  const wd = weekDelta(today());   // 7-dagarssnitt mot veckan innan (2026-11-22): mindre fladder än enskilda vägningar
+  const wd = weekDelta(weekStart(today()));   // veckans snitt mot veckan innan (2026-11-22)
   if (!wd) return null;
   const d = wd.d, row = goalRow(d);   // null utan viktmål
   const v = fmtNum(Math.round(wOut(Math.abs(d)) * 10) / 10);
   return el('div', { class: 'card wk-goal-today' },
     // Färg (2026-11-22): grönt nedåt, rött uppåt.
-    el('p', { class: 'wg-out' }, el('span', { text: 'Snitt 7 dagar mot veckan innan' }), ' ',
+    el('p', { class: 'wg-out' }, el('span', { text: 'Veckans snitt mot veckan innan' }), ' ',
       el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v} ${wUnit()}` }), row);
 }
 export function viewToday() {
