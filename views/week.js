@@ -81,7 +81,7 @@ function avgIn(from, to) {
   return v.length ? v.reduce((x, y) => x + y, 0) / v.length : null;
 }
 export function weekDelta(ws) {
-  const t = today(), end = addDays(ws, 6) > t ? t : addDays(ws, 6), a = avg7Of(S.state.weights, end) == null ? null : avgIn(ws, end), b = avgIn(addDays(ws, -7), addDays(ws, -1));
+  const t = today(), end = addDays(ws, 6) > t ? t : addDays(ws, 6), a = avgIn(ws, end), b = avgIn(addDays(ws, -7), addDays(ws, -1));
   return a == null || b == null ? null : { a, b, d: Math.round((a - b) * 10) / 10 };
 }
 // Utfall mot veckomålet (2026-11-22): d = ändring i kg per vecka; perWeek = visa som kg/v (Månad).
