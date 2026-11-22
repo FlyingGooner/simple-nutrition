@@ -25,6 +25,9 @@ export const mealName = (id) => S.state.meals.find((m) => m.id === id)?.name ?? 
 // Måttsystem (2026-11-15): sn.units = 'metric' | 'imperial'. Inte valt → metriskt (standard, 2026-11-15).
 // All data sparas alltid metriskt (g, kg, km); bara visning och inmatning räknas om.
 const UNITS_KEY = 'sn.units';
+// Vad följs (2026-11-22): sn.track = 'both' (vanor och kalorier, standard) | 'habits' (bara vanor: ingen mat eller kcal på Idag).
+export const habitsOnly = () => { try { return localStorage.getItem('sn.track') === 'habits'; } catch { return false; } };
+export const setTrack = (v) => { try { localStorage.setItem('sn.track', v === 'habits' ? 'habits' : 'both'); } catch { /* blocked */ } };
 export const unitsChosen = () => { try { return ['metric', 'imperial'].includes(localStorage.getItem(UNITS_KEY)); } catch { return false; } };
 export const imperial = () => {
   try { const v = localStorage.getItem(UNITS_KEY); if (v === 'metric' || v === 'imperial') return v === 'imperial'; } catch { /* blocked */ }

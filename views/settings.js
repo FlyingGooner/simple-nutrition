@@ -1,6 +1,6 @@
 // View: Inställningar – grupperna Vanor, Träning, Kalorier och Allmänt, var och en hopfälld för sig (beslut 2026-11-09).
 import { goalFor, findRef, addDays, currentWeight, weightPlan } from '../store.js';
-import { today, S, setOpen, el, kcal, pct, shortDate, LAYOUT, LAYOUT_VIEWS, layoutOf, imperial, wOut, wUnit, fmtNum } from '../ui.js';
+import { today, S, setOpen, el, kcal, pct, shortDate, LAYOUT, LAYOUT_VIEWS, layoutOf, imperial, wOut, wUnit, fmtNum, habitsOnly } from '../ui.js';
 import { PLAN_MAX } from '../habit-store.js';
 import { savedPassword } from './data.js';
 import { forecastLine } from './trend.js';
@@ -126,6 +126,11 @@ export function viewSettings() {
   const goalHint = [['workoutGoal', 'Alla'], ['gymGoal', 'Gym'], ['cardioGoal', 'Kond.']].filter(([k]) => s[k]).map(([k, l]) => `${l} ${s[k]}`).join(' · ');
   return [
     group('habits', 'Vanor', `Minst ${pct(s.successThreshold)}`,
+      sec('track', 'Vad följer du?', habitsOnly() ? 'Bara vanor' : 'Vanor och kalorier',
+        el('label', { class: 'goal-row' }, el('span', { text: 'Följ' }),
+          el('select', { 'data-act': 'track', 'aria-label': 'Vad följer du?' },
+            [['both', 'Vanor och kalorier'], ['habits', 'Bara vanor']].map(([v, l]) => el('option', { value: v, selected: habitsOnly() === (v === 'habits'), text: l })))),
+        el('p', { class: 'muted small', text: 'Bara vanor: Idag visar bara ✅ 🍰 ⏭️, utan mat och kalorier. En måltid räknas som ifylld när du valt vana. Maten du redan loggat finns kvar.' })),
       sec('plan', 'Min plan', s.planText ? s.planText.split('\n')[0].slice(0, 30) + (s.planText.length > 30 ? '…' : '') : 'Ingen plan',
         el('textarea', { rows: 3, maxlength: PLAN_MAX, placeholder: 'T.ex. matlåda till lunch, inget godis på vardagar', id: 'plan-text', 'aria-label': 'Min plan', text: s.planText }),
         el('div', { class: 'save-row' }, el('button', { class: 'weigh-save', 'data-act': 'plansave', text: 'Spara plan' })),

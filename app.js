@@ -2,7 +2,7 @@
 import { load, save, validate, validDate, currentWeight, weightPlan, addDays, weekStart, setGoal, goalFor, findRef, cleanText, uid, dishTotal } from './store.js';
 import { today, S, setOpen, el, kcal, dateTitle, parseNum, wType, isCardio, parseDur, fmtNum, amountText, layoutOf, LAYOUT_VIEWS } from './ui.js';
 import { lastPost, QUICK_ADD, setLevel, dropLevels, quickGroup, EST_MAX } from './store.js';
-import { mealName, wIn, wOut, wUnit, shortDate, dIn, dUnit, setUnits } from './ui.js';
+import { mealName, wIn, wOut, wUnit, shortDate, dIn, dUnit, setUnits, setTrack } from './ui.js';
 import { topLayer, layerDepth, closeTop, dishDirty, defaultQuickG } from './nav.js';
 import { viewToday, dayPosts, dayText, openWeightDialog } from './views/today.js';
 import { resultsList, pickGrams, pickSum, unitsOf, isBulk, bulkDefault, EST_GROUP } from './views/add.js';
@@ -760,6 +760,7 @@ app.addEventListener('change', (ev) => {
     case 'lang': self.I18N.setLang(t.value); return;
     case 'theme': self.THEME.set(t.value); render(); return;
     case 'units': setUnits(t.value); S.add = null; render(); return;
+    case 'track': setTrack(t.value); render(); return;
     case 'bkremind': if (['week', 'month', 'off'].includes(t.value)) { S.state.backup.remind = t.value; S.state.backup.asked = null; persist(); } return;
     case 'threshold': S.state.settings.successThreshold = Number(t.value) / 100; persist(); return;
     case 'wgoal': {

@@ -1,6 +1,6 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
 import { parseKey, sumN, postN, goalFor, setGoal, addDays, habitDay, habitStreak, dayCheck, energyEstimate, weightPlan, currentWeight } from '../store.js';
-import { today, S, setOpen, el, svg, stepper, stat, kcal, fmtNum, pct, dateTitle, wOut, wIn, wUnit, amountText, mealName, reasonName, arrange } from '../ui.js';
+import { today, S, setOpen, el, svg, stepper, stat, kcal, fmtNum, pct, dateTitle, wOut, wIn, wUnit, amountText, mealName, reasonName, arrange, habitsOnly } from '../ui.js';
 import { viewAdd } from './add.js';
 import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
 import { OUTCOMES } from '../habit-store.js';
@@ -183,7 +183,7 @@ function mealCard(m, posts) {
   const body = [
     other ? null : outcomeRow(m.id),
     other ? null : habitDetails(m.id),
-    el('details', { class: 'meal-food' + (posts.length ? ' has-food' : ''), 'data-sec': sec, open },
+    habitsOnly() && !posts.length ? null : el('details', { class: 'meal-food' + (posts.length ? ' has-food' : ''), 'data-sec': sec, open },
       el('summary', {},
         el('span', { class: 'food-label', text: posts.length ? '✅ Mat' : '🥗 Mat' }),
         el('span', { class: 'meal-kcal', text: posts.length ? `${kcal(total)} kcal` : 'Inget loggat' })),
@@ -195,9 +195,10 @@ function mealCard(m, posts) {
   const e = other ? null : dayHabits()[m.id];
   // Ifylld måltid fälls ihop till en rad: val + rätt + kcal (fusk utan orsak hålls öppen tills orsaken är vald).
   // Ifyllt eller inte (2026-11-21): krävd måltid utan mat och utan ⏭️ = "○ Fyll i", valfri = "Valfri".
-  const need = !other && !posts.length && e?.outcome !== 'skipped';
+  const need = !other && !posts.length && e?.outcome !== 'skipped' && !(habitsOnly() && e);   // bara vanor: vald vana räcker
   const mark = !need ? null : m.opt ? el('span', { class: 'fill-tag opt', text: 'Valfri' })
     : e ? el('span', { class: 'fill-tag', title: 'Vanan är vald – lägg till maten för kalorierna, annars räknas dagen inte i statistiken', text: '○ Lägg till mat (kcal)' })
+    : habitsOnly() ? el('span', { class: 'fill-tag', title: 'Välj ✅, 🍰 eller ⏭️', text: '○ Fyll i' })
     : el('span', { class: 'fill-tag', title: 'Lägg till mat eller tryck ⏭️, annars räknas dagen inte i statistiken', text: '○ Fyll i' });
   // Tom måltid visas utfälld så vanan (✅ 🍰 ⏭️) kan fyllas i direkt (2026-11-22, ångrar 634bc4a).
   if (!e || !OUTCOMES[e.outcome] || (e.outcome === 'cheat' && !e.reason)) {
@@ -259,7 +260,7 @@ export function viewToday() {
       extraCards(),
       other.length ? mealCard({ id: '_other', name: 'Övrigt' }, other) : null),
     train: () => el('div', { class: 'workouts' }, workoutCards()),
-    kcal: () => [summaryCard(), dayNote(), weighNote(), energyHint(),
+    kcal: () => habitsOnly() ? [weighNote()] : [summaryCard(), dayNote(), weighNote(), energyHint(),
       !posts.length && (S.state.log[addDays(S.current, -1)] || []).length
         ? el('button', { class: 'extra', 'data-act': 'copyprev', text: 'Kopiera maten från igår' }) : null],
     weight: () => null,   // 2026-11-21: ligger i kcal-kortet
