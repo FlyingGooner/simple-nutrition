@@ -242,10 +242,10 @@ function weekPill() {
   if (!wd) return null;
   const d = wd.d, p = weightPlan(S.state.wgoal, currentWeight(S.state), today()), g = p && !p.reached ? p : null;
   const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = g ? d - g.rate : 0;
-  const mark = !g ? '' : Math.abs(off) < 0.05 ? ' · i fas ✅' : ` · ${v(off)} ${wUnit()} ${off * Math.sign(g.rate) > 0 ? 'före 🚀' : 'efter ⚠️'}`;   // utskrivet (2026-11-22)
-  return el('span', { class: 'wk-pill', title: `Veckans snitt mot veckan innan${g ? ` · veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}` : ''}` }, '⚖️ ',
-    el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v(d)} ${wUnit()}` }), ' mot förra veckan',
-    g ? el('span', { class: 'wk-goal', text: `veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}${mark}` }) : null);
+  const mark = !g ? '' : Math.abs(off) < 0.05 ? ' ✅' : off * Math.sign(g.rate) > 0 ? ' 🚀' : ' ⚠️';   // en rad (2026-11-22); hela texten i title   // utskrivet (2026-11-22)
+  return el('span', { class: 'wk-pill', title: `Veckans snitt mot veckan innan${g ? ` · veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}${Math.abs(off) < 0.05 ? ' · i fas' : ` · ${v(off)} ${wUnit()} ${off * Math.sign(g.rate) > 0 ? 'före' : 'efter'}`}` : ''}` }, '⚖️ ',
+    el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v(d)} ${wUnit()}` }), ' i veckan',
+    g ? el('span', { class: 'wk-goal', text: `· mål ${g.rate < 0 ? '−' : '+'}${v(g.rate)}${mark}` }) : null);
 }
 export function viewToday() {
   if (S.add) return viewAdd();
