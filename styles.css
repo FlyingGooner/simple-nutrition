@@ -846,3 +846,4 @@ details[open] > :not(summary) { animation: m3e-in .35s var(--spring); }
 .day-table tbody td { border-bottom: 1px solid var(--line); }
 .day-table tbody tr { border-bottom: 0; }
 .day-table tbody tr:last-child td, .day-table tbody tr.is-today td, .day-table tbody tr:has(+ tr.is-today) td { border-bottom-color: transparent; }
+.hg-src { margin: 2px 0 0; text-align: right; }

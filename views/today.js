@@ -67,6 +67,9 @@ function headGoalInner(posts) {
     // 2026-11-22: inget mål i siffror – bara ätit och kvar, med ord
     el('div', { class: 'hg-row' }, el('span', { class: 'hg-from' }, 'Ätit ', el('strong', { text: kcal(eaten) }), ' kcal'),
       el('span', { class: 'hg-left' + (left < 0 ? ' over' : ''), text: left < 0 ? `${kcal(-left)} kcal över` : `${kcal(left)} kcal kvar` })),
+    // 2026-11-22: varifrån målet kommer
+    el('p', { class: 'hg-src muted small', text: from === 'Kalorimål' ? 'Kvar till ditt kalorimål (Inställningar → Kalorier)'
+      : from === 'För viktmålet' ? 'Kvar för att nå viktmålet i vald takt, räknat på din förbrukning' : 'Kvar för att hålla vikten, räknat på din förbrukning' }),
   );
 }
 // Påminnelse om vägning (2026-11-21): bara idag, när senaste vägningen är 4 dagar gammal eller äldre och idag saknar vägning.
