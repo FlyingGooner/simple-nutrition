@@ -861,3 +861,6 @@ details[open] > :not(summary) { animation: m3e-in .35s var(--spring); }
 .day-head .streak > .wk-pill { white-space: nowrap; }
 .lg-bar.inc { opacity: .2; }
 .nowrap { white-space: nowrap; }
+
+/* Dag för dag: skillnad mot samma dag förra veckan (2026-11-23) */
+.wk-table .dt-vs { font-size: .75rem; line-height: 1.1; }
