@@ -545,7 +545,11 @@ app.addEventListener('click', (ev) => {
     case 'dper': S.dish.batch = false; break;
     case 'dbatch': S.dish.batch = true; break;
     case 'diadd': openAdd('dish', null); return;
-    case 'didel': S.dish.items.splice(Number(val), 1); break;
+    case 'didel': {   // 2026-11-23: Ångra – ingrediensen tillbaka på samma plats
+      const i = Number(val), [it] = S.dish.items.splice(i, 1), dish = S.dish;
+      if (it) snackbar(`${it.name} togs bort`, 'Ångra', () => { if (S.dish === dish) { dish.items.splice(i, 0, it); render(); } });
+      break;
+    }
     case 'dsave': saveDish(); return;
     case 'ddel': {
       const d = S.state.dishes.find((x) => x.id === S.dish.id);

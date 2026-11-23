@@ -2,6 +2,7 @@
 // Mönster (regex) för texter med tal eller namn i; $1… översätts i sin tur. Saknas en text visas den svenska.
 I18N.setKey('sn.lang');
 I18N.add({
+  'Kunde inte spara – lagringen är full eller blockerad.': 'Could not save – storage is full or blocked.',
   '📋 Kopiera för kontroll med AI': '📋 Copy to check with AI', 'Dagen är kopierad – klistra in den i Gemini': 'The day is copied – paste it into Gemini', 'Kunde inte kopiera': 'Could not copy',
   'Allt du ätit i dag ▾': 'Everything you ate today ▾', 'Övrigt': 'Other', 'Mer ▾': 'More ▾',
   'Öppnas snabbare och fungerar utan nät': 'Opens faster and works offline', 'Installera': 'Install', 'Visa hur': 'Show how', '📲 Installera som app': '📲 Install as an app',
@@ -329,6 +330,7 @@ I18N.add({
   'restaurang/snabbmat · uppskattning': 'restaurant/fast food · estimate', 'Korv med bröd': 'Hot dog', 'varmkorv med bröd och ketchup/senap · uppskattning': 'hot dog with bun and ketchup/mustard · estimate',
   'Sushi': 'Sushi', '1 bit nigiri eller maki · uppskattning': '1 piece of nigiri or maki · estimate',
 }, [
+  [/^Hel sats, (\d+) portioner(?:, färdig vikt (.+) g)?$/, (g) => `Whole batch, ${g[1]} portions` + (g[2] ? `, cooked weight ${g[2]} g` : '')],   // 2026-11-23
   [/^([^,]+), (.+)$/, (g, tr) => { const a = tr(g[1]), b = tr(g[2]); return /[åäöÅÄÖ]/.test(a + b) ? null : a + ', ' + b; }],
   [/^(.+) – (Lätt|Standard|Tung|Lite|Mellan|Mycket)$/, '$1 – $2'],
   [/^(\d+) poster lades till · ✅ enligt plan, som förra gången$/, '$1 items added · ✅ as planned, like last time'],

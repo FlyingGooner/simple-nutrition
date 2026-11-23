@@ -42,8 +42,8 @@ export function dishEditor() {
           el('li', { text: 'Vatten, salt och kryddor behöver inte vägas.' }))),
       el('p', { class: 'import-error small', id: 'd-error', role: 'alert' }),
       el('div', { class: 'row-actions' },
-        d.id ? el('button', { class: 'link danger', 'data-act': 'ddel', text: 'Ta bort rätten' }) : el('span'),
-        el('button', { class: 'weigh-save', 'data-act': 'dsave', text: 'Spara rätt' }))),
+        el('button', { class: 'weigh-save', 'data-act': 'dsave', text: 'Spara rätt' }),   // 2026-11-23: Spara först, Ta bort sist
+        d.id ? el('button', { class: 'link danger', 'data-act': 'ddel', text: 'Ta bort rätten' }) : el('span'))),
   ];
 }
 

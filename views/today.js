@@ -178,8 +178,8 @@ function postRow(p) {
       el('label', { class: 'field' }, el('span', { text: 'Måltid' }),
         el('select', { id: 'p-meal', 'aria-label': 'Måltid' }, S.state.meals.map((m) => el('option', { value: m.id, selected: m.id === p.m, text: m.name })))),
       el('div', { class: 'row-actions' },
-        el('button', { class: 'link danger', 'data-act': 'pdel', 'data-id': p.id, text: 'Ta bort' }),
-        el('button', { class: 'weigh-save', 'data-act': 'psave', 'data-id': p.id, text: 'Spara' })),
+        el('button', { class: 'weigh-save', 'data-act': 'psave', 'data-id': p.id, text: 'Spara' }),   // 2026-11-23: Spara först, Ta bort sist
+        el('button', { class: 'link danger', 'data-act': 'pdel', 'data-id': p.id, text: 'Ta bort' })),
       el('p', { class: 'import-error small', id: 'p-error', role: 'alert' })));
   }
   return row;
