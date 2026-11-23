@@ -462,6 +462,24 @@ app.addEventListener('click', (ev) => {
       if (addPost(post)) logged(post.name);
       return;
     }
+    case 'relogsel': {
+      const sel = S.add.sel || (S.add.sel = []), i = sel.indexOf(id);
+      if (i >= 0) sel.splice(i, 1); else sel.push(id);
+      const y = scrollY; render(); scrollTo(0, y); return;
+    }
+    case 'relogclear': { S.add.sel = []; const y = scrollY; render(); scrollTo(0, y); return; }
+    case 'relogmany': {
+      const all = Object.values(S.state.log).flat(), names = [];
+      for (const sid of S.add.sel || []) {
+        const src = all.find((x) => x.id === sid);
+        if (!src) continue;
+        const post = { ...src, id: uid(), m: S.add.meal, n: [...src.n], ...(src.u ? { u: [...src.u] } : {}) };
+        if (!addPost(post)) break;
+        names.push(post.name);
+      }
+      if (names.length) logged(names.length === 1 ? names[0] : `${names.length} poster`);
+      return;
+    }
     case 'aliasopen': S.add.alias = !S.add.alias; render(); document.getElementById('alias-word')?.focus(); return;
     case 'aliassave': {
       const w = cleanText(document.getElementById('alias-word')?.value, 40).toLowerCase();

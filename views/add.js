@@ -64,9 +64,17 @@ export function resultsList() {
   if (a.tab === 'recent') {
     const list = recent(S.state, 20, a.meal);
     if (!list.length) return [el('p', { class: 'muted small', text: 'Inget loggat ännu. Sök under Varor.' })];
-    return [el('ul', { class: 'posts' }, list.map((p) => el('li', {}, el('button', { class: 'food-row', 'data-act': 'relog', 'data-id': p.id },
-      el('span', { class: 'post-name' }, p.name, el('small', { text: amountText(p) })),
-      el('span', { class: 'post-kcal', text: kcal(postN(p)[0]) })))))];
+    // Flera åt gången (2026-11-23): bocka i rutan till vänster, sedan Lägg till; tryck på raden = lägg till bara den.
+    const sel = a.sel || [], chosen = list.filter((p) => sel.includes(p.id));
+    return [el('ul', { class: 'posts' }, list.map((p) => { const on = sel.includes(p.id);
+      return el('li', { class: 'pick-li' + (on ? ' on' : '') },
+        el('button', { class: 'pick-box', 'data-act': 'relogsel', 'data-id': p.id, role: 'checkbox', 'aria-checked': String(on), 'aria-label': 'Markera ' + p.name, text: on ? '✓' : '' }),
+        el('button', { class: 'food-row', 'data-act': 'relog', 'data-id': p.id },
+          el('span', { class: 'post-name' }, p.name, el('small', { text: amountText(p) })),
+          el('span', { class: 'post-kcal', text: kcal(postN(p)[0]) }))); })),
+      chosen.length ? el('div', { class: 'pick-bar' },
+        el('button', { class: 'btn btn-text', 'data-act': 'relogclear', text: 'Avmarkera' }),
+        el('button', { class: 'btn btn-filled', 'data-act': 'relogmany', text: `Lägg till ${chosen.length} (${kcal(chosen.reduce((x, p) => x + postN(p)[0], 0))} kcal)` })) : null];
   }
   if (!a.q.trim()) return [el('p', { class: 'muted small', text: 'Skriv t.ex. mjölk, kyckling eller havregryn.' })];
   const r = searchFoods(S.state, a.q, a.all);
