@@ -192,7 +192,25 @@ function addPost(p) {
   if (l.length >= 100) { snackbar('Max 100 poster per dag', null, null, 3000); return false; }
   l.push(p); return true;
 }
-function logged(name) { if (String(S.add?.meal).startsWith('extra-')) S.xopen = null; S.add = null; buzz(); persist(); render(); snackbar(`${name} lades till`, null, null, 2500); }
+// Minns enligt plan (2026-11-23): har måltiden exakt samma varor (mängden spelar ingen roll) som en tidigare dag
+// där den var ✅ enligt plan, och inget val gjort än, sätts ✅ direkt. Senaste dagen med samma varor avgör.
+function autoFollowed(meal) {
+  if (!meal || String(meal).startsWith('extra-') || S.state.habits[S.current]?.[meal]) return false;
+  const sig = (posts) => [...new Set(posts.filter((p) => p.m === meal).map((p) => p.ref || p.name))].sort().join('\n');
+  const now = sig(dayList());
+  if (!now) return false;
+  const day = Object.keys(S.state.log).filter((k) => k !== S.current && sig(S.state.log[k]) === now).sort().pop();
+  const h = day && S.state.habits[day]?.[meal];
+  if ((h && typeof h === 'object' ? h.outcome : h) !== 'followed') return false;
+  const name = S.state.meals.find((m) => m.id === meal)?.name;
+  (S.state.habits[S.current] ??= {})[meal] = { outcome: 'followed', ...(name ? { name } : {}) };
+  return true;
+}
+function logged(name) {
+  const meal = S.add?.meal, auto = autoFollowed(meal);
+  if (String(meal).startsWith('extra-')) S.xopen = null; S.add = null; buzz(); persist(); render();
+  snackbar(`${name} lades till${auto ? ' · ✅ enligt plan, som förra gången' : ''}`, null, null, auto ? 4000 : 2500);
+}
 function openAdd(target, meal) {
   const tab = target === 'dish' ? 'foods' : S.lastTab || (Object.keys(S.state.log).length ? 'recent' : 'foods');
   S.add = { target, meal, tab, q: '', all: false, pick: null, dpick: null, est: null, alias: false, scroll: 0, qg: defaultQuickG(mealName(meal), S.quickG) };
