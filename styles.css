@@ -864,4 +864,4 @@ details[open] > :not(summary) { animation: m3e-in .35s var(--spring); }
 
 /* Dag för dag: skillnad mot samma dag förra veckan (2026-11-23) */
 .wk-table .dt-vs { font-size: .75rem; line-height: 1.1; }
-.wk-table .dt-vs.up { color: var(--cheat); }
+.wk-table .delta.up { color: var(--cheat); }

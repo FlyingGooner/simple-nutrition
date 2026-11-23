@@ -146,7 +146,9 @@ export function weekTable(wsList) {
     const st = weekStats(S.state, ws), end = addDays(ws, 6) > today() ? today() : addDays(ws, 6);
     return { ws, st, h: habitWeek(S.state, ws), w: avg7(end), cur: ws === weekStart(today()) };
   });
-  const list = rows.filter((r) => r.st.logged || r.h.count || r.w != null || weekSessions(r.ws).all);
+  // Senaste veckan överst (2026-11-23).
+  const list = rows.filter((r) => r.st.logged || r.h.count || r.w != null || weekSessions(r.ws).all).reverse();
+  const kd = (ws) => { const pe = periodEnergy(S.state, ws, addDays(ws, 6), today()); return pe.logged ? pe.kcal / pe.logged : null; };
   if (!list.length) return el('section', { class: 'card' }, el('h2', { text: 'Vecka för vecka' }), el('p', { class: 'muted small', text: 'Inget loggat de här veckorna.' }));
   return el('section', { class: 'card' }, el('h2', { text: 'Vecka för vecka' }),
     el('table', { class: 'wk-table' },
@@ -156,11 +158,13 @@ export function weekTable(wsList) {
         return el('tr', { 'data-act': 'openweek', 'data-val': r.ws },
           el('td', {}, el('button', { class: 'link wk-open', 'data-act': 'openweek', 'data-val': r.ws, text: String(isoWeek(r.ws)) }), r.cur ? ' •' : null),
           el('td', { text: r.w != null ? wOut(r.w).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : '–' }),
-          el('td', {}, r.w != null && prev != null ? el('span', { class: 'delta' + (r.w - prev < 0 ? ' down' : ''), text: signed(wOut(r.w - prev)) }) : '–'),
+          el('td', {}, r.w != null && prev != null ? el('span', { class: 'delta' + (r.w - prev < 0 ? ' down' : r.w - prev > 0 ? ' up' : ''), text: signed(wOut(r.w - prev)) }) : '–'),
           el('td', { class: r.h.ratio == null ? '' : r.h.ratio >= S.state.settings.successThreshold ? 'good-t' : r.h.ratio >= 0.5 ? 'mid-t' : 'low-t', text: pct(r.h.ratio) }),
           el('td', { text: r.h.count || r.h.extraCheat ? String(r.h.cheat + r.h.extraCheat) : '–' }),
           el('td', { text: (() => { const g = goals(r.ws).find((x) => x.key === 'workoutGoal'); const n = weekSessions(r.ws).all; return g ? `${n}/${g.goal}` : n ? String(n) : '–'; })() }),
-          (() => { const pe = periodEnergy(S.state, r.ws, addDays(r.ws, 6), today()); return el('td', { text: pe.logged ? kcal(pe.kcal / pe.logged) : '–' }); })());   // kompletta dagar
+          // kcal/d mot veckan innan (2026-11-23), som Dag för dag: liten siffra, mer = rött.
+          (() => { const a = kd(r.ws), b = kd(addDays(r.ws, -7)), d = a != null && b != null ? Math.round(a) - Math.round(b) : null;
+            return el('td', {}, a != null ? kcal(a) : '–', d == null ? null : el('div', { class: 'dt-vs delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: (d > 0 ? '+' : d < 0 ? '−' : '±') + kcal(Math.abs(d)) })); })());   // kompletta dagar
       }))));
 }
 

@@ -245,16 +245,19 @@ export function openWeightDialog(onSave) {
 }
 
 // Veckans snitt mot veckan innan (2026-11-22): kompakt pill i dagrubriken – grönt ner, rött upp; med viktmål ✅/🚀/⚠️.
+// Mot samma dag veckan innan (2026-11-23): visade dagens vikt (eller senaste före) mot vägningen 7 dagar tidigare; saknas den, veckosnitten.
 function weekPill() {
-  const wd = weekDelta(weekStart(today()));
+  const ks = Object.keys(S.state.weights).filter((k) => k <= S.current).sort(), k = ks[ks.length - 1];
+  const b = k && k >= addDays(S.current, -6) ? S.state.weights[addDays(k, -7)] : null;
+  const wd = b != null ? { d: Math.round((S.state.weights[k] - b) * 10) / 10, day: true } : weekDelta(weekStart(today()));
   if (!wd) return null;
   const d = wd.d, p = weightPlan(S.state.wgoal, currentWeight(S.state), today()), g = p && !p.reached ? p : null;
   const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = g ? d - g.rate : 0;
   const mark = !g ? '' : Math.abs(off) < 0.05 || off * Math.sign(g.rate) > 0 ? ' 🟢' : ' 🟠';
   // Ett piller (2026-11-22): ändringen och målet ihop, förklaringen i title.
-  return el('span', { class: 'wk-pill', title: `Veckans snitt mot förra veckans snitt${g ? ` · veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}/v` : ''}` }, '⚖️ ',
+  return el('span', { class: 'wk-pill', title: `${wd.day ? 'Mot samma dag veckan innan' : 'Veckans snitt mot förra veckans snitt'}${g ? ` · veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}/v` : ''}` }, '⚖️ ',
     el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v(d)} ${wUnit()}` }),
-    g ? ` · 🎯 ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}/v${mark}` : ' i veckan');
+    g ? ` · 🎯 ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}/v${mark}` : wd.day ? ' sedan förra veckan' : ' i veckan');
 }
 export function viewToday() {
   if (S.add) return viewAdd();
