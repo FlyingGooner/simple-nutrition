@@ -21,12 +21,17 @@ function dayTable(ws, st) {
         // Vanor men ingen mat (2026-11-21): tydligt att dagen inte räknas.
         // Idag (2026-11-21): pågår, räknas när dagen är slut – markeras med … i stället för ○.
         ...[(() => { const c = dayCheck(S.state, d.k, today()), now = c.reason === 'today';
-          return el('td', { class: !now && ((d.logged && !c.ok) || (!d.logged && r != null)) ? 'dt-inc' : '' }, d.logged ? kcal(d.kcal) + (c.ok ? '' : now ? ' ⏳' : ' ○') : r != null && !now ? 'ingen mat ○' : '–'); })()],
+          return el('td', { class: !now && ((d.logged && !c.ok) || (!d.logged && r != null)) ? 'dt-inc' : '' }, d.logged ? kcal(d.kcal) + (c.ok ? '' : now ? ' ⏳' : ' ○') : r != null && !now ? 'ingen mat ○' : '–', c.ok ? vsLast(d.k, 'k') : null); })()],
       );
     })));
 }
-// Mot samma dag förra veckan (2026-11-23): liten skillnad under vikten (bara vikt, 2026-11-23), när båda dagarna har värde.
-function vsLast(k) {
+// Mot samma dag förra veckan (2026-11-23): liten skillnad under vikt och kcal (2026-11-23; kcal bara när båda dagarna räknas), mer = rött, när båda dagarna har värde.
+function vsLast(k, kind = 'w') {
+  if (kind === 'k') {
+    if (!dayCheck(S.state, addDays(k, -7), today()).ok) return null;
+    const d = Math.round(sumN(S.state.log[k] || [])[0]) - Math.round(sumN(S.state.log[addDays(k, -7)] || [])[0]);
+    return el('div', { class: 'dt-vs delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: (d > 0 ? '+' : d < 0 ? '−' : '±') + kcal(Math.abs(d)) });
+  }
   const a = S.state.weights[k], b = S.state.weights[addDays(k, -7)];
   if (a == null || b == null) return null;
   const d = Math.round((wOut(a) - wOut(b)) * 10) / 10;
@@ -151,7 +156,7 @@ export function viewWeek(ws = S.week) {
     weight: () => weightCard(ws),
     habits: () => habitCard(ws),
     days: () => el('section', { class: 'card' }, el('h2', { text: 'Dag för dag' }), dayTable(ws, st),
-      el('p', { class: 'muted small', text: 'Små tal under vikt: mot samma dag förra veckan · ○ räknas inte · ⏳ idag, räknas när dagen är slut' })),
+      el('p', { class: 'muted small', text: 'Små tal: mot samma dag förra veckan · ○ räknas inte · ⏳ idag, räknas när dagen är slut' })),
     training: () => trainingCard(ws),
     // Kortet Kalorier borttaget (2026-11-22): snittet står i diagrammet under Vikt.
     }),
