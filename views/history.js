@@ -1,6 +1,6 @@
 // View: Historik – månadskalender färgad efter följsamhet (vanor, som i follow-diet-tracker), streaks, träning och kcal som stöd.
 import { periodEnergy, weekStart, addDays, dateKey, parseKey, sumN, habitDay } from '../store.js';
-import { energyStats, kcalDayLine, weekTable } from './trend.js';
+import { energyStats, kcalDayLine, weekTable, sameDay } from './trend.js';
 import { kcalWeightChart, goalRow } from './week.js';
 import { today, S, el, svg, stepper, stat, kcal, pct, shortDate, arrange, wOut, wUnit, dOut, dUnit, dayLetters } from '../ui.js';
 // (dateKey/parseKey används även av monthWeight)
@@ -14,11 +14,11 @@ function monthWeight(extra = null) {
   if (!cur.length && !prev.length) return extra ? el('section', { class: 'card w-card' }, extra) : null;
   const W = (k) => S.state.weights[k], kg1 = (v) => wOut(v).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const lastK = cur[cur.length - 1], prevK = prev[prev.length - 1];
-  // Månadens snitt mot förra månadens snitt (2026-11-22), som Vecka; bara när båda månaderna har vägningar.
-  const baseK = prevK;
-  const mean = (ks) => ks.reduce((a, k) => a + W(k), 0) / ks.length, day = (ks) => ks.reduce((a, k) => a + +parseKey(k), 0) / ks.length / 864e5;
-  const aCur = cur.length ? mean(cur) : null, aPrev = prev.length ? mean(prev) : null;
-  const d = aCur != null && aPrev != null ? Math.round((aCur - aPrev) * 10) / 10 : null;
+  // Motsvarande dag månaden innan (2026-11-23): 30 mars mot 28 feb; annars närmaste vägningen förra månaden.
+  const pDays = new Date(pm.slice(0, 4), +pm.slice(5), 0).getDate();
+  const md = lastK ? sameDay(lastK, `${pm}-${String(Math.min(+lastK.slice(8), pDays)).padStart(2, '0')}`, `${pm}-01`, `${pm}-${pDays}`) : null;
+  const baseK = md ? md.bk : prevK;
+  const d = md ? md.d : null;
   const dTxt = d == null ? '' : d === 0 ? `±0 ${wUnit()}` : `${d > 0 ? '+' : '−'}${kg1(Math.abs(d))} ${wUnit()}`;
   const ks = [...prev, ...cur];
   let spark = el('span', { class: 'w-spark' });
@@ -41,11 +41,11 @@ function monthWeight(extra = null) {
       el('span', { class: 'w-label', text: 'Vikt' }),
       el('span', { class: 'w-now', text: lastK ? `${kg1(W(lastK))} ${wUnit()}` : '–' }),
       extra ? el('span', { class: 'w-flex' }) : spark,   // med stapeldiagram behövs ingen minikurva (2026-11-21)
-      d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), text: dTxt }) : null),
+      d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), title: 'Mot motsvarande dag förra månaden', text: dTxt }) : null),
     !lastK || d == null ? el('p', { class: 'w-sub', text: !lastK ? 'Ingen vägning den här månaden' : 'Inga vägningar förra månaden att jämföra med' }) : null,
-    // Veckomålet: takten mellan snitten räknas per vecka, över avståndet mellan vägningarnas mittdatum.
-    d == null ? null : ((days) => { const ref = `månadens snitt ${kg1(aCur)} mot ${kg1(aPrev)} ${wUnit()} förra månaden`;
-      return (days >= 3 ? goalRow((aCur - aPrev) / days * 7, ref + ' · ') : null) || el('p', { class: 'w-sub', text: ref }); })(day(cur) - day(prev)),
+    // Veckomålet: takten räknas per vecka över avståndet mellan de två vägningarna.
+    d == null ? null : ((days) => { const ref = `mot ${kg1(md.b)} ${wUnit()} ${shortDate(md.bk)}`;
+      return (days >= 3 ? goalRow(d / days * 7, ref + ' · ') : null) || el('p', { class: 'w-sub', text: ref }); })(md.days),
     extra);
 }
 

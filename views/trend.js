@@ -141,16 +141,30 @@ function aheadTiles() {
 
 
 // Vecka för vecka (2026-11-21): under Månad, med månadens veckor (wsList = veckostarter, äldst först).
-// Veckans eget snitt (2026-11-23): medel av vägningarna måndag–söndag (eller idag), inte 7-dagars medel.
-const wkAvg = (ws) => {
-  const end = addDays(ws, 6) > today() ? today() : addDays(ws, 6);
-  const v = Object.keys(S.state.weights).filter((k) => k >= ws && k <= end).map((k) => S.state.weights[k]);
-  return v.length ? v.reduce((x, y) => x + y, 0) / v.length : null;
-};
+// Motsvarande dag (2026-11-23), i stället för snitt: senaste vägningen i perioden mot vägningen samma dag perioden innan
+// (target), eller den närmaste vägningen i perioden innan [from, to]. null utan vägningar i båda.
+export function sameDay(lastK, target, from, to) {
+  const W = S.state.weights;
+  if (!lastK || W[lastK] == null) return null;
+  const ks = Object.keys(W).filter((k) => k >= from && k <= to);
+  if (!ks.length) return null;
+  const dist = (k) => Math.abs(+parseKey(k) - +parseKey(target));
+  const bk = ks.reduce((x, k) => (dist(k) < dist(x) || (dist(k) === dist(x) && k < x) ? k : x));
+  return { a: W[lastK], b: W[bk], bk, d: Math.round((W[lastK] - W[bk]) * 10) / 10, days: Math.round((+parseKey(lastK) - +parseKey(bk)) / 864e5) };
+}
+// Vecka: senaste vägningen i veckan mot samma veckodag veckan innan.
+export function weekDelta(ws) {
+  const t = today(), end = addDays(ws, 6) > t ? t : addDays(ws, 6);
+  const ks = Object.keys(S.state.weights).filter((k) => k >= ws && k <= end).sort(), lastK = ks[ks.length - 1];
+  return lastK ? sameDay(lastK, addDays(lastK, -7), addDays(ws, -7), addDays(ws, -1)) : null;
+}
+// Vikt per vecka (2026-11-23): senaste vägningen i veckan, ± mot samma veckodag veckan innan (weekDelta).
+const lastIn = (ws) => { const end = addDays(ws, 6) > today() ? today() : addDays(ws, 6);
+  const ks = Object.keys(S.state.weights).filter((k) => k >= ws && k <= end).sort(); return ks.length ? S.state.weights[ks[ks.length - 1]] : null; };
 export function weekTable(wsList) {
   const rows = wsList.map((ws) => {
     const st = weekStats(S.state, ws);
-    return { ws, st, h: habitWeek(S.state, ws), w: wkAvg(ws), cur: ws === weekStart(today()) };
+    return { ws, st, h: habitWeek(S.state, ws), w: lastIn(ws), wd: weekDelta(ws), cur: ws === weekStart(today()) };
   });
   // Senaste veckan överst (2026-11-23).
   const list = rows.filter((r) => r.st.logged || r.h.count || r.w != null || weekSessions(r.ws).all).reverse();
@@ -160,11 +174,10 @@ export function weekTable(wsList) {
     el('table', { class: 'wk-table' },
       el('thead', {}, el('tr', {}, [self.I18N?.lang() === 'en' ? 'wk' : 'v', 'Vikt', '±', '✅', '🍰', '🏋️', 'kcal/d'].map((h) => el('th', { scope: 'col', text: h })))),
       el('tbody', {}, list.map((r) => {
-        const prev = wkAvg(addDays(r.ws, -7));
         return el('tr', { 'data-act': 'openweek', 'data-val': r.ws },
           el('td', {}, el('button', { class: 'link wk-open', 'data-act': 'openweek', 'data-val': r.ws, text: String(isoWeek(r.ws)) }), r.cur ? ' •' : null),
           el('td', { text: r.w != null ? wOut(r.w).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : '–' }),
-          el('td', {}, r.w != null && prev != null ? el('span', { class: 'delta' + (r1(wOut(r.w - prev)) < 0 ? ' down' : r1(wOut(r.w - prev)) > 0 ? ' up' : ''), text: signed(wOut(r.w - prev)) }) : '–'),
+          el('td', {}, r.wd ? el('span', { class: 'delta' + (r1(wOut(r.wd.d)) < 0 ? ' down' : r1(wOut(r.wd.d)) > 0 ? ' up' : ''), text: signed(wOut(r.wd.d)) }) : '–'),
           el('td', { class: r.h.ratio == null ? '' : r.h.ratio >= S.state.settings.successThreshold ? 'good-t' : r.h.ratio >= 0.5 ? 'mid-t' : 'low-t', text: pct(r.h.ratio) }),
           el('td', { text: r.h.count || r.h.extraCheat ? String(r.h.cheat + r.h.extraCheat) : '–' }),
           el('td', { text: (() => { const g = goals(r.ws).find((x) => x.key === 'workoutGoal'); const n = weekSessions(r.ws).all; return g ? `${n}/${g.goal}` : n ? String(n) : '–'; })() }),

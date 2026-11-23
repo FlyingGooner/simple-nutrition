@@ -1,6 +1,7 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
 import { parseKey, sumN, postN, goalFor, setGoal, addDays, habitDay, habitStreak, dayCheck, energyEstimate, weightPlan, currentWeight, weekStart } from '../store.js';
-import { goalRow, weekDelta } from './week.js';
+import { goalRow } from './week.js';
+import { weekDelta } from './trend.js';
 import { today, S, setOpen, el, svg, stepper, stat, kcal, fmtNum, pct, dateTitle, wOut, wIn, wUnit, amountText, mealName, reasonName, arrange, habitsOnly } from '../ui.js';
 import { viewAdd } from './add.js';
 import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
@@ -249,7 +250,7 @@ export function openWeightDialog(onSave) {
 function weekPill() {
   const ks = Object.keys(S.state.weights).filter((k) => k <= S.current).sort(), k = ks[ks.length - 1];
   const b = k && k >= addDays(S.current, -6) ? S.state.weights[addDays(k, -7)] : null;
-  const wd = b != null ? { d: Math.round((S.state.weights[k] - b) * 10) / 10, day: true } : weekDelta(weekStart(today()));
+  const wd = b != null ? { d: Math.round((S.state.weights[k] - b) * 10) / 10, day: true } : ((w) => w && { ...w, day: true })(weekDelta(weekStart(today())));
   if (!wd) return null;
   const d = wd.d, p = weightPlan(S.state.wgoal, currentWeight(S.state), today()), g = p && !p.reached ? p : null;
   const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = g ? d - g.rate : 0;

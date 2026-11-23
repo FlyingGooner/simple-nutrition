@@ -1,6 +1,6 @@
 // View: Vecka – vanor först (följsamhet, fusk, orsaker, träning), sedan kalorier som stöd (beslut 2026-11-09).
 import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCheck, energyEstimate, goalFor, goalMeaning, sumN, periodEnergy, weightPlan, avg7Of } from '../store.js';
-import { energyStats, kcalDayLine } from './trend.js';
+import { energyStats, kcalDayLine, weekDelta } from './trend.js';
 import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goals, weekSessions, sessionText, fmtNum, arrange, wOut, wUnit, dayLetters } from '../ui.js';
 
 const DAYS = dayLetters();
@@ -84,15 +84,6 @@ export function kcalWeightChart(from, n = 7) {
         : ref ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-ref' }), el('span', { text: `håller vikten ≈ ${kcal(ref)} kcal/dag` })) : null));
 }
 
-// Veckans snitt (måndag–idag/söndag) mot snittet för veckan innan (2026-11-22). null utan vägningar i båda.
-function avgIn(from, to) {
-  const v = Object.keys(S.state.weights).filter((k) => k >= from && k <= to).map((k) => S.state.weights[k]);
-  return v.length ? v.reduce((x, y) => x + y, 0) / v.length : null;
-}
-export function weekDelta(ws) {
-  const t = today(), end = addDays(ws, 6) > t ? t : addDays(ws, 6), a = avgIn(ws, end), b = avgIn(addDays(ws, -7), addDays(ws, -1));
-  return a == null || b == null ? null : { a, b, d: Math.round((a - b) * 10) / 10 };
-}
 // Utfall mot veckomålet (2026-11-22): d = ändring i kg per vecka; perWeek = visa som kg/v (Månad).
 export function goalRow(d, pre = 'snitt mot förra veckan · ') {   // pre: vad ändringen jämförs med
   const p = weightPlan(S.state.wgoal, currentWeight(S.state), today());
@@ -109,7 +100,7 @@ function weightCard(ws) {
   const cur = inRange(ws), prev = inRange(addDays(ws, -7));
   if (!cur.length && !prev.length) return null;
   const last = cur.length ? S.state.weights[cur[cur.length - 1]] : null;
-  // Veckans snitt mot snittet veckan innan (2026-11-22, som Idag).
+  // Mot samma veckodag veckan innan (2026-11-23).
   const wd = weekDelta(ws), bw = wd?.b ?? null, d = wd?.d ?? null;
   const dTxt = d == null ? '' : d === 0 ? `±0 ${wUnit()}` : `${d > 0 ? '+' : '−'}${fmtNum(wOut(Math.abs(d)))} ${wUnit()}`;
   const kg1 = (v) => wOut(v).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
@@ -119,10 +110,10 @@ function weightCard(ws) {
       el('span', { class: 'w-label', text: 'Vikt' }),
       el('span', { class: 'w-now', text: last != null ? `${kg1(last)} ${wUnit()}` : '–' }),
       el('span', { class: 'w-flex' }),
-      d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : ''), title: 'Veckans snitt mot snittet veckan innan', text: dTxt }) : null),
+      d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), title: 'Mot samma dag veckan innan', text: dTxt }) : null),
     // Utfall mot veckomålet (2026-11-22).
     // Snitten utskrivna (2026-11-22), som Månad: den stora siffran är senaste vägningen.
-    d != null ? ((ref) => goalRow(d, ref + ' · ') || el('p', { class: 'w-sub', text: ref }))(`veckans snitt ${kg1(wd.a)} mot ${kg1(wd.b)} ${wUnit()} förra veckan`) : null,
+    d != null ? ((ref) => (wd.days >= 3 ? goalRow(d / wd.days * 7, ref + ' · ') : null) || el('p', { class: 'w-sub', text: ref }))(`mot ${kg1(wd.b)} ${wUnit()} ${shortDate(wd.bk)}`) : null,
     last == null || bw == null ? el('p', { class: 'w-sub', text: last == null ? 'Ingen vägning den här veckan än' : 'Ingen vägning veckan innan att jämföra med' }) : null,
     kcalWeightChart(ws, 7));
 }
