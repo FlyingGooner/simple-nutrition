@@ -417,9 +417,14 @@ app.addEventListener('click', (ev) => {
       return;
     }
     case 'weightsave': {
-      const v = wIn(parseNum(document.getElementById('weight')?.value));
-      if (v >= 20 && v <= 400) S.state.weights[S.current] = Math.round(v * 10) / 10;
-      else delete S.state.weights[S.current];
+      // 2026-11-23: felskrivet = fel och vikten kvar (förut raderades den tyst); tomt = ta bort med Ångra.
+      const raw = document.getElementById('weight')?.value.trim() ?? '', v = wIn(parseNum(raw));
+      if (!raw) {
+        if (S.state.weights[S.current] == null) { S.weighOpen = false; break; }
+        withUndo('Vikten togs bort', () => { delete S.state.weights[S.current]; S.weighOpen = false; }); return;
+      }
+      if (!(v >= 20 && v <= 400)) { snackbar(`Skriv vikten i ${wUnit()}, t.ex. ${wUnit() === 'lb' ? '176' : '80,5'}.`, null, null, 4000); return; }
+      S.state.weights[S.current] = Math.round(v * 10) / 10;
       S.weighOpen = false; persist(); break;
     }
     case 'weighopen':   // 2026-11-21: vikt-rutan i kcal-kortet öppnar popupen
@@ -772,6 +777,8 @@ app.addEventListener('input', (ev) => {
   }, 500));
 });
 app.addEventListener('keydown', (ev) => {
+  // 2026-11-23: tabellrader med data-act (Vecka, Trend) öppnas med Enter/mellanslag som en knapp.
+  if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.matches?.('tr[data-act][tabindex]')) { ev.preventDefault(); ev.target.click(); return; }
   if (ev.key !== 'Enter') return;
   if (ev.target.id === 'amount') { ev.preventDefault(); app.querySelector('[data-act="addsave"], [data-act="daddsave"]')?.click(); }
   if (ev.target.id === 'add-q') { ev.preventDefault(); app.querySelector('#add-results [data-act="pick"], #add-results [data-act="dpick"]')?.click(); }

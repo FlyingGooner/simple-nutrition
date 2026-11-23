@@ -13,7 +13,7 @@ function dayTable(ws, st) {
     el('thead', {}, el('tr', {}, ['Dag', 'Vanor', 'Träning', 'Vikt', 'kcal'].map((t) => el('th', { text: t })))),
     el('tbody', {}, st.days.map((d, i) => {
       const r = h.days[i]?.ratio ?? null, w = S.state.workouts[d.k] || [];
-      return el('tr', { 'data-act': 'goto', 'data-val': d.k, class: d.k === today() ? 'is-today' : '' },
+      return el('tr', { 'data-act': 'goto', 'data-val': d.k, class: d.k === today() ? 'is-today' : '', tabindex: '0', role: 'link', 'aria-label': `Öppna ${shortDate(d.k)}` },
         el('td', { class: 'wk-open', text: DAYS2[i] }),
         el('td', { class: cls(r), text: r == null ? '–' : pct(r) }),
         el('td', { class: 'dt-train', text: w.length ? '🏋️ ' + w.map(sessionText).join(', ') : '–' }),
