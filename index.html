@@ -263,9 +263,9 @@
         <button type="button" class="wd-step" id="wd-plus" aria-label="Öka 0,1">+</button>
       </div>
       <p class="muted small">Väg dig gärna på morgonen. Trenden räknas på 7-dagars medel.</p>
-      <div class="dlg-actions">
-        <button type="submit" class="btn-text" value="cancel">Avbryt</button>
+      <div class="dlg-actions pair">
         <button type="submit" class="btn-filled" value="ok">OK</button>
+        <button type="submit" class="btn-text" value="cancel">Avbryt</button>
       </div>
     </form>
   </dialog>
@@ -273,9 +273,9 @@
     <form method="dialog">
       <h2 id="cd-title">Radera all data?</h2>
       <p class="muted">All loggad mat, vikter och inställningar tas bort från den här enheten. Det går inte att ångra – spara en backup-fil först om du vill kunna få tillbaka den.</p>
-      <div class="dlg-actions">
-        <button type="submit" class="btn-text" value="cancel">Avbryt</button>
+      <div class="dlg-actions pair">
         <button type="submit" class="btn-danger" value="ok" id="cd-ok">Radera</button>
+        <button type="submit" class="btn-text" value="cancel">Avbryt</button>
       </div>
     </form>
   </dialog>
@@ -294,9 +294,9 @@
     <form method="dialog">
       <h2 id="dd-title">Släng ändringarna?</h2>
       <p class="muted">Rätten har ändringar som inte är sparade.</p>
-      <div class="dlg-actions">
-        <button type="submit" class="btn-text" value="cancel">Fortsätt redigera</button>
+      <div class="dlg-actions pair">
         <button type="submit" class="btn-danger" value="ok" id="dd-ok">Släng</button>
+        <button type="submit" class="btn-text" value="cancel">Fortsätt redigera</button>
       </div>
     </form>
   </dialog>
@@ -314,9 +314,9 @@
       <p class="muted small" id="pw-hint">Minst 16 tecken med stor och liten bokstav, siffra och specialtecken. Välj inte ett vanligt ord + årtal.</p>
       <p class="muted" id="pw-warn"></p>
       <p class="import-error small" id="pw-error" role="alert"></p>
-      <div class="dlg-actions">
-        <button type="button" class="btn-text" id="pw-cancel">Avbryt</button>
+      <div class="dlg-actions pair">
         <button type="submit" class="btn-filled" id="pw-ok">Spara krypterad</button>
+        <button type="button" class="btn-text" id="pw-cancel">Avbryt</button>
       </div>
     </form>
   </dialog>
@@ -325,9 +325,9 @@
       <h2 id="imp-title">Ersätta all data?</h2>
       <p id="imp-sum"></p>
       <p class="muted" id="imp-note">All nuvarande data i appen ersätts. Du kan ångra direkt efteråt.</p>
-      <div class="dlg-actions">
-        <button type="submit" class="btn-text" value="cancel">Avbryt</button>
+      <div class="dlg-actions pair">
         <button type="submit" class="btn-filled" value="ok" id="imp-ok">Ersätt</button>
+        <button type="submit" class="btn-text" value="cancel">Avbryt</button>
       </div>
     </form>
   </dialog>
@@ -336,9 +336,9 @@
       <h2 id="bk-title">Dags för backup?</h2>
       <p id="bk-sum"></p>
       <p class="muted">All data finns bara på den här enheten. Påminnelsen ändrar du under Inställningar → Allmänt → Data.</p>
-      <div class="dlg-actions">
-        <button type="submit" class="btn-text" value="later" id="bk-later">Inte nu</button>
+      <div class="dlg-actions pair">
         <button type="submit" class="btn-filled" value="save" id="bk-ok">Spara backup</button>
+        <button type="submit" class="btn-text" value="later" id="bk-later">Inte nu</button>
       </div>
     </form>
   </dialog>

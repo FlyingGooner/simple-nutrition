@@ -174,7 +174,7 @@ export function weekTable(wsList) {
     el('table', { class: 'wk-table' },
       el('thead', {}, el('tr', {}, [self.I18N?.lang() === 'en' ? 'wk' : 'v', 'Vikt', '±', '✅', '🍰', '🏋️', 'kcal/d'].map((h) => el('th', { scope: 'col', text: h })))),
       el('tbody', {}, list.map((r) => {
-        return el('tr', { 'data-act': 'openweek', 'data-val': r.ws, tabindex: '0', role: 'link', 'aria-label': 'Öppna veckan' },
+        return el('tr', { 'data-act': 'openweek', 'data-val': r.ws },
           el('td', {}, el('button', { class: 'link wk-open', 'data-act': 'openweek', 'data-val': r.ws, text: String(isoWeek(r.ws)) }), r.cur ? ' •' : null),
           el('td', { text: r.w != null ? wOut(r.w).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : '–' }),
           el('td', {}, r.wd ? el('span', { class: 'delta' + (r1(wOut(r.wd.d)) < 0 ? ' down' : r1(wOut(r.wd.d)) > 0 ? ' up' : ''), text: signed(wOut(r.wd.d)) }) : '–'),
