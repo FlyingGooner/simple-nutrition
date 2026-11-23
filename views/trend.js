@@ -5,7 +5,7 @@ import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions, a
 // 7-day average of the weights in [k-6, k], or null.
 export const avg7 = (k) => avg7Of(S.state.weights, k);
 const r1 = (x) => Math.round(x * 10) / 10;
-const signed = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + fmtNum(Math.abs(r1(n)));
+const signed = (n) => ((n = r1(n)) > 0 ? '+' : n < 0 ? '−' : '±') + fmtNum(Math.abs(n));   // avrunda först: aldrig "−0" (2026-11-23)
 const delta = (n) => el('span', { class: 'delta' + (n < 0 ? ' down' : ''), text: `${signed(wOut(n))} ${wUnit()} ${n < 0 ? '▼' : n > 0 ? '▲' : ''}`.trim() });
 
 // Viktförändring som kcal/dag (2026-11-21): dKg mellan två datum, 1 kg ≈ 7 700 kcal. Delas av Vecka, Historik och Trend.
@@ -158,7 +158,7 @@ export function weekTable(wsList) {
         return el('tr', { 'data-act': 'openweek', 'data-val': r.ws },
           el('td', {}, el('button', { class: 'link wk-open', 'data-act': 'openweek', 'data-val': r.ws, text: String(isoWeek(r.ws)) }), r.cur ? ' •' : null),
           el('td', { text: r.w != null ? wOut(r.w).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : '–' }),
-          el('td', {}, r.w != null && prev != null ? el('span', { class: 'delta' + (r.w - prev < 0 ? ' down' : r.w - prev > 0 ? ' up' : ''), text: signed(wOut(r.w - prev)) }) : '–'),
+          el('td', {}, r.w != null && prev != null ? el('span', { class: 'delta' + (r1(wOut(r.w - prev)) < 0 ? ' down' : r1(wOut(r.w - prev)) > 0 ? ' up' : ''), text: signed(wOut(r.w - prev)) }) : '–'),
           el('td', { class: r.h.ratio == null ? '' : r.h.ratio >= S.state.settings.successThreshold ? 'good-t' : r.h.ratio >= 0.5 ? 'mid-t' : 'low-t', text: pct(r.h.ratio) }),
           el('td', { text: r.h.count || r.h.extraCheat ? String(r.h.cheat + r.h.extraCheat) : '–' }),
           el('td', { text: (() => { const g = goals(r.ws).find((x) => x.key === 'workoutGoal'); const n = weekSessions(r.ws).all; return g ? `${n}/${g.goal}` : n ? String(n) : '–'; })() }),
