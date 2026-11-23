@@ -17,26 +17,20 @@ function dayTable(ws, st) {
         el('td', { class: 'wk-open', text: DAYS2[i] }),
         el('td', { class: cls(r), text: r == null ? '–' : pct(r) }),
         el('td', { class: 'dt-train', text: w.length ? '🏋️ ' + w.map(sessionText).join(', ') : '–' }),
-        el('td', {}, S.state.weights[d.k] != null ? fmtNum(Math.round(wOut(S.state.weights[d.k]) * 10) / 10) : '–', vsLast(d.k, 'w')),   // vikten tillbaka (2026-11-21)
+        el('td', {}, S.state.weights[d.k] != null ? fmtNum(Math.round(wOut(S.state.weights[d.k]) * 10) / 10) : '–', vsLast(d.k)),   // vikten tillbaka (2026-11-21)
         // Vanor men ingen mat (2026-11-21): tydligt att dagen inte räknas.
         // Idag (2026-11-21): pågår, räknas när dagen är slut – markeras med … i stället för ○.
         ...[(() => { const c = dayCheck(S.state, d.k, today()), now = c.reason === 'today';
-          return el('td', { class: !now && ((d.logged && !c.ok) || (!d.logged && r != null)) ? 'dt-inc' : '' }, d.logged ? kcal(d.kcal) + (c.ok ? '' : now ? ' ⏳' : ' ○') : r != null && !now ? 'ingen mat ○' : '–', c.ok ? vsLast(d.k, 'k') : null); })()],
+          return el('td', { class: !now && ((d.logged && !c.ok) || (!d.logged && r != null)) ? 'dt-inc' : '' }, d.logged ? kcal(d.kcal) + (c.ok ? '' : now ? ' ⏳' : ' ○') : r != null && !now ? 'ingen mat ○' : '–'); })()],
       );
     })));
 }
-// Mot samma dag förra veckan (2026-11-23): liten skillnad under vikt och kcal, bara när båda dagarna har värde (kcal: båda räknas).
-function vsLast(k, kind) {
-  const p = addDays(k, -7);
-  if (kind === 'w') {
-    const a = S.state.weights[k], b = S.state.weights[p];
-    if (a == null || b == null) return null;
-    const d = Math.round((wOut(a) - wOut(b)) * 10) / 10;
-    return el('div', { class: 'dt-vs delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: (d > 0 ? '+' : d < 0 ? '−' : '±') + fmtNum(Math.abs(d)) });
-  }
-  if (!dayCheck(S.state, p, today()).ok) return null;
-  const d = Math.round(sumN(S.state.log[k] || [])[0]) - Math.round(sumN(S.state.log[p] || [])[0]);
-  return el('div', { class: 'dt-vs delta' + (d < 0 ? ' down' : ''), text: (d > 0 ? '+' : d < 0 ? '−' : '±') + kcal(Math.abs(d)) });
+// Mot samma dag förra veckan (2026-11-23): liten skillnad under vikten (bara vikt, 2026-11-23), när båda dagarna har värde.
+function vsLast(k) {
+  const a = S.state.weights[k], b = S.state.weights[addDays(k, -7)];
+  if (a == null || b == null) return null;
+  const d = Math.round((wOut(a) - wOut(b)) * 10) / 10;
+  return el('div', { class: 'dt-vs delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: (d > 0 ? '+' : d < 0 ? '−' : '±') + fmtNum(Math.abs(d)) });
 }
 const DAYS2 = ['Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör', 'Sön'];
 
@@ -157,7 +151,7 @@ export function viewWeek(ws = S.week) {
     weight: () => weightCard(ws),
     habits: () => habitCard(ws),
     days: () => el('section', { class: 'card' }, el('h2', { text: 'Dag för dag' }), dayTable(ws, st),
-      el('p', { class: 'muted small', text: 'Små tal: mot samma dag förra veckan · ○ räknas inte · ⏳ idag, räknas när dagen är slut' })),
+      el('p', { class: 'muted small', text: 'Små tal under vikt: mot samma dag förra veckan · ○ räknas inte · ⏳ idag, räknas när dagen är slut' })),
     training: () => trainingCard(ws),
     // Kortet Kalorier borttaget (2026-11-22): snittet står i diagrammet under Vikt.
     }),
