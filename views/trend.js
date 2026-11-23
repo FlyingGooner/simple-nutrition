@@ -141,10 +141,16 @@ function aheadTiles() {
 
 
 // Vecka för vecka (2026-11-21): under Månad, med månadens veckor (wsList = veckostarter, äldst först).
+// Veckans eget snitt (2026-11-23): medel av vägningarna måndag–söndag (eller idag), inte 7-dagars medel.
+const wkAvg = (ws) => {
+  const end = addDays(ws, 6) > today() ? today() : addDays(ws, 6);
+  const v = Object.keys(S.state.weights).filter((k) => k >= ws && k <= end).map((k) => S.state.weights[k]);
+  return v.length ? v.reduce((x, y) => x + y, 0) / v.length : null;
+};
 export function weekTable(wsList) {
   const rows = wsList.map((ws) => {
-    const st = weekStats(S.state, ws), end = addDays(ws, 6) > today() ? today() : addDays(ws, 6);
-    return { ws, st, h: habitWeek(S.state, ws), w: avg7(end), cur: ws === weekStart(today()) };
+    const st = weekStats(S.state, ws);
+    return { ws, st, h: habitWeek(S.state, ws), w: wkAvg(ws), cur: ws === weekStart(today()) };
   });
   // Senaste veckan överst (2026-11-23).
   const list = rows.filter((r) => r.st.logged || r.h.count || r.w != null || weekSessions(r.ws).all).reverse();
@@ -154,7 +160,7 @@ export function weekTable(wsList) {
     el('table', { class: 'wk-table' },
       el('thead', {}, el('tr', {}, [self.I18N?.lang() === 'en' ? 'wk' : 'v', 'Vikt', '±', '✅', '🍰', '🏋️', 'kcal/d'].map((h) => el('th', { scope: 'col', text: h })))),
       el('tbody', {}, list.map((r) => {
-        const prev = avg7(addDays(r.ws, -1));
+        const prev = wkAvg(addDays(r.ws, -7));
         return el('tr', { 'data-act': 'openweek', 'data-val': r.ws },
           el('td', {}, el('button', { class: 'link wk-open', 'data-act': 'openweek', 'data-val': r.ws, text: String(isoWeek(r.ws)) }), r.cur ? ' •' : null),
           el('td', { text: r.w != null ? wOut(r.w).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : '–' }),
