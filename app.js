@@ -192,34 +192,10 @@ function addPost(p) {
   if (l.length >= 100) { snackbar('Max 100 poster per dag', null, null, 3000); return false; }
   l.push(p); return true;
 }
-// Minns enligt plan (2026-11-23): har måltiden exakt samma varor (mängden spelar ingen roll) som en tidigare dag
-// där den var ✅ enligt plan, och inget val gjort än, sätts ✅ direkt. Senaste dagen med samma varor avgör.
-function autoFollowed(meal) {
-  if (!meal || String(meal).startsWith('extra-')) return 0;
-  const key = (p) => p.ref || p.name, mine = (posts) => posts.filter((p) => p.m === meal);
-  const sig = (posts) => [...new Set(mine(posts).map(key))].sort().join('\n');
-  const followedDay = (s) => Object.keys(S.state.log).some((k) => k !== S.current && sig(S.state.log[k]) === s && ((h) => (h && typeof h === 'object' ? h.outcome : h) === 'followed')(S.state.habits[k]?.[meal]));
-  const posts = dayList(), now = sig(posts), cur = S.state.habits[S.current]?.[meal];
-  if (!now) return 0;
-  if (cur) {
-    // 2026-11-24: ✅ som kom från minnet (måltiden var exakt som en tidigare ✅-dag före den här varan)
-    // tas bort när en ny vara gör måltiden annorlunda – då vet appen inte längre att den följer planen.
-    const last = posts[posts.length - 1];
-    if (cur.outcome !== 'followed' || !last || last.m !== meal || mine(posts).filter((p) => key(p) === key(last)).length > 1) return 0;
-    const before = sig(posts.slice(0, -1));
-    if (!before || !followedDay(before) || followedDay(now)) return 0;
-    const day = S.state.habits[S.current]; delete day[meal]; if (!Object.keys(day).length) delete S.state.habits[S.current];
-    return -1;
-  }
-  if (!followedDay(now)) return 0;
-  const name = S.state.meals.find((m) => m.id === meal)?.name;
-  (S.state.habits[S.current] ??= {})[meal] = { outcome: 'followed', ...(name ? { name } : {}) };
-  return 1;
-}
 function logged(name) {
-  const meal = S.add?.meal, auto = autoFollowed(meal);
+  const meal = S.add?.meal;
   if (String(meal).startsWith('extra-')) S.xopen = null; S.add = null; buzz(); persist(); render();
-  snackbar(`${name} lades till${auto > 0 ? ' · ✅ enligt plan, som förra gången' : auto < 0 ? ' · ny vara, välj ✅ 🍰 ⏭️ igen' : ''}`, null, null, auto ? 4000 : 2500);
+  snackbar(`${name} lades till`, null, null, 2500);
 }
 function openAdd(target, meal) {
   const tab = target === 'dish' ? 'foods' : S.lastTab || (Object.keys(S.state.log).length ? 'recent' : 'foods');

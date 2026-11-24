@@ -335,12 +335,9 @@ I18N.add({
   [/^Hel sats, (\d+) portioner(?:, färdig vikt (.+) g)?$/, (g) => `Whole batch, ${g[1]} portions` + (g[2] ? `, cooked weight ${g[2]} g` : '')],   // 2026-11-23
   [/^([^,]+), (.+)$/, (g, tr) => { const a = tr(g[1]), b = tr(g[2]); return /[åäöÅÄÖ]/.test(a + b) ? null : a + ', ' + b; }],
   [/^(.+) – (Lätt|Standard|Tung|Lite|Mellan|Mycket)$/, '$1 – $2'],
-  [/^(\d+) poster lades till · ✅ enligt plan, som förra gången$/, '$1 items added · ✅ as planned, like last time'],
   [/^(\d+) poster lades till$/, '$1 items added'],
   [/^Lägg till (\d+) \((.+) kcal\)$/, 'Add $1 ($2 kcal)'],
   [/^Markera (.+)$/, 'Select $1'],
-  [/^(.+) lades till · ✅ enligt plan, som förra gången$/, '$1 added · ✅ as planned, like last time'],
-  [/^(.+) lades till · ny vara, välj ✅ 🍰 ⏭️ igen$/, '$1 added · new item, pick ✅ 🍰 ⏭️ again'],
   [/^(.+) lades till$/, '$1 added'],
   [/^P (\S+) · K (\S+) · F (\S+)$/, 'P $1 · C $2 · F $3'],
   [/^(\d+) poster kopierade från igår$/, "$1 entries copied from yesterday"],
