@@ -2,7 +2,7 @@
 import { periodEnergy, weekStart, addDays, dateKey, parseKey, sumN, habitDay } from '../store.js';
 import { energyStats, kcalDayLine, weekTable, sameDay } from './trend.js';
 import { kcalWeightChart, goalRow } from './week.js';
-import { today, S, el, svg, stepper, stat, kcal, pct, shortDate, arrange, wOut, wUnit, dOut, dUnit, dayLetters } from '../ui.js';
+import { today, S, el, svg, stepper, stat, kcal, pct, shortDate, arrange, wOut, wUnit, dOut, dUnit, dayLetters, reasonName, isCardio } from '../ui.js';
 // (dateKey/parseKey används även av monthWeight)
 
 // Vikt (v0.5.16): senaste vägningen i månaden mot senaste vägningen månaden innan, med minikurva över båda månaderna.
@@ -61,6 +61,33 @@ function avgKcal(from, to) {
   return pe.logged ? Math.round(pe.kcal / pe.logged) : null;
 }
 
+// Vanor för månaden (2026-11-24, som Vecka): följsamhet, fusk och vanligaste orsak, dagar till och med idag.
+function monthHabits(from, to) {
+  const h = { score: 0, count: 0, followed: 0, cheat: 0, extraCheat: 0, skipped: 0, reasons: {} };
+  for (let k = from; k <= to && k <= today(); k = addDays(k, 1)) {
+    const r = habitDay(S.state, k); h.score += r.score; h.count += r.count;
+    for (const [id, e] of Object.entries(S.state.habits[k] || {})) {
+      if (!e || typeof e !== 'object') continue;
+      if (e.outcome === 'cheat' && id.startsWith('extra-')) h.extraCheat++; else if (h[e.outcome] != null) h[e.outcome]++;
+      if (e.reason) h.reasons[e.reason] = (h.reasons[e.reason] || 0) + 1;
+    }
+  }
+  if (!h.count) return null;
+  const reasons = Object.entries(h.reasons).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  return el('section', { class: 'card' },
+    el('div', { class: 'stats' },
+      stat(pct(h.score / h.count), 'följsamhet'),
+      stat(`${h.cheat + h.extraCheat}`, '🍰 fusk', h.extraCheat ? ` (${h.extraCheat} extra)` : '')),
+    el('p', { class: 'muted small center', text: `✅ ${h.followed} följde · ⏭️ ${h.skipped} hoppade över` }),
+    reasons.length ? el('p', { class: 'muted small center', text: `Vanligaste orsak: ${reasons.map(([id, n]) => `${reasonName(id)} (${n})`).join(', ')}` }) : null);
+}
+// Träning mot målen för månaden (2026-11-24): veckomålet × månadens dagar / 7, avrundat.
+function monthGoals(mw, days) {
+  const s = S.state.settings, cardio = mw.filter((w) => isCardio(w.types)).length;
+  return [['workoutGoal', 'Träningspass', mw.length], ['gymGoal', 'Gympass', mw.length - cardio], ['cardioGoal', 'Konditionspass', cardio]]
+    .filter(([k]) => s[k]).map(([k, label, n]) => stat(`${n}/${Math.round(s[k] * days / 7)}`, label));
+}
+
 export function viewHistory() {
   const [y, m] = S.month.split('-').map(Number);
   const first = new Date(y, m - 1, 1, 12), days = new Date(y, m, 0).getDate();
@@ -75,6 +102,7 @@ export function viewHistory() {
   // Månaden (städning 2026-11-21): pass och kcal-snitt för den visade månaden, inte totalt/7 dagar.
   const mFrom = `${S.month}-01`, mTo = dateKey(new Date(y, m, 0, 12)), a7 = avgKcal(mFrom, mTo);
   const mw = Object.keys(S.state.workouts).filter((k) => k.startsWith(S.month)).flatMap((k) => S.state.workouts[k]);
+  const pm = dateKey(new Date(y, m - 2, 1, 12)), pa = avgKcal(pm, dateKey(new Date(y, m - 1, 0, 12)));
   const sessions = mw.length, km = mw.reduce((n, w) => n + (w.km || 0), 0);
   return [
     el('div', { class: 'card day-head' }, stepper('Byt månad', ['mprev', 'Föregående månad'], 'mnow', ['mnext', 'Nästa månad'], S.month >= today().slice(0, 7), title.charAt(0).toUpperCase() + title.slice(1))),
@@ -86,10 +114,15 @@ export function viewHistory() {
       el('p', { class: 'legend' },
         el('span', { class: 'lg good' }), ` ≥ ${pct(S.state.settings.successThreshold)}`, el('span', { class: 'lg mid' }), ' 50 %+', el('span', { class: 'lg low' }), ' < 50 %',
         el('span', { class: 'lg lg-weigh' }), ' Vägning', el('span', { class: 'lg lg-train' }), ' Träning')),
-    more: () => el('section', { class: 'card' }, el('div', { class: 'stats' },
-      sessions ? stat(String(sessions), 'pass i månaden', km ? ` · ${Math.round(dOut(km) * 10) / 10} ${dUnit()}` : '') : null,   // 0 pass döljs (2026-11-21)
-      stat(a7 == null ? '–' : kcal(a7), 'kcal/dag i snitt')),
-      energyStats(mFrom, mTo)),
+    habits: () => monthHabits(mFrom, mTo),
+    more: () => { const gs = monthGoals(mw, days), dk = a7 != null && pa != null ? a7 - pa : null;
+      return el('section', { class: 'card' }, el('div', { class: 'stats' },
+      ...gs,
+      sessions && !gs.length ? stat(String(sessions), 'pass i månaden', km ? ` · ${Math.round(dOut(km) * 10) / 10} ${dUnit()}` : '') : null,   // 0 pass döljs (2026-11-21)
+      // kcal/dag mot förra månaden (2026-11-24), som Vecka: mer = rött.
+      stat(a7 == null ? '–' : kcal(a7), 'kcal/dag i snitt', dk ? el('span', { class: 'delta' + (dk < 0 ? ' down' : ' up'), title: 'Mot förra månaden', text: ` ${dk > 0 ? '+' : '−'}${kcal(Math.abs(dk))}` }) : null)),
+      gs.length && km ? el('p', { class: 'muted small center', text: `${sessions} pass · ${Math.round(dOut(km) * 10) / 10} ${dUnit()}` }) : null,
+      energyStats(mFrom, mTo)); },
     weeks: () => { const ws = []; for (let w = weekStart(mFrom); w <= mTo && w <= today(); w = addDays(w, 7)) ws.push(w); return weekTable(ws); },
     }),
   ];

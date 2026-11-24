@@ -131,7 +131,7 @@ export const LAYOUT = {
   today: [['plan', 'Min plan'], ['meals', 'Måltider'], ['train', 'Träning och extra fusk'], ['kcal', 'Kalorier'], ['weight', 'Vikt']],
   week: [['weight', 'Vikt'], ['habits', 'Vanor'], ['days', 'Dag för dag'], ['training', 'Träning']],
   trend: [['weight', 'Vikt, mål och följsamhet'], ['energy', 'Total förbrukning']],
-  history: [['weight', 'Vikt'], ['calendar', 'Kalender'], ['more', 'Träning och kcal'], ['weeks', 'Vecka för vecka']],
+  history: [['weight', 'Vikt'], ['calendar', 'Kalender'], ['habits', 'Vanor'], ['more', 'Träning och kcal'], ['weeks', 'Vecka för vecka']],
 };
 export const LAYOUT_VIEWS = { today: 'Dag', week: 'Vecka', history: 'Månad', trend: 'Historik och mål' };   // flikar 2026-11-21
 export function layoutOf(v) {
