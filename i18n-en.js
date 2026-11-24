@@ -340,6 +340,7 @@ I18N.add({
   [/^Lägg till (\d+) \((.+) kcal\)$/, 'Add $1 ($2 kcal)'],
   [/^Markera (.+)$/, 'Select $1'],
   [/^(.+) lades till · ✅ enligt plan, som förra gången$/, '$1 added · ✅ as planned, like last time'],
+  [/^(.+) lades till · ny vara, välj ✅ 🍰 ⏭️ igen$/, '$1 added · new item, pick ✅ 🍰 ⏭️ again'],
   [/^(.+) lades till$/, '$1 added'],
   [/^P (\S+) · K (\S+) · F (\S+)$/, 'P $1 · C $2 · F $3'],
   [/^(\d+) poster kopierade från igår$/, "$1 entries copied from yesterday"],
