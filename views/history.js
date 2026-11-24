@@ -14,9 +14,11 @@ function monthWeight(extra = null) {
   if (!cur.length && !prev.length) return extra ? el('section', { class: 'card w-card' }, extra) : null;
   const W = (k) => S.state.weights[k], kg1 = (v) => wOut(v).toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const lastK = cur[cur.length - 1], prevK = prev[prev.length - 1];
-  // Motsvarande dag månaden innan (2026-11-23): 30 mars mot 28 feb; annars närmaste vägningen förra månaden.
-  const pDays = new Date(pm.slice(0, 4), +pm.slice(5), 0).getDate();
-  const md = lastK ? sameDay(lastK, `${pm}-${String(Math.min(+lastK.slice(8), pDays)).padStart(2, '0')}`, `${pm}-01`, `${pm}-${pDays}`) : null;
+  // Samma veckodag 4 veckor innan (2026-11-24, som Vecka: samma dag veckan innan): tisdag mot tisdag 28 dagar tidigare,
+  // annars närmaste vägningen inom ±3 dagar från den, annars närmaste vägningen förra månaden.
+  const pDays = new Date(pm.slice(0, 4), +pm.slice(5), 0).getDate(), t28 = lastK ? addDays(lastK, -28) : null;
+  const md = lastK ? sameDay(lastK, t28, addDays(t28, -3), addDays(t28, 3))
+    || sameDay(lastK, `${pm}-${String(Math.min(+lastK.slice(8), pDays)).padStart(2, '0')}`, `${pm}-01`, `${pm}-${pDays}`) : null;
   const baseK = md ? md.bk : prevK;
   const d = md ? md.d : null;
   const dTxt = d == null ? '' : d === 0 ? `±0 ${wUnit()}` : `${d > 0 ? '+' : '−'}${kg1(Math.abs(d))} ${wUnit()}`;
@@ -41,7 +43,7 @@ function monthWeight(extra = null) {
       el('span', { class: 'w-label', text: 'Vikt' }),
       el('span', { class: 'w-now', text: lastK ? `${kg1(W(lastK))} ${wUnit()}` : '–' }),
       extra ? el('span', { class: 'w-flex' }) : spark,   // med stapeldiagram behövs ingen minikurva (2026-11-21)
-      d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), title: 'Mot motsvarande dag förra månaden', text: dTxt }) : null),
+      d != null ? el('span', { class: 'w-chg delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), title: md && md.days === 28 ? 'Mot samma veckodag 4 veckor innan' : `Mot vägningen ${md ? md.days : ''} dagar innan`, text: dTxt }) : null),
     !lastK || d == null ? el('p', { class: 'w-sub', text: !lastK ? 'Ingen vägning den här månaden' : 'Inga vägningar förra månaden att jämföra med' }) : null,
     // Veckomålet: takten räknas per vecka över avståndet mellan de två vägningarna.
     d == null ? null : ((days) => { const ref = `mot ${kg1(md.b)} ${wUnit()} ${shortDate(md.bk)}`;
