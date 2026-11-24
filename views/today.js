@@ -1,7 +1,7 @@
 // View: Idag – summary, meals with posts, weight. "+ Lägg till" opens views/add.js in place of the day.
 import { parseKey, sumN, postN, goalFor, setGoal, addDays, habitDay, habitStreak, dayCheck, energyEstimate, weightPlan, currentWeight, weekStart } from '../store.js';
 import { goalRow } from './week.js';
-import { weekDelta } from './trend.js';
+import { sameDay } from './trend.js';
 import { today, S, setOpen, el, svg, stepper, stat, kcal, fmtNum, pct, dateTitle, wOut, wIn, wUnit, amountText, mealName, reasonName, arrange, habitsOnly } from '../ui.js';
 import { viewAdd } from './add.js';
 import { dayHabits, outcomeRow, habitDetails, extraCards, workoutCards, addRow } from './habits.js';
@@ -249,16 +249,17 @@ export function openWeightDialog(onSave) {
 // Mot samma dag veckan innan (2026-11-23): visade dagens vikt (eller senaste före) mot vägningen 7 dagar tidigare; saknas den, veckosnitten.
 function weekPill() {
   const ks = Object.keys(S.state.weights).filter((k) => k <= S.current).sort(), k = ks[ks.length - 1];
-  const b = k && k >= addDays(S.current, -6) ? S.state.weights[addDays(k, -7)] : null;
-  const wd = b != null ? { d: Math.round((S.state.weights[k] - b) * 10) / 10, day: true } : ((w) => w && { ...w, day: true })(weekDelta(weekStart(today())));
+  // 2026-11-24: allt räknas från den visade dagen (förut föll den tillbaka på dagens vecka när man bläddrat bakåt).
+  // Exakt 7 dagar innan, annars närmaste vägningen veckan innan den vecka vägningen ligger i.
+  const wd = k && k >= addDays(S.current, -6) ? sameDay(k, addDays(k, -7), addDays(weekStart(k), -7), addDays(weekStart(k), -1)) : null;
   if (!wd) return null;
   const d = wd.d, p = weightPlan(S.state.wgoal, currentWeight(S.state), today()), g = p && !p.reached ? p : null;
   const v = (x) => fmtNum(Math.round(wOut(Math.abs(x)) * 10) / 10), off = g ? d - g.rate : 0;
   const mark = !g ? '' : Math.abs(off) < 0.05 || off * Math.sign(g.rate) > 0 ? ' 🟢' : ' 🟠';
   // Ett piller (2026-11-22): ändringen och målet ihop, förklaringen i title.
-  return el('span', { class: 'wk-pill', title: `${wd.day ? 'Mot samma dag veckan innan' : 'Veckans snitt mot förra veckans snitt'}${g ? ` · veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}/v` : ''}` }, '⚖️ ',
+  return el('span', { class: 'wk-pill', title: `${wd.days === 7 ? 'Mot samma dag veckan innan' : `Mot vägningen ${wd.days} dagar innan`}${g ? ` · veckomål ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}/v` : ''}` }, '⚖️ ',
     el('strong', { class: 'delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: `${d === 0 ? '±0' : (d < 0 ? '−' : '+') + v(d)} ${wUnit()}` }),
-    g ? ` · 🎯 ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}/v${mark}` : wd.day ? ' sedan förra veckan' : ' i veckan');
+    g ? ` · 🎯 ${g.rate < 0 ? '−' : '+'}${v(g.rate)} ${wUnit()}/v${mark}` : ' sedan förra veckan');
 }
 export function viewToday() {
   if (S.add) return viewAdd();
