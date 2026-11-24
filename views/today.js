@@ -276,7 +276,7 @@ export function viewToday() {
     stepper('Byt dag', ['prev', 'Föregående dag'], 'today', ['next', 'Nästa dag'], isToday,
       isToday ? [el('span', { class: 'today-badge', text: 'IDAG' }), dateTitle(S.current)] : dateTitle(S.current), null, isToday ? '' : 'not-today'),
     el('div', { class: 'streak' }, st ? el('span', { title: 'Lyckade dagar i rad', text: `🔥 ${st} ${st === 1 ? 'dag' : 'dagar'}` }) : null,
-      isToday ? weekPill() : null,   // 0 i rad visas inte (2026-11-21)
+      weekPill(),   // 2026-11-24: även när man bläddrat, räknat från den visade dagen
       isToday ? null : el('button', { class: 'link back-today', 'data-act': 'today', text: '↩ Till idag' })),
     isToday ? headGoal(posts) : (headShown = false, null)),
     ...arrange('today', {
