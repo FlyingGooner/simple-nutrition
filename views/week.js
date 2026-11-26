@@ -55,7 +55,18 @@ export function kcalWeightChart(from, n = 7) {
   const W = 320, H = 120, top = 8, bot = 96, AX = 30, cw = (W - AX) / n;   // AX: plats för viktskalan till höger (2026-11-21)
   const kmax = Math.max(...kc.filter(Boolean), ref ?? 0, goal ?? 0, 1000) * 1.08;
   const Yk = (v) => bot - v / kmax * (bot - top);
-  const ws_ = kg.filter((x) => x != null), lo = Math.min(...ws_) - 0.3, hi = Math.max(...ws_) + 0.3;
+  // Prognos (2026-11-26): trenden (minsta kvadrat på periodens vägningar, högst de senaste 14 dagarna) förlängd streckad till periodens slut.
+  const proj = (() => {
+    const li = kg.reduce((a, v, i) => (v != null ? i : a), -1);
+    if (li < 0 || li >= n - 1 || days[li] > t) return null;
+    const xs = kg.map((v, i) => [i, v]).filter(([i, v]) => v != null && i > li - 14);
+    if (xs.length < 3) return null;
+    const mx = xs.reduce((a, [i]) => a + i, 0) / xs.length, my = xs.reduce((a, [, v]) => a + v, 0) / xs.length;
+    const sxx = xs.reduce((a, [i]) => a + (i - mx) ** 2, 0); if (!sxx) return null;
+    const k = xs.reduce((a, [i, v]) => a + (i - mx) * (v - my), 0) / sxx;
+    return { i0: li, v0: kg[li], i1: n - 1, v1: kg[li] + k * (n - 1 - li) };
+  })();
+  const ws_ = kg.filter((x) => x != null).concat(proj ? [proj.v1] : []), lo = Math.min(...ws_) - 0.3, hi = Math.max(...ws_) + 0.3;
   const Yw = (v) => top + 6 + (hi - v) / (hi - lo || 1) * (bot - top - 12);
   const pts = kg.map((v, i) => (v == null ? null : [i * cw + cw / 2, Yw(v)])).filter(Boolean);
   const r1 = (x) => Math.round(x * 10) / 10;
@@ -71,6 +82,8 @@ export function kcalWeightChart(from, n = 7) {
       ref && !wk ? svg('line', { class: 'kw-ref', x1: 0, x2: W - AX, y1: r1(Yk(ref)), y2: r1(Yk(ref)) }) : null,
       goal ? svg('line', { class: 'kw-goal', x1: 0, x2: W - AX, y1: r1(Yk(goal)), y2: r1(Yk(goal)) }) : null,
       pts.length > 1 ? svg('polyline', { class: 'kw-line', points: pts.map((p) => p.map(r1).join(',')).join(' ') }) : null,
+      proj ? svg('line', { class: 'kw-proj', x1: r1(proj.i0 * cw + cw / 2), y1: r1(Yw(proj.v0)), x2: r1(proj.i1 * cw + cw / 2), y2: r1(Yw(proj.v1)) }) : null,
+      proj ? svg('circle', { class: 'kw-proj-dot', cx: r1(proj.i1 * cw + cw / 2), cy: r1(Yw(proj.v1)), r: n > 7 ? 1.8 : 2.6 }) : null,
       pts.map((p) => svg('circle', { class: 'kw-dot', cx: r1(p[0]), cy: r1(p[1]), r: n > 7 ? 1.8 : 2.6 })),
       days.map((k, i) => svg('text', { class: 'kw-day cur', x: r1(i * cw + cw / 2), y: H - 8, 'text-anchor': 'middle' }, label(k, i)))),
     // Förklaring bara för de streckade linjerna (2026-11-21): staplar och viktlinje förklarar sig själva.
@@ -81,7 +94,8 @@ export function kcalWeightChart(from, n = 7) {
       // Ljus stapel (2026-11-22): idag eller en dag som saknar måltider räknas inte än.
       kc.some((v, i) => v && !dayCheck(S.state, days[i], t).ok) ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-bar inc' }), el('span', { text: 'ej klar dag' })) : null,
       goal ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-goal' }), el('span', { text: `🎯 ≈ ${kcal(goal)} kcal/dag` }))
-        : ref ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-ref' }), el('span', { text: `håller vikten ≈ ${kcal(ref)} kcal/dag` })) : null));
+        : ref ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-ref' }), el('span', { text: `håller vikten ≈ ${kcal(ref)} kcal/dag` })) : null,
+      proj ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-proj' }), el('span', { text: `prognos ${fmtNum(r1(wOut(proj.v1)))} ${wUnit()} ${shortDate(days[n - 1])}` })) : null));
 }
 
 // Utfall mot veckomålet (2026-11-22): d = ändring i kg per vecka; perWeek = visa som kg/v (Månad).
