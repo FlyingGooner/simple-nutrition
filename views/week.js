@@ -87,9 +87,10 @@ export function kcalWeightChart(from, n = 7) {
   };
   const li = kg.reduce((a, v, i) => (v != null ? i : a), -1);
   const proj = li >= 0 && li < n - 1 && days[li] <= t ? project(li, li) : null;
-  // Prognosen vid periodens start (2026-11-26): från sista vägningen de 7 dagarna före, över hela perioden – så syns hur det gått mot den.
-  const pi = [-1, -2, -3, -4, -5, -6, -7].find((i) => S.state.weights[addDays(from, i)] != null);
-  const before = pi != null && li >= 0 ? project(pi, 0) : null;
+  // Prognosen vid periodens start (2026-11-26): från sista användbara vägningen före, över hela perioden – så syns hur det gått mot den.
+  // Äldre perioder (2026-11-26): ankaret får ligga upp till 21 dagar före; första vägningen bakåt som ger en prognos (minst 3 vägningar på 14 dagar) används.
+  let before = null;
+  for (let i = -1; li >= 0 && i >= -21 && !before; i--) if (S.state.weights[addDays(from, i)] != null) before = project(i, 0);
   const ws_ = kg.filter((x) => x != null).concat(proj ? proj.pts.map((p) => p[1]) : [], before ? before.pts.map((p) => p[1]) : []), lo = Math.min(...ws_) - 0.3, hi = Math.max(...ws_) + 0.3;
   const Yw = (v) => top + 6 + (hi - v) / (hi - lo || 1) * (bot - top - 12);
   const pts = kg.map((v, i) => (v == null ? null : [i * cw + cw / 2, Yw(v)])).filter(Boolean);
