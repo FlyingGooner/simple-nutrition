@@ -75,7 +75,9 @@ export function kcalWeightChart(from, n = 7) {
   const project = (ai, i0) => {
     const ak = addDays(from, ai), wAll = S.state.weights;
     const w = Object.fromEntries(Object.entries(wAll).filter(([k]) => k <= ak));
-    const xs = Array.from({ length: 14 }, (_, j) => [ai - j, w[addDays(ak, -j)]]).filter(([, v]) => v != null);
+    // Glesa vägningar (2026-11-26): färre än 3 på 14 dagar → 28 dagar (t.ex. en vägning i veckan).
+    const pick = (len) => Array.from({ length: len }, (_, j) => [ai - j, w[addDays(ak, -j)]]).filter(([, v]) => v != null);
+    let xs = pick(14); if (xs.length < 3) xs = pick(28);
     if (xs.length < 3) return null;
     const mx = xs.reduce((a, [i]) => a + i, 0) / xs.length, my = xs.reduce((a, [, v]) => a + v, 0) / xs.length;
     const sxx = xs.reduce((a, [i]) => a + (i - mx) ** 2, 0); if (!sxx) return null;
