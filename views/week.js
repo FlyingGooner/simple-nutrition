@@ -55,11 +55,12 @@ export function kcalWeightChart(from, n = 7) {
   const W = 320, H = 120, top = 8, bot = 96, AX = 30, cw = (W - AX) / n;   // AX: plats för viktskalan till höger (2026-11-21)
   const kmax = Math.max(...kc.filter(Boolean), ref ?? 0, goal ?? 0, 1000) * 1.08;
   const Yk = (v) => bot - v / kmax * (bot - top);
-  // Prognos (2026-11-26): trenden (minsta kvadrat på periodens vägningar, högst de senaste 14 dagarna) förlängd streckad till periodens slut.
+  // Prognos (2026-11-26): trenden (minsta kvadrat på de senaste 14 dagarnas vägningar) förlängd streckad till periodens slut.
   const proj = (() => {
     const li = kg.reduce((a, v, i) => (v != null ? i : a), -1);
     if (li < 0 || li >= n - 1 || days[li] > t) return null;
-    const xs = kg.map((v, i) => [i, v]).filter(([i, v]) => v != null && i > li - 14);
+    // Samma underlag i Vecka och Månad (2026-11-26): de 14 dagarna fram till senaste vägningen, även före periodens början.
+    const xs = Array.from({ length: 14 }, (_, j) => [li - j, S.state.weights[addDays(days[li], -j)]]).filter(([, v]) => v != null);
     if (xs.length < 3) return null;
     const mx = xs.reduce((a, [i]) => a + i, 0) / xs.length, my = xs.reduce((a, [, v]) => a + v, 0) / xs.length;
     const sxx = xs.reduce((a, [i]) => a + (i - mx) ** 2, 0); if (!sxx) return null;
