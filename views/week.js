@@ -50,7 +50,8 @@ export function weekdayOffsets(end, w = S.state.weights) {
     const d = new Date(k + 'T12:00').getDay();
     sum[d] += w[k] - near.reduce((a, b) => a + b, 0) / near.length; cnt[d]++;
   }
-  const off = sum.map((s_, d) => (cnt[d] >= 3 ? s_ / (cnt[d] + 4) : 0))   // dämpat (2026-11-26): få värden ger liten effekt, 4 värden = halva, 12 = 75 %, m = off.reduce((a, b) => a + b, 0) / 7;
+  // Dämpat (2026-11-26): få värden ger liten effekt, 4 värden = halva, 12 = 75 %.
+  const off = sum.map((s_, d) => (cnt[d] >= 3 ? s_ / (cnt[d] + 4) : 0)), m = off.reduce((a, b) => a + b, 0) / 7;
   return off.map((v) => v - m);
 }
 
