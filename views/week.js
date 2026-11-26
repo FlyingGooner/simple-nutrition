@@ -73,12 +73,12 @@ export function kcalWeightChart(from, n = 7) {
   const Yk = (v) => bot - v / kmax * (bot - top);
   // Prognos (2026-11-26): trenden (minsta kvadrat på de 14 dagarna fram till ankardagen) förlängd med veckodagsmönstret.
   // ai = ankarets index i perioden (kan vara före periodens början), bara vägningar t.o.m. ankardagen används.
-  const project = (ai, i0) => {
+  const project = (ai, i0, sparse = true) => {
     const ak = addDays(from, ai), wAll = S.state.weights;
     const w = Object.fromEntries(Object.entries(wAll).filter(([k]) => k <= ak));
     // Glesa vägningar (2026-11-26): färre än 3 på 14 dagar → 28 dagar (t.ex. en vägning i veckan).
     const pick = (len) => Array.from({ length: len }, (_, j) => [ai - j, w[addDays(ak, -j)]]).filter(([, v]) => v != null);
-    let xs = pick(14); if (xs.length < 3) xs = pick(28);
+    let xs = pick(14); if (xs.length < 3 && sparse) xs = pick(28);
     if (xs.length < 3) return null;
     const mx = xs.reduce((a, [i]) => a + i, 0) / xs.length, my = xs.reduce((a, [, v]) => a + v, 0) / xs.length;
     const sxx = xs.reduce((a, [i]) => a + (i - mx) ** 2, 0); if (!sxx) return null;
@@ -93,7 +93,8 @@ export function kcalWeightChart(from, n = 7) {
   // Prognosen vid periodens start (2026-11-26): från sista användbara vägningen före, över hela perioden – så syns hur det gått mot den.
   // Äldre perioder (2026-11-26): ankaret får ligga upp till 21 dagar före; första vägningen bakåt som ger en prognos (minst 3 vägningar på 14 dagar) används.
   let before = null;
-  for (let i = -1; li >= 0 && i >= -21 && !before; i--) if (S.state.weights[addDays(from, i)] != null) before = project(i, 0);
+  // Bara med tätt underlag (2026-11-26): ankare högst 7 dagar före och minst 3 vägningar på 14 dagar – glesa vägningar gav en missvisande linje över en hel månad.
+  for (let i = -1; li >= 0 && i >= -7 && !before; i--) if (S.state.weights[addDays(from, i)] != null) before = project(i, 0, false);
   const ws_ = kg.filter((x) => x != null).concat(proj ? proj.pts.map((p) => p[1]) : [], before ? before.pts.map((p) => p[1]) : []), lo = Math.min(...ws_) - 0.3, hi = Math.max(...ws_) + 0.3;
   const Yw = (v) => top + 6 + (hi - v) / (hi - lo || 1) * (bot - top - 12);
   const pts = kg.map((v, i) => (v == null ? null : [i * cw + cw / 2, Yw(v)])).filter(Boolean);
