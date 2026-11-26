@@ -39,6 +39,21 @@ function vsLast(k, kind = 'w') {
 }
 const DAYS2 = ['Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör', 'Sön'];
 
+// Veckodagsmönster (2026-11-26): hur mycket varje veckodag (0 = sön) brukar ligga över/under trenden, ur de senaste 6 veckornas vägningar.
+// Trend = snittet av vägningarna ±3 dagar (minst 3). En veckodag behöver minst 3 värden, annars 0. Avvikelserna centreras kring 0.
+export function weekdayOffsets(end, w = S.state.weights) {
+  const sum = Array(7).fill(0), cnt = Array(7).fill(0);
+  for (let j = 0; j < 42; j++) {
+    const k = addDays(end, -j); if (w[k] == null) continue;
+    const near = [-3, -2, -1, 0, 1, 2, 3].map((d) => w[addDays(k, d)]).filter((v) => v != null);
+    if (near.length < 3) continue;
+    const d = new Date(k + 'T12:00').getDay();
+    sum[d] += w[k] - near.reduce((a, b) => a + b, 0) / near.length; cnt[d]++;
+  }
+  const off = sum.map((s_, d) => (cnt[d] >= 3 ? s_ / cnt[d] : 0)), m = off.reduce((a, b) => a + b, 0) / 7;
+  return off.map((v) => v - m);
+}
+
 // Kalorier och vikt i samma diagram (2026-11-21): bara den visade perioden (vecka eller månad, 2026-11-21), staplar = kcal per dag, linje = vikt,
 // streckad linje = vad som håller vikten (förbrukningen) eller kalorimålet. Ofullständiga dagar ljusare.
 export function kcalWeightChart(from, n = 7) {
@@ -65,9 +80,13 @@ export function kcalWeightChart(from, n = 7) {
     const mx = xs.reduce((a, [i]) => a + i, 0) / xs.length, my = xs.reduce((a, [, v]) => a + v, 0) / xs.length;
     const sxx = xs.reduce((a, [i]) => a + (i - mx) ** 2, 0); if (!sxx) return null;
     const k = xs.reduce((a, [i, v]) => a + (i - mx) * (v - my), 0) / sxx;
-    return { i0: li, v0: kg[li], i1: n - 1, v1: kg[li] + k * (n - 1 - li) };
+    // Veckodagsmönster (2026-11-26): trendlinjen från senaste vägningen (utan dess veckodagsavvikelse) plus varje dags vanliga avvikelse.
+    const off = weekdayOffsets(days[li]), wd = (i) => new Date(addDays(from, i) + 'T12:00').getDay();
+    const base = kg[li] - off[wd(li)], pts = [];
+    for (let i = li; i < n; i++) pts.push([i, i === li ? kg[li] : base + k * (i - li) + off[wd(i)]]);
+    return { pts, v1: pts[pts.length - 1][1] };
   })();
-  const ws_ = kg.filter((x) => x != null).concat(proj ? [proj.v1] : []), lo = Math.min(...ws_) - 0.3, hi = Math.max(...ws_) + 0.3;
+  const ws_ = kg.filter((x) => x != null).concat(proj ? proj.pts.map((p) => p[1]) : []), lo = Math.min(...ws_) - 0.3, hi = Math.max(...ws_) + 0.3;
   const Yw = (v) => top + 6 + (hi - v) / (hi - lo || 1) * (bot - top - 12);
   const pts = kg.map((v, i) => (v == null ? null : [i * cw + cw / 2, Yw(v)])).filter(Boolean);
   const r1 = (x) => Math.round(x * 10) / 10;
@@ -83,8 +102,8 @@ export function kcalWeightChart(from, n = 7) {
       ref && !wk ? svg('line', { class: 'kw-ref', x1: 0, x2: W - AX, y1: r1(Yk(ref)), y2: r1(Yk(ref)) }) : null,
       goal ? svg('line', { class: 'kw-goal', x1: 0, x2: W - AX, y1: r1(Yk(goal)), y2: r1(Yk(goal)) }) : null,
       pts.length > 1 ? svg('polyline', { class: 'kw-line', points: pts.map((p) => p.map(r1).join(',')).join(' ') }) : null,
-      proj ? svg('line', { class: 'kw-proj', x1: r1(proj.i0 * cw + cw / 2), y1: r1(Yw(proj.v0)), x2: r1(proj.i1 * cw + cw / 2), y2: r1(Yw(proj.v1)) }) : null,
-      proj ? svg('circle', { class: 'kw-proj-dot', cx: r1(proj.i1 * cw + cw / 2), cy: r1(Yw(proj.v1)), r: n > 7 ? 1.8 : 2.6 }) : null,
+      proj ? svg('polyline', { class: 'kw-proj', points: proj.pts.map(([i, v]) => `${r1(i * cw + cw / 2)},${r1(Yw(v))}`).join(' ') }) : null,
+      proj ? svg('circle', { class: 'kw-proj-dot', cx: r1((n - 1) * cw + cw / 2), cy: r1(Yw(proj.v1)), r: n > 7 ? 1.8 : 2.6 }) : null,
       pts.map((p) => svg('circle', { class: 'kw-dot', cx: r1(p[0]), cy: r1(p[1]), r: n > 7 ? 1.8 : 2.6 })),
       days.map((k, i) => svg('text', { class: 'kw-day cur', x: r1(i * cw + cw / 2), y: H - 8, 'text-anchor': 'middle' }, label(k, i)))),
     // Förklaring bara för de streckade linjerna (2026-11-21): staplar och viktlinje förklarar sig själva.
