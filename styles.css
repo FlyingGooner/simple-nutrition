@@ -717,6 +717,8 @@ main .day-head + * { margin-top: 10px; }
 .lg-goal { border-top: 1px dotted var(--dev); }
 .kw-proj { fill: none; stroke-linejoin: round; stroke: var(--fg); stroke-width: 1.6; stroke-dasharray: 3 3; stroke-linecap: round; opacity: .4; }
 .kw-proj-dot { fill: none; stroke: var(--fg); stroke-width: 1.2; opacity: .5; }
+.kw-before { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; opacity: .3; }
+.lg-before { display: inline-block; width: 14px; height: 0; border-top: 3px solid var(--accent); opacity: .4; border-radius: 2px; }
 .lg-proj { display: inline-block; width: 14px; height: 0; border-top: 2px dashed var(--fg); opacity: .4; }
 .en-rows { list-style: none; padding: 0; }
 .en-rows li { display: flex; justify-content: space-between; border-top: 1px solid var(--outline-variant); font-size: .9rem; }

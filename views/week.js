@@ -70,23 +70,27 @@ export function kcalWeightChart(from, n = 7) {
   const W = 320, H = 120, top = 8, bot = 96, AX = 30, cw = (W - AX) / n;   // AX: plats för viktskalan till höger (2026-11-21)
   const kmax = Math.max(...kc.filter(Boolean), ref ?? 0, goal ?? 0, 1000) * 1.08;
   const Yk = (v) => bot - v / kmax * (bot - top);
-  // Prognos (2026-11-26): trenden (minsta kvadrat på de senaste 14 dagarnas vägningar) förlängd streckad till periodens slut.
-  const proj = (() => {
-    const li = kg.reduce((a, v, i) => (v != null ? i : a), -1);
-    if (li < 0 || li >= n - 1 || days[li] > t) return null;
-    // Samma underlag i Vecka och Månad (2026-11-26): de 14 dagarna fram till senaste vägningen, även före periodens början.
-    const xs = Array.from({ length: 14 }, (_, j) => [li - j, S.state.weights[addDays(days[li], -j)]]).filter(([, v]) => v != null);
+  // Prognos (2026-11-26): trenden (minsta kvadrat på de 14 dagarna fram till ankardagen) förlängd med veckodagsmönstret.
+  // ai = ankarets index i perioden (kan vara före periodens början), bara vägningar t.o.m. ankardagen används.
+  const project = (ai, i0) => {
+    const ak = addDays(from, ai), wAll = S.state.weights;
+    const w = Object.fromEntries(Object.entries(wAll).filter(([k]) => k <= ak));
+    const xs = Array.from({ length: 14 }, (_, j) => [ai - j, w[addDays(ak, -j)]]).filter(([, v]) => v != null);
     if (xs.length < 3) return null;
     const mx = xs.reduce((a, [i]) => a + i, 0) / xs.length, my = xs.reduce((a, [, v]) => a + v, 0) / xs.length;
     const sxx = xs.reduce((a, [i]) => a + (i - mx) ** 2, 0); if (!sxx) return null;
     const k = xs.reduce((a, [i, v]) => a + (i - mx) * (v - my), 0) / sxx;
-    // Veckodagsmönster (2026-11-26): trendlinjen från senaste vägningen (utan dess veckodagsavvikelse) plus varje dags vanliga avvikelse.
-    const off = weekdayOffsets(days[li]), wd = (i) => new Date(addDays(from, i) + 'T12:00').getDay();
-    const base = kg[li] - off[wd(li)], pts = [];
-    for (let i = li; i < n; i++) pts.push([i, i === li ? kg[li] : base + k * (i - li) + off[wd(i)]]);
+    const off = weekdayOffsets(ak, w), wd = (i) => new Date(addDays(from, i) + 'T12:00').getDay();
+    const base = w[ak] - off[wd(ai)], pts = [];
+    for (let i = i0; i < n; i++) pts.push([i, i === ai ? w[ak] : base + k * (i - ai) + off[wd(i)]]);
     return { pts, v1: pts[pts.length - 1][1] };
-  })();
-  const ws_ = kg.filter((x) => x != null).concat(proj ? proj.pts.map((p) => p[1]) : []), lo = Math.min(...ws_) - 0.3, hi = Math.max(...ws_) + 0.3;
+  };
+  const li = kg.reduce((a, v, i) => (v != null ? i : a), -1);
+  const proj = li >= 0 && li < n - 1 && days[li] <= t ? project(li, li) : null;
+  // Prognosen vid periodens start (2026-11-26): från sista vägningen de 7 dagarna före, över hela perioden – så syns hur det gått mot den.
+  const pi = [-1, -2, -3, -4, -5, -6, -7].find((i) => S.state.weights[addDays(from, i)] != null);
+  const before = pi != null && li >= 0 ? project(pi, 0) : null;
+  const ws_ = kg.filter((x) => x != null).concat(proj ? proj.pts.map((p) => p[1]) : [], before ? before.pts.map((p) => p[1]) : []), lo = Math.min(...ws_) - 0.3, hi = Math.max(...ws_) + 0.3;
   const Yw = (v) => top + 6 + (hi - v) / (hi - lo || 1) * (bot - top - 12);
   const pts = kg.map((v, i) => (v == null ? null : [i * cw + cw / 2, Yw(v)])).filter(Boolean);
   const r1 = (x) => Math.round(x * 10) / 10;
@@ -102,6 +106,7 @@ export function kcalWeightChart(from, n = 7) {
       ref && !wk ? svg('line', { class: 'kw-ref', x1: 0, x2: W - AX, y1: r1(Yk(ref)), y2: r1(Yk(ref)) }) : null,
       goal ? svg('line', { class: 'kw-goal', x1: 0, x2: W - AX, y1: r1(Yk(goal)), y2: r1(Yk(goal)) }) : null,
       pts.length > 1 ? svg('polyline', { class: 'kw-line', points: pts.map((p) => p.map(r1).join(',')).join(' ') }) : null,
+      before ? svg('polyline', { class: 'kw-before', points: before.pts.map(([i, v]) => `${r1(i * cw + cw / 2)},${r1(Yw(v))}`).join(' ') }) : null,
       proj ? svg('polyline', { class: 'kw-proj', points: proj.pts.map(([i, v]) => `${r1(i * cw + cw / 2)},${r1(Yw(v))}`).join(' ') }) : null,
       proj ? svg('circle', { class: 'kw-proj-dot', cx: r1((n - 1) * cw + cw / 2), cy: r1(Yw(proj.v1)), r: n > 7 ? 1.8 : 2.6 }) : null,
       pts.map((p) => svg('circle', { class: 'kw-dot', cx: r1(p[0]), cy: r1(p[1]), r: n > 7 ? 1.8 : 2.6 })),
@@ -115,7 +120,8 @@ export function kcalWeightChart(from, n = 7) {
       kc.some((v, i) => v && !dayCheck(S.state, days[i], t).ok) ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-bar inc' }), el('span', { text: 'ej klar dag' })) : null,
       goal ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-goal' }), el('span', { text: `🎯 ≈ ${kcal(goal)} kcal/dag` }))
         : ref ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-ref' }), el('span', { text: `håller vikten ≈ ${kcal(ref)} kcal/dag` })) : null,
-      proj ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-proj' }), el('span', { text: `prognos ${fmtNum(r1(wOut(proj.v1)))} ${wUnit()} ${shortDate(days[n - 1])}` })) : null));
+      proj ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-proj' }), el('span', { text: `prognos ${fmtNum(r1(wOut(proj.v1)))} ${wUnit()} ${shortDate(days[n - 1])}` })) : null,
+      before ? el('span', { class: 'lg-item' }, el('span', { class: 'lg-before' }), el('span', { text: `väntat vid start ${fmtNum(r1(wOut(before.v1)))} ${wUnit()}` })) : null));
 }
 
 // Utfall mot veckomålet (2026-11-22): d = ändring i kg per vecka; perWeek = visa som kg/v (Månad).
