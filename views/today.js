@@ -18,7 +18,7 @@ function dayGoal(k) {
   return p && !p.reached ? r50(e.tdee + p.kcalDay) : r50(e.tdee);
 }
 function summaryCard() {
-  const posts = dayPosts(), n = sumN(posts), g = { kcal: dayGoal(S.current) };
+  const posts = dayPosts(), n = sumN(posts), saved = goalFor(S.state, S.current), g = { kcal: dayGoal(S.current), prot: saved.prot, kolh: saved.kolh };
   const macro = (label, v, goal) => el('span', { class: 'macro' }, `${label} `, el('strong', { text: fmtNum(v, 0) }), goal ? ` / ${goal} g` : ' g');
   // 2026-11-22: kalorier mot målet igen – sparat kalorimål, annars det appen räknar fram (förbrukning ± viktmålets takt).
   const has = g.kcal != null, left = has ? Math.round(g.kcal - n[0]) : 0, over = left < 0;
@@ -35,7 +35,8 @@ function summaryCard() {
     has ? svg('svg', { class: 'kbar', viewBox: '0 0 100 6', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
       svg('rect', { class: 'kbar-bg', x: 0, y: 0, width: 100, height: 6, rx: 2 }),
       svg('rect', { class: 'kbar-fill' + (over ? ' over' : ''), x: 0, y: 0, width: Math.round(Math.min(1, n[0] / g.kcal) * 1000) / 10, height: 6, rx: 2 })) : null,
-    el('p', { class: 'macros' }, macro('Protein', n[1]), ' · ', macro('Kolh.', n[2]), ' · ', macro('Fett', n[3])),
+    el('p', { class: 'macros' }, macro('Protein', n[1], g.prot), ' · ', macro('Kolh.', n[2], g.kolh),   // 2026-11-27: sparade makromål syns igen
+      ' · ', macro('Fett', n[3])),
     any && (has || headShown) ? el('p', { class: 'sum-more', text: posts.length ? 'Allt du ätit i dag ▾' : 'Mer ▾' }) : null),
     posts.length ? [dayList(posts), el('button', { class: 'link dl-ai', 'data-act': 'dayai', text: '📋 Kopiera för kontroll med AI' })] : null,
     any ? el('button', { class: 'link danger dl-clear', 'data-act': 'clearday', text: '🗑 Rensa dagen' }) : null));   // 2026-11-21: Rensa dagen i listan
@@ -227,6 +228,7 @@ function mealCard(m, posts) {
 }
 
 // 2026-11-21: vikt i en popup – reglage runt gårdagens (senaste) vikt, ± 0,1 per steg, OK/Avbryt.
+// 2026-11-27: Ta bort (bara när dagen har en vikt) → onSave(null).
 export function openWeightDialog(onSave) {
   const d = document.getElementById('weight-dialog');
   if (!d || typeof d.showModal !== 'function') return;
@@ -241,7 +243,8 @@ export function openWeightDialog(onSave) {
   r.oninput = show;
   d.querySelector('#wd-minus').onclick = () => step(-0.1);
   d.querySelector('#wd-plus').onclick = () => step(0.1);
-  d.onclose = () => { if (d.returnValue === 'ok') onSave(Math.round(wIn(Number(r.value)) * 10) / 10); };
+  d.querySelector('#wd-del').hidden = own == null;
+  d.onclose = () => { if (d.returnValue === 'ok') onSave(Math.round(wIn(Number(r.value)) * 10) / 10); else if (d.returnValue === 'del') onSave(null); };
   d.returnValue = ''; show(); d.showModal();
 }
 

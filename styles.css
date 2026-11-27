@@ -163,6 +163,7 @@ dialog h2 { margin: 0 0 4px; font-size: 1.375rem; font-weight: 400; }
 .dlg-actions button { min-height: 48px; padding: 0 20px; border: 0; border-radius: var(--r-md); font-weight: 500; }
 .btn-text { background: transparent; color: var(--primary); }
 .btn-danger { background: #ba1a1a; color: #fff; }
+.dlg-actions .wd-del { margin-right: auto; color: var(--cheat); }
 #snackbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(96px + env(safe-area-inset-bottom)); z-index: 60; display: flex; align-items: center; gap: 8px; width: min(560px, calc(100vw - 32px)); padding: 4px 8px 4px 16px; border-radius: var(--r-sm); background: var(--on-surface); color: var(--surface); box-shadow: 0 4px 12px rgba(0,0,0,.25); }
 #snackbar[hidden] { display: none; }
 #snack-text { flex: 1; padding: 10px 0; }

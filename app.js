@@ -402,20 +402,14 @@ app.addEventListener('click', (ev) => {
       buzz(); persist(); render(); snackbar(`${src.length} poster kopierade från igår`, 'Ångra', () => { delete S.state.log[S.current]; persist(); render(); });
       return;
     }
-    case 'weightsave': {
-      // 2026-11-23: felskrivet = fel och vikten kvar (förut raderades den tyst); tomt = ta bort med Ångra.
-      const raw = document.getElementById('weight')?.value.trim() ?? '', v = wIn(parseNum(raw));
-      if (!raw) {
-        if (S.state.weights[S.current] == null) { S.weighOpen = false; break; }
-        withUndo('Vikten togs bort', () => { delete S.state.weights[S.current]; S.weighOpen = false; }); return;
-      }
-      if (!(v >= 20 && v <= 400)) { snackbar(`Skriv vikten i ${wUnit()}, t.ex. ${wUnit() === 'lb' ? '176' : '80,5'}.`, null, null, 4000); return; }
-      S.state.weights[S.current] = Math.round(v * 10) / 10;
-      S.weighOpen = false; persist(); break;
-    }
-    case 'weighopen':   // 2026-11-21: vikt-rutan i kcal-kortet öppnar popupen
-      openWeightDialog((kg) => { if (kg >= 20 && kg <= 400) { S.state.weights[S.current] = kg; persist(); render(); } });
+    case 'weighopen': {   // 2026-11-21: vikt-popupen; 2026-11-27: Ta bort med Ångra (fältet med tomt = ta bort fanns inte längre)
+      const day = S.current;
+      openWeightDialog((kg) => {
+        if (kg == null) { if (S.state.weights[day] != null) withUndo('Vikten togs bort', () => { delete S.state.weights[day]; }); return; }
+        if (kg >= 20 && kg <= 400) { S.state.weights[day] = kg; persist(); render(); }
+      });
       return;
+    }
     // Lägg till
     case 'addopen': S.open = null; openAdd('meal', id); return;
     case 'addclose': S.add = null; break;

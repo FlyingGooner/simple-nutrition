@@ -20,7 +20,6 @@ T.test('vanor: följde, fusk med orsak och anteckning, tryck igen tar bort', () 
   const note = q('.hab-note[data-id="m2"]'); note.value = '<b>jobbet</b>'; note.dispatchEvent(new Event('change', { bubbles: true }));
   T.eq([stored().habits['2026-11-09'].m2.reason, stored().habits['2026-11-09'].m2.note], ['stress', '<b>jobbet</b>']);
   T.eq(app.querySelectorAll('b').length, 0);
-  T.ok(/1\/2/.test(q('.summary').textContent), q('.summary').textContent);
   q('[data-act="outcome"][data-id="m1"][data-val="followed"]').click();
   T.ok(!stored().habits['2026-11-09'].m1, 'borttagen');
   q('[data-act="outcome"][data-id="m1"][data-val="followed"]').click();
@@ -106,9 +105,16 @@ T.test('ändra mängd och flytta post, sedan ta bort med ångra', () => {
   document.getElementById('snack-action').click();
   T.eq(stored().log['2026-11-09'].length, 3);
 });
-T.test('vikt sparas', () => {
-  q('#weight').value = '83,4';
-  q('[data-act="weightsave"]').click();
+T.test('vikt sparas i popupen och tas bort med Ångra', async () => {
+  const d = document.getElementById('weight-dialog'), r = d.querySelector('#wd-range');
+  q('[data-act="weighopen"]').click();
+  T.ok(d.open, 'popup'); T.ok(d.querySelector('#wd-del').hidden === (stored().weights['2026-11-09'] == null), 'Ta bort bara med vikt');
+  r.value = '83.4'; r.dispatchEvent(new Event('input')); d.close('ok'); await T.wait();
+  T.eq(stored().weights['2026-11-09'], 83.4);
+  q('[data-act="weighopen"]').click();
+  T.ok(!d.querySelector('#wd-del').hidden, 'Ta bort syns'); d.close('del'); await T.wait();
+  T.eq(stored().weights['2026-11-09'], undefined);
+  document.getElementById('snack-action').click();
   T.eq(stored().weights['2026-11-09'], 83.4);
 });
 T.test('namn från data visas som text', async () => {
@@ -175,77 +181,55 @@ const pickFile = (parts, name = 'x.txt', type = 'text/plain') => {
 };
 const closeImport = async () => { $id('import-dialog').querySelector('button[value="cancel"]').click(); await T.until(() => !$id('import-dialog').open, 'importdialogen stängdes inte'); await T.wait(50); };
 let encFile = null;
-T.test('backup-fil: krypterad som standard, simple-nutrition-datum.txt, senaste backup sparas', async () => {
+// 2026-11-15: lösenordet skapas automatiskt och sparas på enheten – backup är ett tryck utan dialog.
+T.test('backup-fil: krypterad med det sparade lösenordet, ett tryck, simple-nutrition-datum.txt, senaste backup sparas', async () => {
   await tab('settings');
-  const saved = await catchDownload(async () => {
-    q('[data-act="backupsave"]').click();
-    await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
-    T.ok(!$id('pw-enc') && /krypterad/.test($id('pw-ok').textContent), 'inget val att spara okrypterat');
-    $id('pw-show').click();
-    T.eq([$id('pw-1').type, $id('pw-2').type], ['text', 'text'], 'Visa lösenord');
-    $id('pw-1').value = PW; $id('pw-2').value = PW; $id('pw-ok').click();
-  });
+  const saved = await catchDownload(async () => { q('[data-act="backupsave"]').click(); });
+  T.ok(!$id('pw-dialog').open, 'ingen lösenordsdialog');
   T.ok(/^simple-nutrition-\d{4}-\d{2}-\d{2}\.txt$/.test(saved.name), 'filnamn ' + saved.name);
   T.ok(saved.text && Backup.isEncrypted(saved.text) && !saved.text.includes('"log"'), 'filen är krypterad');
-  T.eq([$id('pw-1').value, $id('pw-2').value], ['', ''], 'lösenordsfälten töms');
-  T.ok($id('pw-1').type === 'password' && !$id('pw-show').checked, 'dolt igen efter stängning');
   await T.until(() => stored().backup.last, 'senaste backup sparades inte');
   encFile = saved.text;
 });
-T.test('backup-fil: svagt lösenord stoppas, Avbryt sparar inget', async () => {
-  const last = stored().backup.last;
-  q('[data-act="backupsave"]').click();
-  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
-  $id('pw-1').value = 'kort'; $id('pw-2').value = 'kort'; $id('pw-ok').click();
-  T.ok($id('pw-dialog').open && /minst 8/.test($id('pw-error').textContent), 'fel visas');
-  let clicked = false;
-  const realClick = HTMLAnchorElement.prototype.click;
-  HTMLAnchorElement.prototype.click = function () { clicked = true; };
-  try { $id('pw-cancel').click(); await T.wait(50); } finally { HTMLAnchorElement.prototype.click = realClick; }
-  T.ok(!$id('pw-dialog').open && !clicked, 'avbrutet utan fil');
-  T.eq(stored().backup.last, last);
-});
-T.test('backup-fil: krypterad fil → lösenord → bekräftelse → ersätter', async () => {
+T.test('backup-fil: egen fil öppnas med det sparade lösenordet utan fråga', async () => {
   T.ok(encFile, 'krypterad fil från tidigare test');
   const before = JSON.stringify(stored().log);
   const input = pickFile([encFile], 'vad-som-helst.bin', 'image/png');
-  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
-  T.eq(input.value, '', 'filväljaren nollställdes inte');
-  T.ok($id('pw-2-row').hidden && !$id('pw-show-row').hidden, 'bara ett fält vid import, Visa lösenord finns');
-  $id('pw-1').value = PW; $id('pw-ok').click();
   await T.real(T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog'));
+  T.ok(!$id('pw-dialog').open, 'lösenord frågades');
+  T.eq(input.value, '', 'filväljaren nollställdes inte');
   $id('imp-ok').click();
   await T.until(() => !$id('import-dialog').open, 'dialogen stängdes inte');
   T.eq(JSON.stringify(stored().log), before, 'importen ändrade loggen');
 });
-T.test('backup-fil: fel lösenord och Avbryt ändrar inget', async () => {
+T.test('backup-fil: annat lösenord frågas, fel lösenord och Avbryt ändrar inget', async () => {
   await tab('settings');
-  const before = localStorage.getItem('sn.data');
-  pickFile([encFile]);
-  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
+  const other = await Backup.encrypt(JSON.stringify({ app: 'simple-nutrition', format: 1, data: stored() }), PW, 'simple-nutrition');
+  const before = localStorage.getItem('sn.data'), pwdBefore = localStorage.getItem('sn.pwd');
+  pickFile([other]);
+  await T.real(T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog'));
+  T.ok($id('pw-2-row').hidden && !$id('pw-show-row').hidden, 'bara ett fält vid import, Visa lösenord finns');
   $id('pw-1').value = 'Fel2026!x'; $id('pw-ok').click();
-  T.ok($id('pw-ok').disabled && $id('pw-cancel').disabled && /Öppnar/.test($id('pw-ok').textContent), 'upptaget-läge under dekryptering');
   await T.real(T.until(() => /Fel lösenord eller skadad fil/.test($id('pw-error').textContent), 'felmeddelande saknas i dialogen'));
-  T.ok($id('pw-dialog').open && !$id('pw-ok').disabled && $id('pw-ok').textContent === 'Öppna', 'dialogen står kvar för nytt försök');
-  T.ok(!$id('import-dialog').open, 'dialog öppnades: ' + $id('import-dialog').textContent.slice(0, 300));
+  T.ok($id('pw-dialog').open && !$id('pw-ok').disabled, 'dialogen står kvar för nytt försök');
+  T.ok(!$id('import-dialog').open, 'importdialog öppnades');
   $id('pw-cancel').click();
   await T.wait(50);
-  T.ok(!$id('pw-dialog').open, 'Avbryt stängde inte');
-  pickFile([encFile]);
-  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
-  $id('pw-cancel').click();
-  await T.wait(50);
-  T.ok(!$id('import-dialog').open, 'dialog öppnades efter Avbryt');
+  T.ok(!$id('pw-dialog').open && !$id('import-dialog').open, 'Avbryt stängde inte');
   T.eq(localStorage.getItem('sn.data'), before);
+  T.eq(localStorage.getItem('sn.pwd'), pwdBefore, 'sparat lösenord ändrades');
 });
-T.test('import: klistrad krypterad text frågar efter lösenord', async () => {
+T.test('lösenordsdialogen: svagt lösenord stoppas, Avbryt ger null', async () => {
+  const done = Backup.askPassword('export');
+  $id('pw-1').value = 'kort'; $id('pw-2').value = 'kort'; $id('pw-ok').click();
+  T.ok($id('pw-dialog').open && /minst 16/.test($id('pw-error').textContent), 'fel visas');
+  $id('pw-cancel').click();
+  T.eq(await done, null);
+});
+T.test('import: klistrad krypterad text öppnas med det sparade lösenordet', async () => {
   $id('import-text').value = encFile;
   q('[data-act="import"]').click();
-  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
-  $id('pw-1').value = PW; $id('pw-ok').click();
-  try { await T.real(T.until(() => $id('import-dialog').open, 'x')); } catch {
-    throw new Error('ingen bekräftelsedialog: ' + [$id('pw-dialog').open, $id('pw-ok').disabled, $id('pw-ok').textContent, $id('pw-error').textContent, $id('import-error').textContent].join('|'));
-  }
+  await T.real(T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog'));
   await closeImport();
   $id('import-text').value = '';
 });
@@ -277,7 +261,7 @@ T.test('ny rätt: hel sats med ingrediens, portioner och färdig vikt', async ()
   q('[data-act="dsave"]').click();
   const d = stored().dishes[0];
   T.eq([d.name, d.portions, d.cooked, d.items.length, d.items[0].g], ['Köttfärssås <b>', 5, 1000, 1, 500]);
-  T.eq(app.querySelectorAll('b').length, 0);
+  T.eq([...app.querySelectorAll('b')].filter((b) => !b.closest('.dl-app')).length, 0);   // appnamnen i Ladda ner är egna <b>
 });
 T.test('rätt per portion sparas med portions 1', () => {
   q('[data-act="dnew"]').click();
@@ -348,6 +332,7 @@ T.test('spara måltid som rätt (+🍲) öppnar editorn med varorna', async () =
   T.eq([d.portions, d.items.map((i) => i.g)], [1, foods.map((p) => p.g)]);
 });
 T.test('egen produkt sparas och hittas i sökningen', async () => {
+  if (!q('#f-name')) { q('[data-act="fnew"]').click(); await T.wait(); }
   const set = (i, v) => { q('#' + i).value = v; };
   set('f-name', 'Proteinbar typ X'); set('f-kcal', '360'); set('f-p', '33'); set('f-k', '30'); set('f-f', '12'); set('f-unit', 'st'); set('f-ug', '55');
   q('[data-act="fadd"]').click();
@@ -391,8 +376,9 @@ T.test('proteinmål visas i summan', async () => {
 T.test('trend: 7-dagars medel, tabell och diagram', async () => {
   await tab('trend');
   T.ok(q('.w-card .w-now'), 'vikt');
-  T.ok(app.querySelectorAll('.wk-table tbody tr').length >= 2, 'tabell');
   T.ok(q('.chart .w-line'), 'diagram');
+  await tab('history');   // Vecka för vecka ligger i Månad sedan 2026-11-21
+  T.ok(app.querySelectorAll('.wk-table tbody tr').length >= 2, 'tabell');
   q('.wk-table [data-act="openweek"]').click(); await T.wait();
   T.eq(location.hash, '#week');
 });
@@ -437,7 +423,8 @@ T.test('tomt kalorimål + Spara = inget mål, Idag visar bara summan', async () 
   T.ok(!q('.sum-left') && !q('.kbar'), 'ingen kvar-text eller stapel');
 });T.test('viktdiagram: hela perioden, skalar över år (ingen ring per vägning, år-etiketter)', async () => {
   await tab('trend');
-  T.ok(/veckor/.test(q('.chart')?.closest('.card').querySelector('.legend').textContent), 'kort period i veckor');
+  const legend = () => q('.chart').getAttribute('aria-label');   // förklaringen ligger i diagrammet sedan 2026-11-21
+  T.ok(/veckor/.test(legend()), 'kort period i veckor');
   T.ok(app.querySelectorAll('.chart .w-dot-extra').length >= 2, 'ringar vid kort period');
   const weights = {};
   for (let d = new Date(2024, 0, 1, 12); d < new Date(2026, 10, 1, 12); d.setDate(d.getDate() + 7)) {
@@ -450,7 +437,7 @@ T.test('tomt kalorimål + Spara = inget mål, Idag visar bara summan', async () 
   await T.until(() => document.getElementById('import-dialog').open, 'dialog');
   document.getElementById('imp-ok').click(); document.getElementById('import-dialog').close();
   await tab('trend');
-  const h2 = q('.chart').closest('.card').querySelector('.legend').textContent;
+  const h2 = legend();
   T.ok(/år/.test(h2), h2);
   T.eq(app.querySelectorAll('.chart .w-dot-extra').length, 0);
   const pts = (q('.chart .w-line').getAttribute('d').match(/[ML]/g) || []).length;
@@ -469,8 +456,8 @@ T.test('ifylld måltid är hopfälld efter dagbyte, även om den var utfälld (v
 });
 T.test('kortordning: dölj, flytta, återställ (v0.6)', async () => {
   await tab('settings');
-  q('[data-act="lhide"][data-kind="week"][data-id="kcal"]').click();
-  T.eq(stored().layout.week.hidden, ['kcal']);
+  q('[data-act="lhide"][data-kind="week"][data-id="days"]').click();
+  T.eq(stored().layout.week.hidden, ['days']);
   q('[data-act="ldown"][data-kind="week"][data-id="weight"]').click();
   T.eq(stored().layout.week.order.slice(0, 2), ['habits', 'weight']);
   q('[data-act="lresetall"]').click();

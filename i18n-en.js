@@ -2,7 +2,7 @@
 // Mönster (regex) för texter med tal eller namn i; $1… översätts i sin tur. Saknas en text visas den svenska.
 I18N.setKey('sn.lang');
 I18N.add({
-  'Vikten togs bort': 'The weight was removed', 'Öppna veckan': 'Open the week', '🔥 1 dag': '🔥 1 day',
+  'Vikten togs bort': 'The weight was removed', 'Ta bort': 'Delete', 'Öppna veckan': 'Open the week', '🔥 1 dag': '🔥 1 day',
   'Kunde inte spara – lagringen är full eller blockerad.': 'Could not save – storage is full or blocked.',
   '📋 Kopiera för kontroll med AI': '📋 Copy to check with AI', 'Dagen är kopierad – klistra in den i Gemini': 'The day is copied – paste it into Gemini', 'Kunde inte kopiera': 'Could not copy',
   'Allt du ätit i dag ▾': 'Everything you ate today ▾', 'Övrigt': 'Other', 'Mer ▾': 'More ▾',
