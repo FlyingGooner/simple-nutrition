@@ -1,6 +1,6 @@
 // View: Vecka – vanor först (följsamhet, fusk, orsaker, träning), sedan kalorier som stöd (beslut 2026-11-09).
-import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCheck, energyEstimate, goalFor, goalMeaning, sumN, periodEnergy, weightPlan, avg7Of } from '../store.js';
-import { energyStats, kcalDayLine, weekDelta } from './trend.js';
+import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCheck, energyEstimate, goalFor, sumN, weightPlan } from '../store.js';
+import { weekDelta, signed, signedK, vsChip } from './trend.js';
 import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goals, weekSessions, sessionText, fmtNum, arrange, wOut, wUnit, dayLetters } from '../ui.js';
 
 // Dag för dag (v0.5.12): vanor, träning och kcal per dag i en tabell. Tryck på en rad = öppna dagen.
@@ -28,12 +28,12 @@ function vsLast(k, kind = 'w') {
   if (kind === 'k') {
     if (!dayCheck(S.state, addDays(k, -7), today()).ok) return null;
     const d = Math.round(sumN(S.state.log[k] || [])[0]) - Math.round(sumN(S.state.log[addDays(k, -7)] || [])[0]);
-    return el('div', { class: 'dt-vs delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: (d > 0 ? '+' : d < 0 ? '−' : '±') + kcal(Math.abs(d)) });
+    return vsChip(d, signedK(d));
   }
   const a = S.state.weights[k], b = S.state.weights[addDays(k, -7)];
   if (a == null || b == null) return null;
   const d = Math.round((wOut(a) - wOut(b)) * 10) / 10;
-  return el('div', { class: 'dt-vs delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: (d > 0 ? '+' : d < 0 ? '−' : '±') + fmtNum(Math.abs(d)) });
+  return vsChip(d, signed(d));
 }
 const DAYS2 = ['Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör', 'Sön'];
 

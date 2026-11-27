@@ -182,7 +182,7 @@ export function sumN(posts) {
   return posts.reduce((a, p) => { const n = postN(p); return a.map((x, i) => x + n[i]); }, [0, 0, 0, 0]);
 }
 export function goalFor(state, k) {
-  let g = state.goals[0];
+  let g = { from: '2000-01-01' };   // 2026-11-27: före första målet = inget mål (förut gällde det första målet bakåt i tiden)
   for (const x of state.goals) if (x.from <= k) g = x;
   return g;
 }

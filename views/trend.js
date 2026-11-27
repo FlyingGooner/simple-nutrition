@@ -5,7 +5,7 @@ import { today, S, el, svg, kcal, fmtNum, shortDate, pct, goals, weekSessions, a
 // 7-day average of the weights in [k-6, k], or null.
 export const avg7 = (k) => avg7Of(S.state.weights, k);
 const r1 = (x) => Math.round(x * 10) / 10;
-const signed = (n) => ((n = r1(n)) > 0 ? '+' : n < 0 ? '−' : '±') + fmtNum(Math.abs(n));   // avrunda först: aldrig "−0" (2026-11-23)
+export const signed = (n) => ((n = r1(n)) > 0 ? '+' : n < 0 ? '−' : '±') + fmtNum(Math.abs(n));   // avrunda först: aldrig "−0" (2026-11-23)
 const delta = (n) => el('span', { class: 'delta' + (n < 0 ? ' down' : ''), text: `${signed(wOut(n))} ${wUnit()} ${n < 0 ? '▼' : n > 0 ? '▲' : ''}`.trim() });
 
 // Viktförändring som kcal/dag (2026-11-21): dKg mellan två datum, 1 kg ≈ 7 700 kcal. Delas av Vecka, Historik och Trend.
@@ -86,6 +86,8 @@ export function forecastLine() {
 /* Förbrukning (2026-11-21): räknas från dag ett, med kvalitet som datan själv avgör. */
 const r50 = (x) => Math.round(x / 50) * 50;
 export const signedK = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + kcal(Math.abs(n));
+// Liten skillnad under ett värde (Dag för dag, Vecka för vecka): mer = rött, mindre = grönt.
+export const vsChip = (d, text) => el('div', { class: 'dt-vs delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text });
 const WHY = {
   precision: 'Säkrare med fler dagar – väg dig minst 3 gånger i veckan. Full kvalitet efter 2–4 veckor.',
   logging: 'Ofullständiga dagar drar ner – ge varje måltid mat eller markera ⏭️ Hoppade över.',
@@ -183,7 +185,7 @@ export function weekTable(wsList) {
           el('td', { text: (() => { const g = goals(r.ws).find((x) => x.key === 'workoutGoal'); const n = weekSessions(r.ws).all; return g ? `${n}/${g.goal}` : n ? String(n) : '–'; })() }),
           // kcal/d mot veckan innan (2026-11-23), som Dag för dag: liten siffra, mer = rött.
           (() => { const a = kd(r.ws), b = kd(addDays(r.ws, -7)), d = a != null && b != null ? Math.round(a) - Math.round(b) : null;
-            return el('td', {}, a != null ? kcal(a) : '–', d == null ? null : el('div', { class: 'dt-vs delta' + (d < 0 ? ' down' : d > 0 ? ' up' : ''), text: (d > 0 ? '+' : d < 0 ? '−' : '±') + kcal(Math.abs(d)) })); })());   // kompletta dagar
+            return el('td', {}, a != null ? kcal(a) : '–', d == null ? null : vsChip(d, signedK(d))); })());   // kompletta dagar
       }))));
 }
 

@@ -202,3 +202,7 @@ T.test('Smör har enheterna smörgås (förvald) och msk', () => {
   const s = searchFoods(ST(), 'smör').hits.find((f) => f.name === 'Smör');
   T.eq(s.v[0].u, ['smörgås', 10]); T.eq(s.v[0].u2, ['msk', 14]);
 });
+T.test('goalFor: före första målet finns inget mål', () => {
+  const s = validate({ goals: [{ from: '2026-11-05', kcal: 2000, prot: 120 }] });
+  T.eq([goalFor(s, '2026-11-04').kcal, goalFor(s, '2026-11-04').prot, goalFor(s, '2026-11-05').kcal], [undefined, undefined, 2000]);
+});
