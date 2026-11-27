@@ -3,8 +3,6 @@ import { weekStats, weekStart, addDays, isoWeek, habitWeek, currentWeight, dayCh
 import { energyStats, kcalDayLine, weekDelta } from './trend.js';
 import { today, S, el, svg, stepper, stat, kcal, shortDate, pct, reasonName, goals, weekSessions, sessionText, fmtNum, arrange, wOut, wUnit, dayLetters } from '../ui.js';
 
-const DAYS = dayLetters();
-
 // Dag för dag (v0.5.12): vanor, träning och kcal per dag i en tabell. Tryck på en rad = öppna dagen.
 function dayTable(ws, st) {
   const h = habitWeek(S.state, ws), thr = S.state.settings.successThreshold;
@@ -59,7 +57,7 @@ export function weekdayOffsets(end, w = S.state.weights) {
 // streckad linje = vad som håller vikten (förbrukningen) eller kalorimålet. Ofullständiga dagar ljusare.
 export function kcalWeightChart(from, n = 7) {
   const days = Array.from({ length: n }, (_, i) => addDays(from, i)), t = today();
-  const label = (k, i) => (n <= 7 ? DAYS[i] : (i % 5 === 0 || i === n - 1) ? String(Number(k.slice(8))) : '');
+  const DAYS = dayLetters(), label = (k, i) => (n <= 7 ? DAYS[i] : (i % 5 === 0 || i === n - 1) ? String(Number(k.slice(8))) : '');
   const kc = days.map((k) => (k > t ? null : Math.round(sumN(S.state.log[k] || [])[0]) || null));
   const kg = days.map((k) => S.state.weights[k] ?? null);
   if (kc.filter(Boolean).length + kg.filter((x) => x != null).length < 2) return null;

@@ -2,7 +2,7 @@
 // Mönster (regex) för texter med tal eller namn i; $1… översätts i sin tur. Saknas en text visas den svenska.
 I18N.setKey('sn.lang');
 I18N.add({
-  'Vikten togs bort': 'The weight was removed', 'Ta bort': 'Delete', 'Öppna veckan': 'Open the week', '🔥 1 dag': '🔥 1 day',
+  'Vikten togs bort': 'The weight was removed', 'sedan förra veckan': 'since last week', 'Fitness buddy (den här)': 'Fitness buddy (this one)', 'Ta bort': 'Delete', 'Öppna veckan': 'Open the week', '🔥 1 dag': '🔥 1 day',
   'Kunde inte spara – lagringen är full eller blockerad.': 'Could not save – storage is full or blocked.',
   '📋 Kopiera för kontroll med AI': '📋 Copy to check with AI', 'Dagen är kopierad – klistra in den i Gemini': 'The day is copied – paste it into Gemini', 'Kunde inte kopiera': 'Could not copy',
   'Allt du ätit i dag ▾': 'Everything you ate today ▾', 'Övrigt': 'Other', 'Mer ▾': 'More ▾',
@@ -333,6 +333,8 @@ I18N.add({
 }, [
   [/^Skriv vikten i (\S+), t\.ex\. (\S+)\.$/, 'Enter the weight in $1, e.g. $2.'], [/^Öppna (\d.*)$/, 'Open $1'],
   [/^Hel sats, (\d+) portioner(?:, färdig vikt (.+) g)?$/, (g) => `Whole batch, ${g[1]} portions` + (g[2] ? `, cooked weight ${g[2]} g` : '')],   // 2026-11-23
+  [/^Målvikt \((kg|lb), valfritt\)$/, (g) => `Goal weight (${g[1]}, optional)`],   // 2026-11-27: före kommamönstret
+  [/^(Flytta upp|Flytta ner|Dölj|Visa) (.+)$/, (g, tr) => { const b = tr(g[2]); return /[åäöÅÄÖ]/.test(b) ? null : `${{ 'Flytta upp': 'Move up', 'Flytta ner': 'Move down', 'Dölj': 'Hide', 'Visa': 'Show' }[g[1]]} ${b}`; }],
   [/^([^,]+), (.+)$/, (g, tr) => { const a = tr(g[1]), b = tr(g[2]); return /[åäöÅÄÖ]/.test(a + b) ? null : a + ', ' + b; }],
   [/^(.+) – (Lätt|Standard|Tung|Lite|Mellan|Mycket)$/, '$1 – $2'],
   [/^(\d+) poster lades till$/, '$1 items added'],
