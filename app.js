@@ -3,7 +3,7 @@ import { load, save, validate, validDate, currentWeight, weightPlan, addDays, we
 import { today, S, setOpen, el, kcal, dateTitle, parseNum, wType, isCardio, parseDur, fmtNum, amountText, layoutOf, LAYOUT_VIEWS } from './ui.js';
 import { lastPost, QUICK_ADD, setLevel, dropLevels, quickGroup, EST_MAX } from './store.js';
 import { mealName, wIn, wOut, wUnit, shortDate, dIn, dUnit, setUnits, setTrack } from './ui.js';
-import { topLayer, layerDepth, closeTop, dishDirty, defaultQuickG } from './nav.js';
+import { topLayer, layerDepth, closeTop, dishDirty, defaultQuickG, syncDialogs } from './nav.js';
 import { viewToday, dayPosts, dayText, openWeightDialog } from './views/today.js';
 import { resultsList, pickGrams, pickSum, unitsOf, isBulk, bulkDefault, EST_GROUP } from './views/add.js';
 import { viewWeek } from './views/week.js';
@@ -126,6 +126,13 @@ function go(v, push = true) {
   render();
   scrollTo(0, 0);
 }
+// Dialogrutor som lager (2026-11-27, som budget-buddy): varje öppen <dialog> med id är ett Bakåt-steg. Släng-rutan
+// (discard-dialog) hör till rätt-editorns steg och räknas inte.
+const layerDialogs = () => [...document.querySelectorAll('dialog[id]:not([data-nolayer])')];
+new MutationObserver(() => {
+  const before = S.dlg?.length || 0;
+  if (syncDialogs(S, layerDialogs().filter((d) => d.open).map((d) => d.id)) !== before) syncHistory();
+}).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open'] });
 addEventListener('popstate', (e) => {
   S.navPending = false; clearTimeout(navTimer);
   const target = e.state?.depth ?? 0;
@@ -144,6 +151,7 @@ addEventListener('popstate', (e) => {
     const wasPick = topLayer(S) === 'pick', y = S.add?.scroll || 0;
     while (layerDepth(S) > target && closeTop(S));
     histDepth = layerDepth(S);
+    for (const d of layerDialogs()) if (!S.dlg.includes(d.id)) d.close();   // rutor som Bakåt stängde
     render();
     scrollTo(0, wasPick && S.add ? y : 0);
     return;

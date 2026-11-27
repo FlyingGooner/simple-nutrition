@@ -1,7 +1,7 @@
 // Node tests (node:test, no npm) for v0.14.0. Loads the app's own source files. Run: node --test tools/tests/
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { topLayer, layerDepth, closeTop, dishDirty, defaultQuickG } from '../../nav.js';
+import { topLayer, layerDepth, closeTop, dishDirty, defaultQuickG, syncDialogs } from '../../nav.js';
 import { QUICK_ADD, validate, exportText, importText, defaults, recent } from '../../store.js';
 
 const add = (o = {}) => ({ target: 'meal', meal: 'm1', tab: 'foods', q: 'bröd', all: true, pick: null, dpick: null, est: null, alias: false, scroll: 420, ...o });
@@ -96,4 +96,20 @@ test('senaste per måltid: lunch och middag delar, frukost och mellanmål egna',
   assert.equal(names('m4'), 'Chili,Lax');
   assert.equal(names('m3'), 'Frukt');
   assert.equal(recent(s).length, 4);
+});
+
+test('bakåt: dialogrutor är lager överst, ett steg var', () => {
+  const S = { add: add(), dlg: [] };
+  assert.equal(syncDialogs(S, ['weight-dialog']), 1);
+  assert.equal(topLayer(S), 'dlg'); assert.equal(layerDepth(S), 2);
+  assert.ok(closeTop(S)); assert.deepEqual(S.dlg, []); assert.equal(topLayer(S), 'add');
+});
+test('bakåt: stäng en ruta och öppna en annan direkt = samma djup, ordningen behålls', () => {
+  const S = { dlg: [] };
+  syncDialogs(S, ['pw-dialog']);
+  assert.equal(syncDialogs(S, ['import-dialog']), 1);   // lösenord → bekräftelse i samma omgång
+  assert.deepEqual(S.dlg, ['import-dialog']);
+  syncDialogs(S, ['import-dialog', 'confirm-dialog']); syncDialogs(S, ['confirm-dialog', 'import-dialog']);
+  assert.deepEqual(S.dlg, ['import-dialog', 'confirm-dialog']);
+  assert.equal(syncDialogs(S, []), 0);
 });

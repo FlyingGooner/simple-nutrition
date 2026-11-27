@@ -117,6 +117,17 @@ T.test('vikt sparas i popupen och tas bort med Ångra', async () => {
   document.getElementById('snack-action').click();
   T.eq(stored().weights['2026-11-09'], 83.4);
 });
+T.test('Bakåt stänger viktdialogen utan att spara, flikbytet ligger kvar', async () => {
+  const d = document.getElementById('weight-dialog'), w = stored().weights['2026-11-09'], hash = location.hash;
+  q('[data-act="weighopen"]').click(); await T.wait();
+  T.ok(d.open, 'popup');
+  history.back(); await T.until(() => !d.open, 'Bakåt stängde inte dialogen');
+  await T.wait(100);
+  T.eq([location.hash, stored().weights['2026-11-09']], [hash, w]);
+  q('[data-act="weighopen"]').click(); await T.wait();
+  d.close('cancel'); await T.wait(150);   // stängd med knapp: steget tas tillbaka, inget extra Bakåt-steg kvar
+  T.eq(history.state?.depth ?? 0, 0);
+});
 T.test('namn från data visas som text', async () => {
   q('[data-act="prev"]').click(); await T.wait();
   T.eq(app.querySelectorAll('img').length, 0);

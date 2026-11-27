@@ -53,6 +53,10 @@ export function weekdayOffsets(end, w = S.state.weights) {
   return off.map((v) => v - m);
 }
 
+// Tak för prognosens lutning (2026-11-27): högst 1 % av vikten per vecka åt båda hållen (kg per dag in och ut),
+// så att t.ex. vätsketapp de första dagarna inte ger en orimligt brant linje över en hel månad.
+export const capSlope = (k, kg) => Math.max(-kg * 0.01 / 7, Math.min(kg * 0.01 / 7, k));
+
 // Kalorier och vikt i samma diagram (2026-11-21): bara den visade perioden (vecka eller månad, 2026-11-21), staplar = kcal per dag, linje = vikt,
 // streckad linje = vad som håller vikten (förbrukningen) eller kalorimålet. Ofullständiga dagar ljusare.
 export function kcalWeightChart(from, n = 7) {
@@ -80,7 +84,7 @@ export function kcalWeightChart(from, n = 7) {
     if (xs.length < 3) return null;
     const mx = xs.reduce((a, [i]) => a + i, 0) / xs.length, my = xs.reduce((a, [, v]) => a + v, 0) / xs.length;
     const sxx = xs.reduce((a, [i]) => a + (i - mx) ** 2, 0); if (!sxx) return null;
-    const k = xs.reduce((a, [i, v]) => a + (i - mx) * (v - my), 0) / sxx;
+    const k = capSlope(xs.reduce((a, [i, v]) => a + (i - mx) * (v - my), 0) / sxx, w[ak]);
     const off = weekdayOffsets(ak, w), wd = (i) => new Date(addDays(from, i) + 'T12:00').getDay();
     const base = w[ak] - off[wd(ai)], pts = [];
     for (let i = i0; i < n; i++) pts.push([i, i === ai ? w[ak] : base + k * (i - ai) + off[wd(i)]]);
