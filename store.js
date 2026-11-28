@@ -407,7 +407,7 @@ function index() {
     name: f.name, sub: f.sub, words: [f.name.toLowerCase(), ...(f.q || []), ...enWords([f.name])],
     v: f.v.map((v) => ({ label: v.l, ref: 'p:' + v.id, n: v.n, u: v.u, u2: v.u2, d: v.d })), product: true,
   }));
-  const more = (typeof FOODS_MORE !== 'undefined' ? FOODS_MORE : []).map((r) => ({ name: r[1], words: [r[1].toLowerCase()], v: [{ label: '', ref: 'l:' + r[0], n: r.slice(2, 6) }], more: true }));
+  const more = (typeof FOODS_MORE !== 'undefined' ? FOODS_MORE : []).map((r) => genericName(r[1])).map((nm, i) => [nm, FOODS_MORE[i]]).map(([nm, r]) => ({ name: nm, words: [nm.toLowerCase()], v: [{ label: '', ref: 'l:' + r[0], n: r.slice(2, 6) }], more: true }));
   return (INDEX = { core, products, more });
 }
 // Own products as foods (ref u:id).
@@ -420,6 +420,15 @@ function score(f, q) {
     else if (w.includes(q)) best = Math.max(best, 1);
   }
   return best;
+}
+// Generiska namn (2026-11-28): Livsmedelsverkets namn nämner ibland märken ("typ Bregott", "typ Oumph®") eller "mormors".
+// Märket och resten av namnet efter det tas bort i visning och sökning; näringsvärden och ref (l:<id>) är oförändrade,
+// så gamla loggar och backuper påverkas inte. Sorter som Madeira, Portvin, Grana Padano och Hönökaka är inga märken och står kvar.
+const BRANDS = ['Bregott', 'Milda', 'Melba', 'Becel', 'Lätt & lagom', 'Husman', 'Ryvita', 'Vika', 'Finn crisp', 'Weetabix', 'Specialflingor',
+  'Lätta', 'Mini Lätta', 'Carlshamn', 'Havrefras', 'Rågi', 'Ica', 'Arla', 'Flora', 'Tzay', 'Oumph', 'Plant b\\*tter', 'BreOliv'];
+const BRAND_RE = new RegExp('\\s+typ\\s+(?:' + BRANDS.join('|') + ')(?![a-zåäö]).*$');
+export function genericName(n) {
+  return String(n).replace(BRAND_RE, '').replace(/[®™]/g, '').replace(/^Gryta mormors (\S)/, (_, c) => c.toUpperCase()).replace(/\s*\b(?:mor|far)mors\s+/gi, ' ').replace(/\s{2,}/g, ' ').trim();
 }
 // → { hits: [food], more: n } – core and own first; FOODS_MORE only when `all` (or no core hit).
 const GENERIC = /^(lätt|mellan|normal|standard|fet|mager|rå|kokt|stekt|okokt|färsk|i )/;   // variant labels that are grades, not names

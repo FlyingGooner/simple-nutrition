@@ -1,5 +1,5 @@
 // Unit tests for store.js (ES module). Run: tools\test.ps1 simple-nutrition
-import { defaults, validate, cleanText, postN, sumN, goalFor, setGoal, weekStats, exportText, importText, addDays, weekStart, isoWeek, mergeFdt, habitDay, setLevel, dropLevels, quickGroup, searchFoods, findRef } from '../../store.js';
+import { genericName, defaults, validate, cleanText, postN, sumN, goalFor, setGoal, weekStats, exportText, importText, addDays, weekStart, isoWeek, mergeFdt, habitDay, setLevel, dropLevels, quickGroup, searchFoods, findRef } from '../../store.js';
 const FDT = JSON.stringify({ app: 'follow-diet-tracker', format: 1, exported: '2026-11-09', data: { settings: { planText: 'Plan' }, days: { '2026-11-02': { breakfast: 'f', lunch: { o: 'c', r: 'craving', n: 'jobbet' }, 'extra-1': 'c' } }, weighIns: { '2026-11-02': 84.6, '2026-11-03': 999 }, workouts: { '2026-11-02': ['push,pull', { t: 'run', k: 5, s: 1500 }] } } });
 
 const post = (o) => ({ id: 'p1', m: 'm1', ref: 'l:151', name: 'Mjölk', g: 200, n: [39, 3.6, 4.8, 0.5], ...o });
@@ -205,4 +205,13 @@ T.test('Smör har enheterna smörgås (förvald) och msk', () => {
 T.test('goalFor: före första målet finns inget mål', () => {
   const s = validate({ goals: [{ from: '2026-11-05', kcal: 2000, prot: 120 }] });
   T.eq([goalFor(s, '2026-11-04').kcal, goalFor(s, '2026-11-04').prot, goalFor(s, '2026-11-05').kcal], [undefined, undefined, 2000]);
+});
+
+T.test('generiska namn: märken och mormors bort, sorter kvar (2026-11-28)', () => {
+  T.eq(genericName('Matfettsblandning havssaltat fett 80% berikad typ Bregott'), 'Matfettsblandning havssaltat fett 80% berikad');
+  T.eq(genericName('Sojaprotein bitar stekta typ Oumph®'), 'Sojaprotein bitar stekta');
+  T.eq(genericName('Bordsmargarin fett 75% berikad typ Becel Gold'), 'Bordsmargarin fett 75% berikad');
+  T.eq(genericName('Gryta mormors kycklinggryta m. svamp'), 'Kycklinggryta m. svamp');
+  T.eq(genericName('Starkvin vitt rött vol. % 20 typ Portvin'), 'Starkvin vitt rött vol. % 20 typ Portvin');
+  T.eq(genericName('Bröd vitt vete fibrer ca 2,5% typ baguette'), 'Bröd vitt vete fibrer ca 2,5% typ baguette');
 });
